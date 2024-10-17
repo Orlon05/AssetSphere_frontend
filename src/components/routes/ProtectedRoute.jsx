@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 const isAuthenticated = () => {
 
-    const token = localStorage.getItem("authToken"); //Aqui pasamos el token que se genera en el login para proteger el resto del contenido
+    const token = localStorage.getItem("authenticationToken"); //Aqui pasamos el token que se genera en el login para proteger el resto del contenido
     return token !== null; // y se verifica si existe//
 
 };

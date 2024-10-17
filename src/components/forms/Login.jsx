@@ -20,7 +20,7 @@ const Login = () => {
 
     if (email === "admin@correo.com" && password === "password123") {
       //guardar un token de auth
-      localStorage.setItem("authToken", "123456");
+      localStorage.setItem("authenticationToken", "123456");
       navigate("/"); //redirigir al dashboard
     } else {
       setModalError(true); //mostrar modal de error
