@@ -1,9 +1,10 @@
-import React, { Children } from "react";
+import React from "react";
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
-import Dashboard from "../layouts/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import Login from "../forms/Login";
 import ProtectedRoute from "./ProtectedRoute";
+import Analitica from "../pages/Analitica";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -20,7 +21,11 @@ export let EnrutadorApp = [
         <Dashboard />
       </ProtectedRoute>
     ),
-    Children: [
+    children: [
+      {
+        path: "analitica",
+        element: <Analitica />,
+      },
       {
         path: "servidoresf",
         element: <ServidoresF />,
