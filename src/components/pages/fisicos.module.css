@@ -2,6 +2,8 @@
     --azul-celeste: #8AFFE6;
     --azul-oscuro: #1B3F4B;
     --azul-oscuro-intermedio: #3b5d68;
+    --azul-profundo:#0164f8;
+    --azul-profundo-oscuro:#0453c9;
     --gris-claro: #CBCBCB;
     --gris-oscuro:#6b6868;
     --gris-oscuro-medio:#bbb8b8;
@@ -11,10 +13,10 @@
     --blanco: #fff;
     --verde: #017e0c;
     --verde-claro:#03b912;
-    --naranja:#c25c19;
-    --naranja-claro:#e06512;
-    --rojo:#ce1f28;
-    --rojo-claro:#ec2b35;
+    --naranja:#f86605;
+    --naranja-claro:#c25106;
+    --rojo:#f70511;
+    --rojo-claro:#c5060f;
   }
 /*********************CONTENEDOR PRINCIPAL*************/
 .container{
@@ -164,7 +166,7 @@
     }
 }
 
-  .customTable {
+.customTable {
     font-size: 16px;
     box-shadow: 0 0 5px var(--azul-oscuro);
     border-radius: 10px; /* Ajusta el valor según el grado de redondez que desees */
@@ -236,9 +238,9 @@
 }
 
 .btnVer{
-  background: var(--azul-claro);
+  background: var(--azul-profundo);
   &:hover{
-    background: var(--azul-claro-intermedio);
+    background: var(--azul-profundo-oscuro);
   }
 }
 

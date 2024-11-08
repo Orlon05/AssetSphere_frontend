@@ -7,6 +7,7 @@ import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import style from "./fisicos.module.css";
+import { Link, useNavigate } from "react-router-dom";
 
 // Datos de los usuarios
 const users = [
@@ -49,6 +50,12 @@ const ServidoresFisicos = () => {
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
   const [rowsPerPage, setRowsPerPage] = useState(5); // Estado para filas por página
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const navigate = useNavigate();
+  
+  const irCrear = () =>{
+    navigate('/crear-servidores-f')
+  };
   // Función para alternar la selección de todos los usuarios
   const toggleSelectAll = () => {
     if (selectAll) {
@@ -99,7 +106,7 @@ const ServidoresFisicos = () => {
         <h1 className={style.tittle}>
           <FaServer /> Lista de Servidores
         </h1>
-        <button className={style.btnAdd}>
+        <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} />
           Crear
         </button>

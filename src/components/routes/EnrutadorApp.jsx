@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard";
 import Login from "../forms/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
+import CrearServerF from "../pages/CrearServidor";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -33,6 +34,10 @@ export let EnrutadorApp = [
       {
         path: "servidoresv",
         element: <ServidoresV />,
+      },
+      {
+        path: "crear-servidores-f",
+        element: < CrearServerF />
       },
     ],
   },
