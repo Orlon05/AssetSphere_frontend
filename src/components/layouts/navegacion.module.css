@@ -16,7 +16,7 @@
     background-color:var(--azul-oscuro);
     opacity: 0.9;
     padding: 10px 20px;
-    z-index: 2;
+    z-index: 1112;
     position: fixed;
     width: 100%;
     left: 20rem;

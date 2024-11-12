@@ -42,7 +42,8 @@
     padding: 4px 8px;
 
     &:hover{
-      background: var(--gris-oscuro-medio);
+      background: var(--gris-claro);
+      color: var(--azul-profundo-oscuro);
     }
 }
 
@@ -53,7 +54,8 @@
     padding: 4px 8px;
 
     &:hover{
-      background: var(--gris-oscuro-medio);
+      background: var(--gris-claro);
+      color: var(--azul-profundo-oscuro);
     }
 }
 
@@ -62,11 +64,11 @@
     right: 0;
     top: 0%;
     padding: 7px 14px;
-    background: var(--verde);
+    background: var(--azul-profundo-oscuro);
     color: var(--blanco);
 
     &:hover{
-      background: var(--verde-claro);
+      background: var(--azul-profundo);
   }
 }
 
@@ -122,7 +124,7 @@
   /* Estilos al enfocar el input */
   &:focus {
   outline: none; 
-  border: 1px solid var(--azul-claro); 
+  border: 1px solid var(--azul-profundo-oscuro); 
   }
 }
 

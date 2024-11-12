@@ -49,7 +49,7 @@ const ServerForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2>Crear Servidores</h2>
+      <h2 className={styles.tittle}>Crear Servidores</h2>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
@@ -89,6 +89,8 @@ const ServerForm = () => {
             <div className={styles.label}>Nombre del Servidor*</div>
           </div>
 
+          <hr className={styles.lines} />
+
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -124,6 +126,8 @@ const ServerForm = () => {
             />
             <div className={styles.label}>Ambiente*</div>
           </div>
+
+          <hr className={styles.lines} />
 
           <div className={styles.formGroup}>
             <input
@@ -199,6 +203,8 @@ const ServerForm = () => {
             <div className={styles.label}>Marca*</div>
           </div>
 
+          <hr className={styles.lines} />
+
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -234,6 +240,8 @@ const ServerForm = () => {
             />
             <div className={styles.label}>Modelo*</div>
           </div>
+
+          <hr className={styles.lines} />
 
           <div className={styles.formGroup}>
             <input
