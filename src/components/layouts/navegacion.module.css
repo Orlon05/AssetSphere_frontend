@@ -16,7 +16,7 @@
     background-color:var(--azul-oscuro);
     opacity: 0.9;
     padding: 10px 20px;
-    z-index: 1112;
+    z-index: 9;
     position: fixed;
     width: 100%;
     left: 20rem;
@@ -76,7 +76,7 @@
     position: relative;
     cursor: pointer;
     transition: left 0.3s ease, margin-left 0.3s ease;
-    left: 52%;
+    left: 46%;
   }
   
   .userIcon {
@@ -118,6 +118,17 @@
   }
   .mailUser, .btnLogout{
    text-align: center;
+  }
+  .containerNameUser{
+    display: flex;
+    margin-top: 20px;
+    position: absolute;
+    left: 850px;
+  }
+  
+  .userName{
+    color: var(--blanco);
+    font-weight: bold;
   }
   .mailUser{
     padding-bottom: 10px;
@@ -163,17 +174,16 @@
     }
     
   }
-  
-  /* Ajustes para pantallas más grandes */
-  @media (min-width: 1000px) {
-    .userContainer {
-      left: 42%; 
-    }
-  }
   /* Ajustes para pantallas entre 768px y 991px */
   @media (max-width: 991px) {
-    .userContainer {
+    .userContainer{
       left: 20%; /* Más a la izquierda a medida que la pantalla se reduce */
+    }
+    .containerNameUser{
+      left: 320px;
+    }
+    .searchInput{
+      width: 200px;
     }
   }
   @media (max-width: 867px) {
@@ -193,7 +203,7 @@
   /* Ajustes para pantallas muy pequeñas (menos de 576px) */
   @media (max-width: 575px) {
     .userContainer {
-      left: 10%; /* Aún más a la izquierda si es necesario */
+      left: 29%; /* Aún más a la izquierda si es necesario */
     }
   
   }

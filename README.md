@@ -91,3 +91,39 @@ El proyecto sigue una arquitectura basada en componentes, con separación clara 
 3. **Despliegue**:
    - Desplegar el backend y frontend en un servidor.
    - Configurar la base de datos MySQL en el entorno de producción.
+
+## Características principales
+- [x] 🔒 Autenticación JWT
+- [ ] 🔎 Consulta de servidores
+- [ ] ➕ Agregar nuevos servidores
+- [ ]  ✏️ Actualizar información
+- [ ]  ⛔ Eliminar servidores del inventario
+- [x] 👮 Registro de las acciones de los usuarios
+
+## Instalación
+
+ 1. **Clonar el repositorio**
+```bash
+git clone http://10.8.150.91/virtualizacion-automatizaciones/inventariodatacenter.git
+cd inventariodatacenter-backend
+
+2. **Instalar las dependencias**
+```bash
+npm install
+```
+3. **Iniciar la APP**
+```bash
+npm run dev
+```
+## Contribuciones
+Si quieres contribuir en el desarrollo, por favor envia un **Pull Request**. Recuerda antes asegurarte que funcione correctamente en local, para intentar entre todos, tener un repositorio limpio y funcional.
+
+## Contacto
+
+**Jorge Eduardo Muñoz Quintero**\
+*Desarrollador principal*\
+joedmuno@bancolombia.com.co |  2811750@tcs.com
+
+**Soporte en campo TCS**\
+*Equipo del proyecto*\
+Gestion_SupCampo_TCS@bancolombia.com.co

@@ -98,7 +98,10 @@ const ServidoresFisicos = () => {
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
   // const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser); // Quitar esta línea
   const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
-
+  
+  const irEditar = () =>{
+    navigate(`/editar-servidores-f`)
+  }
   return (
     <div className={style.container}>
       {/******************ENCABEZADO***************************/}
@@ -176,7 +179,7 @@ const ServidoresFisicos = () => {
                     <button className={style.btnVer}>
                       <GrFormViewHide/>
                     </button>
-                    <button className={style.btnEdit}>
+                    <button className={style.btnEdit} onClick={() => irEditar()}>
                       <MdEdit/>
                     </button>
                     <button className={style.btnDelete}>

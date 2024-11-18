@@ -4,12 +4,14 @@ import { IoIosArrowForward } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import style from "./login.module.css";
 import PopupError from "../popups/PopupError";
+import Loader from "../layouts/Loader";
 
 const Login = () => {
   //estado para manejar el correo y la contraseña
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   //estado para mostrar el modal de error
   const [modalError, setModalError] = useState(false);
@@ -21,7 +23,14 @@ const Login = () => {
     if (email === "admin@correo.com" && password === "password123") {
       //guardar un token de auth
       localStorage.setItem("authenticationToken", "123456");
-      navigate("/"); //redirigir al dashboard
+      setIsLoading(true);
+        setTimeout(() => {
+          navigate("/"); // Redirigir al dashboard
+        }, 1500); // Tiempo de espera en milisegundos (1.5 segundos)
+
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2500); // Tiempo de espera en milisegundos (2.5 segundos)
     } else {
       setModalError(true); //mostrar modal de error
     }
@@ -34,6 +43,7 @@ const Login = () => {
 
   return (
     <div className={style.container}>
+      {isLoading && <Loader />}
       {/*/MOSTRAR MODAL ERROR SI ESTA ACTIVADO */}
       {modalError && <PopupError onClose={cerrarModalError} />}
       <div className={style.screen}>

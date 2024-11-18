@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import styles from "./crearServidor.module.css";
-import { IoIosAdd } from "react-icons/io";
+import styles from "./editarServidor.module.css";
+import {  MdEdit } from "react-icons/md";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 
-const ServerForm = () => {
+const EditarServer = () => {
   const [serial, setSerial] = useState("");
   const [nombreServidor, setNombreServidor] = useState("");
   const [propietario, setPropietario] = useState("");
@@ -43,7 +43,7 @@ const ServerForm = () => {
   const showSuccessToast = () => {
     Toast.fire({
       icon: 'success',
-      title: 'Servidor creado exitosamente'
+      title: 'Servidor actualizado exitosamente'
     });
   };
 
@@ -75,7 +75,7 @@ const ServerForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>< IoIosAdd/>Crear Servidores</h2>
+      <h2 className={styles.tittle}>< MdEdit />Editar Servidores</h2>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
@@ -319,11 +319,11 @@ const ServerForm = () => {
         </div>
 
         <button type="submit" className={styles.button} onClick={showSuccessToast}>
-          Guardar
+          Actualizar
         </button>
       </div>
     </form>
   );
 };
 
-export default ServerForm;
+export default EditarServer;

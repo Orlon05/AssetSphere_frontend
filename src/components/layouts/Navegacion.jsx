@@ -3,6 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import Style from './navegacion.module.css';
 import { useNavigate } from "react-router-dom";
 import { RiMenu4Fill } from "react-icons/ri";
+import Swal from "sweetalert2";
 
 const Navegacion = ({ toggleSidebar }) => {
   const [showModal, setShowModal] = useState(false);
@@ -13,10 +14,20 @@ const Navegacion = ({ toggleSidebar }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authenticationToken");
-    if (window.confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-      navigate("/login");
-    }
+    Swal.fire({
+      title: "¿Estás seguro de que deseas cerrar sesión?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("autenticacionToken");
+        navigate("/login");
+      }
+    });
   };
 
   return (
@@ -36,6 +47,9 @@ const Navegacion = ({ toggleSidebar }) => {
             <CiSearch />
           </button>
         </form>
+        <div className={Style.containerNameUser}>
+          <p className={Style.userName}>Administrador</p>
+        </div>
         {/* Imagen de usuario redonda */}
         <div className={Style.userContainer} onClick={toggleModal}>
           <img
