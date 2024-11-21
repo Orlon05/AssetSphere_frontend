@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 import style from "./login.module.css";
 import PopupError from "../popups/PopupError";
 import Loader from "../layouts/Loader";
@@ -9,30 +10,57 @@ import Loader from "../layouts/Loader";
 const Login = () => {
   //estado para manejar el correo y la contraseña
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   //estado para mostrar el modal de error
   const [modalError, setModalError] = useState(false);
 
-  //simulación de autenticación
-  const envioSesion = (e) => {
+  // Función para logearse
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === "admin@correo.com" && password === "password123") {
-      //guardar un token de auth
-      localStorage.setItem("authenticationToken", "123456");
-      setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      console.log("Respuesta del servidor:", data);
+
+      if (response.ok) {
+        setMessage("Inicio de sesión exitoso");
+        localStorage.setItem("authenticationToken",data.data.accessToken); // Guardar token de manera local
+
+        // Decodificar el token para obtener el tipo de usuario
+        const decodedToken = jwtDecode(data.data.accessToken);
+        console.log("Token decodificado:", decodedToken);
+
+        // LIMPIAR CAMPOS DESPUES DEL INICIO DE SESION
+        setUsername("");
+        setPassword("");
+        setIsLoading(true);
+
         setTimeout(() => {
-          navigate("/"); // Redirigir al dashboard
+          navigate("/"); // Redirige al dashboard
         }, 1500); // Tiempo de espera en milisegundos (1.5 segundos)
 
         setTimeout(() => {
           setIsLoading(false);
         }, 2500); // Tiempo de espera en milisegundos (2.5 segundos)
-    } else {
-      setModalError(true); //mostrar modal de error
+      } else {
+        setMessage(data.msg || "Error al iniciar sesión");
+        setShowErrorPopup(true);
+        console.error("Error al iniciar sesión:", data.msg);
+      }
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -48,17 +76,17 @@ const Login = () => {
       {modalError && <PopupError onClose={cerrarModalError} />}
       <div className={style.screen}>
         <div className={style.screenContent}>
-          <form className={style.login} onSubmit={envioSesion}>
+          <form className={style.login} onSubmit={handleLoginSubmit}>
             <div className={style.loginField}>
               <span className={style.loginIcon}>
                 <FaUser />
               </span>
               <input
-                type="email"
+                type="user"
                 className={style.loginInput}
-                placeholder="Usuario / Correo"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}// actualiza el estado 'EMAIL' cuando cambia el valor
+                placeholder="Usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                />
             </div>
@@ -75,7 +103,7 @@ const Login = () => {
                 required
               />
             </div>
-            <button className={style.loginSubmit}>
+            <button type="submit" className={style.loginSubmit}>
               <span>Iniciar Sesión</span>
               <span className={style.buttonIcon}>
                 <IoIosArrowForward />
