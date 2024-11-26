@@ -3,11 +3,14 @@ import { CiSearch } from "react-icons/ci";
 import Style from './navegacion.module.css';
 import { useNavigate } from "react-router-dom";
 import { RiMenu4Fill } from "react-icons/ri";
+import { IoIosNotifications } from "react-icons/io";
 import Swal from "sweetalert2";
+import { useAuth } from "../routes/ProtectedRoute"; 
 
 const Navegacion = ({ toggleSidebar }) => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const { remainingTime } = useAuth();
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -30,6 +33,30 @@ const Navegacion = ({ toggleSidebar }) => {
     });
   };
 
+  const showRemainingTime = () => {
+    if (remainingTime) {
+      const secondsLeft = Math.floor(remainingTime / 1000);
+      const minutesLeft = Math.floor(secondsLeft / 60);
+      const hoursLeft = Math.floor(minutesLeft / 60);
+      const daysLeft = Math.floor(hoursLeft / 24);
+
+      const timeLeftString = `${daysLeft} días, ${hoursLeft % 24} horas, ${minutesLeft % 60} minutos`;
+
+      Swal.fire({
+        title: 'Tiempo de sesión restante:',
+        text: timeLeftString,
+        icon: 'info',
+        confirmButtonText: 'OK'
+      });
+    } else {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo obtener el tiempo de sesión restante',
+        icon: 'error'
+      });
+    }
+  };
+
   return (
     <nav className={Style.navbar}>
       <div className={Style.container}>
@@ -45,6 +72,9 @@ const Navegacion = ({ toggleSidebar }) => {
           />
           <button className={Style.searchButton} type="submit">
             <CiSearch />
+          </button>
+          <button className={Style.noti} onClick={showRemainingTime}>
+            <IoIosNotifications/>
           </button>
         </form>
         <div className={Style.containerNameUser}>

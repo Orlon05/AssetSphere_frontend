@@ -7,136 +7,162 @@ import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import style from "./fisicos.module.css";
-import { Link, useNavigate } from "react-router-dom";
-
-// Datos de los usuarios
-const users = [
-  {
-    name: "Alcides Antonio",
-    email: "alcides.antonio@devias.io",
-    location: "Madrid, Comunidad de Madrid, Spain",
-    phone: "908-691-3242",
-  },
-  {
-    name: "Marcus Finn",
-    email: "marcus.finn@devias.io",
-    location: "Carson City, Nevada, USA",
-    phone: "415-907-2647",
-  },
-  {
-    name: "Jie Yan",
-    email: "jie.yan.song@devias.io",
-    location: "North Canton, Ohio, USA",
-    phone: "770-635-2682",
-  },
-  {
-    name: "Nasimiyu Danai",
-    email: "nasimiyu.danai@devias.io",
-    location: "Salt Lake City, Utah, USA",
-    phone: "801-301-7894",
-  },
-  {
-    name: "Iulia Albu",
-    email: "iulia.albu@devias.io",
-    location: "Murray, Utah, USA",
-    phone: "313-812-8947",
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const ServidoresFisicos = () => {
-  const [searchValue, setSearchValue] = useState(""); // Estado para el input de búsqueda
-  const [filteredUsers, setFilteredUsers] = useState(users); // Estado para los usuarios filtrados
-  const [selectAll, setSelectAll] = useState(false); // Estado para seleccionar todos
-  const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Estado para filas por página
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [servers, setServers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedServers, setSelectedServers] = useState(new Set()); // Usar un Set
 
   const navigate = useNavigate();
-  
-  const irCrear = () =>{
-    navigate('/crear-servidores-f')
+
+  const irCrear = () => {
+    navigate("/crear-servidores-f");
   };
-  // Función para alternar la selección de todos los usuarios
+
+  const irEditar = (id) => {
+    navigate(`/editar-servidores-f/${id}`);
+  };
+
+  const fetchServers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`http://localhost:8000/servers/physical`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            "authenticationToken"
+          )}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        let errorMessage = "Error al obtener servidores";
+        if (errorData.detail) {
+          errorMessage = Array.isArray(errorData.detail)
+            ? errorData.detail.map((e) => e.msg).join(", ")
+            : errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else {
+          errorMessage = `Error HTTP: ${response.status} - ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+
+      if (
+        data &&
+        data.status === "success" &&
+        data.data &&
+        typeof data.data === "object" &&
+        data.data.servers
+      ) {
+        setServers(data.data.servers);
+        setTotalPages(data.data.total_pages || 0);
+        setCurrentPage(data.data.current_page + 1);
+      } else {
+        setServers([]);
+        setTotalPages(0);
+        setCurrentPage(1);
+        setError(
+          new Error(
+            "Error al obtener datos de servidores. Respuesta de la API inesperada."
+          )
+        );
+        console.error("Respuesta de la API inesperada:", data);
+      }
+    } catch (error) {
+      setError(error);
+      console.error("Error al obtener servidores:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServers();
+  }, []);
+
   const toggleSelectAll = () => {
+    setSelectAll(!selectAll);
     if (selectAll) {
-      setSelectedUsers([]); // Deseleccionar todos
+      setSelectedServers(new Set());
     } else {
-      setSelectedUsers(users.map((_, index) => index)); // Seleccionar todos
-    }
-    setSelectAll(!selectAll); // Cambiar estado de selectAll
-  };
-
-  // Función para alternar la selección de un usuario específico
-  const toggleSelectUser = (index) => {
-    if (selectedUsers.includes(index)) {
-      setSelectedUsers(selectedUsers.filter((i) => i !== index)); // Deseleccionar usuario
-    } else {
-      setSelectedUsers([...selectedUsers, index]); // Seleccionar usuario
+      setSelectedServers(new Set(servers.map((server) => server.id)));
     }
   };
 
-  // Función para actualizar el valor de búsqueda
+  const toggleSelectServer = (serverId) => {
+    const newSelectedServers = new Set(selectedServers);
+    if (newSelectedServers.has(serverId)) {
+      newSelectedServers.delete(serverId);
+    } else {
+      newSelectedServers.add(serverId);
+    }
+    setSelectedServers(newSelectedServers);
+  };
+
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
 
-  // Función para filtrar los usuarios
-  const filterUsers = () => {
-    const newFilteredUsers = users.filter((user) =>
-      user.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    setFilteredUsers(newFilteredUsers);
-  };
+  const filteredServers = servers.filter((server) =>
+    server.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
-  // Efecto para filtrar los usuarios cuando el valor de búsqueda cambia
-  useEffect(() => {
-    filterUsers();
-  }, [searchValue]); // Depende del estado searchValue
+  const indexOfLastServer = currentPage * rowsPerPage;
+  const indexOfFirstServer = indexOfLastServer - rowsPerPage;
+  const currentServers = filteredServers.slice(
+    indexOfFirstServer,
+    indexOfLastServer
+  );
 
-  // Calcular los índices para la paginación
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  // const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser); // Quitar esta línea
-  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
-  
-  const irEditar = () =>{
-    navigate(`/editar-servidores-f`)
+  if (loading) {
+    return <div>Loading...</div>;
   }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
     <div className={style.container}>
-      {/******************ENCABEZADO***************************/}
       <div className={style.containerMain}>
         <h1 className={style.tittle}>
           <FaServer /> Lista de Servidores
         </h1>
         <button className={style.btnAdd} onClick={irCrear}>
-          <IoIosAdd className={style.icon} />
-          Crear
+          <IoIosAdd className={style.icon} /> Crear
         </button>
         <button className={style.btnImport}>
-          <CiImport className={style.icon} />
-          Import
+          <CiImport className={style.icon} /> Import
         </button>
         <button className={style.btnExport}>
-          <CiExport className={style.icon} />
-          Export
+          <CiExport className={style.icon} /> Export
         </button>
       </div>
-      {/*************************SEARCH*********************************/}
       <form className={style.searchContainer}>
         <input
           className={style.searchInput}
           type="search"
           placeholder="Buscar servidor..."
-          aria-label="Buscar"
-          value={searchValue} // Vincula al input de búsqueda
-          onChange={handleSearchChange} // Actualiza el estado del input
+          value={searchValue}
+          onChange={handleSearchChange}
         />
         <span className={style.searchIcon}>
           <CiSearch className={style.iconS} />
         </span>
       </form>
-      {/*****************Tabla de Servidores **********************/}
       <div className={style.container}>
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
@@ -145,61 +171,74 @@ const ServidoresFisicos = () => {
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
-                  checked={selectAll}
+                  checked={
+                    servers.length > 0 &&
+                    selectedServers.size === servers.length
+                  }
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Location</th>
-              <th>Phone</th>
+              <th>Servidor</th>
+              <th>Estado</th>
+              <th>Serial</th>
+              <th>IP</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map(
-              (
-                user,
-                index // Usa filteredUsers para la tabla
-              ) => (
-                <tr key={index}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      className={style.customCheckbox}
-                      checked={selectedUsers.includes(index)}
-                      onChange={() => toggleSelectUser(index)}
-                    />
-                  </td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.location}</td>
-                  <td>{user.phone}</td>
-                  <td>
-                    <button className={style.btnVer}>
-                      <GrFormViewHide/>
-                    </button>
-                    <button className={style.btnEdit} onClick={() => irEditar()}>
-                      <MdEdit/>
-                    </button>
-                    <button className={style.btnDelete}>
-                      <MdDelete/>
-                    </button>
-                  </td>
-                </tr>
-              )
-            )}
+            {currentServers.map((server) => (
+              <tr key={server.id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    className={style.customCheckbox}
+                    checked={selectedServers.has(server.id)}
+                    onChange={() => toggleSelectServer(server.id)}
+                  />
+                </td>
+                <td>{server.name}</td>
+                <td>{server.status}</td>
+                <td>{server.serial}</td>
+                <td>{server.ip_address}</td>
+                <td>
+                  <button
+                    className={style.btnVer}
+                    onClick={() => {
+                      /* Acción para ver */
+                    }}
+                  >
+                    <GrFormViewHide />
+                  </button>
+                  <button
+                    className={style.btnEdit}
+                    onClick={() => irEditar(server.id)}
+                  >
+                    <MdEdit />
+                  </button>
+                  <button
+                    className={style.btnDelete}
+                    onClick={() => {
+                      /* Acción para eliminar */
+                    }}
+                  >
+                    <MdDelete />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
           <tfoot>
             <tr>
               <td colSpan="2">
                 <div
-                  className={`d-flex justify-content-start align-items-center${style.tfootSmall}`}
+                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
                 >
                   <span className={style.textfoot}>Filas por página:</span>
                   <Form.Select
                     value={rowsPerPage}
-                    onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                    onChange={(e) =>
+                      setRowsPerPage(parseInt(e.target.value, 10))
+                    }
                     className={style.selectLine}
                   >
                     <option value={5}>5</option>
@@ -209,26 +248,30 @@ const ServidoresFisicos = () => {
               </td>
               <td colSpan="1">
                 <div
-                  className={`d-flex justify-content-center align-items-center${style.tfootSmall}`}
+                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
                 >
-                  <span>{`${indexOfFirstUser + 1}-${Math.min(
-                    indexOfLastUser,
-                    filteredUsers.length
-                  )} of ${filteredUsers.length}`}</span>
+                  <span>{`${indexOfFirstServer + 1}-${Math.min(
+                    indexOfLastServer,
+                    filteredServers.length
+                  )} of ${filteredServers.length}`}</span>
                 </div>
               </td>
               <td colSpan="3">
                 <div
-                  className={`d-flex justify-content-end align-items-center${style.tfootSmall}`}
+                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
                 >
                   <Pagination className={style.pestanas}>
                     <Pagination.Prev
-                      onClick={() => setCurrentPage(currentPage - 1)}
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
                       disabled={currentPage === 1}
                     />
                     <Pagination.Item active>{currentPage}</Pagination.Item>
                     <Pagination.Next
-                      onClick={() => setCurrentPage(currentPage + 1)}
+                      onClick={() =>
+                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                      }
                       disabled={currentPage === totalPages}
                     />
                   </Pagination>

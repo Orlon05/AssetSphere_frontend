@@ -76,7 +76,24 @@
     position: relative;
     cursor: pointer;
     transition: left 0.3s ease, margin-left 0.3s ease;
-    left: 46%;
+    left: 44%;
+  }
+  .noti{
+    padding: 8px 8px;
+    border: none;
+    color: var(--blanco);
+    background: var(--azul-oscuro);
+    border-radius: 100%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+
+    &:hover{
+      transform: scale(1.2); /*zoom*/
+    background: var(--azul-oscuro-intermedio);
+    }
   }
   
   .userIcon {
