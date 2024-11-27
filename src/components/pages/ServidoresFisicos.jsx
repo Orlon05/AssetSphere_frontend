@@ -113,6 +113,35 @@ const ServidoresFisicos = () => {
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
   const currentServers = filteredServers.slice(indexOfFirstServer, indexOfLastServer);
 
+  const handleDeleteServer = async (serverId) => {
+    try {
+      const response = await fetch(`/servers/physical/${serverId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorData = await response.json();
+          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
+          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error al eliminar el servidor', text: `Error HTTP ${response.status}` });
+        }
+      } else {
+        const data = await response.json();
+        Swal.fire({ icon: 'success', title: 'Servidor eliminado', text: data.msg });
+        // Actualiza la lista de servidores después de eliminar uno
+        fetchServers(); 
+      }
+    } catch (error) {
+      console.error("Error al eliminar el servidor:", error);
+      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado al eliminar el servidor." });
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -190,7 +219,7 @@ const ServidoresFisicos = () => {
                   <button className={style.btnEdit} onClick={() => irEditar(server.id)}>
                     <MdEdit />
                   </button>
-                  <button className={style.btnDelete} onClick={() => {}}>
+                  <button className={style.btnDelete} onClick={() => {handleDeleteServer}}>
                     <MdDelete />
                   </button>
                 </td>

@@ -47,30 +47,58 @@ const ServerForm = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Formulario enviado:", {
-      serial,
-      nombreServidor,
-      propietario,
-      chasis,
-      estado,
-      marca,
-      rack,
-      unidad,
-      ip,
-      rol,
-      so,
-      tipo_activo_rack,
-      modelo,
-      ambiente,
-      procesador,
-      cores,
-      discos,
-      observaciones,
-      ram,
-    });
-    navigate("/servidoresf")
+
+    const serverData = {
+      name: nombreServidor,
+      brand: marca,
+      model: modelo,
+      processor: procesador,
+      cpu_cores: parseInt(cores, 10), // Convierte a número
+      total_disk_size: discos,
+      os: so,
+      status: estado,
+      role: rol,
+      environment: ambiente,
+      serial: serial,
+      rack_id: rack,
+      unit: unidad,
+      ip_address: ip,
+      city: "", // Agrega campos que falten (o quita los que no necesites)
+      location: "",
+      chassis: chasis,
+      rack_asset_type: tipo_activo_rack,
+      owner: propietario,
+      comments: observaciones,
+    };
+
+    try {
+      const response = await fetch("/servers/physical/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(serverData),
+      });
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorData = await response.json();
+          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
+          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error al crear el servidor', text: `Error HTTP ${response.status}` });
+        }
+      } else {
+        showSuccessToast();
+        navigate("/servidoresf");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado." });
+    }
   };
 
   return (
@@ -318,7 +346,7 @@ const ServerForm = () => {
           </div>
         </div>
 
-        <button type="submit" className={styles.button} onClick={showSuccessToast}>
+        <button type="submit" className={styles.button}>
           Guardar
         </button>
       </div>

@@ -25,6 +25,7 @@ const EditarServer = () => {
   const [observaciones, setObservaciones] = useState("");
   const [ram, setRam] = useState(""); 
   const navigate = useNavigate();
+  const { serverId } = useParams();
 
   // Crea la instancia de Toast
   const Toast = Swal.mixin({
@@ -47,30 +48,102 @@ const EditarServer = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    const fetchServerData = async () => {
+      try {
+        const response = await fetch(`/servers/physical/${serverId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Error al obtener datos del servidor: ${response.status}`);
+        }
+        const data = await response.json();
+        setSerial(data.serial);
+        setNombreServidor(data.name);
+        setPropietario(data.owner);
+        setChasis(data.chassis);
+        setEstado(data.status);
+        setMarca(data.brand);
+        setRack(data.rack_id);
+        setUnidad(data.unit);
+        setIp(data.ip_address);
+        setRol(data.role);
+        setSo(data.os);
+        setTipoActivoRack(data.rack_asset_type);
+        setModelo(data.model);
+        setAmbiente(data.environment);
+        setProcesador(data.processor);
+        setCores(data.cpu_cores);
+        setDiscos(data.total_disk_size);
+        setObservaciones(data.comments);
+        setRam(data.ram); // Asegúrate de que 'ram' existe en la respuesta de la API
+      } catch (error) {
+        console.error("Error fetching server data:", error);
+        Swal.fire({ icon: 'error', title: 'Error', text: "No se pudieron obtener los datos del servidor." });
+      }
+    };
+
+    if (serverId) {
+      fetchServerData();
+    }
+  }, [serverId]);
+
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Formulario enviado:", {
-      serial,
-      nombreServidor,
-      propietario,
-      chasis,
-      estado,
-      marca,
-      rack,
-      unidad,
-      ip,
-      rol,
-      so,
-      tipo_activo_rack,
-      modelo,
-      ambiente,
-      procesador,
-      cores,
-      discos,
-      observaciones,
-      ram,
-    });
-    navigate("/servidoresf")
+
+    const serverData = {
+      name: nombreServidor,
+      brand: marca,
+      model: modelo,
+      processor: procesador,
+      cpu_cores: parseInt(cores, 10),
+      total_disk_size: discos,
+      os: so,
+      status: estado,
+      role: rol,
+      environment: ambiente,
+      serial: serial,
+      rack_id: rack,
+      unit: unidad,
+      ip_address: ip,
+      city: "",
+      location: "",
+      chassis: chasis,
+      rack_asset_type: tipo_activo_rack,
+      owner: propietario,
+      comments: observaciones,
+      ram: ram, // Asegúrate que 'ram' esté incluido en serverData
+    };
+
+    try {
+      const response = await fetch(`/servers/physical/${serverId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(serverData),
+      });
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorData = await response.json();
+          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
+          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error al actualizar el servidor', text: `Error HTTP ${response.status}` });
+        }
+      } else {
+        showSuccessToast();
+        navigate("/servidoresf");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado." });
+    }
   };
 
   return (
@@ -318,7 +391,7 @@ const EditarServer = () => {
           </div>
         </div>
 
-        <button type="submit" className={styles.button} onClick={showSuccessToast}>
+        <button type="submit" className={styles.button}>
           Actualizar
         </button>
       </div>
