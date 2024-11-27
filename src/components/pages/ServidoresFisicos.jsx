@@ -5,20 +5,20 @@ import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import style from "./fisicos.module.css";
-import { useNavigate } from "react-router-dom";
 
 const ServidoresFisicos = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(""); // Valor de búsqueda
   const [servers, setServers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Por defecto, 10 servidores por página
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedServers, setSelectedServers] = useState(new Set()); // Usar un Set
+  const [selectedServers, setSelectedServers] = useState(new Set());
 
   const navigate = useNavigate();
 
@@ -34,14 +34,15 @@ const ServidoresFisicos = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:8000/servers/physical`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(
-            "authenticationToken"
-          )}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8000/servers/physical/search?name=${searchValue}&page=${currentPage}&limit=${rowsPerPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -60,25 +61,13 @@ const ServidoresFisicos = () => {
 
       const data = await response.json();
 
-      if (
-        data &&
-        data.status === "success" &&
-        data.data &&
-        typeof data.data === "object" &&
-        data.data.servers
-      ) {
-        setServers(data.data.servers);
-        setTotalPages(data.data.total_pages || 0);
-        setCurrentPage(data.data.current_page + 1);
+      if (data && data.status === "success" && data.data) {
+        setServers(data.data.servers || []);
+        setTotalPages(data.data.total_pages || 0); // Usamos total_pages para calcular el total de páginas
       } else {
         setServers([]);
         setTotalPages(0);
-        setCurrentPage(1);
-        setError(
-          new Error(
-            "Error al obtener datos de servidores. Respuesta de la API inesperada."
-          )
-        );
+        setError(new Error("Respuesta inesperada de la API"));
         console.error("Respuesta de la API inesperada:", data);
       }
     } catch (error) {
@@ -91,7 +80,7 @@ const ServidoresFisicos = () => {
 
   useEffect(() => {
     fetchServers();
-  }, []);
+  }, [currentPage, rowsPerPage, searchValue]); // Dependemos de currentPage, rowsPerPage y searchValue para volver a cargar los datos
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -122,10 +111,7 @@ const ServidoresFisicos = () => {
 
   const indexOfLastServer = currentPage * rowsPerPage;
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
-  const currentServers = filteredServers.slice(
-    indexOfFirstServer,
-    indexOfLastServer
-  );
+  const currentServers = filteredServers.slice(indexOfFirstServer, indexOfLastServer);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -145,10 +131,10 @@ const ServidoresFisicos = () => {
           <IoIosAdd className={style.icon} /> Crear
         </button>
         <button className={style.btnImport}>
-          <CiImport className={style.icon} /> Import
+          <CiImport className={style.icon} /> Importar
         </button>
         <button className={style.btnExport}>
-          <CiExport className={style.icon} /> Export
+          <CiExport className={style.icon} /> Exportar
         </button>
       </div>
       <form className={style.searchContainer}>
@@ -171,10 +157,7 @@ const ServidoresFisicos = () => {
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
-                  checked={
-                    servers.length > 0 &&
-                    selectedServers.size === servers.length
-                  }
+                  checked={servers.length > 0 && selectedServers.size === servers.length}
                   onChange={toggleSelectAll}
                 />
               </th>
@@ -201,26 +184,13 @@ const ServidoresFisicos = () => {
                 <td>{server.serial}</td>
                 <td>{server.ip_address}</td>
                 <td>
-                  <button
-                    className={style.btnVer}
-                    onClick={() => {
-                      /* Acción para ver */
-                    }}
-                  >
+                  <button className={style.btnVer} onClick={() => {}}>
                     <GrFormViewHide />
                   </button>
-                  <button
-                    className={style.btnEdit}
-                    onClick={() => irEditar(server.id)}
-                  >
+                  <button className={style.btnEdit} onClick={() => irEditar(server.id)}>
                     <MdEdit />
                   </button>
-                  <button
-                    className={style.btnDelete}
-                    onClick={() => {
-                      /* Acción para eliminar */
-                    }}
-                  >
+                  <button className={style.btnDelete} onClick={() => {}}>
                     <MdDelete />
                   </button>
                 </td>
@@ -230,50 +200,32 @@ const ServidoresFisicos = () => {
           <tfoot>
             <tr>
               <td colSpan="2">
-                <div
-                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
-                >
+                <div className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}>
                   <span className={style.textfoot}>Filas por página:</span>
                   <Form.Select
                     value={rowsPerPage}
-                    onChange={(e) =>
-                      setRowsPerPage(parseInt(e.target.value, 10))
-                    }
+                    onChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
                     className={style.selectLine}
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
                   </Form.Select>
                 </div>
               </td>
               <td colSpan="1">
-                <div
-                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
-                >
-                  <span>{`${indexOfFirstServer + 1}-${Math.min(
-                    indexOfLastServer,
-                    filteredServers.length
-                  )} of ${filteredServers.length}`}</span>
+                <div className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}>
+                  <span>{`${indexOfFirstServer + 1}-${Math.min(indexOfLastServer, filteredServers.length)} de ${filteredServers.length}`}</span>
                 </div>
               </td>
               <td colSpan="3">
-                <div
-                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
-                >
+                <div className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}>
                   <Pagination className={style.pestanas}>
-                    <Pagination.Prev
-                      onClick={() =>
-                        setCurrentPage(Math.max(1, currentPage - 1))
-                      }
-                      disabled={currentPage === 1}
-                    />
-                    <Pagination.Item active>{currentPage}</Pagination.Item>
-                    <Pagination.Next
-                      onClick={() =>
-                        setCurrentPage(Math.min(totalPages, currentPage + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    />
+                    <Pagination.Prev onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} />
+                    <Pagination.Item>{currentPage}</Pagination.Item>
+                    <Pagination.Next onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} />
                   </Pagination>
                 </div>
               </td>

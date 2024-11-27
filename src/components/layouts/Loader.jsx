@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
-import styles from "./loader.module.css"; 
+import React from "react";
+import styles from "./loader.module.css";
 
-const Loader = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); 
-
-    return () => clearTimeout(timeout);
-  }, []);
-
+const Loader = ({ isLoading }) => { // Recibe isLoading como prop
   return (
     <div className={isLoading ? styles.loaderWrapper : ""}>
       {isLoading && (

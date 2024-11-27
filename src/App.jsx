@@ -1,11 +1,16 @@
+import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import {EnrutadorApp} from './components/routes/EnrutadorApp';
+import { EnrutadorApp } from './components/routes/EnrutadorApp';
+import { AuthProvider } from './components/routes/AuthContext'; 
 
-let router = createBrowserRouter(EnrutadorApp); //aplicamos como contenido principal la ruta para que acceda dependiendo de la Auth//
+const router = createBrowserRouter(EnrutadorApp);
 
 function App() {
+  return (
+    <AuthProvider> 
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
+}
 
-  return <RouterProvider router={router} />;
-
-}  
 export default App;

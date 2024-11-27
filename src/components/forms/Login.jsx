@@ -13,7 +13,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   //estado para mostrar el modal de error
   const [modalError, setModalError] = useState(false);
@@ -21,46 +21,33 @@ const Login = () => {
   // Función para logearse
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
 
     try {
       const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-      console.log("Respuesta del servidor:", data);
+      const data = await response.json(); // Llama a response.json() solo una vez
 
-      if (response.ok) {
-        setMessage("Inicio de sesión exitoso");
-        localStorage.setItem("authenticationToken",data.data.accessToken); // Guardar token de manera local
-
-        // Decodificar el token para obtener el tipo de usuario
-        const decodedToken = jwtDecode(data.data.accessToken);
-        console.log("Token decodificado:", decodedToken);
-
-        // LIMPIAR CAMPOS DESPUES DEL INICIO DE SESION
-        setUsername("");
-        setPassword("");
-        setIsLoading(true);
-
-        setTimeout(() => {
-          navigate("/"); // Redirige al dashboard
-        }, 1500); // Tiempo de espera en milisegundos (1.5 segundos)
-
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2500); // Tiempo de espera en milisegundos (2.5 segundos)
-      } else {
-        setMessage(data.msg || "Error al iniciar sesión");
-        setShowErrorPopup(true);
-        console.error("Error al iniciar sesión:", data.msg);
+      if (!response.ok) {
+        const errorMessage = data.detail && data.detail.length > 0 ? data.detail[0].msg : "Error de autenticación";
+        throw new Error(errorMessage);
       }
+
+      localStorage.setItem("authenticationToken", data.data.accessToken);
+      localStorage.setItem("userInfo", JSON.stringify(data.data));
+      navigate("/");
+
     } catch (error) {
-      handleError(error);
+      setErrorMessage(error.message);
+      setModalError(true);
+      console.error("Error de inicio de sesión:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,7 +58,7 @@ const Login = () => {
 
   return (
     <div className={style.container}>
-      {isLoading && <Loader />}
+      {isLoading && <Loader isLoading={isLoading} />}
       {/*/MOSTRAR MODAL ERROR SI ESTA ACTIVADO */}
       {modalError && <PopupError onClose={cerrarModalError} />}
       <div className={style.screen}>

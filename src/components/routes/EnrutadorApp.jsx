@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
 import CrearServerF from "../pages/CrearServidor";
 import EditarServer from "../pages/EditarServidor";
+import Perfil from "../perfil/Perfil";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -43,6 +44,10 @@ export let EnrutadorApp = [
       {
         path: "editar-servidores-f",
         element: < EditarServer />
+      },
+      {
+        path: "perfil",
+        element: < Perfil />
       },
     ],
   },

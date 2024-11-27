@@ -1,13 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
-import Style from './navegacion.module.css';
 import { useNavigate } from "react-router-dom";
 import { RiMenu4Fill } from "react-icons/ri";
 import { IoIosNotifications } from "react-icons/io";
+import { useAuth } from "../routes/AuthContext";
+import SessionTimerNotification from "../popups/SessionTimerNotification";
+import Style from "./navegacion.module.css";
 import Swal from "sweetalert2";
-import { useAuth } from "../routes/ProtectedRoute"; 
 
 const Navegacion = ({ toggleSidebar }) => {
+  const [showNotification, setShowNotification] = useState(false);
+  const storedUserInfo = localStorage.getItem("userInfo");
+  const [userName, setUserName] = useState("Usuario");
+  const [userEmail, setUserEmail] = useState("Email");
+  const [errorLoadingUser, setErrorLoadingUser] = useState(false);
+
+  useEffect(() => {
+    if (storedUserInfo) {
+      try {
+        const userInfo = JSON.parse(storedUserInfo);
+        setUserName(userInfo.name);
+        setUserEmail(userInfo.email);
+      } catch (error) {
+        console.error("Error al parsear userInfo:", error);
+        setErrorLoadingUser(true);
+      }
+    }
+  }, [storedUserInfo]);
+
+  const { logout } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const { remainingTime } = useAuth();
@@ -27,34 +48,19 @@ const Navegacion = ({ toggleSidebar }) => {
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("autenticacionToken");
+        localStorage.removeItem("authenticationToken");
+        logout();
         navigate("/login");
       }
     });
   };
 
-  const showRemainingTime = () => {
-    if (remainingTime) {
-      const secondsLeft = Math.floor(remainingTime / 1000);
-      const minutesLeft = Math.floor(secondsLeft / 60);
-      const hoursLeft = Math.floor(minutesLeft / 60);
-      const daysLeft = Math.floor(hoursLeft / 24);
+  const showTimerNotification = () => {
+    setShowNotification(true);
+  };
 
-      const timeLeftString = `${daysLeft} días, ${hoursLeft % 24} horas, ${minutesLeft % 60} minutos`;
-
-      Swal.fire({
-        title: 'Tiempo de sesión restante:',
-        text: timeLeftString,
-        icon: 'info',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      Swal.fire({
-        title: 'Error',
-        text: 'No se pudo obtener el tiempo de sesión restante',
-        icon: 'error'
-      });
-    }
+  const closeNotification = () => {
+    setShowNotification(false);
   };
 
   return (
@@ -73,27 +79,24 @@ const Navegacion = ({ toggleSidebar }) => {
           <button className={Style.searchButton} type="submit">
             <CiSearch />
           </button>
-          <button className={Style.noti} onClick={showRemainingTime}>
-            <IoIosNotifications/>
+          <button className={Style.noti} onClick={showTimerNotification}>
+            <IoIosNotifications />
           </button>
         </form>
         <div className={Style.containerNameUser}>
-          <p className={Style.userName}>Administrador</p>
+          <p className={Style.userName}>{userName}</p>
         </div>
-        {/* Imagen de usuario redonda */}
         <div className={Style.userContainer} onClick={toggleModal}>
           <img
-            src="../../../public/imagenes/user.png" // Aquí puedes cambiar el enlace por tu imagen de usuario
+            src="../../../public/imagenes/user.png"
             alt="user"
             className={Style.userIcon}
           />
         </div>
-
-        {/* Modal pequeño que se despliega debajo de la imagen */}
         {showModal && (
           <div className={Style.modalContent}>
             <ul className={Style.modalOptions}>
-              <p className={Style.mailUser}>Admin@ejemplo.com</p>
+              <p className={Style.mailUser}>{userEmail}</p>
               <hr />
               <li>Perfil</li>
               <li>Configuraciones</li>
@@ -103,6 +106,12 @@ const Navegacion = ({ toggleSidebar }) => {
               </li>
             </ul>
           </div>
+        )}
+        {showNotification && (
+          <SessionTimerNotification
+            remainingTime={remainingTime}
+            onClose={closeNotification}
+          />
         )}
       </div>
     </nav>

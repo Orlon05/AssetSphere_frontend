@@ -6,10 +6,13 @@ import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
+import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 
 
 const Sidebar = ({ isOpen }) => {
+
+    const { logout } = useAuth();
 
     const handleLogout = () => {
         Swal.fire({
@@ -23,6 +26,7 @@ const Sidebar = ({ isOpen }) => {
         }).then((result) => {
           if (result.isConfirmed) {
             localStorage.removeItem("autenticacionToken");
+            logout();
             navigate("/login");
           }
         });
