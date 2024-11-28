@@ -34,7 +34,7 @@ const ServidoresFisicos = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
+      let response = await fetch(
         `http://localhost:8000/servers/physical/search?name=${searchValue}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
@@ -62,7 +62,7 @@ const ServidoresFisicos = () => {
       const data = await response.json();
 
       if (data && data.status === "success" && data.data) {
-        setServers(data.data.servers || []);
+        setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0); // Usamos total_pages para calcular el total de páginas
       } else {
         setServers([]);
@@ -169,7 +169,7 @@ const ServidoresFisicos = () => {
             </tr>
           </thead>
           <tbody>
-            {currentServers.map((server) => (
+            {servers.map((server) => (
               <tr key={server.id}>
                 <td>
                   <input
