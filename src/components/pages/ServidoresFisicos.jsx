@@ -38,7 +38,9 @@ const ServidoresFisicos = () => {
         `http://localhost:8000/servers/physical/search?name=${searchValue}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+            Authorization: `Bearer ${localStorage.getItem(
+              "authenticationToken"
+            )}`,
             "Content-Type": "application/json",
           },
         }
@@ -111,14 +113,19 @@ const ServidoresFisicos = () => {
 
   const indexOfLastServer = currentPage * rowsPerPage;
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
-  const currentServers = filteredServers.slice(indexOfFirstServer, indexOfLastServer);
+  const currentServers = filteredServers.slice(
+    indexOfFirstServer,
+    indexOfLastServer
+  );
 
   const handleDeleteServer = async (serverId) => {
     try {
       const response = await fetch(`/servers/physical/${serverId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+          Authorization: `Bearer ${localStorage.getItem(
+            "authenticationToken"
+          )}`,
         },
       });
 
@@ -126,19 +133,35 @@ const ServidoresFisicos = () => {
         if (response.status === 422) {
           const errorData = await response.json();
           const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
-          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
+          Swal.fire({
+            icon: "error",
+            title: "Error de validación",
+            text: errorMessages,
+          });
         } else {
-          Swal.fire({ icon: 'error', title: 'Error al eliminar el servidor', text: `Error HTTP ${response.status}` });
+          Swal.fire({
+            icon: "error",
+            title: "Error al eliminar el servidor",
+            text: `Error HTTP ${response.status}`,
+          });
         }
       } else {
         const data = await response.json();
-        Swal.fire({ icon: 'success', title: 'Servidor eliminado', text: data.msg });
+        Swal.fire({
+          icon: "success",
+          title: "Servidor eliminado",
+          text: data.msg,
+        });
         // Actualiza la lista de servidores después de eliminar uno
-        fetchServers(); 
+        fetchServers();
       }
     } catch (error) {
       console.error("Error al eliminar el servidor:", error);
-      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado al eliminar el servidor." });
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error inesperado al eliminar el servidor.",
+      });
     }
   };
 
@@ -186,7 +209,10 @@ const ServidoresFisicos = () => {
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
-                  checked={servers.length > 0 && selectedServers.size === servers.length}
+                  checked={
+                    servers.length > 0 &&
+                    selectedServers.size === servers.length
+                  }
                   onChange={toggleSelectAll}
                 />
               </th>
@@ -209,17 +235,38 @@ const ServidoresFisicos = () => {
                   />
                 </td>
                 <td>{server.name}</td>
-                <td>{server.status}</td>
+                <td>
+                  <div className={style.serverStatus}>
+                    <span
+                      className={
+                        server.status.toLowerCase() === "encendido"
+                          ? style.online
+                          : server.status.toLowerCase() === "mantenimiento"
+                          ? style.online
+                          : style.offline
+                      }
+                    ></span>
+                    {server.status}
+                  </div>
+                </td>
                 <td>{server.serial}</td>
                 <td>{server.ip_address}</td>
                 <td>
                   <button className={style.btnVer} onClick={() => {}}>
                     <GrFormViewHide />
                   </button>
-                  <button className={style.btnEdit} onClick={() => irEditar(server.id)}>
+                  <button
+                    className={style.btnEdit}
+                    onClick={() => irEditar(server.id)}
+                  >
                     <MdEdit />
                   </button>
-                  <button className={style.btnDelete} onClick={() => {handleDeleteServer}}>
+                  <button
+                    className={style.btnDelete}
+                    onClick={() => {
+                      handleDeleteServer;
+                    }}
+                  >
                     <MdDelete />
                   </button>
                 </td>
@@ -229,11 +276,15 @@ const ServidoresFisicos = () => {
           <tfoot>
             <tr>
               <td colSpan="2">
-                <div className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}>
+                <div
+                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+                >
                   <span className={style.textfoot}>Filas por página:</span>
                   <Form.Select
                     value={rowsPerPage}
-                    onChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
+                    onChange={(e) =>
+                      setRowsPerPage(parseInt(e.target.value, 10))
+                    }
                     className={style.selectLine}
                   >
                     <option value={5}>5</option>
@@ -245,16 +296,31 @@ const ServidoresFisicos = () => {
                 </div>
               </td>
               <td colSpan="1">
-                <div className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}>
-                  <span>{`${indexOfFirstServer + 1}-${Math.min(indexOfLastServer, filteredServers.length)} de ${filteredServers.length}`}</span>
+                <div
+                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+                >
+                  <span>{`${indexOfFirstServer + 1}-${Math.min(
+                    indexOfLastServer,
+                    filteredServers.length
+                  )} de ${filteredServers.length}`}</span>
                 </div>
               </td>
               <td colSpan="3">
-                <div className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}>
+                <div
+                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+                >
                   <Pagination className={style.pestanas}>
-                    <Pagination.Prev onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} />
+                    <Pagination.Prev
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
+                      }
+                    />
                     <Pagination.Item>{currentPage}</Pagination.Item>
-                    <Pagination.Next onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} />
+                    <Pagination.Next
+                      onClick={() =>
+                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                      }
+                    />
                   </Pagination>
                 </div>
               </td>

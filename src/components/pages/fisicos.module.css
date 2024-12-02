@@ -1,95 +1,97 @@
-:root{
-    --azul-celeste: #8AFFE6;
-    --azul-oscuro: #1B3F4B;
-    --azul-oscuro-intermedio: #3b5d68;
-    --azul-profundo:#0164f8;
-    --azul-profundo-oscuro:#0453c9;
-    --gris-claro: #CBCBCB;
-    --gris-oscuro:#6b6868;
-    --gris-oscuro-medio:#bbb8b8;
-    --azul-claro: #4E8AC4;
-    --azul-claro-intermedio: #6cb5fa;
-    --negro: #000000;
-    --blanco: #fff;
-    --verde: #017e0c;
-    --verde-claro:#03b912;
-    --naranja:#f86605;
-    --naranja-claro:#c25106;
-    --rojo:#f70511;
-    --rojo-claro:#c5060f;
-  }
+:root {
+  --azul-celeste: #8affe6;
+  --azul-oscuro: #1b3f4b;
+  --azul-oscuro-intermedio: #3b5d68;
+  --azul-profundo: #0164f8;
+  --azul-profundo-oscuro: #0453c9;
+  --gris-claro: #cbcbcb;
+  --gris-oscuro: #6b6868;
+  --gris-oscuro-medio: #bbb8b8;
+  --azul-claro: #4e8ac4;
+  --azul-claro-intermedio: #6cb5fa;
+  --negro: #000000;
+  --blanco: #fff;
+  --verde: #017e0c;
+  --verde-claro: #03b912;
+  --naranja: #f86605;
+  --naranja-claro: #c25106;
+  --rojo: #f70511;
+  --rojo-claro: #c5060f;
+}
 /*********************CONTENEDOR PRINCIPAL*************/
-.container{
- width: 100%;
- height: 100%;
- position: fixed;
- left: 20rem;
- overflow-y: auto;
+.container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 20rem;
+  overflow-y: auto;
 }
 
 /***********************ENCABEZADO*************************/
-.containerMain{
-    display: flex;
-    top: 80px;
-    margin-left: 20px;
-    margin-right: 20px;
-    position: relative;
-    width: 63rem;
-    height: 80px;
+.containerMain {
+  display: flex;
+  top: 80px;
+  margin-left: 20px;
+  margin-right: 20px;
+  position: relative;
+  width: 63rem;
+  height: 80px;
 }
-.btnImport{
-    position: absolute;
-    left: 0;
-    bottom: 5px; 
-    padding: 4px 8px;
+.btnImport {
+  position: absolute;
+  left: 0;
+  bottom: 5px;
+  padding: 4px 8px;
 
-    &:hover{
-      background: var(--gris-claro);
-      color: var(--azul-profundo-oscuro);
-    }
-}
-
-.btnExport{
-    position: absolute;
-    left: 6.5rem;
-    bottom: 5px; 
-    padding: 4px 8px;
-
-    &:hover{
-      background: var(--gris-claro);
-      color: var(--azul-profundo-oscuro);
-    }
-}
-
-.btnAdd{
-    position: absolute;
-    right: 0;
-    top: 0%;
-    padding: 7px 14px;
-    background: var(--azul-profundo-oscuro);
-    color: var(--blanco);
-
-    &:hover{
-      background: var(--azul-profundo);
+  &:hover {
+    background: var(--gris-claro);
+    color: var(--azul-profundo-oscuro);
   }
 }
 
-.tittle{
-    font-size: 25px;
-    font-family: sans-serif;
-    color: var(--azul-oscuro);
+.btnExport {
+  position: absolute;
+  left: 6.5rem;
+  bottom: 5px;
+  padding: 4px 8px;
+
+  &:hover {
+    background: var(--gris-claro);
+    color: var(--azul-profundo-oscuro);
+  }
 }
 
-.btnAdd, .btnExport, .btnImport{
-    border-radius: 10px;
-    border: none;
-    justify-content: space-between;
-    box-shadow: 0 0 5px var(--azul-oscuro);
+.btnAdd {
+  position: absolute;
+  right: 0;
+  top: 0%;
+  padding: 7px 14px;
+  background: var(--azul-profundo-oscuro);
+  color: var(--blanco);
+
+  &:hover {
+    background: var(--azul-profundo);
+  }
 }
 
-.icon{
-    font-size: 20px;
-    margin-right: 5px;
+.tittle {
+  font-size: 25px;
+  font-family: sans-serif;
+  color: var(--azul-oscuro);
+}
+
+.btnAdd,
+.btnExport,
+.btnImport {
+  border-radius: 10px;
+  border: none;
+  justify-content: space-between;
+  box-shadow: 0 0 5px var(--azul-oscuro);
+}
+
+.icon {
+  font-size: 20px;
+  margin-right: 5px;
 }
 /***********INPUT SEARCH**********************/
 
@@ -120,13 +122,13 @@
   border-radius: 10px;
   cursor: pointer;
   text-indent: 35px;
-  &:hover{
+  &:hover {
     border: 1px solid var(--gris-oscuro);
   }
   /* Estilos al enfocar el input */
   &:focus {
-  outline: none; 
-  border: 1px solid var(--azul-profundo-oscuro); 
+    outline: none;
+    border: 1px solid var(--azul-profundo-oscuro);
   }
 }
 
@@ -138,45 +140,44 @@
   transform: translateY(-50%);
   color: var(--gris-oscuro);
   font-size: 20px;
-  cursor: pointer; 
+  cursor: pointer;
   perspective: 1000px;
 }
 
-.iconS{
+.iconS {
   transition: transform 0.3s ease;
-/* Estilos al pasar el mouse sobre el icono */
+  /* Estilos al pasar el mouse sobre el icono */
   &:hover {
-  color: var(--azul-claro);
-  transform: translateZ(10px) scale(1.1);
+    color: var(--azul-claro);
+    transform: translateZ(10px) scale(1.1);
   }
 }
-
 
 /*********************TABLA*******************/
 
 /*CHECKBOX*/
 .customCheckbox {
-    display: flex;
-    align-items: center;
-    width: 20px; /* Tamaño del checkbox */
-    height: 20px;
-    border: 2px solid var(--gris-oscuro); /* Color y grosor del borde */
-    border-radius: 4px; /* Opcional: para bordes redondeados */
-    transition: border-color 0.3s ease; /* Efecto de transición */
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 20px; /* Tamaño del checkbox */
+  height: 20px;
+  border: 2px solid var(--gris-oscuro); /* Color y grosor del borde */
+  border-radius: 4px; /* Opcional: para bordes redondeados */
+  transition: border-color 0.3s ease; /* Efecto de transición */
+  cursor: pointer;
 
-    &:hover{
-      background: var(--azul-celeste);
-    }
+  &:hover {
+    background: var(--azul-celeste);
+  }
 }
 
 .customTable {
-    font-size: 16px;
-    box-shadow: 0 0 5px var(--azul-oscuro);
-    border-radius: 10px; /* Ajusta el valor según el grado de redondez que desees */
-    overflow: hidden; /* Esto es importante para que las esquinas redondeadas se apliquen correctamente */
-    border: 1px solid var(--gris-claro); /* Borde alrededor de la tabla */
-  }
+  font-size: 16px;
+  box-shadow: 0 0 5px var(--azul-oscuro);
+  border-radius: 10px; /* Ajusta el valor según el grado de redondez que desees */
+  overflow: hidden; /* Esto es importante para que las esquinas redondeadas se apliquen correctamente */
+  border: 1px solid var(--gris-claro); /* Borde alrededor de la tabla */
+}
 
 .table td,
 .table th {
@@ -184,7 +185,7 @@
   border-right: none; /* Quitar borde derecho */
 }
 
-.table{
+.table {
   width: 63rem;
   margin-left: 20px;
   margin-right: 20px;
@@ -199,7 +200,6 @@
 
 .table tbody tr {
   border-bottom: 1px solid var(--azul-claro); /* Líneas horizontales */
-
 }
 
 .table tbody td {
@@ -214,17 +214,17 @@
   padding: 0px; /* Ajusta el padding según tu necesidad */
 }
 
-.textfoot{
+.textfoot {
   margin-left: 10px;
 }
 
-.selectLine{
+.selectLine {
   padding: 0;
   width: 3.5rem;
   margin-left: 10px;
 }
 
-.pestanas{
+.pestanas {
   padding: 0;
   width: 3rem;
   margin-right: 60px;
@@ -233,7 +233,9 @@
 }
 /*******************BOTONES CRUD*****************/
 
-.btnVer, .btnEdit, .btnDelete{
+.btnVer,
+.btnEdit,
+.btnDelete {
   border: none;
   padding: 5px 7px; /* Ajusta el padding según tus necesidades */
   margin-right: 7px; /* Espacio entre los botones */
@@ -242,31 +244,52 @@
   color: var(--blanco);
 }
 
-.btnVer{
+.btnVer {
   background: var(--azul-profundo);
-  &:hover{
+  &:hover {
     background: var(--azul-profundo-oscuro);
   }
 }
 
-.btnEdit{
+.btnEdit {
   background: var(--naranja);
-  &:hover{
+  &:hover {
     background: var(--naranja-claro);
   }
 }
 
-.btnDelete{
+.btnDelete {
   background: var(--rojo);
-  &:hover{
+  &:hover {
     background: var(--rojo-claro);
   }
 }
 
 @media (max-width: 768px) {
-    .container {
-        left: 0; /* O un valor más pequeño si quieres un margen */
-        width: 100%; /* Asegura que el contenedor use todo el ancho */
-    }
+  .container {
+    left: 0; /* O un valor más pequeño si quieres un margen */
+    width: 100%; /* Asegura que el contenedor use todo el ancho */
+  }
 }
 
+.serverStatus {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.serverStatus .online {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: #03b912;
+}
+
+.serverStatus .offline {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: #c5060f;
+}
