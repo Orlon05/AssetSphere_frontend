@@ -242,7 +242,7 @@ const ServidoresFisicos = () => {
                         server.status.toLowerCase() === "encendido"
                           ? style.online
                           : server.status.toLowerCase() === "mantenimiento"
-                          ? style.online
+                          ? style.maintenance
                           : style.offline
                       }
                     ></span>

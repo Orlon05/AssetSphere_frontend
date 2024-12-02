@@ -293,3 +293,11 @@
   border-radius: 50%;
   background-color: #c5060f;
 }
+
+.serverStatus .maintenance {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: #f86605;
+}
