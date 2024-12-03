@@ -13,6 +13,7 @@
 .logo {
     display: flex; /* Utiliza flexbox para alinear los elementos */
     align-items: center; /* Centra verticalmente los elementos */
+    justify-content: center;
 }
 
 .icon {

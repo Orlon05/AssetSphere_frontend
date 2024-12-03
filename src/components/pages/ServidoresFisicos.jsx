@@ -6,6 +6,8 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import "bootstrap/dist/css/bootstrap.min.css";
 import style from "./fisicos.module.css";
 
@@ -21,6 +23,15 @@ const ServidoresFisicos = () => {
   const [selectedServers, setSelectedServers] = useState(new Set());
 
   const navigate = useNavigate();
+
+  const selectedCount = selectedServers.size; // Cuenta de servidores seleccionados
+
+  const [showSearch, setShowSearch] = useState(true); // Estado para mostrar/ocultar la búsqueda
+
+  useEffect(() => {
+    // Cambia showSearch a false si hay servidores seleccionados
+    setShowSearch(selectedCount === 0);
+  }, [selectedCount]);
 
   const irCrear = () => {
     navigate("/crear-servidores-f");
@@ -77,6 +88,29 @@ const ServidoresFisicos = () => {
       console.error("Error al obtener servidores:", error);
     } finally {
       setLoading(false);
+    }
+  };
+  //FUNCION PARA EXPORTAR
+  const handleExport = () => {
+    try {
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(servers);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Servidores");
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const data = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(data, "servidores_fisicos.xlsx");
+    } catch (error) {
+      console.error("Error al exportar:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error al exportar",
+        text: error.message,
+      });
     }
   };
 
@@ -185,27 +219,44 @@ const ServidoresFisicos = () => {
         <button className={style.btnImport}>
           <CiImport className={style.icon} /> Importar
         </button>
-        <button className={style.btnExport}>
+        <button className={style.btnExport} onClick={handleExport}>
           <CiExport className={style.icon} /> Exportar
         </button>
       </div>
-      <form className={style.searchContainer}>
-        <input
-          className={style.searchInput}
-          type="search"
-          placeholder="Buscar servidor..."
-          value={searchValue}
-          onChange={handleSearchChange}
-        />
-        <span className={style.searchIcon}>
-          <CiSearch className={style.iconS} />
-        </span>
-      </form>
+      <div
+        className={`${style.searchContainer} ${
+          selectedCount > 0 ? style.searchContainerSelected : ""
+        }`} // Clase condicional
+      >
+        {showSearch && ( // Condicional para mostrar/ocultar el input de búsqueda
+          <>
+            <input
+              className={style.searchInput}
+              type="search"
+              placeholder="Buscar servidor..."
+              value={searchValue}
+              onChange={handleSearchChange}
+            />
+            <span className={style.searchIcon}>
+              <CiSearch className={style.iconS} />
+            </span>
+          </>
+        )}
+        {selectedCount > 0 && (
+          <span className={style.selectedCount}>
+            <span>{selectedCount}</span>
+            <span>
+              Servidor{selectedCount !== 1 ? "es" : ""} Seleccionado
+              {selectedCount !== 1 ? "s" : ""}
+            </span>
+          </span>
+        )}
+      </div>
       <div className={style.container}>
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
-              <th>
+              <th className={style.contChek}>
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
@@ -220,12 +271,17 @@ const ServidoresFisicos = () => {
               <th>Estado</th>
               <th>Serial</th>
               <th>IP</th>
-              <th>Acciones</th>
+              <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {servers.map((server) => (
-              <tr key={server.id}>
+              <tr
+                key={server.id}
+                className={
+                  selectedServers.has(server.id) ? style.selectedRow : ""
+                } // Clase condicional
+              >
                 <td>
                   <input
                     type="checkbox"
@@ -274,7 +330,7 @@ const ServidoresFisicos = () => {
             ))}
           </tbody>
           <tfoot>
-            <tr>
+            <tr className={style.contFil}>
               <td colSpan="2">
                 <div
                   className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}

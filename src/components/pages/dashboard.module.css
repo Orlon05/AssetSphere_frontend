@@ -8,10 +8,11 @@
   --azul-claro-intermedio: #6cb5fa;
   --negro: #000000;
   --blanco: #fff;
+  --blanco-oscuro:#F5F5DC;
 }
 
 body {
-  background: var(--gris-claro);
+  background: var(--blanco-oscuro);
 }
 
 .panelControl {
@@ -21,12 +22,12 @@ body {
   flex: 1;
   flex-direction: row;
   position: absolute;
-  /* justify-content: space-between; */
+  justify-content: space-between;
 }
 section {
   display: flex;
   flex-direction: column;
-  /* align-items: flex-start; */
+  align-items: flex-start;
   position: relative;
   width: 100%;
 }

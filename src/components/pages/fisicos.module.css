@@ -20,27 +20,26 @@
 }
 /*********************CONTENEDOR PRINCIPAL*************/
 .container {
-  width: 100%;
-  height: 100%;
-  /* position: fixed; */
-  /* left: 20rem; */
-  overflow-y: auto;
+  width: 66.3rem;
+  height: auto;
+  left: 20rem;
+  align-items: center;
 }
 
 /***********************ENCABEZADO*************************/
 .containerMain {
   display: flex;
-  top: 80px;
+  top: 40px;
   margin-left: 20px;
-  margin-right: 20px;
   position: relative;
-  width: 63rem;
+  width: 64rem;
   height: 80px;
 }
 .btnImport {
   position: absolute;
   left: 0;
   bottom: 5px;
+  margin-right: 10px;
   padding: 4px 8px;
 
   &:hover {
@@ -51,7 +50,7 @@
 
 .btnExport {
   position: absolute;
-  left: 6.5rem;
+  left: 8rem;
   bottom: 5px;
   padding: 4px 8px;
 
@@ -98,16 +97,30 @@
 /* Estilos generales del contenedor */
 .searchContainer {
   position: relative;
-  width: 63rem;
+  width: 64rem;
   height: 40px;
   padding: 30px;
   box-shadow: 0 0 5px var(--azul-oscuro);
   border-radius: 10px;
   margin-left: 20px;
-  margin-top: 90px;
+  margin-top: 80px;
   margin-right: 20px;
   background: var(--blanco);
   overflow: hidden; /* Oculta el exceso de contenido */
+}
+
+.searchContainerSelected {
+  background-color: var(--azul-celeste);
+}
+
+.selectedCount {
+  display: flex; /* Para controlar el alineamiento */
+  align-items: center; /* Alinea verticalmente al centro */
+  gap: 5px; /* Separa los textos */
+  font-weight: bold; /* Negrita */
+  color: var(--azul-profundo); /* O cualquier otro color */
+  top: 20px;
+  position: absolute;
 }
 
 /* Estilos del input */
@@ -175,8 +188,6 @@
   font-size: 16px;
   box-shadow: 0 0 5px var(--azul-oscuro);
   border-radius: 10px; /* Ajusta el valor según el grado de redondez que desees */
-  overflow: hidden; /* Esto es importante para que las esquinas redondeadas se apliquen correctamente */
-  border: 1px solid var(--gris-claro); /* Borde alrededor de la tabla */
 }
 
 .table td,
@@ -186,16 +197,24 @@
 }
 
 .table {
-  width: 63rem;
+  width: 64rem;
   margin-left: 20px;
   margin-right: 20px;
-  top: 20px;
+  top: 40px;
   position: relative;
-  overflow-y: auto;
 }
 
 .table thead th {
   border-bottom: 2px solid var(--gris-claro); /* Mantener borde inferior en el encabezado */
+  color: var(--azul-oscuro);
+}
+
+.table .contChek{
+  border-top-left-radius: 10px;
+}
+
+.table .contBtns{
+  border-top-right-radius: 10px;
 }
 
 .table tbody tr {
@@ -204,14 +223,21 @@
 
 .table tbody td {
   border-bottom: 1px solid var(--gris-claro); /* Mantener las líneas horizontales entre filas */
+  color: var(--azul-oscuro);
 }
 /* En tu archivo CSS */
 .table tfoot {
-  height: 3.8rem; /* Ajusta el valor según tu necesidad */
+  height: 3.8rem; 
 }
 
 .table tfoot td {
-  padding: 0px; /* Ajusta el padding según tu necesidad */
+  padding: 5px; 
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.contFil{
+  border-bottom-left-radius: 10px;
 }
 
 .textfoot {
@@ -283,7 +309,7 @@
   height: 10px;
   border: none;
   border-radius: 50%;
-  background-color: #03b912;
+  background-color: var(--verde-claro);
 }
 
 .serverStatus .offline {
@@ -291,7 +317,7 @@
   height: 10px;
   border: none;
   border-radius: 50%;
-  background-color: #c5060f;
+  background-color: var(--rojo);
 }
 
 .serverStatus .maintenance {
@@ -299,5 +325,5 @@
   height: 10px;
   border: none;
   border-radius: 50%;
-  background-color: #f86605;
+  background-color: var(--naranja);
 }

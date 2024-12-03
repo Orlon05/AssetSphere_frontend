@@ -20,14 +20,14 @@ hr {
   position: relative;
   top: 0;
   left: 0;
-  width: 20rem;
+  width: 18rem;
   height: 100%;
   border-right: 10px solid var(--azul-celeste);
   display: flex;
   justify-content: center;
   background-color: var(--negro);
   transition: transform 0.3s ease;
-  /* z-index: 8; */
+  z-index: 8
 }
 
 ul {
@@ -36,13 +36,21 @@ ul {
   margin-top: 20px;
 }
 li {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+.line{
+  position: relative;
+  top: 4rem;
+}
+
+.container{
+    height: 13rem;
+    margin-top:80px;
 }
 .icon {
   margin-right: 10px;
 }
 .links {
-  margin-top: 20px;
   display: inline-block;
   width: 15rem;
   align-items: center;
@@ -60,6 +68,7 @@ li {
   color: var(--blanco);
   padding: 10px 20px;
   border-radius: 10px;
+  text-align: center;
 }
 
 .btnLogout:hover {

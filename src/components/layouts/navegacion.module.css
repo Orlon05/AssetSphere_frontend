@@ -13,87 +13,49 @@
 
 /* Estilo general del navbar */
 .navbar {
-  background-color: var(--azul-oscuro);
-  opacity: 0.9;
+  background-color: var(--blanco);
   padding: 10px 20px;
-  /* z-index: 9; */
+  z-index: 9;
   position: relative;
   width: 100%;
-  /* left: 20rem; */
+  height: 60px;
   transition: transform 0.3s ease;
+  display: block;
+  border-bottom: 2px solid var(--gris-claro);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Contenedor para centrar los elementos dentro del navbar */
 .container {
   display: flex;
-  justify-content: flex-start; /* Centra horizontalmente el contenido */
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  height: 50px;
 }
 
-/* Estilo para el formulario de búsqueda */
-.searchForm {
-  display: flex;
-  align-items: center;
-}
-
-/* Estilo del input de búsqueda */
-.searchInput {
-  padding: 8px;
-  border: 1px solid;
-  border-radius: 4px;
-  outline: none;
-  width: 300px; /* Ancho del input */
-  font-size: 15px;
-  margin-right: 5px;
-}
-
-/* Cambiar borde al hacer foco */
-.searchInput:focus {
-  border: 1px solid var(--azul-celeste);
-  box-shadow: 0 0 5px rgba(164, 199, 236, 0.5);
-}
-
-/* Estilo del botón de búsqueda */
-.searchButton {
-  padding: 8px 8px;
-  border: none;
-  color: var(--blanco);
-  background: var(--azul-oscuro);
-  border-radius: 100%;
-  cursor: pointer;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  margin-left: 5px;
-}
-
-.searchButton:hover {
-  transform: scale(1.2); /*zoom*/
-  background: var(--azul-oscuro-intermedio);
-}
 /* Imagen de usuario redonda */
 .userContainer {
   position: relative;
   cursor: pointer;
-  /* transition: left 0.3s ease, margin-left 0.3s ease; */
-  /* left: 44%; */
+  transition: left 0.3s ease, margin-left 0.3s ease;
 }
 .noti {
   padding: 8px 8px;
   border: none;
-  color: var(--blanco);
-  background: var(--azul-oscuro);
+  color: var(--azul-oscuro);
+  background: var(--blanco);
   border-radius: 100%;
   cursor: pointer;
   font-size: 20px;
   display: flex;
   align-items: center;
-  margin-left: 5px;
+  left: 0;
 
   &:hover {
     transform: scale(1.2); /*zoom*/
-    background: var(--azul-oscuro-intermedio);
+    background: var(--gris-claro);
   }
 }
 
@@ -141,12 +103,11 @@
 .containerNameUser {
   display: flex;
   margin-top: 20px;
-  /* position: absolute;
-  left: 850px; */
+  margin-right: 10px;
 }
 
 .userName {
-  color: var(--blanco);
+  color: var(--azul-oscuro);
   font-weight: bold;
 }
 .mailUser {

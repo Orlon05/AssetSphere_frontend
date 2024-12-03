@@ -56,33 +56,46 @@ const Navegacion = ({ toggleSidebar }) => {
   };
 
   const showTimerNotification = () => {
-    setShowNotification(true);
-  };
+    const minutes = Math.floor(remainingTime / 60); // Calcula los minutos
+    const seconds = remainingTime % 60; // Calcula los segundos restantes
 
-  const closeNotification = () => {
-    setShowNotification(false);
+    Swal.fire({
+      title: "Tiempo de sesión restante:",
+      text: `${minutes} minuto${minutes !== 1 ? "s" : ""} y ${seconds} segundo${
+        seconds !== 1 ? "s" : ""
+      }`, // Ajusta la gramática
+      timer: 2000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      onBeforeOpen: () => {
+        Swal.showLoading();
+      },
+      onOpen: () => {
+        const interval = setInterval(() => {
+          const updatedMinutes = Math.floor(remainingTime / 60);
+          const updatedSeconds = remainingTime % 60;
+          Swal.update({
+            text: `${updatedMinutes} minuto${
+              updatedMinutes !== 1 ? "s" : ""
+            } y ${updatedSeconds} segundo${updatedSeconds !== 1 ? "s" : ""}`,
+          });
+        }, 1000);
+        return () => clearInterval(interval);
+      },
+    });
   };
 
   return (
     <nav className={Style.navbar}>
+        <div className={Style.containerSecond}>
+          <button className={Style.noti} onClick={showTimerNotification}>
+            <IoIosNotifications />
+          </button>
+        </div>
       <div className={Style.container}>
         <button className={Style.hamburger} onClick={toggleSidebar}>
           <RiMenu4Fill className={Style.iconHam} />
         </button>
-        <form className={Style.searchForm} role="search">
-          <input
-            className={Style.searchInput}
-            type="search"
-            placeholder="Buscar..."
-            aria-label="Search"
-          />
-          <button className={Style.searchButton} type="submit">
-            <CiSearch />
-          </button>
-          <button className={Style.noti} onClick={showTimerNotification}>
-            <IoIosNotifications />
-          </button>
-        </form>
         <div className={Style.containerNameUser}>
           <p className={Style.userName}>{userName}</p>
         </div>
