@@ -27,7 +27,7 @@ hr {
   justify-content: center;
   background-color: var(--negro);
   transition: transform 0.3s ease;
-  z-index: 8
+  z-index: 8;
 }
 
 ul {
@@ -88,5 +88,10 @@ li {
 @media (max-width: 768px) {
   .sidebar.closed {
     transform: translateX(-100%);
+  }
+  .sidebar{
+    top: 45px;
+    margin-top: 10px;
+    position: relative;
   }
 }

@@ -20,10 +20,12 @@
 }
 /*********************CONTENEDOR PRINCIPAL*************/
 .container {
-  width: 66.3rem;
-  height: auto;
-  left: 20rem;
+  width: 1078px;
+  height: 110vh;
+  left: 0;
   align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /***********************ENCABEZADO*************************/
@@ -106,7 +108,6 @@
   margin-top: 80px;
   margin-right: 20px;
   background: var(--blanco);
-  overflow: hidden; /* Oculta el exceso de contenido */
 }
 
 .searchContainerSelected {
@@ -187,7 +188,6 @@
 .customTable {
   font-size: 16px;
   box-shadow: 0 0 5px var(--azul-oscuro);
-  border-radius: 10px; /* Ajusta el valor según el grado de redondez que desees */
 }
 
 .table td,
@@ -202,6 +202,7 @@
   margin-right: 20px;
   top: 40px;
   position: relative;
+  border-radius: 10px;
 }
 
 .table thead th {
@@ -209,7 +210,7 @@
   color: var(--azul-oscuro);
 }
 
-.table .contChek{
+.contChek{
   border-top-left-radius: 10px;
 }
 
@@ -232,12 +233,13 @@
 
 .table tfoot td {
   padding: 5px; 
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
 }
 
 .contFil{
   border-bottom-left-radius: 10px;
+}
+.contFilDos{
+  border-bottom-right-radius: 10px;
 }
 
 .textfoot {

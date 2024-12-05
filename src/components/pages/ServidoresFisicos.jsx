@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 
 const ServidoresFisicos = () => {
@@ -24,9 +25,34 @@ const ServidoresFisicos = () => {
 
   const navigate = useNavigate();
 
+  // Crea la instancia de Toast
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000, // Duración del Toast (3 segundos)
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
+  // Función para mostrar un Toast de éxito después de crear una receta
+  const showSuccessToast = () => {
+    Toast.fire({
+      icon: "success",
+      title: "servidor eliminado exitosamente",
+    });
+  };
+
   const selectedCount = selectedServers.size; // Cuenta de servidores seleccionados
 
   const [showSearch, setShowSearch] = useState(true); // Estado para mostrar/ocultar la búsqueda
+
+  const [unfilteredServers, setUnfilteredServers] = useState([]); //Estado para alamcenar los servidores sin filtrar por busqueda
+  const [isSearching, setIsSearching] = useState(false); // Estado para controlar si se está buscando
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     // Cambia showSearch a false si hay servidores seleccionados
@@ -37,59 +63,112 @@ const ServidoresFisicos = () => {
     navigate("/crear-servidores-f");
   };
 
-  const irEditar = (id) => {
-    navigate(`/editar-servidores-f/${id}`);
+  const irEditar = (serverId) => {
+    navigate(`/editar/${serverId}/servidores`);
   };
 
-  const fetchServers = async () => {
+  const handleError = (error) => {
+    setError(error);
+    console.error("Error al obtener servidores:", error);
+    //Podríamos añadir un mensaje al usuario aquí, por ejemplo con Swal
+  }
+
+  const token = localStorage.getItem("authenticationToken");
+
+  const fetchServers = async (page, limit, search = "") => {
+    if (isSearching) return; // Evita llamadas adicionales si ya se está buscando
     setLoading(true);
     setError(null);
     try {
-      let response = await fetch(
-        `http://localhost:8000/servers/physical/search?name=${searchValue}&page=${currentPage}&limit=${rowsPerPage}`,
+      const response = await fetch(
+        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "authenticationToken"
-            )}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        let errorMessage = "Error al obtener servidores";
-        if (errorData.detail) {
-          errorMessage = Array.isArray(errorData.detail)
-            ? errorData.detail.map((e) => e.msg).join(", ")
-            : errorData.detail;
-        } else if (errorData.message) {
-          errorMessage = errorData.message;
-        } else {
-          errorMessage = `Error HTTP: ${response.status} - ${response.statusText}`;
-        }
-        throw new Error(errorMessage);
+        throw await response.json();
       }
 
       const data = await response.json();
-
       if (data && data.status === "success" && data.data) {
+        setUnfilteredServers(data.data.servers);
         setServers(data.data.servers);
-        setTotalPages(data.data.total_pages || 0); // Usamos total_pages para calcular el total de páginas
+        setTotalPages(data.data.total_pages || 0);
       } else {
-        setServers([]);
-        setTotalPages(0);
-        setError(new Error("Respuesta inesperada de la API"));
-        console.error("Respuesta de la API inesperada:", data);
+        throw new Error("Respuesta inesperada de la API");
       }
     } catch (error) {
-      setError(error);
-      console.error("Error al obtener servidores:", error);
+      handleError(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.msg || error.message || 'Ha ocurrido un error.',
+      });
     } finally {
       setLoading(false);
+      setIsSearching(false); 
     }
   };
+
+  const fetchSearch = async (search) => {
+    if (isSearching) return; // Evita llamadas adicionales si ya se está buscando
+    setIsSearching(true); // Establece isSearching en true al iniciar la búsqueda
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/servers/physical/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw await response.json();
+      }
+
+      const data = await response.json();
+      if (data && data.status === "success" && data.data) {
+        setServers(data.data.servers);
+        setTotalPages(data.data.total_pages || 0);
+      } else {
+        throw new Error("Respuesta inesperada de la API");
+      }
+    } catch (error) {
+      handleError(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.msg || error.message || 'Ha ocurrido un error.',
+      });
+    } finally {
+      setLoading(false);
+      setIsSearching(false); 
+    }
+  };
+  
+  useEffect(() => {
+    fetchServers(currentPage, rowsPerPage); // Carga inicial sin filtro
+  }, [currentPage, rowsPerPage]);
+  // Dependemos de currentPage, rowsPerPage y searchValue para volver a cargar los datos
+  
+  useEffect(() => {
+    if (searchValue.trim() !== "") {
+      fetchSearch(searchValue);
+    } else {
+      setServers(unfilteredServers);
+      setTotalPages(unfilteredServers.length > 0 ? Math.ceil(unfilteredServers.length / rowsPerPage) : 0);
+    }
+  }, [searchValue, rowsPerPage]); //rowsPerPage añadido para refrescar la paginación al cambiar el número de filas
+  
   //FUNCION PARA EXPORTAR
   const handleExport = () => {
     try {
@@ -113,10 +192,10 @@ const ServidoresFisicos = () => {
       });
     }
   };
-
-  useEffect(() => {
-    fetchServers();
-  }, [currentPage, rowsPerPage, searchValue]); // Dependemos de currentPage, rowsPerPage y searchValue para volver a cargar los datos
+const handleSearchChange = (e) => {
+  setSearchValue(e.target.value);
+  searchInputRef.current.focus(); 
+};
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -137,9 +216,6 @@ const ServidoresFisicos = () => {
     setSelectedServers(newSelectedServers);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchValue(e.target.value);
-  };
 
   const filteredServers = servers.filter((server) =>
     server.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -153,50 +229,63 @@ const ServidoresFisicos = () => {
   );
 
   const handleDeleteServer = async (serverId) => {
-    try {
-      const response = await fetch(`/servers/physical/${serverId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(
-            "authenticationToken"
-          )}`,
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 422) {
-          const errorData = await response.json();
-          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¿Deseas eliminar este servidor?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/servers/physical/${serverId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (!response.ok) {
+            let errorMessage = `Error HTTP ${response.status}`;
+            if (response.status === 422) {
+              const errorData = await response.json();
+              errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+            } else if (response.status === 401 || response.status === 403) {
+              errorMessage = "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+            } else if (response.status === 404){
+              errorMessage = "El servidor no existe."
+            } else {
+              try {
+                const errorData = await response.json();
+                if (errorData.message) errorMessage = errorData.message;
+              } catch(e) {}
+            }
+            Swal.fire({
+              icon: "error",
+              title: "Error al eliminar el servidor",
+              text: errorMessage,
+            });
+          } else {
+            const data = await response.json();
+            setServers(servers.filter((server) => server.id !== serverId));
+            showSuccessToast();
+          }
+        } catch (error) {
+          console.error("Error al eliminar el servidor:", error);
           Swal.fire({
             icon: "error",
-            title: "Error de validación",
-            text: errorMessages,
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error al eliminar el servidor",
-            text: `Error HTTP ${response.status}`,
+            title: "Error",
+            text: "Ocurrió un error inesperado al eliminar el servidor.",
           });
         }
-      } else {
-        const data = await response.json();
-        Swal.fire({
-          icon: "success",
-          title: "Servidor eliminado",
-          text: data.msg,
-        });
-        // Actualiza la lista de servidores después de eliminar uno
-        fetchServers();
       }
-    } catch (error) {
-      console.error("Error al eliminar el servidor:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Ocurrió un error inesperado al eliminar el servidor.",
-      });
-    }
+    });
   };
 
   if (loading) {
@@ -236,6 +325,7 @@ const ServidoresFisicos = () => {
               placeholder="Buscar servidor..."
               value={searchValue}
               onChange={handleSearchChange}
+              ref={searchInputRef}
             />
             <span className={style.searchIcon}>
               <CiSearch className={style.iconS} />
@@ -320,7 +410,7 @@ const ServidoresFisicos = () => {
                   <button
                     className={style.btnDelete}
                     onClick={() => {
-                      handleDeleteServer;
+                      handleDeleteServer(server.id);
                     }}
                   >
                     <MdDelete />
@@ -330,8 +420,8 @@ const ServidoresFisicos = () => {
             ))}
           </tbody>
           <tfoot>
-            <tr className={style.contFil}>
-              <td colSpan="2">
+            <tr>
+              <td className={style.contFil} colSpan="2">
                 <div
                   className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
                 >
@@ -361,7 +451,7 @@ const ServidoresFisicos = () => {
                   )} de ${filteredServers.length}`}</span>
                 </div>
               </td>
-              <td colSpan="3">
+              <td className={style.contFilDos} colSpan="3">
                 <div
                   className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
                 >

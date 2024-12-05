@@ -42,7 +42,7 @@ export let EnrutadorApp = [
         element: < CrearServerF />
       },
       {
-        path: "editar-servidores-f",
+        path: "/editar/:serverId/servidores",
         element: < EditarServer />
       },
       {

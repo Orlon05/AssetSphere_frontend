@@ -16,7 +16,7 @@ const Dashboard = () => {
   return (
     <main>
       <section className={style.panelControl}>
-        <Sidebar isOpen={abrirMenu} />
+          <Sidebar isOpen={abrirMenu} />
         <section>
           <Navegacion toggleSidebar={toggleSidebar} />
           <Outlet />

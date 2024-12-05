@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { MdEdit } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import styles from "./editarServidor.module.css";
-import {  MdEdit } from "react-icons/md";
-import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 
 const EditarServer = () => {
   const [serial, setSerial] = useState("");
@@ -23,7 +23,12 @@ const EditarServer = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [ram, setRam] = useState(""); 
+  const [ram, setRam] = useState("");
+  const [city, setCity] = useState("");
+  const [location, setLocation] = useState("");
+  const [loading, setLoading] = useState(true); // Estado para indicar carga
+  const [error, setError] = useState(null);     // Estado para manejar errores
+
   const navigate = useNavigate();
   const { serverId } = useParams();
 
@@ -32,56 +37,69 @@ const EditarServer = () => {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000, // Duración del Toast (3 segundos)
+    timer: 3000, 
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
       toast.onmouseleave = Swal.resumeTimer;
-    }
+    },
   });
 
-  // Función para mostrar un Toast de éxito después de crear una receta
   const showSuccessToast = () => {
-    Toast.fire({
-      icon: 'success',
-      title: 'Servidor actualizado exitosamente'
-    });
+    Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
 
   useEffect(() => {
     const fetchServerData = async () => {
+      setLoading(true); // Indica que la carga ha comenzado
+      setError(null);   // Limpia cualquier error previo
       try {
-        const response = await fetch(`/servers/physical/${serverId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8000/servers/physical/${serverId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "authenticationToken"
+              )}`,
+            },
+          }
+        );
         if (!response.ok) {
-          throw new Error(`Error al obtener datos del servidor: ${response.status}`);
+          if (response.status === 404) {
+            throw new Error("Servidor no encontrado");
+          } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Error HTTP ${response.status}`);
+          }
         }
         const data = await response.json();
-        setSerial(data.serial);
-        setNombreServidor(data.name);
-        setPropietario(data.owner);
-        setChasis(data.chassis);
-        setEstado(data.status);
-        setMarca(data.brand);
-        setRack(data.rack_id);
-        setUnidad(data.unit);
-        setIp(data.ip_address);
-        setRol(data.role);
-        setSo(data.os);
-        setTipoActivoRack(data.rack_asset_type);
-        setModelo(data.model);
-        setAmbiente(data.environment);
-        setProcesador(data.processor);
-        setCores(data.cpu_cores);
-        setDiscos(data.total_disk_size);
-        setObservaciones(data.comments);
-        setRam(data.ram); // Asegúrate de que 'ram' existe en la respuesta de la API
+        // Actualiza los estados con los datos recibidos
+        setSerial(data.data.serial || "");
+        setNombreServidor(data.data.name || "");
+        setPropietario(data.data.owner || "");
+        setChasis(data.data.chassis || "");
+        setEstado(data.data.status || "");
+        setMarca(data.data.brand || "");
+        setRack(data.data.rack_id || "");
+        setUnidad(data.data.unit || "");
+        setIp(data.data.ip_address || "");
+        setRol(data.data.role || "");
+        setSo(data.data.os || "");
+        setTipoActivoRack(data.data.rack_asset_type || "");
+        setModelo(data.data.model || "");
+        setAmbiente(data.data.environment || "");
+        setProcesador(data.data.processor || "");
+        setCores(data.data.cpu_cores || "");
+        setDiscos(data.data.total_disk_size || "");
+        setObservaciones(data.data.comments || "");
+        setRam(data.data.ram || "");
+        setCity(data.data.city || "");
+        setLocation(data.data.location || "");
+
       } catch (error) {
-        console.error("Error fetching server data:", error);
-        Swal.fire({ icon: 'error', title: 'Error', text: "No se pudieron obtener los datos del servidor." });
+        setError(error.message); // Guarda el mensaje de error
+      } finally {
+        setLoading(false); // Indica que la carga ha terminado
       }
     };
 
@@ -90,10 +108,24 @@ const EditarServer = () => {
     }
   }, [serverId]);
 
+  useEffect(() => {
+    console.log("Serial recibido:", serial);
+    console.log("Nombre del servidor recibido:", nombreServidor);
+  }, [serial, nombreServidor]);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
+    if (!nombreServidor || !serial || !marca || !modelo) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obligatorios",
+        text: "Por favor, completa todos los campos obligatorios.",
+      });
+      return;
+    }
+  
     const serverData = {
       name: nombreServidor,
       brand: marca,
@@ -109,46 +141,66 @@ const EditarServer = () => {
       rack_id: rack,
       unit: unidad,
       ip_address: ip,
-      city: "",
-      location: "",
+      city: city,
+      location: location,
       chassis: chasis,
       rack_asset_type: tipo_activo_rack,
       owner: propietario,
       comments: observaciones,
-      ram: ram, // Asegúrate que 'ram' esté incluido en serverData
+      ram: ram,
     };
-
+  
     try {
-      const response = await fetch(`/servers/physical/${serverId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(serverData),
-      });
-
-      if (!response.ok) {
-        if (response.status === 422) {
-          const errorData = await response.json();
-          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
-          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
-        } else {
-          Swal.fire({ icon: 'error', title: 'Error al actualizar el servidor', text: `Error HTTP ${response.status}` });
+      const response = await fetch(
+        `http://localhost:8000/servers/physical/${serverId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(serverData),
         }
+      );
+  
+      if (!response.ok) {
+        let errorMessage = `Error HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData && errorData.detail) {
+            errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+          }
+        } catch {}
+        Swal.fire({ icon: "error", title: "Error al actualizar", text: errorMessage });
       } else {
         showSuccessToast();
         navigate("/servidoresf");
       }
     } catch (error) {
       console.error("Error:", error);
-      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado." });
+      Swal.fire({ icon: "error", title: "Error", text: "Ocurrió un error inesperado." });
     }
   };
 
+  // Renderizado condicional: muestra un mensaje de carga o de error si es necesario
+  if (loading) {
+    return <div>Cargando datos del servidor...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>< MdEdit />Editar Servidores</h2>
+      <div className={styles.containtTit}>
+        <h2 className={styles.tittle}>
+          <MdEdit />
+          Editar Servidores
+        </h2>
+      </div>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
@@ -253,6 +305,18 @@ const EditarServer = () => {
           </div>
 
           <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Ciudad</div>
+          </div>
+
+          <div className={styles.formGroup}>
             <textarea
               id="observaciones"
               name="observaciones"
@@ -262,6 +326,9 @@ const EditarServer = () => {
             />
             <div className={styles.labelTarea}>Observaciones</div>
           </div>
+          <button type="submit" className={styles.button}>
+            Actualizar
+          </button>
         </div>
 
         {/*INICIO DE LA COLUMNA 2*/}
@@ -389,11 +456,19 @@ const EditarServer = () => {
             />
             <div className={styles.label}>Tipo Activo*</div>
           </div>
-        </div>
 
-        <button type="submit" className={styles.button}>
-          Actualizar
-        </button>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Ubicación</div>
+          </div>
+        </div>
       </div>
     </form>
   );

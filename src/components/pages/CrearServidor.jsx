@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./crearServidor.module.css";
 import { IoIosAdd } from "react-icons/io";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const ServerForm = () => {
@@ -23,7 +23,9 @@ const ServerForm = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [ram, setRam] = useState(""); 
+  const [ram, setRam] = useState("");
+  const [city, setCity] = useState("");
+  const [location, setLocation] = useState("");
   const navigate = useNavigate();
 
   // Crea la instancia de Toast
@@ -36,14 +38,14 @@ const ServerForm = () => {
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
       toast.onmouseleave = Swal.resumeTimer;
-    }
+    },
   });
 
   // Función para mostrar un Toast de éxito después de crear una receta
   const showSuccessToast = () => {
     Toast.fire({
-      icon: 'success',
-      title: 'Servidor creado exitosamente'
+      icon: "success",
+      title: "Servidor creado exitosamente",
     });
   };
 
@@ -55,7 +57,7 @@ const ServerForm = () => {
       brand: marca,
       model: modelo,
       processor: procesador,
-      cpu_cores: parseInt(cores, 10), // Convierte a número
+      cpu_cores: parseInt(cores, 10) || 0, //Manejo de error para cores
       total_disk_size: discos,
       os: so,
       status: estado,
@@ -65,8 +67,8 @@ const ServerForm = () => {
       rack_id: rack,
       unit: unidad,
       ip_address: ip,
-      city: "", // Agrega campos que falten (o quita los que no necesites)
-      location: "",
+      city: city,
+      location: location,
       chassis: chasis,
       rack_asset_type: tipo_activo_rack,
       owner: propietario,
@@ -74,36 +76,62 @@ const ServerForm = () => {
     };
 
     try {
-      const response = await fetch("/servers/physical/add", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(serverData),
-      });
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch(
+        "http://localhost:8000/servers/physical/add",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(serverData),
+        }
+      );
 
       if (!response.ok) {
+        let errorMessage = `Error HTTP ${response.status}`;
         if (response.status === 422) {
           const errorData = await response.json();
-          const errorMessages = errorData.detail.map((e) => e.msg).join(", ");
-          Swal.fire({ icon: 'error', title: 'Error de validación', text: errorMessages });
+          errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+        } else if (response.status === 401 || response.status === 403) {
+          errorMessage =
+            "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
         } else {
-          Swal.fire({ icon: 'error', title: 'Error al crear el servidor', text: `Error HTTP ${response.status}` });
+          try {
+            const errorData = await response.json();
+            if (errorData.message) errorMessage = errorData.message;
+          } catch (e) {}
         }
+        Swal.fire({
+          icon: "error",
+          title: "Error al crear el servidor",
+          text: errorMessage,
+        });
       } else {
         showSuccessToast();
         navigate("/servidoresf");
       }
     } catch (error) {
-      console.error("Error:", error);
-      Swal.fire({ icon: 'error', title: 'Error', text: "Ocurrió un error inesperado." });
+      console.error("Error:", error); // Registra el error en la consola para depuración
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Ocurrió un error inesperado.",
+      });
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>< IoIosAdd/>Crear Servidores</h2>
+      <h2 className={styles.tittle}>
+        <IoIosAdd />
+        Crear Servidores
+      </h2>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
@@ -208,6 +236,18 @@ const ServerForm = () => {
           </div>
 
           <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Ciudad</div>
+          </div>
+
+          <div className={styles.formGroup}>
             <textarea
               id="observaciones"
               name="observaciones"
@@ -217,6 +257,9 @@ const ServerForm = () => {
             />
             <div className={styles.labelTarea}>Observaciones</div>
           </div>
+          <button type="submit" className={styles.button}>
+            Guardar
+          </button>
         </div>
 
         {/*INICIO DE LA COLUMNA 2*/}
@@ -344,11 +387,19 @@ const ServerForm = () => {
             />
             <div className={styles.label}>Tipo Activo*</div>
           </div>
-        </div>
 
-        <button type="submit" className={styles.button}>
-          Guardar
-        </button>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Ubicación</div>
+          </div>
+        </div>
       </div>
     </form>
   );
