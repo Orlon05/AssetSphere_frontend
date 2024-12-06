@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import style from "./login.module.css";
 import PopupError from "../popups/PopupError";
 import Loader from "../layouts/Loader";
@@ -34,14 +34,22 @@ const Login = () => {
       const data = await response.json(); // Llama a response.json() solo una vez
 
       if (!response.ok) {
-        const errorMessage = data.detail && data.detail.length > 0 ? data.detail[0].msg : "Error de autenticación";
+        const errorMessage =
+          data.detail && data.detail.length > 0
+            ? data.detail[0].msg
+            : "Error de autenticación";
         throw new Error(errorMessage);
       }
 
-      localStorage.setItem("authenticationToken", data.data.accessToken);
+      const tokenFromResponse = data.data.accessToken; 
+      console.log("Token de la respuesta del login:", tokenFromResponse); // Nuevo log para el token de la respuesta
+
+      localStorage.setItem("authenticationToken", tokenFromResponse);
+      const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
+      console.log("Token guardado en localStorage:", tokenFromLocalStorage); // Nuevo log para el token en localStorage
+
       localStorage.setItem("userInfo", JSON.stringify(data.data));
       navigate("/");
-
     } catch (error) {
       setErrorMessage(error.message);
       setModalError(true);
@@ -75,7 +83,7 @@ const Login = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-               />
+              />
             </div>
             <div className={style.loginField}>
               <span className={style.loginIcon}>

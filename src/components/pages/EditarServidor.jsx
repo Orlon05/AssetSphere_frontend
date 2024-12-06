@@ -23,11 +23,11 @@ const EditarServer = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [ram, setRam] = useState("");
+  // const [ram, setRam] = useState("");
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true); // Estado para indicar carga
-  const [error, setError] = useState(null);     // Estado para manejar errores
+  const [error, setError] = useState(null); // Estado para manejar errores
 
   const navigate = useNavigate();
   const { serverId } = useParams();
@@ -37,7 +37,7 @@ const EditarServer = () => {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000, 
+    timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
@@ -49,10 +49,12 @@ const EditarServer = () => {
     Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
 
+  const token = localStorage.getItem("authenticationToken");
+
   useEffect(() => {
     const fetchServerData = async () => {
-      setLoading(true); // Indica que la carga ha comenzado
-      setError(null);   // Limpia cualquier error previo
+      setLoading(true);
+      setError(null);
       try {
         const response = await fetch(
           `http://localhost:8000/servers/physical/${serverId}`,
@@ -64,42 +66,54 @@ const EditarServer = () => {
             },
           }
         );
+
         if (!response.ok) {
+          const errorData = await response.json(); // Intenta leer la respuesta en caso de error
+          console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
           if (response.status === 404) {
             throw new Error("Servidor no encontrado");
+          } else if (response.status === 401) {
+            throw new Error("No autorizado");
           } else {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `Error HTTP ${response.status}`);
+            throw new Error(
+              `Error HTTP ${response.status}: ${
+                errorData.message || errorData.detail
+              }`
+            );
           }
         }
         const data = await response.json();
+        // console.log("Datos recibidos:", data);
         // Actualiza los estados con los datos recibidos
-        setSerial(data.data.serial || "");
-        setNombreServidor(data.data.name || "");
-        setPropietario(data.data.owner || "");
-        setChasis(data.data.chassis || "");
-        setEstado(data.data.status || "");
-        setMarca(data.data.brand || "");
-        setRack(data.data.rack_id || "");
-        setUnidad(data.data.unit || "");
-        setIp(data.data.ip_address || "");
-        setRol(data.data.role || "");
-        setSo(data.data.os || "");
-        setTipoActivoRack(data.data.rack_asset_type || "");
-        setModelo(data.data.model || "");
-        setAmbiente(data.data.environment || "");
-        setProcesador(data.data.processor || "");
-        setCores(data.data.cpu_cores || "");
-        setDiscos(data.data.total_disk_size || "");
-        setObservaciones(data.data.comments || "");
-        setRam(data.data.ram || "");
-        setCity(data.data.city || "");
-        setLocation(data.data.location || "");
-
-      } catch (error) {
-        setError(error.message); // Guarda el mensaje de error
+        if (data.status === "success" && data.data && data.data.server_info) {
+          setSerial(data.data.server_info.serial || "");
+          setNombreServidor(data.data.server_info.name || "");
+          setPropietario(data.data.server_info.owner || "");
+          setChasis(data.data.server_info.chassis || "");
+          setEstado(data.data.server_info.status || "");
+          setMarca(data.data.server_info.brand || "");
+          setRack(data.data.server_info.rack_id || "");
+          setUnidad(data.data.server_info.unit || "");
+          setIp(data.data.server_info.ip_address || "");
+          setRol(data.data.server_info.role || "");
+          setSo(data.data.server_info.os || "");
+          setTipoActivoRack(data.data.server_info.rack_asset_type || "");
+          setModelo(data.data.server_info.model || "");
+          setAmbiente(data.data.server_info.environment || "");
+          setProcesador(data.data.server_info.processor || "");
+          setCores(data.data.server_info.cpu_cores || "");
+          setDiscos(data.data.server_info.total_disk_size || "");
+          setObservaciones(data.data.server_info.comments || "");
+          // setRam(data.data.server_info.ram || "");
+          setCity(data.data.server_info.city || "");
+          setLocation(data.data.server_info.location || "");
+        } else {
+          console.error("Estructura de datos inesperada:", data);
+          setError("Estructura de datos inesperada del servidor");
+        }
+        console.error("Error en fetchServerData:", error); 
       } finally {
-        setLoading(false); // Indica que la carga ha terminado
+        setLoading(false);
       }
     };
 
@@ -109,14 +123,11 @@ const EditarServer = () => {
   }, [serverId]);
 
   useEffect(() => {
-    console.log("Serial recibido:", serial);
-    console.log("Nombre del servidor recibido:", nombreServidor);
   }, [serial, nombreServidor]);
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (!nombreServidor || !serial || !marca || !modelo) {
       Swal.fire({
         icon: "warning",
@@ -125,7 +136,7 @@ const EditarServer = () => {
       });
       return;
     }
-  
+
     const serverData = {
       name: nombreServidor,
       brand: marca,
@@ -147,40 +158,51 @@ const EditarServer = () => {
       rack_asset_type: tipo_activo_rack,
       owner: propietario,
       comments: observaciones,
-      ram: ram,
     };
+
+    console.log("Token de autenticación:", localStorage.getItem("authenticationToken"));
+    console.log("Datos a enviar:", serverData);
   
     try {
-      const response = await fetch(
-        `http://localhost:8000/servers/physical/${serverId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(serverData),
-        }
-      );
+      const response = await fetch(`http://localhost:8000/servers/physical/${serverId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(serverData),
+      });
+  
+      console.log("Respuesta del servidor:", response);
   
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         try {
           const errorData = await response.json();
-          if (errorData && errorData.message) {
-            errorMessage = errorData.message;
-          } else if (errorData && errorData.detail) {
+          console.error("Detalles del error (JSON):", errorData); 
+          if (errorData && Array.isArray(errorData.detail)) { 
             errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+          } else if (errorData && errorData.message) { 
+            errorMessage = errorData.message;
+          } else if (errorData) {
+            errorMessage = JSON.stringify(errorData); 
           }
-        } catch {}
-        Swal.fire({ icon: "error", title: "Error al actualizar", text: errorMessage });
+          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
+        } catch (jsonError) {
+          console.error("Error al parsear JSON:", jsonError);
+          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
+        }
       } else {
         showSuccessToast();
         navigate("/servidoresf");
       }
     } catch (error) {
-      console.error("Error:", error);
-      Swal.fire({ icon: "error", title: "Error", text: "Ocurrió un error inesperado." });
+      console.error("Error inesperado:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error inesperado.",
+      });
     }
   };
 
@@ -421,7 +443,7 @@ const EditarServer = () => {
             <div className={styles.label}>Cores*</div>
           </div>
 
-          <div className={styles.formGroup}>
+          {/* <div className={styles.formGroup}>
             <input
               type="text"
               id="ram"
@@ -431,7 +453,7 @@ const EditarServer = () => {
               className={styles.input}
             />
             <div className={styles.label}>Ram*</div>
-          </div>
+          </div> */}
 
           <div className={styles.formGroup}>
             <input

@@ -23,7 +23,7 @@ const ServerForm = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [ram, setRam] = useState("");
+  // const [ram, setRam] = useState("");
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
   const navigate = useNavigate();
@@ -352,7 +352,7 @@ const ServerForm = () => {
             <div className={styles.label}>Cores*</div>
           </div>
 
-          <div className={styles.formGroup}>
+          {/* <div className={styles.formGroup}>
             <input
               type="text"
               id="ram"
@@ -362,7 +362,7 @@ const ServerForm = () => {
               className={styles.input}
             />
             <div className={styles.label}>Ram*</div>
-          </div>
+          </div> */}
 
           <div className={styles.formGroup}>
             <input
