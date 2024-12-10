@@ -4,17 +4,17 @@ import { jwtDecode } from 'jwt-decode';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('authenticationToken'));
+  const [token, setToken] = useState(localStorage.getItem("authenticationToken"));
   const [remainingTime, setRemainingTime] = useState(0);
 
   useEffect(() => {
+    console.log("HOLA")
     const checkTokenExpiration = () => {
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
           const expirationTime = decodedToken.exp * 1000;
           const timeLeft = expirationTime - Date.now();
-
           if (timeLeft <= 0) {
             logout();
           } else {

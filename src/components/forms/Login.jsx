@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,8 +6,11 @@ import { jwtDecode } from "jwt-decode";
 import style from "./login.module.css";
 import PopupError from "../popups/PopupError";
 import Loader from "../layouts/Loader";
+import { useAuth } from "../routes/AuthContext";
 
 const Login = () => {
+
+  const user = useAuth()
   //estado para manejar el correo y la contraseña
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -44,7 +47,7 @@ const Login = () => {
       const tokenFromResponse = data.data.accessToken; 
       console.log("Token de la respuesta del login:", tokenFromResponse); // Nuevo log para el token de la respuesta
 
-      localStorage.setItem("authenticationToken", tokenFromResponse);
+      user.login(tokenFromResponse);
       const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
       console.log("Token guardado en localStorage:", tokenFromLocalStorage); // Nuevo log para el token en localStorage
 
@@ -64,7 +67,10 @@ const Login = () => {
     setModalError(false);
   };
 
+  useEffect(() => {if (user.token) navigate("/")}, [user.token])
+
   return (
+    !user.token &&
     <div className={style.container}>
       {isLoading && <Loader isLoading={isLoading} />}
       {/*/MOSTRAR MODAL ERROR SI ESTA ACTIVADO */}
