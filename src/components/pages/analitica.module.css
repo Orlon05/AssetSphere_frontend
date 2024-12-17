@@ -9,3 +9,34 @@
     --blanco: #fff;
   }
 
+  .analiticaContainer {
+    padding: 20px;
+    width: 1076px;
+    height: 900px;
+    overflow-y: auto;
+  }
+  
+  .cardContainer {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+
+  .graficos{
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 30px;
+  }
+
+  .barras{
+    width: 580px;
+    height: 400px;
+  }
+
+  .donut{
+    width: 400px;
+    height: 400px;
+  }
+

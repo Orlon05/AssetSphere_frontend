@@ -1,0 +1,61 @@
+:root {
+    --azul-celeste: #8affe6;
+    --azul-oscuro: #1b3f4b;
+    --azul-oscuro-intermedio: #3b5d68;
+    --azul-profundo: #0164f8;
+    --azul-profundo-oscuro: #0453c9;
+    --gris-claro: #cbcbcb;
+    --gris-oscuro: #6b6868;
+    --gris-oscuro-medio: #bbb8b8;
+    --azul-claro: #4e8ac4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+    --verde: #017e0c;
+    --verde-claro: #03b912;
+    --naranja: #f86605;
+    --naranja-claro: #c25106;
+    --rojo: #f70511;
+    --rojo-claro: #c5060f;
+  }
+.card {
+    background-color: var(--blanco);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 5px var(--azul-oscuro);
+    margin-top: 20px;
+    width: 350px;
+    height: 100px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover{
+        transform: translateY(-5px); /* Eleva la tarjeta ligeramente */
+        box-shadow: 0 5px 15px var(--azul-oscuro-intermedio); /* Sombra más pronunciada */
+    }
+  }
+
+  .cardContent{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+  
+  .cardIcon{
+    display: flex;
+    margin-bottom:0;
+    height: 30px;
+    width: 30px;
+  }
+  
+  .cardTitle {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: var(--azul-oscuro);
+  }
+  
+  .cardValue {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--azul-profundo);
+  }

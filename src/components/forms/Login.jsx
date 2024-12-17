@@ -9,8 +9,7 @@ import Loader from "../layouts/Loader";
 import { useAuth } from "../routes/AuthContext";
 
 const Login = () => {
-
-  const user = useAuth()
+  const user = useAuth();
   //estado para manejar el correo y la contraseña
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -44,7 +43,7 @@ const Login = () => {
         throw new Error(errorMessage);
       }
 
-      const tokenFromResponse = data.data.accessToken; 
+      const tokenFromResponse = data.data.accessToken;
       console.log("Token de la respuesta del login:", tokenFromResponse); // Nuevo log para el token de la respuesta
 
       user.login(tokenFromResponse);
@@ -52,7 +51,7 @@ const Login = () => {
       console.log("Token guardado en localStorage:", tokenFromLocalStorage); // Nuevo log para el token en localStorage
 
       localStorage.setItem("userInfo", JSON.stringify(data.data));
-      navigate("/");
+      navigate("/analitica");
     } catch (error) {
       setErrorMessage(error.message);
       setModalError(true);
@@ -67,74 +66,77 @@ const Login = () => {
     setModalError(false);
   };
 
-  useEffect(() => {if (user.token) navigate("/")}, [user.token])
+  useEffect(() => {
+    if (user.token) navigate("/analitica");
+  }, [user.token]);
 
   return (
-    !user.token &&
-    <div className={style.container}>
-      {isLoading && <Loader isLoading={isLoading} />}
-      {/*/MOSTRAR MODAL ERROR SI ESTA ACTIVADO */}
-      {modalError && <PopupError onClose={cerrarModalError} />}
-      <div className={style.screen}>
-        <div className={style.screenContent}>
-          <form className={style.login} onSubmit={handleLoginSubmit}>
-            <div className={style.loginField}>
-              <span className={style.loginIcon}>
-                <FaUser />
-              </span>
-              <input
-                type="user"
-                className={style.loginInput}
-                placeholder="Usuario"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+    !user.token && (
+      <div className={style.container}>
+        {isLoading && <Loader isLoading={isLoading} />}
+        {/*/MOSTRAR MODAL ERROR SI ESTA ACTIVADO */}
+        {modalError && <PopupError onClose={cerrarModalError} />}
+        <div className={style.screen}>
+          <div className={style.screenContent}>
+            <form className={style.login} onSubmit={handleLoginSubmit}>
+              <div className={style.loginField}>
+                <span className={style.loginIcon}>
+                  <FaUser />
+                </span>
+                <input
+                  type="user"
+                  className={style.loginInput}
+                  placeholder="Usuario"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className={style.loginField}>
+                <span className={style.loginIcon}>
+                  <FaLock />
+                </span>
+                <input
+                  type="password"
+                  className={style.loginInput}
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)} //actualiza el estado 'PASSWORD' cuando cambia el valor
+                  required
+                />
+              </div>
+              <button type="submit" className={style.loginSubmit}>
+                <span>Iniciar Sesión</span>
+                <span className={style.buttonIcon}>
+                  <IoIosArrowForward />
+                </span>
+              </button>
+            </form>
+            <div className={style.socialLogin}>
+              <img
+                className={style.socialLoginIcon}
+                src="/src/assets/tcs_logo.png"
+                alt="logo TATA"
               />
             </div>
-            <div className={style.loginField}>
-              <span className={style.loginIcon}>
-                <FaLock />
-              </span>
-              <input
-                type="password"
-                className={style.loginInput}
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)} //actualiza el estado 'PASSWORD' cuando cambia el valor
-                required
-              />
-            </div>
-            <button type="submit" className={style.loginSubmit}>
-              <span>Iniciar Sesión</span>
-              <span className={style.buttonIcon}>
-                <IoIosArrowForward />
-              </span>
-            </button>
-          </form>
-          <div className={style.socialLogin}>
-            <img
-              className={style.socialLoginIcon}
-              src="/src/assets/tcs_logo.png"
-              alt="logo TATA"
-            />
+          </div>
+          <div className={style.screenBackground}>
+            <span
+              className={`${style.screenBackgroundShape} ${style.screenBackgroundShape4}`}
+            ></span>
+            <span
+              className={`${style.screenBackgroundShape} ${style.screenBackgroundShape3}`}
+            ></span>
+            <span
+              className={`${style.screenBackgroundShape} ${style.screenBackgroundShape2}`}
+            ></span>
+            <span
+              className={`${style.screenBackgroundShape} ${style.screenBackgroundShape1}`}
+            ></span>
           </div>
         </div>
-        <div className={style.screenBackground}>
-          <span
-            className={`${style.screenBackgroundShape} ${style.screenBackgroundShape4}`}
-          ></span>
-          <span
-            className={`${style.screenBackgroundShape} ${style.screenBackgroundShape3}`}
-          ></span>
-          <span
-            className={`${style.screenBackgroundShape} ${style.screenBackgroundShape2}`}
-          ></span>
-          <span
-            className={`${style.screenBackgroundShape} ${style.screenBackgroundShape1}`}
-          ></span>
-        </div>
       </div>
-    </div>
+    )
   );
 };
 
