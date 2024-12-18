@@ -1,0 +1,168 @@
+:root {
+    --azul-celeste: #8affe6;
+    --azul-oscuro: #1b3f4b;
+    --azul-oscuro-intermedio: #3b5d68;
+    --azul-profundo: #0164f8;
+    --azul-profundo-oscuro: #0453c9;
+    --gris-claro: #cbcbcb;
+    --gris-oscuro: #6b6868;
+    --gris-oscuro-medio: #bbb8b8;
+    --azul-claro: #4e8ac4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+    --verde: #017e0c;
+    --verde-claro: #03b912;
+    --naranja: #f86605;
+    --naranja-claro: #c25106;
+    --rojo: #f70511;
+    --rojo-claro: #c5060f;
+  }
+  /*********************CONTENEDOR PRINCIPAL*************/
+  .container {
+    width: 1078px;
+    height: 110vh;
+    left: 0;
+    align-items: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  /***********************ENCABEZADO*************************/
+  .containerMain {
+    display: flex;
+    top: 40px;
+    margin-left: 20px;
+    position: relative;
+    width: 64rem;
+    height: 80px;
+  }
+  .btnImport {
+    position: absolute;
+    left: 0;
+    bottom: 5px;
+    margin-right: 10px;
+    padding: 4px 8px;
+  
+    &:hover {
+      background: var(--gris-claro);
+      color: var(--azul-profundo-oscuro);
+    }
+  }
+  
+  .btnExport {
+    position: absolute;
+    left: 8rem;
+    bottom: 5px;
+    padding: 4px 8px;
+  
+    &:hover {
+      background: var(--gris-claro);
+      color: var(--azul-profundo-oscuro);
+    }
+  }
+  
+  .btnAdd {
+    position: absolute;
+    right: 0;
+    top: 0%;
+    padding: 7px 14px;
+    background: var(--azul-profundo-oscuro);
+    color: var(--blanco);
+  
+    &:hover {
+      background: var(--azul-profundo);
+    }
+  }
+  
+  .tittle {
+    font-size: 25px;
+    font-family: sans-serif;
+    color: var(--azul-oscuro);
+  }
+  
+  .btnAdd,
+  .btnExport,
+  .btnImport {
+    border-radius: 10px;
+    border: none;
+    justify-content: space-between;
+    box-shadow: 0 0 5px var(--azul-oscuro);
+  }
+  
+  .icon {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+  /***********INPUT SEARCH**********************/
+  
+  /* Estilos generales del contenedor */
+  .searchContainer {
+    position: relative;
+    width: 64rem;
+    height: 40px;
+    padding: 30px;
+    box-shadow: 0 0 5px var(--azul-oscuro);
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-top: 80px;
+    margin-right: 20px;
+    background: var(--blanco);
+  }
+  
+  .searchContainerSelected {
+    background-color: var(--azul-celeste);
+  }
+  
+  .selectedCount {
+    display: flex; /* Para controlar el alineamiento */
+    align-items: center; /* Alinea verticalmente al centro */
+    gap: 5px; /* Separa los textos */
+    font-weight: bold; /* Negrita */
+    color: var(--azul-profundo); /* O cualquier otro color */
+    top: 20px;
+    position: absolute;
+  }
+  
+  /* Estilos del input */
+  .searchInput {
+    position: absolute;
+    top: 10px;
+    width: 40%;
+    height: 70%;
+    border: none;
+    font-size: 16px;
+    color: var(--gris-oscuro);
+    border-radius: 10px;
+    cursor: pointer;
+    text-indent: 35px;
+    &:hover {
+      border: 1px solid var(--gris-oscuro);
+    }
+    /* Estilos al enfocar el input */
+    &:focus {
+      outline: none;
+      border: 1px solid var(--azul-profundo-oscuro);
+    }
+  }
+  
+  /* Estilos del icono */
+  .searchIcon {
+    position: absolute;
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+    color: var(--gris-oscuro);
+    font-size: 20px;
+    cursor: pointer;
+    perspective: 1000px;
+  }
+  
+  .iconS {
+    transition: transform 0.3s ease;
+    /* Estilos al pasar el mouse sobre el icono */
+    &:hover {
+      color: var(--azul-claro);
+      transform: translateZ(10px) scale(1.1);
+    }
+  }

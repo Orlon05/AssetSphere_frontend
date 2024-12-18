@@ -1,0 +1,69 @@
+:root {
+    --azul-celeste: #8affe6;
+    --azul-oscuro: #1b3f4b;
+    --azul-oscuro-intermedio: #3b5d68;
+    --azul-profundo: #0164f8;
+    --azul-profundo-oscuro: #0453c9;
+    --gris-claro: #cbcbcb;
+    --gris-oscuro: #6b6868;
+    --gris-oscuro-medio: #bbb8b8;
+    --azul-claro: #4e8ac4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+    --verde: #017e0c;
+    --verde-claro: #03b912;
+    --naranja: #f86605;
+    --naranja-claro: #c25106;
+    --rojo: #f70511;
+    --rojo-claro: #c5060f;
+  }
+
+.list-wrapper {
+    max-width: 64rem;
+    margin: 50px auto;
+  }
+  
+  .list {
+    background: var(--blanco);
+    border-radius: 10px;
+    list-style: none;
+    padding: 10px 20px;
+    box-shadow: 0 0 5px var(--azul-oscuro);
+  }
+  
+  .list-item {
+      display: flex;
+      margin: 10px;
+      padding-bottom: 5px;
+      padding-top: 5px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  
+  .list-item:last-child {
+    border-bottom: none;
+  }
+  
+  .list-item-image {
+      border-radius: 50%;
+      width: 64px;
+    }
+  
+  .list-item-content {
+      margin-left: 20px;
+    }
+  
+  .list-item-content h4,
+  .list-item-content p {
+      margin: 0;
+    }
+  
+  .list-item-content h4 {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  
+  .list-item-content p {
+      margin-top: 5px;
+      color: #999;
+    }

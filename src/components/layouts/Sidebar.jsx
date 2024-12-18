@@ -72,7 +72,7 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
-              to="#"
+              to="/usuarios"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links
               }
