@@ -23,7 +23,7 @@ const EditarServer = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  // const [ram, setRam] = useState("");
+  const [ram, setRam] = useState("");
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(true); // Estado para indicar carga
@@ -48,6 +48,31 @@ const EditarServer = () => {
   const showSuccessToast = () => {
     Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
+
+  const ciudadesCapitalesColombia = [
+    "Bogotá",
+    "Medellín",
+    "Bello",
+    "Sincelejo",
+    "Ibague",
+    "Valledupar",
+  ];
+
+  const ambienteServidores = ["Producción", "Certificación"];
+
+  const estadoServidores = ["Encendido", "Apagado", "Mantenimiento"];
+
+  const marcaServidores = ["Cisco", "HP", "Lenovo", "DELL"];
+
+  const rolServidores = [
+    "NUTANIX",
+    "AXIOM10",
+    "OLVM",
+    "CITRIX BANCOLOMBIA",
+    "CITRIX",
+    "WINDOWS",
+    "LINUX",
+  ];
 
   const token = localStorage.getItem("authenticationToken");
 
@@ -104,14 +129,14 @@ const EditarServer = () => {
           setCores(data.data.server_info.cpu_cores || "");
           setDiscos(data.data.server_info.total_disk_size || "");
           setObservaciones(data.data.server_info.comments || "");
-          // setRam(data.data.server_info.ram || "");
+          setRam(data.data.server_info.ram || "");
           setCity(data.data.server_info.city || "");
           setLocation(data.data.server_info.location || "");
         } else {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");
         }
-        console.error("Error en fetchServerData:", error); 
+        console.error("Error en fetchServerData:", error);
       } finally {
         setLoading(false);
       }
@@ -122,8 +147,7 @@ const EditarServer = () => {
     }
   }, [serverId]);
 
-  useEffect(() => {
-  }, [serial, nombreServidor]);
+  useEffect(() => {}, [serial, nombreServidor]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -142,6 +166,7 @@ const EditarServer = () => {
       brand: marca,
       model: modelo,
       processor: procesador,
+      ram: ram,
       cpu_cores: parseInt(cores, 10),
       total_disk_size: discos,
       os: so,
@@ -160,32 +185,38 @@ const EditarServer = () => {
       comments: observaciones,
     };
 
-    console.log("Token de autenticación:", localStorage.getItem("authenticationToken"));
+    console.log(
+      "Token de autenticación:",
+      localStorage.getItem("authenticationToken")
+    );
     console.log("Datos a enviar:", serverData);
-  
+
     try {
-      const response = await fetch(`http://localhost:8000/servers/physical/${serverId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(serverData),
-      });
-  
+      const response = await fetch(
+        `http://localhost:8000/servers/physical/${serverId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(serverData),
+        }
+      );
+
       console.log("Respuesta del servidor:", response);
-  
+
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         try {
           const errorData = await response.json();
-          console.error("Detalles del error (JSON):", errorData); 
-          if (errorData && Array.isArray(errorData.detail)) { 
+          console.error("Detalles del error (JSON):", errorData);
+          if (errorData && Array.isArray(errorData.detail)) {
             errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-          } else if (errorData && errorData.message) { 
+          } else if (errorData && errorData.message) {
             errorMessage = errorData.message;
           } else if (errorData) {
-            errorMessage = JSON.stringify(errorData); 
+            errorMessage = JSON.stringify(errorData);
           }
           Swal.fire({ icon: "error", title: "Error", text: errorMessage });
         } catch (jsonError) {
@@ -277,27 +308,37 @@ const EditarServer = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="rol"
               name="rol"
               value={rol}
               onChange={(e) => setRol(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Rol*</div>
+              className={styles.selected}
+            >
+              <option value="" disabled>Selecciona el rol</option>
+              {rolServidores.map((rol) => (
+                <option key={rol} value={rol}>
+                  {rol}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="ambiente"
               name="ambiente"
               value={ambiente}
               onChange={(e) => setAmbiente(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ambiente*</div>
+              className={styles.selected}
+            >
+              <option value=""disabled>Selecciona el Ambiente</option>
+              {ambienteServidores.map((ambiente) => (
+                <option key={ambiente} value={ambiente}>
+                  {ambiente}
+                </option>
+              ))}
+            </select>
           </div>
 
           <hr className={styles.lines} />
@@ -327,15 +368,20 @@ const EditarServer = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="city"
               name="city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ciudad</div>
+              className={styles.selected}
+            >
+              <option value=""disabled>Selecciona una ciudad</option>
+              {ciudadesCapitalesColombia.map((ciudad) => (
+                <option key={ciudad} value={ciudad}>
+                  {ciudad}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
@@ -349,7 +395,7 @@ const EditarServer = () => {
             <div className={styles.labelTarea}>Observaciones</div>
           </div>
           <button type="submit" className={styles.button}>
-            Actualizar
+            Guardar
           </button>
         </div>
 
@@ -368,27 +414,37 @@ const EditarServer = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="estado"
               name="estado"
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Estado*</div>
+              className={styles.selected}
+            >
+              <option value=""disabled>Selecciona un estado</option>
+              {estadoServidores.map((estado) => (
+                <option key={estado} value={estado}>
+                  {estado}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="marca"
               name="marca"
               value={marca}
               onChange={(e) => setMarca(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Marca*</div>
+              className={styles.selected}
+            >
+              <option value=""disabled>Selecciona una marca</option>
+              {marcaServidores.map((marca) => (
+                <option key={marca} value={marca}>
+                  {marca}
+                </option>
+              ))}
+            </select>
           </div>
 
           <hr className={styles.lines} />
@@ -443,7 +499,7 @@ const EditarServer = () => {
             <div className={styles.label}>Cores*</div>
           </div>
 
-          {/* <div className={styles.formGroup}>
+          <div className={styles.formGroup}>
             <input
               type="text"
               id="ram"
@@ -453,7 +509,7 @@ const EditarServer = () => {
               className={styles.input}
             />
             <div className={styles.label}>Ram*</div>
-          </div> */}
+          </div>
 
           <div className={styles.formGroup}>
             <input

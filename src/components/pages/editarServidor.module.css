@@ -100,6 +100,26 @@
     border:1px solid var(--azul-profundo);
   }
 
+  .selected{
+    position: absolute;
+    width: 100%;
+    outline: none;
+    font-size: 0.8rem;
+    padding:  10px;
+    border: none; 
+    line-height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--gris-claro);
+    background: transparent;
+    transition: 0.1s ease;
+    z-index: 1111;
+
+    &:focus{
+      color: var(--azul-profundo-oscuro);
+      border:1px solid var(--azul-profundo);
+    }
+  }
+
 .label{
   position: absolute;
   font-size: 1.0rem;

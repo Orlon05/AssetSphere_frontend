@@ -67,7 +67,7 @@ const Sidebar = ({ isOpen }) => {
               }
             >
               <VscServerEnvironment className={Style.icon} />
-              Virtuales
+              Sucursales
             </NavLink>
           </li>
           <li>

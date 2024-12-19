@@ -23,7 +23,7 @@ const ServerForm = () => {
   const [cores, setCores] = useState("");
   const [discos, setDiscos] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  // const [ram, setRam] = useState("");
+  const [ram, setRam] = useState("");
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
   const navigate = useNavigate();
@@ -49,6 +49,43 @@ const ServerForm = () => {
     });
   };
 
+  const ciudadesCapitalesColombia = [
+    "Bogotá",
+    "Medellín",
+    "Bello",
+    "Sincelejo",
+    "Ibague",
+    "Valledupar",
+  ];
+
+  const ambienteServidores = [
+    "Producción",
+    "Certificación",
+  ];
+
+  const estadoServidores = [
+    "Encendido",
+    "Apagado",
+    "Mantenimiento",
+  ];
+
+  const marcaServidores = [
+    "Cisco",
+    "HP",
+    "Lenovo",
+    "DELL",
+  ];
+  
+  const rolServidores = [
+    "NUTANIX",
+    "AXIOM10",
+    "OLVM",
+    "CITRIX BANCOLOMBIA",
+    "CITRIX",
+    "WINDOWS",
+    "LINUX",
+  ];
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -57,6 +94,7 @@ const ServerForm = () => {
       brand: marca,
       model: modelo,
       processor: procesador,
+      ram: ram,
       cpu_cores: parseInt(cores, 10) || 0, //Manejo de error para cores
       total_disk_size: discos,
       os: so,
@@ -185,28 +223,43 @@ const ServerForm = () => {
             <div className={styles.label}>Unidad*</div>
           </div>
 
+          
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="rol"
               name="rol"
               value={rol}
               onChange={(e) => setRol(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Rol*</div>
+              className={styles.selected}
+            >
+              <option value="">
+                Selecciona el rol
+              </option>
+              {rolServidores.map((rol) => (
+                <option key={rol} value={rol}>
+                  {rol}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="ambiente"
               name="ambiente"
               value={ambiente}
               onChange={(e) => setAmbiente(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ambiente*</div>
+              className={styles.selected}
+            >
+              <option value="">
+                Selecciona el Ambiente
+              </option>
+              {ambienteServidores.map((ambiente) => (
+                <option key={ambiente} value={ambiente}>
+                  {ambiente}
+                </option>
+              ))}
+            </select>
           </div>
 
           <hr className={styles.lines} />
@@ -236,15 +289,22 @@ const ServerForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="city"
               name="city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ciudad</div>
+              className={styles.selected}
+            >
+              <option value="">
+                Selecciona una ciudad
+              </option>
+              {ciudadesCapitalesColombia.map((ciudad) => (
+                <option key={ciudad} value={ciudad}>
+                  {ciudad}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
@@ -277,27 +337,41 @@ const ServerForm = () => {
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="estado"
               name="estado"
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Estado*</div>
+              className={styles.selected}
+            >
+              <option value="">
+                Selecciona un estado
+              </option>
+              {estadoServidores.map((estado) => (
+                <option key={estado} value={estado}>
+                  {estado}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={styles.formGroup}>
-            <input
-              type="text"
+            <select
               id="marca"
               name="marca"
               value={marca}
               onChange={(e) => setMarca(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Marca*</div>
+              className={styles.selected}
+            >
+              <option value="">
+                Selecciona una marca
+              </option>
+              {marcaServidores.map((marca) => (
+                <option key={marca} value={marca}>
+                  {marca}
+                </option>
+              ))}
+            </select>
           </div>
 
           <hr className={styles.lines} />
@@ -352,7 +426,7 @@ const ServerForm = () => {
             <div className={styles.label}>Cores*</div>
           </div>
 
-          {/* <div className={styles.formGroup}>
+          <div className={styles.formGroup}>
             <input
               type="text"
               id="ram"
@@ -362,7 +436,7 @@ const ServerForm = () => {
               className={styles.input}
             />
             <div className={styles.label}>Ram*</div>
-          </div> */}
+          </div>
 
           <div className={styles.formGroup}>
             <input

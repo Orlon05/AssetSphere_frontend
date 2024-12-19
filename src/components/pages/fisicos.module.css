@@ -156,6 +156,8 @@
   font-size: 20px;
   cursor: pointer;
   perspective: 1000px;
+  border: none;
+  background: transparent;
 }
 
 .iconS {

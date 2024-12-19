@@ -13,24 +13,21 @@ import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 
 const ServidoresFisicos = () => {
-  const [searchValue, setSearchValue] = useState(""); // Valor de búsqueda
+  const [searchValue, setSearchValue] = useState("");
   const [servers, setServers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Por defecto, 10 servidores por página
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedServers, setSelectedServers] = useState(new Set());
-
   const navigate = useNavigate();
-
-  // Crea la instancia de Toast
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000, // Duración del Toast (3 segundos)
+    timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
@@ -38,7 +35,6 @@ const ServidoresFisicos = () => {
     },
   });
 
-  // Función para mostrar un Toast de éxito después de crear una receta
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
@@ -46,37 +42,29 @@ const ServidoresFisicos = () => {
     });
   };
 
-  const selectedCount = selectedServers.size; // Cuenta de servidores seleccionados
+  const selectedCount = selectedServers.size;
 
-  const [showSearch, setShowSearch] = useState(true); // Estado para mostrar/ocultar la búsqueda
-
-  const [unfilteredServers, setUnfilteredServers] = useState([]); //Estado para alamcenar los servidores sin filtrar por busqueda
-  const [isSearching, setIsSearching] = useState(false); // Estado para controlar si se está buscando
+  const [showSearch, setShowSearch] = useState(true);
+  const [unfilteredServers, setUnfilteredServers] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
-
   useEffect(() => {
-    // Cambia showSearch a false si hay servidores seleccionados
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
-
   const irCrear = () => {
     navigate("/crear-servidores-f");
   };
-
   const irEditar = (serverId) => {
     navigate(`/editar/${serverId}/servidores`);
   };
-
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener servidores:", error);
-    //Podríamos añadir un mensaje al usuario aquí, por ejemplo con Swal
-  }
-
+  };
   const token = localStorage.getItem("authenticationToken");
-
   const fetchServers = async (page, limit, search = "") => {
-    if (isSearching) return; // Evita llamadas adicionales si ya se está buscando
+    if (isSearching) return;
     setLoading(true);
     setError(null);
     try {
@@ -105,19 +93,18 @@ const ServidoresFisicos = () => {
     } catch (error) {
       handleError(error);
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.msg || error.message || 'Ha ocurrido un error.',
+        icon: "error",
+        title: "Oops...",
+        text: error.msg || error.message || "Ha ocurrido un error.",
       });
     } finally {
       setLoading(false);
-      setIsSearching(false); 
+      setIsSearching(false);
     }
   };
-
   const fetchSearch = async (search) => {
-    if (isSearching) return; // Evita llamadas adicionales si ya se está buscando
-    setIsSearching(true); // Establece isSearching en true al iniciar la búsqueda
+    if (isSearching) return;
+    setIsSearching(true);
     setLoading(true);
     setError(null);
     try {
@@ -145,31 +132,37 @@ const ServidoresFisicos = () => {
     } catch (error) {
       handleError(error);
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.msg || error.message || 'Ha ocurrido un error.',
+        icon: "error",
+        title: "Oops...",
+        text: error.msg || error.message || "Ha ocurrido un error.",
       });
     } finally {
       setLoading(false);
-      setIsSearching(false); 
+      setIsSearching(false);
     }
   };
-  
+
   useEffect(() => {
-    fetchServers(currentPage, rowsPerPage); // Carga inicial sin filtro
+    fetchServers(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
-  // Dependemos de currentPage, rowsPerPage y searchValue para volver a cargar los datos
-  
+
   useEffect(() => {
-    if (searchValue.trim() !== "") {
-      fetchSearch(searchValue);
-    } else {
-      setServers(unfilteredServers);
-      setTotalPages(unfilteredServers.length > 0 ? Math.ceil(unfilteredServers.length / rowsPerPage) : 0);
+    if (isSearchButtonClicked) {
+      if (searchValue.trim() === "") {
+        setServers(unfilteredServers);
+        setTotalPages(
+          unfilteredServers.length > 0
+            ? Math.ceil(unfilteredServers.length / rowsPerPage)
+            : 0
+        );
+      } else {
+        setCurrentPage(1);
+        fetchSearch(searchValue);
+      }
+      setIsSearchButtonClicked(false);
     }
-  }, [searchValue, rowsPerPage]); //rowsPerPage añadido para refrescar la paginación al cambiar el número de filas
-  
-  //FUNCION PARA EXPORTAR
+  }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
+
   const handleExport = () => {
     try {
       const workbook = XLSX.utils.book_new();
@@ -192,10 +185,14 @@ const ServidoresFisicos = () => {
       });
     }
   };
-const handleSearchChange = (e) => {
-  setSearchValue(e.target.value);
-  searchInputRef.current.focus(); 
-};
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+    searchInputRef.current.focus();
+  };
+
+  const handleSearchButtonClick = () => {
+    setIsSearchButtonClicked(true); // Activa la busqueda
+  };
 
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
@@ -215,8 +212,6 @@ const handleSearchChange = (e) => {
     }
     setSelectedServers(newSelectedServers);
   };
-
-
   const filteredServers = servers.filter((server) =>
     server.name.toLowerCase().includes(searchValue.toLowerCase())
   );
@@ -227,7 +222,6 @@ const handleSearchChange = (e) => {
     indexOfFirstServer,
     indexOfLastServer
   );
-
   const handleDeleteServer = async (serverId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -250,21 +244,22 @@ const handleSearchChange = (e) => {
               },
             }
           );
-  
+
           if (!response.ok) {
             let errorMessage = `Error HTTP ${response.status}`;
             if (response.status === 422) {
               const errorData = await response.json();
               errorMessage = errorData.detail.map((e) => e.msg).join(", ");
             } else if (response.status === 401 || response.status === 403) {
-              errorMessage = "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
-            } else if (response.status === 404){
-              errorMessage = "El servidor no existe."
+              errorMessage =
+                "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+            } else if (response.status === 404) {
+              errorMessage = "El servidor no existe.";
             } else {
               try {
                 const errorData = await response.json();
                 if (errorData.message) errorMessage = errorData.message;
-              } catch(e) {}
+              } catch (e) {}
             }
             Swal.fire({
               icon: "error",
@@ -295,7 +290,6 @@ const handleSearchChange = (e) => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
   return (
     <div className={style.container}>
       <div className={style.containerMain}>
@@ -315,9 +309,9 @@ const handleSearchChange = (e) => {
       <div
         className={`${style.searchContainer} ${
           selectedCount > 0 ? style.searchContainerSelected : ""
-        }`} // Clase condicional
+        }`}
       >
-        {showSearch && ( // Condicional para mostrar/ocultar el input de búsqueda
+        {showSearch && (
           <>
             <input
               className={style.searchInput}
@@ -327,9 +321,12 @@ const handleSearchChange = (e) => {
               onChange={handleSearchChange}
               ref={searchInputRef}
             />
-            <span className={style.searchIcon}>
+            <button
+              className={style.searchIcon}
+              onClick={handleSearchButtonClick}
+            >
               <CiSearch className={style.iconS} />
-            </span>
+            </button>
           </>
         )}
         {selectedCount > 0 && (
@@ -370,7 +367,7 @@ const handleSearchChange = (e) => {
                 key={server.id}
                 className={
                   selectedServers.has(server.id) ? style.selectedRow : ""
-                } // Clase condicional
+                }
               >
                 <td>
                   <input
