@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import styles from "./crearUsuario.module.css";
 import Swal from "sweetalert2";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 const CrearUsuario = () => {
@@ -23,6 +24,8 @@ const CrearUsuario = () => {
     { id: 3, name: "Administrador" },
     { id: 4, name: "Dev" },
   ];
+
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -90,6 +93,7 @@ const CrearUsuario = () => {
         const selectedRoleData = roles.find(role => role.id === formData.role);
         const roleName = selectedRoleData ? selectedRoleData.name : "Desconocido";
         showSuccessToast(roleName);
+        navigate("/usuarios");
       } else if (response.status === 422) {
         const errorData = await response.json();
         setErrorMessages(errorData.detail);
