@@ -87,11 +87,11 @@ const Navegacion = ({ toggleSidebar }) => {
 
   return (
     <nav className={Style.navbar}>
-        <div className={Style.containerSecond}>
-          <button className={Style.noti} onClick={showTimerNotification}>
-            <IoIosNotifications />
-          </button>
-        </div>
+      <div className={Style.containerSecond}>
+        <button className={Style.noti} onClick={showTimerNotification}>
+          <IoIosNotifications />
+        </button>
+      </div>
       <div className={Style.container}>
         <button className={Style.hamburger} onClick={toggleSidebar}>
           <RiMenu4Fill className={Style.iconHam} />
@@ -101,7 +101,7 @@ const Navegacion = ({ toggleSidebar }) => {
         </div>
         <div className={Style.userContainer} onClick={toggleModal}>
           <img
-            src="../../../public/imagenes/user.png"
+            src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${userName}`}
             alt="user"
             className={Style.userIcon}
           />
