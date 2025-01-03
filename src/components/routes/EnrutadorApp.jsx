@@ -10,6 +10,7 @@ import EditarServer from "../pages/EditarServidor";
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
+import Logs from "../pages/Logs";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -58,6 +59,10 @@ export let EnrutadorApp = [
       {
         path: "crear-usuarios",
         element: <CrearUsuario/>
+      },
+      {
+        path: "ver-logs",
+        element: <Logs/>
       },
     ],
   },

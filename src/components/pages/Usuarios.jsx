@@ -18,6 +18,9 @@ const Usuarios = () => {
   const irCrear = () => {
     navigate("/crear-usuarios");
   };
+  const irLogs = () => {
+    navigate("/ver-logs");
+  };
 
   //FUNCION PARA EXPORTAR
   const handleExport = () => {
@@ -55,7 +58,7 @@ const Usuarios = () => {
         res.json().then((data) => setUsersData(data.data.users))
       );
     } catch {
-      console.log("Error"); // Aqui deberias de manejar este error. By: Wilson
+      console.log("Error"); 
     }
   }, [token]);
   return (
@@ -64,6 +67,9 @@ const Usuarios = () => {
         <h1 className={style.tittle}>
           <FiUsers /> Lista de Usuarios
         </h1>
+        <button className={style.btnIrLogs} onClick={irLogs}>
+          <IoIosAdd className={style.icon} /> Logs
+        </button>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear
         </button>

@@ -89,6 +89,21 @@
     justify-content: space-between;
     box-shadow: 0 0 5px var(--azul-oscuro);
   }
+
+  .btnIrLogs{
+    position: absolute;
+    right: 120px;
+    top: 0%;
+    padding: 7px 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--azul-profundo-oscuro);
+    color: var(--blanco);
+  
+    &:hover {
+      background: var(--azul-profundo);
+    }
+  }
   
   .icon {
     font-size: 20px;
