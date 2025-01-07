@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { CiImport, CiExport, CiSearch } from "react-icons/ci";
+import useExport from "../../hooks/useExport";
+import style from "./logs.module.css";
 
 const Logs = () => {
   const [logs, setLogs] = useState([]);
@@ -8,12 +11,19 @@ const Logs = () => {
 
   const token = localStorage.getItem("authenticationToken");
 
+  const { exportToExcel } = useExport();
+
+
+  const handleExport = () => {
+      exportToExcel(logs, "Registros"); // Pasar 'logs' y el nombre de archivo al hook
+    };
+
   useEffect(() => {
     const fetchLogs = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:8000/logs/', {
+        const response = await fetch("http://localhost:8000/logs/", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -28,15 +38,17 @@ const Logs = () => {
           setLogs(data.data.logs);
           //Obtener las claves de la propiedad log
           if (data.data.logs.length > 0) {
-              setLogKeys(Object.keys(data.data.logs[0]));
+            setLogKeys(Object.keys(data.data.logs[0]));
           }
         } else {
           //si la estructura no es la esperada, lanzamos un error
-          throw new Error(`Error de estructura en respuesta API ${JSON.stringify(data)}`);
+          throw new Error(
+            `Error de estructura en respuesta API ${JSON.stringify(data)}`
+          );
         }
       } catch (error) {
         setError(`Error fetching logs: ${error.message}`);
-        console.error('Error fetching logs:', error);
+        console.error("Error fetching logs:", error);
       } finally {
         setLoading(false);
       }
@@ -44,36 +56,49 @@ const Logs = () => {
     fetchLogs();
   }, [token]);
 
-    if (loading) {
-        return <p>Cargando registros...</p>;
-    }
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
-
+  if (loading) {
+    return <p>Cargando registros...</p>;
+  }
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
-      <div>
-      <h1>Logs</h1>
-      <table>
-          <thead>
-              <tr>
-              {logKeys.map((key) => (
-                  <th key={key}>{key}</th>
-              ))}
-              </tr>
-          </thead>
-          <tbody>
-              {logs.map((log) => (
-              <tr key={log.id}>
-                  {logKeys.map((key) => (
-                      <td key={`${log.id}-${key}`}>{log[key] != null ? log[key].toString() : "null"}</td>
-                  ))}
-              </tr>
-              ))}
-          </tbody>
-      </table>
+    <div className={style.container}>
+      <div className={style.containerMain}>
+        <h1 className={style.tittle}>Logs</h1>
+        <button className={style.btnImport}>
+          <CiImport className={style.icon} /> Importar
+        </button>
+        <button className={style.btnExport} onClick={handleExport}>
+          <CiExport className={style.icon} /> Exportar
+        </button>
       </div>
+      <table className={`${style.table} ${style.customTable}`}>
+        <thead>
+          <tr>
+            <th>Detalles</th>
+            <th>ID Usuario</th>
+            <th>Evento</th>
+            <th>Num/Reg</th>
+            <th>Tipo</th>
+            <th>IP</th>
+            <th className={style.contBtns}>Marca de tiempo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.map((log) => (
+            <tr key={log.id}>
+              {logKeys.map((key) => (
+                <td key={`${log.id}-${key}`}>
+                  {log[key] != null ? log[key].toString() : "null"}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
