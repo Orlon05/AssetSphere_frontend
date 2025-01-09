@@ -2,35 +2,35 @@ import React from 'react';
 import Chart from 'react-apexcharts';
 import styles from './donutChart.module.css';
 
-const DonutChart = ({ data, labels, title }) => {
+const DonutChart = ({ data, labels, title, totalServers }) => {
     const chartOptions = {
         chart: {
             type: 'donut',
             toolbar: {
-                show: false // Ocultar la barra de herramientas
-              }
+                show: false
+            }
         },
         labels: labels,
         responsive: [{
             breakpoint: 480,
             options: {
-              chart: {
-                width: 200
-              },
-              legend: {
-                position: 'bottom'
-              }
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
             }
-          }],
+        }],
         legend: {
-            position: 'bottom', // Mover la leyenda abajo
+            position: 'bottom',
             horizontalAlign: 'center'
-          },
+        },
         tooltip: {
             y: {
-              formatter: function(val) {
-                return val + " Servidores"
-              }
+                formatter: function(val) {
+                    return val + " Servidores"
+                }
             }
         },
         plotOptions: {
@@ -40,48 +40,45 @@ const DonutChart = ({ data, labels, title }) => {
                     labels: {
                         show: true,
                         name: {
-                          show: true,
-                          offsetY: 20, // Ajustar el espacio para el nombre
-                          formatter: function (val) {
-                            return val // Mantener el valor de labels
-                          }
-                        },
-                        value: {
-                          show: true,
-                            offsetY: -20, // Ajustar el espacio para el valor
-                          formatter: function (val) {
-                              return val + " Servidores"
+                            show: true,
+                            offsetY: 20,
+                            formatter: function (val) {
+                                return val
                             }
                         },
-                         total: {
-                             show: true,
-                             showAlways: true,
-                             label: 'Total',
-                             formatter: (w) => {
-                                 const sum = w.globals.seriesTotals.reduce((a, b) => {
-                                     return a + b
-                                 }, 0)
-                                 return `${sum} Servidores`
-                             }
-                         }
+                        value: {
+                            show: true,
+                            offsetY: -20,
+                            formatter: function (val) {
+                                return val + " Servidores"
+                            }
+                        },
+                        total: {
+                            show: true,
+                            showAlways: true,
+                            label: 'Total',
+                            formatter: () => {
+                                return `${totalServers} Servidores`;
+                            }
+                        }
                     }
                 }
             }
         },
         dataLabels: {
-          enabled: true, 
+            enabled: true,
         },
     };
 
     const chartSeries = data;
 
     return (
-      <div className={styles.donutChartContainer}>
-        <h2 className={styles.titulo}>{title}</h2>
-        <div className={styles.chartWrapper}>
-          <Chart options={chartOptions} series={chartSeries} type="donut" />
+        <div className={styles.donutChartContainer}>
+            <h2 className={styles.titulo}>{title}</h2>
+            <div className={styles.chartWrapper}>
+                <Chart options={chartOptions} series={chartSeries} type="donut" />
+            </div>
         </div>
-      </div>
     );
 };
 

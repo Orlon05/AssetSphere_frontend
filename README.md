@@ -94,10 +94,10 @@ El proyecto sigue una arquitectura basada en componentes, con separación clara 
 
 ## Características principales
 - [x] 🔒 Autenticación JWT
-- [ ] 🔎 Consulta de servidores
-- [ ] ➕ Agregar nuevos servidores
-- [ ]  ✏️ Actualizar información
-- [ ]  ⛔ Eliminar servidores del inventario
+- [x] 🔎 Consulta de servidores
+- [x] ➕ Agregar nuevos servidores
+- [x] ✏️ Actualizar información
+- [x] ⛔ Eliminar servidores del inventario
 - [x] 👮 Registro de las acciones de los usuarios
 
 ## Instalación
