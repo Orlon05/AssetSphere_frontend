@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import style from "./usuarios.module.css";
 import { FiUsers } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
+import { FaFileAlt } from 'react-icons/fa';
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
@@ -68,7 +69,7 @@ const Usuarios = () => {
           <FiUsers /> Lista de Usuarios
         </h1>
         <button className={style.btnIrLogs} onClick={irLogs}>
-          <IoIosAdd className={style.icon} /> Logs
+          <FaFileAlt className={style.icon} /> Logs
         </button>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear
