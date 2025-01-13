@@ -7,6 +7,8 @@ import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
+import { BsDatabase } from 'react-icons/bs';
+import { BsCloudUpload } from 'react-icons/bs';
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 
@@ -68,6 +70,17 @@ const Sidebar = ({ isOpen }) => {
             >
               <VscServerEnvironment className={Style.icon} />
               Sucursales
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="#"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <BsCloudUpload className={Style.icon} />
+              Storage
             </NavLink>
           </li>
           <li>

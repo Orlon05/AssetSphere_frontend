@@ -1,35 +1,40 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-const useSearch = (initialSearch = "") => {
-  const [searchValue, setSearchValue] = useState(initialSearch);
-  const [isSearching, setIsSearching] = useState(false);
+const useSearch = (unfilteredServers, fetchSearch) => {
+  const [searchValue, setSearchValue] = useState("");
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
-  const searchInputRef = useRef(null);
+    useEffect(() => {
+    if (isSearchButtonClicked) {
+       if (searchValue.trim() === "") {
+          fetchSearch("", 1, 10);
+        } else {
+          fetchSearch(searchValue,1,10);
+
+        }
+      setIsSearchButtonClicked(false);
+    }
+    }, [isSearchButtonClicked, searchValue, unfilteredServers, fetchSearch]);
+
+
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
-    searchInputRef.current?.focus();
   };
 
   const handleSearchButtonClick = () => {
-    setIsSearchButtonClicked(true);
+    setIsSearchButtonClicked(true); // Activa la busqueda
   };
 
-  const clearSearch = () => {
-     setSearchValue("");
-     setIsSearchButtonClicked(true);
-   }
-
+    const filteredServers = (servers) => {
+        return servers.filter((server) =>
+        server.name.toLowerCase().includes(searchValue.toLowerCase())
+        );
+    }
   return {
     searchValue,
     handleSearchChange,
     handleSearchButtonClick,
-    isSearching,
-    setIsSearching,
-    isSearchButtonClicked,
-    setIsSearchButtonClicked,
-    searchInputRef,
-    clearSearch
+    filteredServers,
   };
 };
 

@@ -11,6 +11,7 @@ import { saveAs } from "file-saver";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
+import useExport from "../../hooks/useExport";
 
 const ServidoresFisicos = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -23,6 +24,8 @@ const ServidoresFisicos = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedServers, setSelectedServers] = useState(new Set());
   const navigate = useNavigate();
+  const { exportToExcel } = useExport();
+
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -163,28 +166,10 @@ const ServidoresFisicos = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
-  const handleExport = () => {
-    try {
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(servers);
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Servidores");
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
-      });
-      const data = new Blob([excelBuffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      saveAs(data, "servidores_fisicos.xlsx");
-    } catch (error) {
-      console.error("Error al exportar:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al exportar",
-        text: error.message,
-      });
-    }
+   const handleExport = () => {
+    exportToExcel(servers, "servidores_fisicos");//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
+
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     searchInputRef.current.focus();

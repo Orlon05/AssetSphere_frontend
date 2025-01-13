@@ -8,15 +8,12 @@ const Logs = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [logKeys, setLogKeys] = useState([]);
-
   const token = localStorage.getItem("authenticationToken");
-
   const { exportToExcel } = useExport();
 
-
   const handleExport = () => {
-      exportToExcel(logs, "Registros"); // Pasar 'logs' y el nombre de archivo al hook
-    };
+    exportToExcel(logs, "Registros"); // Pasar 'logs' y el nombre de archivo al hook
+  };
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -77,23 +74,26 @@ const Logs = () => {
       <table className={`${style.table} ${style.customTable}`}>
         <thead>
           <tr>
+            <th>Num/Reg</th>
             <th>Detalles</th>
             <th>ID Usuario</th>
             <th>Evento</th>
-            <th>Num/Reg</th>
             <th>Tipo</th>
             <th>IP</th>
             <th className={style.contBtns}>Marca de tiempo</th>
           </tr>
         </thead>
         <tbody>
-          {logs.map((log) => (
+          {logs.map((log, index) => (
             <tr key={log.id}>
-              {logKeys.map((key) => (
-                <td key={`${log.id}-${key}`}>
-                  {log[key] != null ? log[key].toString() : "null"}
-                </td>
-              ))}
+              <td>{index + 1}</td>
+              {/* Usamos log.detail en lugar de log.detalles */}
+              <td>{log.detail != null ? log.detail : "null"}</td>
+              <td>{log.user_id != null ? log.user_id : "null"}</td>
+              <td>{log.event != null ? log.event : "null"}</td>
+              <td>{log.type != null ? log.type : "null"}</td>
+              <td>{log.ip_address != null ? log.ip_address : "null"}</td>
+              <td>{log.timestamp != null ? log.timestamp : "null"}</td>
             </tr>
           ))}
         </tbody>
