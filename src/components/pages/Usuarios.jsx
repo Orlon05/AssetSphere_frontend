@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, } from "react";
 import style from "./usuarios.module.css";
 import { FiUsers } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Card from "../cards/card";
+import { useEffect, useState } from "react";
 import BarChart from "../charts/BarChart";
 import DonutChart from "../charts/DonutChart";
 import CardStatsServers from "../cards/CardStatsServers";

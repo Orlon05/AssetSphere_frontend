@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import styles from "./crearUsuario.module.css";
 import Swal from "sweetalert2";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const CrearUsuario = () => {
@@ -51,7 +51,7 @@ const CrearUsuario = () => {
       },
     });
   
-    // Función para mostrar un Toast de éxito después de crear una receta
+    // Función para mostrar un Toast de éxito después de crear un usuario
     const showSuccessToast = (roleName) => {
       Toast.fire({
         icon: "success",

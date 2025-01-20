@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import style from "./login.module.css";
 import PopupError from "../popups/PopupError";
 import Loader from "../layouts/Loader";

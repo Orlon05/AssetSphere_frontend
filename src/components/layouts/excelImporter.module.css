@@ -1,0 +1,52 @@
+/* excelImporter.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 15px;
+}
+
+.inputExcel{
+   padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.selectLine{
+     margin-bottom: 10px;
+}
+.tableContainer {
+     width: 100%;
+    overflow-x: auto; /* Para scroll horizontal si la tabla es muy ancha */
+    overflow-y:auto; /* Para scroll vertical si la tabla es muy alta */
+}
+.error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+th, td {
+    font-size: 0.8rem; /* Puedes ajustar el tamaño de la fuente */
+     white-space: nowrap; /* Evita que el texto se desborde y lo ponga en una sola linea*/
+    width: auto; /* Permite que la celda se ajuste al contenido */
+      max-width: 100%;
+}
+.tableContainer td > .form-control {
+    width: 100%;
+    box-sizing: border-box; /* para que el padding no aumente el ancho */
+    min-height: 2.5rem; /* Altura minima del input */
+     overflow: hidden;
+}
+
+.emptyCell {
+    background-color: #fac5c5; /* Un rojo claro para resaltar las celdas vacías */
+}
+.resizeHandle {
+  cursor: ew-resize;
+  padding: 0 2px;
+  margin-left: 2px;
+  border-left: 2px solid #ccc;
+  user-select: none;
+}

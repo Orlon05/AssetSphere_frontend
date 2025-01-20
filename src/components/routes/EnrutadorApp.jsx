@@ -1,4 +1,3 @@
-import React from "react";
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
 import Dashboard from "../pages/Dashboard";
@@ -10,6 +9,7 @@ import EditarServer from "../pages/EditarServidor";
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
+import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 
 export let EnrutadorApp = [
@@ -63,6 +63,10 @@ export let EnrutadorApp = [
       {
         path: "ver-logs",
         element: <Logs/>
+      },
+      {
+        path: "/editar-usuarios",
+        element: <EditarUsuario/>
       },
     ],
   },
