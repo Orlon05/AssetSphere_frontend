@@ -236,8 +236,35 @@ const ServidoresFisicos = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
+  const serverDataMapper = (server) => {
+    return {
+      "Nombre": server.name || "",
+      "Marca": server.brand || "",
+      "Modelo": server.model || "",
+      "Procesador": server.processor || "",
+      "Núcleos CPU": server.cpu_cores || "",
+      "RAM": server.ram || "",
+      "Tamaño Total Disco": server.total_disk_size || "",
+      "Sistema Operativo": server.os || "",
+      "Estado": server.status || "",
+      "Rol": server.role || "",
+      "Entorno": server.environment || "",
+      "Serial": server.serial || "",
+      "ID Rack": server.rack_id || "",
+      "Unidad": server.unit || "",
+      "Dirección IP": server.ip_address || "",
+      "Ciudad": server.city || "",
+      "Ubicación": server.location || "",
+      "Chasis": server.chassis || "",
+      "Tipo Rack": server.rack_asset_type || "",
+      "Propietario": server.owner || "",
+      "Comentarios": server.comments || "",
+      // Agrega aquí otros campos que necesites
+    };
+  };
+
    const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos");//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+    exportToExcel(servers, "servidores_fisicos", serverDataMapper);//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
 
   const handleSearchChange = (e) => {

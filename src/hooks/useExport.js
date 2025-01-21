@@ -3,11 +3,12 @@ import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 
 const useExport = () => {
-  const exportToExcel = (data, fileName) => {
+  const exportToExcel = (data, fileName, dataMapper) => {
     try {
+      const mappedData = dataMapper ? data.map(dataMapper) : data;
       const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(data); // Aquí usamos 'data'
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos'); // Un nombre genérico
+      const worksheet = XLSX.utils.json_to_sheet(mappedData);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
       const excelBuffer = XLSX.write(workbook, {
         bookType: 'xlsx',
         type: 'array',
