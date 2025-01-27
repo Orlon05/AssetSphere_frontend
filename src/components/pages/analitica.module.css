@@ -10,6 +10,8 @@
   }
 
   .analiticaContainer {
+    display: flex;
+  flex-direction: column;
     padding: 20px;
     width: 1076px;
     height: 900px;
@@ -25,6 +27,7 @@
 
   .graficos{
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 30px;
     margin-top: 30px;
@@ -40,3 +43,19 @@
     height: 400px;
   }
 
+
+ /* Media Query para pantallas más pequeñas */
+@media (max-width: 768px) {
+  /* Hacer que las cards se apilen */
+  .cards-container {
+    flex-direction: column;
+   }
+  /* Hacer que las cards ocupen todo el ancho*/
+  .card{
+      flex: 1 1 100%;
+  }
+/* Hacer que los gráficos ocupen todo el ancho */
+.barras, .donut {
+  flex: 1 1 100%;
+}
+}

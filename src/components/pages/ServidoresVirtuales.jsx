@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect,} from "react";
 import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
@@ -25,6 +25,7 @@ const ServidoresFisicos = () => {
   const { selectedItems, toggleSelectAll, toggleSelectItem, clearSelected } = useSelection();
   const { currentPage, rowsPerPage, handlePageChange, handleRowsPerPageChange, setCurrentPage } = usePagination();
   const [unfilteredServers, setUnfilteredServers] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [selectAll, setSelectAll] = useState(false);
 
    const fetchServers = async (page, limit, search = "") => {
@@ -119,7 +120,7 @@ const ServidoresFisicos = () => {
          <button className={style.btnEdit} onClick={() => handleEdit(item.id)}>
            <MdEdit />
          </button>
-         <DeleteButton onDelete={handleDeleteServer} itemId={item.id} />
+         <DeleteButton onDelete={handleEdit} itemId={item.id} />
         </div>,
     }
 

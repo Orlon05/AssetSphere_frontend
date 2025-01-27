@@ -1,16 +1,15 @@
-import React from "react";
 import Style from "./sidebar.module.css";
 import Logo from "./Logo";
-import { NavLink } from "react-router-dom";
+import { NavLink, navigate } from "react-router-dom";
 import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
-import { BsDatabase } from 'react-icons/bs';
 import { BsCloudUpload } from 'react-icons/bs';
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
+import PropTypes from 'prop-types';
 
 const Sidebar = ({ isOpen }) => {
   const { logout } = useAuth();
@@ -74,7 +73,7 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
-              to="#"
+              to="/storage"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links
               }
@@ -111,5 +110,9 @@ const Sidebar = ({ isOpen }) => {
     </div>
   );
 };
+Sidebar.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default Sidebar;
+

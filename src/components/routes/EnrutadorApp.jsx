@@ -11,6 +11,7 @@ import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
+import Storage from "../pages/Storage";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -67,6 +68,10 @@ export let EnrutadorApp = [
       {
         path: "/editar-usuarios",
         element: <EditarUsuario/>
+      },
+      {
+        path: "/storage",
+        element: <Storage/>
       },
     ],
   },
