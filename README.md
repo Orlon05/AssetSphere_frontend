@@ -118,6 +118,128 @@ npm run dev
 ## Contribuciones
 Si quieres contribuir en el desarrollo, por favor envia un **Pull Request**. Recuerda antes asegurarte que funcione correctamente en local, para intentar entre todos, tener un repositorio limpio y funcional.
 
+[Estructuración-Carpetas]:
+.
+├── public/                     # Archivos estáticos (imágenes, favicon, etc.)
+│   ├── imagenes/             # Aquí van las imágenes para uso general en la app.
+│   │   └── user.png          # Ejemplo de una imagen de usuario
+│   │
+│   └── vite.svg               # Imagen SVG utilizada por Vite (generalmente el logo)
+│
+├── src/                        # Código fuente de la aplicación
+│   ├── assets/                # Recursos generales (imágenes, logos, iconos).
+│   │   ├── react.svg            # Logo de React
+│   │   └── tcs_logo.png         # Logo específico de la app o la empresa
+│   │
+│   ├── components/             # Componentes de la interfaz de usuario.
+│   │   ├── buttons/             # Botones reutilizables y genéricos.
+│   │   │   └── DeleteButton.jsx # Botón específico para eliminar elementos.
+│   │   │
+│   │   ├── cards/              # Componentes de tipo "tarjeta" o "card"
+│   │   │   ├── card.jsx         # Componente genérico de tarjeta.
+│   │   │   ├── card.module.css   # Estilos para el componente Card
+│   │   │   ├── CardStatsServers.jsx # Tarjeta específica que muestra estadísticas de servidores
+│   │   │   ├── UserList.jsx       # Lista de usuarios.
+│   │   │   ├── userList.module.css   # Estilos para la lista de usuarios
+│   │   │   ├── UserListItem.jsx    # Componente individual de un ítem de la lista de usuarios.
+│   │   │   └── userListItem.module.css  # Estilos para el ítem de la lista de usuarios
+│   │   │
+│   │   ├── charts/             # Componentes para mostrar gráficos.
+│   │   │   ├── BarChart.jsx      # Gráfico de barras.
+│   │   │   ├── barChart.module.css   # Estilos para el gráfico de barras
+│   │   │   ├── DonutChart.jsx    # Gráfico de dona.
+│   │   │   └── donutChart.module.css  # Estilos para el gráfico de dona
+│   │   │
+│   │   ├── data/               # Componentes o archivos para manejar datos de prueba.
+│   │   │   │
+│   │   │   └── servidores.jsx    # Datos de ejemplo de servidores. *Considera mover esto a utils/mocks o services*
+│   │   │
+│   │   ├── forms/             # Componentes de formularios.
+│   │   │   ├── CrearUsuario.jsx # Formulario para crear un usuario.
+│   │   │   ├── crearUsuario.module.css  # Estilos para el formulario de crear usuario
+│   │   │   ├── EditarUsuario.jsx  # Formulario para editar un usuario.
+│   │   │   ├── Login.jsx        # Formulario de login.
+│   │   │   └── login.module.css  # Estilos para el formulario de login
+│   │   │
+│   │   ├── layouts/            # Componentes para definir la estructura de la app (header, sidebar, footer, etc)
+│   │   │   ├── ExcelImporter.jsx # Componente para importar datos de Excel
+│   │   │   ├── excelImporter.module.css # Estilos para el importador de Excel
+│   │   │   ├── Loader.jsx            # Componente de carga visual.
+│   │   │   ├── loader.module.css      # Estilos para el componente de carga
+│   │   │   ├── Logo.jsx              # Componente para el logo de la aplicación
+│   │   │   ├── logo.module.css        # Estilos para el componente logo
+│   │   │   ├── Navegacion.jsx        # Barra de navegación principal
+│   │   │   ├── navegacion.module.css   # Estilos para la barra de navegación
+│   │   │   ├── Sidebar.jsx           # Componente de la barra lateral de navegación.
+│   │   │   ├── sidebar.module.css   # Estilos para la barra lateral
+│   │   │   └── Table.jsx             # Tabla genérica reutilizable.
+│   │   │
+│   │   ├── pages/              # Componentes que representan las vistas o páginas de la aplicación
+│   │   │   ├── Analitica.jsx       # Página de análisis/dashboard principal.
+│   │   │   ├── analitica.module.css # Estilos para la página de analítica
+│   │   │   ├── CrearServidor.jsx     # Página para crear un servidor.
+│   │   │   ├── crearServidor.module.css # Estilos para crear un servidor
+│   │   │   ├── Dashboard.jsx         # Componente que orquesta/renderiza la vista de dashboard.
+│   │   │   ├── dashboard.module.css    # Estilos para el componente dashboard
+│   │   │   ├── EditarServidor.jsx    # Página para editar un servidor.
+│   │   │   ├── editarServidor.module.css # Estilos para editar un servidor
+│   │   │   ├── fisicos.module.css       # *Estilos para un componente que debería estar en su propia carpeta, como una "feature" o en pages/
+│   │   │
+│   │   │   ├── Logs.jsx              # Página para ver logs.
+│   │   │   ├── logs.module.css        # Estilos para la página de logs
+│   │   │   ├── ServidoresFisicos.jsx   # Página para listar servidores físicos.
+│   │   │   ├── ServidoresVirtuales.jsx # Página para listar servidores virtuales.
+│   │   │   ├── Storage.jsx            # Página para gestionar el storage.
+│   │   │   ├── Usuarios.jsx           # Página para gestionar usuarios.
+│   │   │   └── usuarios.module.css     # Estilos para la página de usuarios
+│   │   │
+│   │   ├── perfil/             # Componentes específicos de perfil de usuario.
+│   │   │   ├── Perfil.jsx        # Componente para mostrar/editar el perfil de un usuario.
+│   │   │   └── perfil.module.css  # Estilos para el perfil de usuario
+│   │   │
+│   │   ├── popups/             # Componentes de popups y notificaciones
+│   │   │   ├── PopupError.jsx      # Popup para mostrar errores.
+│   │   │   ├── popupError.module.css  # Estilos para el popup de errores.
+│   │   │   ├── SessionTimerNotification.jsx # Notificación de timer de sesión.
+│   │   │   └── sessionTimerNotification.module.css  # Estilos para la noti del timer
+│   │   │
+│   │   └── routes/             # Componentes relacionados con el enrutamiento
+│   │       ├── AuthContext.jsx    # Contexto para la autenticación. *Considera mover a contexts/*
+│   │       ├── EnrutadorApp.jsx    # Componente que define las rutas de la app.
+│   │       └── ProtectedRoute.jsx  # Componente para proteger las rutas.
+│   │
+│   ├── contexts/              # Contextos para manejar el estado global
+│   │   ├── AuthContext.js       # Contexto para la autenticación (debería ser .jsx si es un componente)
+│   │   ├── ThemeContext.js      # Contexto para el tema de la app
+│   │   └── index.js           # Exporta todos los contextos
+│   │
+│   ├── hooks/                 # Hooks personalizados
+│   │   ├── useFetch.js          # Hook para realizar peticiones HTTP
+│   │   ├── useForm.js           # Hook para manejar formularios
+│   │   └── index.js           # Exporta todos los hooks
+│   │
+│   ├── utils/                 # Funciones y utilidades generales
+│   │   ├── helpers.js         # Funciones de utilidad general (formatos, conversiones, etc)
+│   │   ├── constants.js       # Constantes globales.
+│   │   └── validations.js     # Lógica para validar datos.
+│   │
+│   ├── App.jsx               # Componente principal de la aplicación
+│   ├── index.css             # Estilos globales.
+│   └── main.jsx              # Punto de entrada de Vite
+│
+├── .eslintrc.json            # Configuración de ESLint
+├── .gitignore                # Archivos a ignorar en Git
+├── ejemplo.md                # Archivo MD adicional para información o documentación
+├── eslint.config.js          # Configuración de ESLint para un directorio y sus subdirectorios. *Considera usar un solo archivo de configuración 
+│
+├── index.html                # Punto de entrada HTML de la aplicación.
+├── inventario.sql            # Query de la DB (no es un archivo de front-end y debería estar en el backend/documentación).
+├── package-lock.json         # Dependencias adicionales (no tocar).
+├── package.json              # Dependencias del proyecto
+├── README.md                 # Documentación del proyecto.
+├── vite.config.js            # Configuración de Vite
+└── tsconfig.json             # Configuración de TypeScript (si aplica)
+
 ## Contacto
 
 **Jorge Eduardo Muñoz Quintero**\
