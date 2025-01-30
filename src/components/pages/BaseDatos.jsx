@@ -16,7 +16,7 @@ import ExcelImporter from "../layouts/ExcelImporter";
 
 const BaseDatos = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [servers, setServers] = useState([]);
+  const [base_datos, setBaseDatos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -126,7 +126,7 @@ const BaseDatos = () => {
   const selectedCount = selectedBaseDatos.size;
 
   const [showSearch, setShowSearch] = useState(true);
-  const [unfilteredServers, setUnfilteredServers] = useState([]);
+  const [unfilteredBaseDatos, setUnfilteredBaseDatos] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
@@ -136,15 +136,15 @@ const BaseDatos = () => {
   const irCrear = () => {
     navigate("/crear-servidores-f");
   };
-  const irEditar = (serverId) => {
-    navigate(`/editar/${serverId}/servidores`);
+  const irEditar = (BaseDatosId) => {
+    navigate(`/editar/${BaseDatosId}/servidores`);
   };
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener servidores:", error);
   };
   const token = localStorage.getItem("authenticationToken");
-  const fetchServers = async (page, limit, search = "") => {
+  const fetchBasesDatos = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
@@ -165,8 +165,8 @@ const BaseDatos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredServers(data.data.servers);
-        setServers(data.data.servers);
+        setUnfilteredBaseDatos(data.data.base_datos);
+        setBaseDatos(data.data.base_datos);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -190,7 +190,7 @@ const BaseDatos = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -205,7 +205,7 @@ const BaseDatos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setServers(data.data.servers);
+        setBaseDatos(data.data.base_datos);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -224,16 +224,16 @@ const BaseDatos = () => {
   };
 
   useEffect(() => {
-    fetchServers(currentPage, rowsPerPage);
+    fetchBasesDatos(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
-        setServers(unfilteredServers);
+        setBaseDatos(unfilteredBaseDatos);
         setTotalPages(
-          unfilteredServers.length > 0
-            ? Math.ceil(unfilteredServers.length / rowsPerPage)
+          unfilteredBaseDatos.length > 0
+            ? Math.ceil(unfilteredBaseDatos.length / rowsPerPage)
             : 0
         );
       } else {
@@ -242,7 +242,7 @@ const BaseDatos = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
+  }, [isSearchButtonClicked, searchValue, unfilteredBaseDatos, rowsPerPage]);
 
   const BaseDatosDataMapper = (base_datos) => {
     return {
@@ -296,26 +296,28 @@ const BaseDatos = () => {
     if (selectAll) {
       setSelectedBaseDatos(new Set());
     } else {
-        setSelectedBaseDatos(new Set(bases_datos.map((base_datos) => base_datos.id)));
+      setSelectedBaseDatos(
+        new Set(bases_datos.map((base_datos) => base_datos.id))
+      );
     }
   };
 
-  const toggleSelectBaseDatos = (serverId) => {
+  const toggleSelectBaseDatos = (BaseDatosId) => {
     const newSelectedBaseDatos = new Set(selectedBaseDatos);
-    if (newSelectedBaseDatos.has(serverId)) {
-      newSelectedBaseDatos.delete(serverId);
+    if (newSelectedBaseDatos.has(BaseDatosId)) {
+      newSelectedBaseDatos.delete(BaseDatosId);
     } else {
-      newSelectedBaseDatos.add(serverId);
+      newSelectedBaseDatos.add(BaseDatosId);
     }
     setSelectedBaseDatos(newSelectedBaseDatos);
   };
-  const filteredServers = servers.filter((server) =>
-    server.name.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredServers = base_datos.filter((BaseDatos) =>
+    BaseDatos.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const indexOfLastServer = currentPage * rowsPerPage;
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
-  const handleDeleteServer = async (serverId) => {
+  const handleDeleteServer = async (BaseDatosId) => {
     Swal.fire({
       title: "¿Estás seguro?",
       text: "¿Deseas eliminar esta base de datos?",
@@ -329,7 +331,7 @@ const BaseDatos = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/storage/delete/${Id}`,
+            `http://localhost:8000/base_datos/delete/${Id}`,
             {
               method: "DELETE",
               headers: {
@@ -366,7 +368,9 @@ const BaseDatos = () => {
               text: errorMessage,
             });
           } else {
-            setServers(servers.filter((server) => server.id !== serverId));
+            setBaseDatos(
+              base_datos.filter((BaseDatos) => BaseDatos.id !== BaseDatosId)
+            );
             showSuccessToast();
           }
         } catch (error) {
@@ -415,7 +419,7 @@ const BaseDatos = () => {
             <input
               className={style.searchInput}
               type="search"
-              placeholder="Buscar servidor..."
+              placeholder="Buscar base de datos..."
               value={searchValue}
               onChange={handleSearchChange}
               ref={searchInputRef}
@@ -432,7 +436,7 @@ const BaseDatos = () => {
           <span className={style.selectedCount}>
             <span>{selectedCount}</span>
             <span>
-              Servidor{selectedCount !== 1 ? "es" : ""} Seleccionado
+              Base de datos{selectedCount !== 1 ? "es" : ""} Seleccionada
               {selectedCount !== 1 ? "s" : ""}
             </span>
           </span>
@@ -447,8 +451,8 @@ const BaseDatos = () => {
                   type="checkbox"
                   className={style.customCheckbox}
                   checked={
-                    servers.length > 0 &&
-                    selectedBaseDatos.size === servers.length
+                    base_datos.length > 0 &&
+                    selectedBaseDatos.size === base_datos.length
                   }
                   onChange={toggleSelectAll}
                 />
@@ -461,52 +465,52 @@ const BaseDatos = () => {
             </tr>
           </thead>
           <tbody>
-            {servers.map((server) => (
+            {base_datos.map((BaseDatos) => (
               <tr
-                key={server.id}
+                key={BaseDatos.id}
                 className={
-                  selectedBaseDatos.has(server.id) ? style.selectedRow : ""
+                  selectedBaseDatos.has(BaseDatos.id) ? style.selectedRow : ""
                 }
               >
                 <td>
                   <input
                     type="checkbox"
                     className={style.customCheckbox}
-                    checked={selectedBaseDatos.has(server.id)}
-                    onChange={() => toggleSelectBaseDatos(server.id)}
+                    checked={selectedBaseDatos.has(BaseDatos.id)}
+                    onChange={() => toggleSelectBaseDatos(BaseDatos.id)}
                   />
                 </td>
-                <td>{server.name}</td>
+                <td>{BaseDatos.name}</td>
                 <td>
                   <div className={style.serverStatus}>
                     <span
                       className={
-                        server.status.toLowerCase() === "encendido"
+                        BaseDatos.status.toLowerCase() === "encendido"
                           ? style.online
-                          : server.status.toLowerCase() === "mantenimiento"
+                          : BaseDatos.status.toLowerCase() === "mantenimiento"
                           ? style.maintenance
                           : style.offline
                       }
                     ></span>
-                    {server.status}
+                    {BaseDatos.status}
                   </div>
                 </td>
-                <td>{server.serial}</td>
-                <td>{server.ip_address}</td>
+                <td>{BaseDatos.serial}</td>
+                <td>{BaseDatos.ip_address}</td>
                 <td>
                   <button className={style.btnVer} onClick={() => {}}>
                     <GrFormViewHide />
                   </button>
                   <button
                     className={style.btnEdit}
-                    onClick={() => irEditar(server.id)}
+                    onClick={() => irEditar(BaseDatos.id)}
                   >
                     <MdEdit />
                   </button>
                   <button
                     className={style.btnDelete}
                     onClick={() => {
-                      handleDeleteServer(server.id);
+                      handleDeleteServer(BaseDatos.id);
                     }}
                   >
                     <MdDelete />
