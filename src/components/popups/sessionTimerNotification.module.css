@@ -1,0 +1,50 @@
+:root{
+    --azul-celeste: #8AFFE6;
+    --azul-oscuro: #1B3F4B;
+    --azul-oscuro-intermedio: #3b5d68;
+    --azul-profundo:#0164f8;
+    --azul-profundo-oscuro:#0453c9;
+    --gris-claro: #CBCBCB;
+    --gris-oscuro:#6b6868;
+    --gris-oscuro-medio:#bbb8b8;
+    --azul-claro: #4E8AC4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+    --verde: #017e0c;
+    --verde-claro:#03b912;
+    --naranja:#f86605;
+    --naranja-claro:#c25106;
+    --rojo:#f70511;
+    --rojo-claro:#c5060f;
+  }
+  
+.notification {
+    position: fixed;
+    top: 20px;
+    margin-top: 35px;
+    left:30rem;
+    margin-left: 100px;
+    background-color:var(--negro);
+    color:var(--azul-celeste);
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 2px solid var(--azul-oscuro);
+
+    z-index: 9; 
+  }
+  
+  .notificationContent p {
+    margin: 0;
+    padding: 5px 0;
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }

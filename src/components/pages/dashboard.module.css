@@ -1,0 +1,59 @@
+:root {
+  --azul-celeste: #8affe6;
+  --azul-oscuro: #1b3f4b;
+  --azul-oscuro-intermedio: #3b5d68;
+  --gris-claro: #cbcbcb;
+  --gris-oscuro: #696868;
+  --azul-claro: #4e8ac4;
+  --azul-claro-intermedio: #6cb5fa;
+  --negro: #000000;
+  --blanco: #fff;
+  --blanco-oscuro:#F6F6F6;
+}
+
+body {
+  background: var(--blanco-oscuro);
+  margin: 0;
+}
+
+.panelControl {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  flex: 1;
+  flex-direction: row;
+  position: absolute;
+  justify-content: space-between;
+}
+
+/* Sidebar (se mantiene fijo) */
+.panelControl > Sidebar {
+  height: 100%;
+  position: fixed; /* Importante: Fija el sidebar a la viewport */
+  left: 0;
+}
+/* Contenido principal */
+.panelControl > section {
+  flex: 1; /* Ocupa el espacio restante */
+  height: 100%; /* Altura completa para que el scroll funcione correctamente */
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .panelControl {
+    flex-direction: column;
+    margin-left: 0;
+    width: 100%;
+  }
+  .panelControl {
+    height: auto;
+    padding: 10px;
+  }
+}

@@ -1,9 +1,17 @@
-import React, { Children } from "react";
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
-import Dashboard from "../layouts/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import Login from "../forms/Login";
 import ProtectedRoute from "./ProtectedRoute";
+import Analitica from "../pages/Analitica";
+import CrearServerF from "../pages/CrearServidor";
+import EditarServer from "../pages/EditarServidor";
+import Perfil from "../perfil/Perfil";
+import Usuarios from "../pages/Usuarios";
+import CrearUsuario from "../forms/CrearUsuario";
+import EditarUsuario from "../forms/EditarUsuario";
+import Logs from "../pages/Logs";
+import Storage from "../pages/Storage";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -20,7 +28,11 @@ export let EnrutadorApp = [
         <Dashboard />
       </ProtectedRoute>
     ),
-    Children: [
+    children: [
+      {
+        path: "analitica",
+        element: <Analitica />,
+      },
       {
         path: "servidoresf",
         element: <ServidoresF />,
@@ -28,6 +40,38 @@ export let EnrutadorApp = [
       {
         path: "servidoresv",
         element: <ServidoresV />,
+      },
+      {
+        path: "crear-servidores-f",
+        element: < CrearServerF />
+      },
+      {
+        path: "/editar/:serverId/servidores",
+        element: < EditarServer />
+      },
+      {
+        path: "perfil",
+        element: < Perfil />
+      },
+      {
+        path: "usuarios",
+        element: <Usuarios/>
+      },
+      {
+        path: "crear-usuarios",
+        element: <CrearUsuario/>
+      },
+      {
+        path: "ver-logs",
+        element: <Logs/>
+      },
+      {
+        path: "/editar-usuarios",
+        element: <EditarUsuario/>
+      },
+      {
+        path: "/storage",
+        element: <Storage/>
       },
     ],
   },

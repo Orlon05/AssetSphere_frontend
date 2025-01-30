@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&display=swap');
+:root{
+    --azul-celeste: #8AFFE6;
+    --azul-oscuro: #1B3F4B;
+    --azul-oscuro-intermedio: #3b5d68;
+    --gris-claro: #CBCBCB;
+    --azul-claro: #4E8AC4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+  }
+
+.logo {
+    display: flex; /* Utiliza flexbox para alinear los elementos */
+    align-items: center; /* Centra verticalmente los elementos */
+    justify-content: center;
+}
+
+.icon {
+    margin-right: 10px; /* Espacio entre el icono y el texto */
+    font-size: 24px; /* Ajusta el tamaño del icono según sea necesario */
+    color: var(--azul-celeste);
+    margin-bottom: 10px;
+}
+
+.text {
+    font-size: 30px; /* Ajusta el tamaño del texto según sea necesario */
+    color: var(--blanco);
+    font-family: 'Agdasima', sans-serif; 
+    
+}

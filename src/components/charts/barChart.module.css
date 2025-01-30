@@ -1,0 +1,22 @@
+:root{
+    --azul-celeste: #8AFFE6;
+    --azul-oscuro: #1B3F4B;
+    --azul-oscuro-intermedio: #3b5d68;
+    --gris-claro: #CBCBCB;
+    --azul-claro: #4E8AC4;
+    --azul-claro-intermedio: #6cb5fa;
+    --negro: #000000;
+    --blanco: #fff;
+  }
+
+.barChartContainer {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px var(--azul-oscuro);
+    height: 390px;
+    color: var(--azul-oscuro);
+  }
+
+  .titulo{
+    font-size: 1.5rem;
+  }

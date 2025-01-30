@@ -1,16 +1,16 @@
-import React, { Children } from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // Ajusta la ruta si es necesario
 
-const isAuthenticated = () => {
+const ProtectedRoute = ({ children }) => {
+    const { token } = useAuth();
 
-    const token = localStorage.getItem("authToken"); //Aqui pasamos el token que se genera en el login para proteger el resto del contenido
-    return token !== null; // y se verifica si existe//
 
-};
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
 
-const ProtectedRoute = ({ Children }) => { //declaramos la prop//
-    
-    return isAuthenticated() ? Children : <Navigate to= "/login" />; 
+    return children;
 };
 
 export default ProtectedRoute;
