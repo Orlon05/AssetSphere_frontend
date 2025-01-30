@@ -13,6 +13,8 @@ import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
+import React from "react";
+
 
 const BaseDatos = () => {
     const [searchValue, setSearchValue] = useState("");

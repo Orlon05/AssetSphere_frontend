@@ -74,6 +74,17 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
+              to="/BaseDatos"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <BsCloudUpload className={Style.icon} />
+              Base de datos
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to="/storage"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links

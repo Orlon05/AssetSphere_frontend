@@ -75,7 +75,7 @@ export let EnrutadorApp = [
         element: <Storage/>
       },
       {
-        path: "/BaseDatos",
+        path: "/DaseDatos",
         element: <BaseDatos/>
       }
     ],
