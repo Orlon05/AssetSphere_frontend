@@ -1,6 +1,6 @@
 import Style from "./sidebar.module.css";
 import Logo from "./Logo";
-import { NavLink, navigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // Importamos useNavigate para el error 
 import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 
 const Sidebar = ({ isOpen }) => {
   const { logout } = useAuth();
+  const navigate = useNavigate(); // Obtenemos la función navigate usando useNavigate
 
   const handleLogout = () => {
     Swal.fire({
@@ -27,7 +28,7 @@ const Sidebar = ({ isOpen }) => {
       if (result.isConfirmed) {
         localStorage.removeItem("autenticacionToken");
         logout();
-        navigate("/login");
+        navigate("/login"); // Usamos navigate para redireccionar
       }
     });
   };
@@ -99,7 +100,7 @@ const Sidebar = ({ isOpen }) => {
               onClick={handleLogout}
               className={({ isActive }) =>
                 isActive ? `${Style.btnLogout} active` : Style.links
-            }
+              }
             >
               <CiLogout className={Style.icon} />
               Cerrar sesión
@@ -110,9 +111,9 @@ const Sidebar = ({ isOpen }) => {
     </div>
   );
 };
+
 Sidebar.propTypes = {
   isOpen: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;
-
