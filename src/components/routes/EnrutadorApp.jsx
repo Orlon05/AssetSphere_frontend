@@ -13,6 +13,7 @@ import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
 import BaseDatos from "../pages/BaseDatos";
+import CrearStorage from "../pages/CrearStorage";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -73,6 +74,10 @@ export let EnrutadorApp = [
       {
         path: "/storage",
         element: <Storage/>
+      },
+      {
+        path: "/crear-storages-f",
+        element: <CrearStorage/>
       },
       {
         path: "/DaseDatos",

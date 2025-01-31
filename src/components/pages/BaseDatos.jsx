@@ -313,13 +313,13 @@ const BaseDatos = () => {
         }
         setSelectedBaseDatos(newSelectedBaseDatos);
     };
-    const filteredServers = base_datos.filter((BaseDatos) =>
+    const filteredBaseDatos = base_datos.filter((BaseDatos) =>
         BaseDatos.name.toLowerCase().includes(searchValue.toLowerCase())
     );
 
     const indexOfLastServer = currentPage * rowsPerPage;
     const indexOfFirstServer = indexOfLastServer - rowsPerPage;
-    const handleDeleteServer = async (BaseDatosId) => {
+    const handleDeleteBaseDatos = async (BaseDatosId) => {
         Swal.fire({
             title: "¿Estás seguro?",
             text: "¿Deseas eliminar esta base de datos?",
@@ -483,7 +483,7 @@ const BaseDatos = () => {
                                 </td>
                                 <td>{BaseDatos.name}</td>
                                 <td>
-                                    <div className={style.serverStatus}>
+                                    {/* <div className={style.serverStatus}>
                                         <span
                                             className={
                                                 BaseDatos.status.toLowerCase() === "encendido"
@@ -494,7 +494,7 @@ const BaseDatos = () => {
                                             }
                                         ></span>
                                         {BaseDatos.status}
-                                    </div>
+                                    </div> */}
                                 </td>
                                 <td>{BaseDatos.serial}</td>
                                 <td>{BaseDatos.ip_address}</td>
@@ -511,7 +511,7 @@ const BaseDatos = () => {
                                     <button
                                         className={style.btnDelete}
                                         onClick={() => {
-                                            handleDeleteServer(BaseDatos.id);
+                                            handleDeleteBaseDatos(BaseDatos.id);
                                         }}
                                     >
                                         <MdDelete />
@@ -548,8 +548,8 @@ const BaseDatos = () => {
                                 >
                                     <span>{`${indexOfFirstServer + 1}-${Math.min(
                                         indexOfLastServer,
-                                        filteredServers.length
-                                    )} de ${filteredServers.length}`}</span>
+                                        filteredBaseDatos.length
+                                    )} de ${filteredBaseDatos.length}`}</span>
                                 </div>
                             </td>
                             <td className={style.contFilDos} colSpan="3">

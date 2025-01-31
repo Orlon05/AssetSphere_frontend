@@ -1,14 +1,3 @@
-// const Storage = () => {
-//   return (
-//     <div>
-//       <h1>Storage</h1>
-//       <p>listo para usar</p>
-//     </div>
-//   );
-// };
-
-// export default Storage;
-
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { FaServer } from "react-icons/fa";
@@ -25,6 +14,7 @@ import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
+
 
 const Storage = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -64,8 +54,8 @@ const Storage = () => {
           { name: "name", required: true, type: "string" },
           { name: "application_code", required: true, type: "string" },
           { name: "cost_center", required: false, type: "string" },
-          { name: "active", required: false, type: "integer" },
-          { name: "category", required: false, type: "integer" },
+          { name: "active", required: false, type: "string" },
+          { name: "category", required: false, type: "string" },
           { name: "type", required: false, type: "string" },
           { name: "item", required: true, type: "string" },
           { name: "company", required: true, type: "string" },
@@ -150,7 +140,7 @@ const Storage = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/storages/get_all?page=${page}&limit=${limit}&name=${search}`,
+        `http://localhost:8000/storage/get_all?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -190,7 +180,7 @@ const Storage = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/storages/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/storage/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -321,7 +311,7 @@ const Storage = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/storages/delete/${storageId}`,
+            `http://localhost:8000/storage/delete/${storageId}`,
             {
               method: "DELETE",
               headers: {
@@ -447,7 +437,7 @@ const Storage = () => {
                 />
                 {/* Modificar hacia abajo */}
               </th>
-              <th>Servidor</th>
+              <th>Almacenamiento</th>
               <th>Estado</th>
               <th>Serial</th>
               <th>IP</th>
@@ -472,7 +462,7 @@ const Storage = () => {
                 </td>
                 <td>{storage.name}</td>
                 <td>
-                  <div className={style.serverStatus}>
+                  {/* <div className={style.serverStatus}>
                     <span
                       className={
                         storage.status.toLowerCase() === "encendido"
@@ -483,7 +473,7 @@ const Storage = () => {
                       }
                     ></span>
                     {storage.status}
-                  </div>
+                  </div> */}
                 </td>
                 <td>{storage.serial}</td>
                 <td>{storage.ip_address}</td>
