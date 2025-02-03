@@ -14,6 +14,7 @@ import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
 import BaseDatos from "../pages/BaseDatos";
 import CrearStorage from "../pages/CrearStorage";
+import EditarStorage from "../pages/EditarStorage";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -80,7 +81,11 @@ export let EnrutadorApp = [
         element: <CrearStorage/>
       },
       {
-        path: "/DaseDatos",
+        path: "/editar/:storageId/storages",
+        element: < EditarStorage />
+      },
+      {
+        path: "/BaseDatos",
         element: <BaseDatos/>
       }
     ],

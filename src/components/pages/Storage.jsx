@@ -7,14 +7,13 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
-
 
 const Storage = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -32,13 +31,13 @@ const Storage = () => {
   //USO DEL IMPORT
   const handleImport = () => {
     Swal.fire({
-      title: 'Importar desde Excel',
+      title: "Importar desde Excel",
       html: '<div id="excel-importer-container"></div>',
       showConfirmButton: false,
       showCancelButton: true,
       cancelButtonText: "Cancelar",
-      width: '80%',
-      height: '80%',
+      width: "80%",
+      height: "80%",
       /*
      customClass: {
         container: 'swal-custom-container',
@@ -69,21 +68,24 @@ const Storage = () => {
           { name: "org_maintenance", required: true, type: "string" },
           { name: "ip_address", required: false, type: "string" },
           { name: "disk_size", required: false, type: "string" },
-          { name: "location", required: false, type: "string" }
-        ]
-        const importer = <ExcelImporter onImportComplete={handleImportComplete} tableMetadata={tableMetadata} />;
+          { name: "location", required: false, type: "string" },
+        ];
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleImportComplete}
+            tableMetadata={tableMetadata}
+          />
+        );
         if (container) {
-
-          const root = createRoot(container)
-          root.render(importer)
+          const root = createRoot(container);
+          root.render(importer);
         }
       },
       willClose: () => {
         const container = document.getElementById("excel-importer-container");
         if (container) {
-
-          const root = createRoot(container)
-          root.unmount()
+          const root = createRoot(container);
+          root.unmount();
         }
       },
     });
@@ -111,7 +113,7 @@ const Storage = () => {
   const handleImportComplete = (importedData) => {
     console.log("datos importados:", importedData); // Aqui tendrias tu data
     Swal.close();
-  }
+  };
 
   const selectedCount = selectedStorages.size;
 
@@ -236,32 +238,32 @@ const Storage = () => {
 
   const StorageDataMapper = (storage) => {
     return {
-      "cod_item_configuracion": storage.cod_item_configuracion || "",
-      "name": storage.name || "",
-      "application_code": storage.application_code || "",
-      "cost_center": storage.cost_center || "",
-      "active": storage.active || "",
-      "category": storage.category || "",
-      "type": storage.type || "",
-      "item": storage.item || "",
-      "company": storage.company || "",
-      "organization_responsible": storage.organization_responsible || "",
-      "host_name": storage.host_name || "",
-      "manufacturer": storage.manufacturer || "",
-      "status": storage.status || "",
-      "owner": storage.owner || "",
-      "model": storage.model || "",
-      "serial": storage.serial || "",
-      "org_maintenance": storage.org_maintenance || "",
-      "ip_address": storage.ip_address || "",
-      "disk_size": storage.disk_size || "",
-      "location": storage.location || "",
+      cod_item_configuracion: storage.cod_item_configuracion || "",
+      name: storage.name || "",
+      application_code: storage.application_code || "",
+      cost_center: storage.cost_center || "",
+      active: storage.active || "",
+      category: storage.category || "",
+      type: storage.type || "",
+      item: storage.item || "",
+      company: storage.company || "",
+      organization_responsible: storage.organization_responsible || "",
+      host_name: storage.host_name || "",
+      manufacturer: storage.manufacturer || "",
+      status: storage.status || "",
+      owner: storage.owner || "",
+      model: storage.model || "",
+      serial: storage.serial || "",
+      org_maintenance: storage.org_maintenance || "",
+      ip_address: storage.ip_address || "",
+      disk_size: storage.disk_size || "",
+      location: storage.location || "",
       // Agrega aquí otros campos que necesites
     };
   };
 
   const handleExport = () => {
-    exportToExcel(storages, "storages", StorageDataMapper);//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+    exportToExcel(storages, "storages", StorageDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
 
   const handleSearchChange = (e) => {
@@ -336,13 +338,11 @@ const Storage = () => {
               } else if (errorData && errorData.message) {
                 errorMessage = errorData.message;
               }
-
             } catch (errorParse) {
               console.error("Error parsing error response:", errorParse);
               errorMessage = `Error al procesar la respuesta del servidor.`;
               handleError(errorParse);
             }
-
 
             Swal.fire({
               icon: "error",
@@ -461,20 +461,7 @@ const Storage = () => {
                   />
                 </td>
                 <td>{storage.name}</td>
-                <td>
-                  {/* <div className={style.serverStatus}>
-                    <span
-                      className={
-                        storage.status.toLowerCase() === "encendido"
-                          ? style.online
-                          : storage.status.toLowerCase() === "mantenimiento"
-                            ? style.maintenance
-                            : style.offline
-                      }
-                    ></span>
-                    {storage.status}
-                  </div> */}
-                </td>
+                <td>{storage.status}</td>
                 <td>{storage.serial}</td>
                 <td>{storage.ip_address}</td>
                 <td>
