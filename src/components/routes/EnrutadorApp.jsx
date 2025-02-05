@@ -14,6 +14,7 @@ import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
 import BaseDatos from "../pages/BaseDatos";
 import CrearStorage from "../pages/CrearStorage";
+import CrearBaseDatos from "../pages/CrearBaseDatos";
 import EditarStorage from "../pages/EditarStorage";
 
 export let EnrutadorApp = [
@@ -85,9 +86,13 @@ export let EnrutadorApp = [
         element: < EditarStorage />
       },
       {
-        path: "/BaseDatos",
+        path: "/Base-De-Datos",
         element: <BaseDatos/>
-      }
+      },
+      {
+        path: "/crear-base-de-datos",
+        element: <CrearBaseDatos/>
+      },
     ],
   },
 ];

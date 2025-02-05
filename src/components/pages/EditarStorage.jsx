@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import styles from "./editarServidor.module.css";
+import styles from "./editarStorage.module.css";
 
 const EditarStorage = () => {
     const [cod_item_configuracion, setCodItemConfiguracion] = useState("");
@@ -159,31 +159,32 @@ const EditarStorage = () => {
                 const data = await response.json();
                 // console.log("Datos recibidos:", data);
                 // Actualiza los estados con los datos recibidos
-                if (data.status === "success" && data.data && data.data.storage_info) {
-                    setCodItemConfiguracion(data.data.storage_info.cod_item_configuracion || "");
-                    setName(data.data.storage_info.name || "");
-                    setApplicationCode(data.data.storage_info.application_code || "");
-                    setCostCenter(data.data.storage_info.cost_center || "");
-                    setActive(data.data.storage_info.active || "");
-                    setCategory(data.data.storage_info.category || "");
-                    setType(data.data.storage_info.type || "");
-                    setItem(data.data.storage_info.item || "");
-                    setCompany(data.data.storage_info.company || "");
-                    setOrganizationResponsible(data.data.storage_info.organization_responsible || "");
-                    setHostName(data.data.storage_info.host_name || "");
-                    setManufacturer(data.data.storage_info.manufacturer || "");
-                    setStatus(data.data.storage_info.status || "");
-                    setOwner(data.data.storage_info.owner || "");
-                    setModel(data.data.storage_info.model || "");
-                    setSerial(data.data.storage_info.serial || "");
-                    setOrgMaintenance(data.data.storage_info.org_maintenance || "");
-                    setIpAddress(data.data.storage_info.ip_address || "");
-                    setDiskSize(data.data.storage_info.disk_size || "");
-                    setLocation(data.data.storage_info.location || "");
+                if (data.status === "success" && data.data) {
+                    setCodItemConfiguracion(data.data.cod_item_configuracion || "");
+                    setName(data.data.name || "");
+                    setApplicationCode(data.data.application_code || "");
+                    setCostCenter(data.data.cost_center || "");
+                    setActive(data.data.active || "");
+                    setCategory(data.data.category || "");
+                    setType(data.data.type || "");
+                    setItem(data.data.item || "");
+                    setCompany(data.data.company || "");
+                    setOrganizationResponsible(data.data.organization_responsible || "");
+                    setHostName(data.data.host_name || "");
+                    setManufacturer(data.data.manufacturer || "");
+                    setStatus(data.data.status || "");
+                    setOwner(data.data.owner || "");
+                    setModel(data.data.model || "");
+                    setSerial(data.data.serial || "");
+                    setOrgMaintenance(data.data.org_maintenance || "");
+                    setIpAddress(data.data.ip_address || "");
+                    setDiskSize(data.data.disk_size || "");
+                    setLocation(data.data.location || "");
                 } else {
                     console.error("Estructura de datos inesperada:", data);
                     setError("Estructura de datos inesperada del storage");
                 }
+                
                 console.error("Error en fetchStorageData:", error);
             } finally {
                 setLoading(false);
@@ -272,7 +273,7 @@ const EditarStorage = () => {
                 }
             } else {
                 showSuccessToast();
-                navigate("/storagesf");
+                navigate("/storage");
             }
         } catch (error) {
             console.error("Error inesperado:", error);
@@ -337,7 +338,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el Application Code
+                                Application Code
                             </option>
                             {application_code_.map((application_code) => (
                                 <option key={application_code} value={application_code}>
@@ -358,7 +359,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el centro de costos
+                                Cost Center
                             </option>
                             {cost_center_.map((cost_center) => (
                                 <option key={cost_center} value={cost_center}>
@@ -377,7 +378,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el activo
+                                Active
                             </option>
                             {active_.map((active) => (
                                 <option key={active} value={active}>
@@ -396,7 +397,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona la categoría
+                                Category
                             </option>
                             {category_.map((category) => (
                                 <option key={category} value={category}>
@@ -417,7 +418,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el tipo
+                                Type
                             </option>
                             {type_.map((type) => (
                                 <option key={type} value={type}>
@@ -436,7 +437,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el item
+                                Item
                             </option>
                             {item_.map((item) => (
                                 <option key={item} value={item}>
@@ -455,7 +456,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona la compañía
+                                Company
                             </option>
                             {company_.map((company) => (
                                 <option key={company} value={company}>
@@ -474,7 +475,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona la organización responsable
+                                 Organization responsible
                             </option>
                             {organization_responsible_.map((organization_responsible) => (
                                 <option key={organization_responsible} value={organization_responsible}>
@@ -524,7 +525,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el fabricante
+                            Manufacturer
                             </option>
                             {manufacturer_.map((manufacturer) => (
                                 <option key={manufacturer} value={manufacturer}>
@@ -543,7 +544,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el estado
+                                Status
                             </option>
                             {status_.map((status) => (
                                 <option key={status} value={status}>
@@ -564,7 +565,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el propietario
+                                Owner
                             </option>
                             {owner_.map((owner) => (
                                 <option key={owner} value={owner}>
@@ -583,7 +584,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el modelo
+                                Model
                             </option>
                             {model_.map((model) => (
                                 <option key={model} value={model}>
@@ -616,7 +617,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el OrgMantenimiento
+                                Org Maintenance
                             </option>
                             {org_maintenance_.map((org_maintenance) => (
                                 <option key={org_maintenance} value={org_maintenance}>
@@ -659,7 +660,7 @@ const EditarStorage = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona la ubicación
+                                Location
                             </option>
                             {location_.map((location) => (
                                 <option key={location} value={location}>

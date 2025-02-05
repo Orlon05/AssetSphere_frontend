@@ -189,7 +189,7 @@ const StorageForm = () => {
                 });
             } else {
                 showSuccessToast();
-                navigate("/servidoresf");
+                navigate("/storage");
             }
         } catch (error) {
             console.error("Error:", error); // Registra el error en la consola para depuración

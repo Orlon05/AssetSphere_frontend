@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-import { FaServer } from "react-icons/fa";
+import { FaDatabase } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
-import style from "./fisicos.module.css";
+import style from "./storage.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
@@ -238,26 +238,26 @@ const Storage = () => {
 
   const StorageDataMapper = (storage) => {
     return {
-      cod_item_configuracion: storage.cod_item_configuracion || "",
-      name: storage.name || "",
-      application_code: storage.application_code || "",
-      cost_center: storage.cost_center || "",
-      active: storage.active || "",
-      category: storage.category || "",
-      type: storage.type || "",
-      item: storage.item || "",
-      company: storage.company || "",
-      organization_responsible: storage.organization_responsible || "",
-      host_name: storage.host_name || "",
-      manufacturer: storage.manufacturer || "",
-      status: storage.status || "",
-      owner: storage.owner || "",
-      model: storage.model || "",
-      serial: storage.serial || "",
-      org_maintenance: storage.org_maintenance || "",
-      ip_address: storage.ip_address || "",
-      disk_size: storage.disk_size || "",
-      location: storage.location || "",
+      "CodItemConfiguracion": storage.cod_item_configuracion || "",
+      "Nombre": storage.name || "",
+      "ApplicationCode": storage.application_code || "",
+      "CostCenter": storage.cost_center || "",
+      "Activo": storage.active || "",
+      "Category": storage.category || "",
+      "Type": storage.type || "",
+      "Item": storage.item || "",
+      "Compañia": storage.company || "",
+      "OrganizacionResponsable": storage.organization_responsible || "",
+      "NombreHost": storage.host_name || "",
+      "Fabricante": storage.manufacturer || "",
+      "Estado": storage.status || "",
+      "Responsable": storage.owner || "",
+      "Modelo": storage.model || "",
+      "Serial": storage.serial || "",
+      "OrgMantenimiento": storage.org_maintenance || "",
+      "DireccionIP": storage.ip_address || "",
+      "CapacidadDiscoBytes": storage.disk_size || "",
+      "Sitio": storage.location || "",
       // Agrega aquí otros campos que necesites
     };
   };
@@ -377,7 +377,7 @@ const Storage = () => {
     <div className={style.container}>
       <div className={style.containerMain}>
         <h1 className={style.tittle}>
-          <FaServer /> Lista de Storages
+          <FaDatabase /> Lista de Storages
         </h1>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear
@@ -437,10 +437,10 @@ const Storage = () => {
                 />
                 {/* Modificar hacia abajo */}
               </th>
-              <th>Almacenamiento</th>
-              <th>Estado</th>
-              <th>Serial</th>
-              <th>IP</th>
+              <th>Nombre almacenamiento</th>
+              <th>Nombre del host</th>
+              <th>Modelo</th>
+              <th>Dirección IP</th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
@@ -461,8 +461,8 @@ const Storage = () => {
                   />
                 </td>
                 <td>{storage.name}</td>
-                <td>{storage.status}</td>
-                <td>{storage.serial}</td>
+                <td>{storage.host_name}</td>
+                <td>{storage.model}</td>
                 <td>{storage.ip_address}</td>
                 <td>
                   <button className={style.btnVer} onClick={() => { }}>

@@ -4,9 +4,10 @@ import { NavLink, useNavigate } from "react-router-dom"; // Importamos useNaviga
 import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
+import { FaDatabase } from "react-icons/fa";
+import { GiDatabase } from "react-icons/gi";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
-import { BsCloudUpload } from 'react-icons/bs';
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
@@ -74,12 +75,12 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
-              to="/BaseDatos"
+              to="/Base-De-Datos"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <BsCloudUpload className={Style.icon} />
+              <GiDatabase className={Style.icon} />
               Base de datos
             </NavLink>
           </li>
@@ -90,7 +91,7 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <BsCloudUpload className={Style.icon} />
+              <FaDatabase className={Style.icon} />
               Storage
             </NavLink>
           </li>
