@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./crearStorage.module.css";
+import styles from "./crearBaseDatos.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";

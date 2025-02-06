@@ -491,7 +491,7 @@ const EditarBaseDatos = () => {
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
             <h2 className={styles.tittle}>
-                <IoIosAdd />
+                <MdEdit />
                 Editar Base de Datos
             </h2>
             <div className={styles.container}>

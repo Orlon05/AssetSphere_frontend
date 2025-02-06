@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
-import style from "./fisicos.module.css";
+import style from "./baseDatos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
