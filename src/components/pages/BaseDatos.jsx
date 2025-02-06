@@ -137,7 +137,7 @@ const BaseDeDatos = () => {
         navigate("/crear-base-de-datos");
     };
     const irEditar = (baseDeDatosId) => {
-        navigate(`/editar/${baseDeDatosId}/storages`);
+        navigate(`/editar/${baseDeDatosId}/Base-De-Datos`);
     };
     const handleError = (error) => {
         setError(error);
@@ -246,34 +246,34 @@ const BaseDeDatos = () => {
 
     const BaseDeDatosMapper = (baseDeDatos) => {
         return {
-            instance_id: baseDeDatos.instance_id || "",
-            cost_center: baseDeDatos.cost_center || "",
-            category: baseDeDatos.category || "",
-            type: baseDeDatos.type || "",
-            item: baseDeDatos.item || "",
-            owner_contact: baseDeDatos.owner_contact || "",
-            name: baseDeDatos.name || "",
-            application_code: baseDeDatos.application_code || "",
-            inactive: baseDeDatos.inactive || "",
-            asset_life_cycle_status: baseDeDatos.asset_life_cycle_status || "",
-            system_environment: baseDeDatos.system_environment || "",
-            cloud: baseDeDatos.cloud || "",
-            version_number: baseDeDatos.version_number || "",
-            serial: baseDeDatos.serial || "",
-            ci_tag: baseDeDatos.ci_tag || "",
-            instance_name: baseDeDatos.instance_name || "",
-            model: baseDeDatos.model || "",
-            ha: baseDeDatos.ha || "",
-            port: baseDeDatos.port || "",
-            owner_name: baseDeDatos.owner_name || "",
-            department: baseDeDatos.department || "",
-            company: baseDeDatos.company || "",
-            manufacturer_name: baseDeDatos.manufacturer_name || "",
-            supplier_name: baseDeDatos.supplier_name || "",
-            supported: baseDeDatos.supported || "",
-            account_id: baseDeDatos.account_id || "",
-            create_date: baseDeDatos.create_date || "",
-            modified_date: baseDeDatos.modified_date || "",
+            "InstanceId": baseDeDatos.instance_id || "",
+            "Cost Center": baseDeDatos.cost_center || "",
+            "Category": baseDeDatos.category || "",
+            "Type": baseDeDatos.type || "",
+            "Item": baseDeDatos.item || "",
+            "OwnerContact": baseDeDatos.owner_contact || "",
+            "Name": baseDeDatos.name || "",
+            "ApplicationCode": baseDeDatos.application_code || "",
+            "Inactive": baseDeDatos.inactive || "",
+            "AssetLifecycleStatus": baseDeDatos.asset_life_cycle_status || "",
+            "SystemEnvironment": baseDeDatos.system_environment || "",
+            "isCloud": baseDeDatos.cloud || "",
+            "VersionNumber": baseDeDatos.version_number || "",
+            "SerialNumber": baseDeDatos.serial || "",
+            "CITag": baseDeDatos.ci_tag || "",
+            "InstanceName": baseDeDatos.instance_name || "",
+            "Model": baseDeDatos.model || "",
+            "HA": baseDeDatos.ha || "",
+            "Port": baseDeDatos.port || "",
+            "OwnerName": baseDeDatos.owner_name || "",
+            "Department": baseDeDatos.department || "",
+            "Company": baseDeDatos.company || "",
+            "ManufacturerName": baseDeDatos.manufacturer_name || "",
+            "Supplier Name+": baseDeDatos.supplier_name || "",
+            "Supported": baseDeDatos.supported || "",
+            "AccountID": baseDeDatos.account_id || "",
+            "CreateDate": baseDeDatos.create_date || "",
+            "ModifiedDate": baseDeDatos.modified_date || "",
 
         };
     };
