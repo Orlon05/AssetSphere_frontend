@@ -124,6 +124,14 @@ const EditarBaseDatos = () => {
         "No"
     ];
 
+    const model_ = [
+        "Database"
+    ];
+
+    const owner_name_ = [
+        "Carlos Arboleda"
+    ]
+
     const owner_contact_ = [
         "JAIRO MANUEL RAMIREZ", "HAROLD JORGE APOLINAR CRUZ", "JUAN CAMILOVALENZUELA CARRERO",
         "HENRY ACEROS SIERRA", "CDE PLATAFORMAS Y DISPONIBILIDAD TI LDC FC BASE DE DATOS TI SOPORTE DE BASES DE DATOS", "JOSE IGNACIOPINZON VALLESTEROS",
@@ -382,12 +390,12 @@ const EditarBaseDatos = () => {
         }
     }, [baseDatosId]);
 
-    useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
+    useEffect(() => { }, [instance_id, instance_id]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!cod_item_configuracion || !cod_item_configuracion || !name || !application_code) {
+        if (!instance_id || !instance_id || !name || !category) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos obligatorios",
@@ -547,8 +555,6 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
-                    <hr className={styles.lines} />
-
                     <div className={styles.formGroup}>
                         <select
                             id="type"
@@ -567,6 +573,8 @@ const EditarBaseDatos = () => {
                             ))}
                         </select>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -606,8 +614,6 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
-                    <hr className={styles.lines} />
-
                     <div className={styles.formGroup}>
                         <input
                             type="text"
@@ -639,6 +645,8 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
+                    <hr className={styles.lines} />
+
                     <div className={styles.formGroup}>
                         <select
                             id="inactive"
@@ -657,8 +665,6 @@ const EditarBaseDatos = () => {
                             ))}
                         </select>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -679,15 +685,8 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
-                    <button type="submit" className={styles.button}>
-                        Guardar
-                    </button>
-                </div>
-
-                {/*INICIO DE LA COLUMNA 2*/}
-                <div className={styles.columnDos}>
-
                     <div className={styles.formGroup}>
+
                         <select
                             id="system_environment"
                             name="system_environment"
@@ -725,6 +724,8 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
+                    <hr className={styles.lines} />
+
                     <div className={styles.formGroup}>
                         <select
                             id="version_number"
@@ -744,8 +745,6 @@ const EditarBaseDatos = () => {
                         </select>
                     </div>
 
-                    <hr className={styles.lines} />
-
                     <div className={styles.formGroup}>
                         <input
                             type="text"
@@ -758,6 +757,15 @@ const EditarBaseDatos = () => {
                         <div className={styles.label}>Serial*</div>
                     </div>
 
+
+                    <button type="submit" className={styles.button}>
+                        Guardar
+                    </button>
+                </div>
+
+                {/*INICIO DE LA COLUMNA 2*/}
+                <div className={styles.columnDos}>
+
                     <div className={styles.formGroup}>
                         <input
                             type="ci_tag"
@@ -769,6 +777,7 @@ const EditarBaseDatos = () => {
                         />
                         <div className={styles.label}>ci_tag*</div>
                     </div>
+
 
                     <div className={styles.formGroup}>
                         <input
@@ -832,6 +841,8 @@ const EditarBaseDatos = () => {
                         <div className={styles.label}>port*</div>
                     </div>
 
+                    <hr className={styles.lines} />
+
                     <div className={styles.formGroup}>
                         <select
                             id="owner_name"
@@ -850,8 +861,6 @@ const EditarBaseDatos = () => {
                             ))}
                         </select>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -949,6 +958,8 @@ const EditarBaseDatos = () => {
                             ))}
                         </select>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <input

@@ -12,10 +12,11 @@ import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
-import BaseDatos from "../pages/BaseDatos";
 import CrearStorage from "../pages/CrearStorage";
-import CrearBaseDatos from "../pages/CrearBaseDatos";
 import EditarStorage from "../pages/EditarStorage";
+import BaseDatos from "../pages/BaseDatos";
+import CrearBaseDatos from "../pages/CrearBaseDatos";
+import EditarBaseDatos from "../pages/EditarBaseDatos";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -92,6 +93,10 @@ export let EnrutadorApp = [
       {
         path: "/crear-base-de-datos",
         element: <CrearBaseDatos/>
+      },
+      {
+        path: "/editar/:baseDatosId/basedatos",
+        element: < EditarBaseDatos />
       },
     ],
   },

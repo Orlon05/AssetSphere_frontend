@@ -17,7 +17,7 @@ import React from "react";
 
 const BaseDeDatos = () => {
     const [searchValue, setSearchValue] = useState("");
-    const [basesDeDatos, setBasesDeDatos] = useState([]);
+    const [base_datos, setBasesDeDatos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -137,7 +137,7 @@ const BaseDeDatos = () => {
         navigate("/crear-base-de-datos");
     };
     const irEditar = (baseDeDatosId) => {
-        navigate(`/editar/${baseDeDatosId}/Base-De-Datos`);
+        navigate(`/editar/${baseDeDatosId}/basedatos`);
     };
     const handleError = (error) => {
         setError(error);
@@ -165,8 +165,8 @@ const BaseDeDatos = () => {
 
             const data = await response.json();
             if (data && data.status === "success" && data.data) {
-                setUnfilteredBasesDeDatos(data.data.basesDeDatos);
-                setBasesDeDatos(data.data.basesDeDatos);
+                setUnfilteredBasesDeDatos(data.data.base_datos);
+                setBasesDeDatos(data.data.base_datos);
                 setTotalPages(data.data.total_pages || 0);
             } else {
                 throw new Error("Respuesta inesperada de la API");
@@ -205,7 +205,7 @@ const BaseDeDatos = () => {
 
             const data = await response.json();
             if (data && data.status === "success" && data.data) {
-                setBasesDeDatos(data.data.basesDeDatos);
+                setBasesDeDatos(data.data.base_datos);
                 setTotalPages(data.data.total_pages || 0);
             } else {
                 throw new Error("Respuesta inesperada de la API");
@@ -279,7 +279,7 @@ const BaseDeDatos = () => {
     };
 
     const handleExport = () => {
-        exportToExcel(basesDeDatos, "baseDeDatos", BaseDeDatosMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+        exportToExcel(base_datos, "baseDeDatos", BaseDeDatosMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
     };
 
     const handleSearchChange = (e) => {
@@ -296,7 +296,7 @@ const BaseDeDatos = () => {
         if (selectAll) {
             setSelectedBasesDeDatos(new Set());
         } else {
-            setSelectedBasesDeDatos(new Set(basesDeDatos.map((baseDeDatos) => baseDeDatos.id)));
+            setSelectedBasesDeDatos(new Set(base_datos.map((baseDeDatos) => baseDeDatos.id)));
         }
     };
 
@@ -309,7 +309,7 @@ const BaseDeDatos = () => {
         }
         setSelectedBasesDeDatos(newSelectedBasesDeDatos);
     };
-    const filteredBasesDeDatos = basesDeDatos.filter((baseDeDatos) =>
+    const filteredBasesDeDatos = base_datos.filter((baseDeDatos) =>
         baseDeDatos.name.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -366,7 +366,7 @@ const BaseDeDatos = () => {
                             text: errorMessage,
                         });
                     } else {
-                        setBasesDeDatos(basesDeDatos.filter((baseDeDatos) => baseDeDatos.id !== baseDeDatosId));
+                        setBasesDeDatos(base_datos.filter((baseDeDatos) => baseDeDatos.id !== baseDeDatosId));
                         showSuccessToast();
                     }
                 } catch (error) {
@@ -446,8 +446,8 @@ const BaseDeDatos = () => {
                                     type="checkbox"
                                     className={style.customCheckbox}
                                     checked={
-                                        basesDeDatos.length > 0 &&
-                                        selectedBasesDeDatos.size === basesDeDatos.length
+                                        base_datos.length > 0 &&
+                                        selectedBasesDeDatos.size === base_datos.length
                                     }
                                     onChange={toggleSelectAll}
                                 />
@@ -461,7 +461,7 @@ const BaseDeDatos = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {basesDeDatos.map((baseDeDatos) => (
+                        {base_datos.map((baseDeDatos) => (
                             <tr
                                 key={baseDeDatos.id}
                                 className={
