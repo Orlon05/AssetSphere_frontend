@@ -13,9 +13,11 @@ import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
 import CrearStorage from "../pages/CrearStorage";
+import VerStorage from "../pages/VerStorage";
 import EditarStorage from "../pages/EditarStorage";
 import BaseDatos from "../pages/BaseDatos";
 import CrearBaseDatos from "../pages/CrearBaseDatos";
+import VerBaseDatos from "../pages/VerBaseDatos";
 import EditarBaseDatos from "../pages/EditarBaseDatos";
 
 export let EnrutadorApp = [
@@ -83,6 +85,10 @@ export let EnrutadorApp = [
         element: <CrearStorage/>
       },
       {
+        path: "/ver/:storageId/storages",
+        element: < VerStorage />
+      },
+      {
         path: "/editar/:storageId/storages",
         element: < EditarStorage />
       },
@@ -93,6 +99,10 @@ export let EnrutadorApp = [
       {
         path: "/crear-base-de-datos",
         element: <CrearBaseDatos/>
+      },
+      {
+        path: "/ver/:baseDatosId/basedatos",
+        element: < VerBaseDatos />
       },
       {
         path: "/editar/:baseDatosId/basedatos",

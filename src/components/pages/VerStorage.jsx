@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import styles from "./editarStorage.module.css";
+import { MdVisibility } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import styles from "./verStorage.module.css";
 
-const EditarStorage = () => {
+const VerStorage = () => {
     const [cod_item_configuracion, setCodItemConfiguracion] = useState("");
     const [name, setName] = useState("");
     const [application_code, setApplicationCode] = useState("");
@@ -28,25 +27,7 @@ const EditarStorage = () => {
     const [loading, setLoading] = useState(true); // Estado para indicar carga
     const [error, setError] = useState(null); // Estado para manejar errores
 
-    const navigate = useNavigate();
     const { storageId } = useParams();
-
-    // Crea la instancia de Toast
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        },
-    });
-
-    const showSuccessToast = () => {
-        Toast.fire({ icon: "success", title: "Storage actualizado exitosamente" });
-    };
 
     const application_code_ = [
         "AP0240001",
@@ -197,93 +178,6 @@ const EditarStorage = () => {
 
     useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        if (!cod_item_configuracion || !cod_item_configuracion || !name || !application_code) {
-            Swal.fire({
-                icon: "warning",
-                title: "Campos obligatorios",
-                text: "Por favor, completa todos los campos obligatorios.",
-            });
-            return;
-        }
-
-        const storageData = {
-            cod_item_configuracion: cod_item_configuracion,
-            name: name,
-            application_code: application_code,
-            cost_center: cost_center,
-            active: active,
-            category: category,
-            type: type,
-            item: item,
-            company: company,
-            organization_responsible: organization_responsible,
-            host_name: host_name,
-            manufacturer: manufacturer,
-            status: status,
-            owner: owner,
-            model: model,
-            serial: serial,
-            org_maintenance: org_maintenance,
-            ip_address: ip_address,
-            disk_size: disk_size,
-            location: location
-        };
-
-        console.log(
-            "Token de autenticación:",
-            localStorage.getItem("authenticationToken")
-        );
-        console.log("Datos a enviar:", storageData);
-
-        try {
-            const response = await fetch(
-                `http://localhost:8000/storage/edit/${storageId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(storageData),
-                }
-            );
-
-            console.log("Respuesta del servidor:", response);
-
-            if (!response.ok) {
-                let errorMessage = `Error HTTP ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    console.error("Detalles del error (JSON):", errorData);
-                    if (errorData && Array.isArray(errorData.detail)) {
-                        errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-                    } else if (errorData && errorData.message) {
-                        errorMessage = errorData.message;
-                    } else if (errorData) {
-                        errorMessage = JSON.stringify(errorData);
-                    }
-                    Swal.fire({ icon: "error", title: "Error", text: errorMessage });
-                } catch (jsonError) {
-                    console.error("Error al parsear JSON:", jsonError);
-                    Swal.fire({ icon: "error", title: "Error", text: errorMessage });
-                }
-            } else {
-                showSuccessToast();
-                navigate("/storage");
-            }
-        } catch (error) {
-            console.error("Error inesperado:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Ocurrió un error inesperado.",
-            });
-        }
-    };
-
     // Renderizado condicional: muestra un mensaje de carga o de error si es necesario
     if (loading) {
         return <div>Cargando datos del storage...</div>;
@@ -294,11 +188,11 @@ const EditarStorage = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form className={styles.form}>
             <div className={styles.containtTit}>
                 <h2 className={styles.tittle}>
-                    <MdEdit />
-                    Editar Storages
+                    <MdVisibility  />
+                    Ver Storages
                 </h2>
             </div>
             <div className={styles.container}>
@@ -343,6 +237,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
+                        
                         <div className={styles.labelSelect}>Application Code*</div>
                     </div>
 
@@ -475,10 +370,7 @@ const EditarStorage = () => {
                         </select>
                         <div className={styles.labelSelect}>Organization responsible*</div>
                     </div>
-
-                    <button type="submit" className={styles.button}>
-                        Guardar
-                    </button>
+                  
                 </div>
 
                 {/*INICIO DE LA COLUMNA 2*/}
@@ -649,4 +541,4 @@ const EditarStorage = () => {
     );
 };
 
-export default EditarStorage;
+export default VerStorage;

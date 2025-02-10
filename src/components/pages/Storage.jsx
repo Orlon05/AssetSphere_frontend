@@ -4,7 +4,7 @@ import { FaDatabase } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { GrFormViewHide } from "react-icons/gr";
+import { MdVisibility  } from "react-icons/md";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
@@ -127,6 +127,9 @@ const Storage = () => {
   }, [selectedCount]);
   const irCrear = () => {
     navigate("/crear-storages-f");
+  };
+  const irVer = (storageId) => {
+    navigate(`/ver/${storageId}/storages`);
   };
   const irEditar = (storageId) => {
     navigate(`/editar/${storageId}/storages`);
@@ -465,9 +468,12 @@ const Storage = () => {
                 <td>{storage.model}</td>
                 <td>{storage.ip_address}</td>
                 <td>
-                  <button className={style.btnVer} onClick={() => { }}>
-                    <GrFormViewHide />
+                  <button 
+                    className={style.btnVer}
+                     onClick={() => irVer(storage.id)}>
+                    <MdVisibility  />
                   </button>
+                 
                   <button
                     className={style.btnEdit}
                     onClick={() => irEditar(storage.id)}

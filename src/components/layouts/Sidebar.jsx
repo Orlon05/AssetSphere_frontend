@@ -91,7 +91,7 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <FaDatabase className={Style.icon} />
+              <FaDatabase  className={Style.icon} />
               Storage
             </NavLink>
           </li>

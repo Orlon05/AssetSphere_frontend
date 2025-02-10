@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import styles from "./crearBaseDatos.module.css";
-import { IoIosAdd } from "react-icons/io";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { MdVisibility  } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import styles from "./verBaseDatos.module.css";
 
-const BaseDatosForm = () => {
+const VerBaseDatos = () => {
     const [instance_id, setInstanceId] = useState("");
     const [cost_center, setCostCenter] = useState("");
     const [category, setCategory] = useState("");
@@ -33,28 +32,9 @@ const BaseDatosForm = () => {
     const [account_id, setAccountId] = useState("");
     const [create_date, setCreateDate] = useState("");
     const [modified_date, setModifiedDate] = useState("");
-    const navigate = useNavigate();
-
-    // Crea la instancia de Toast
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000, // Duración del Toast (3 segundos)
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        },
-    });
-
-    // Función para mostrar un Toast de éxito después de crear una receta
-    const showSuccessToast = () => {
-        Toast.fire({
-            icon: "success",
-            title: "Base de datos creada exitosamente",
-        });
-    };
+    const [loading, setLoading] = useState(true); // Estado para indicar carga
+    const [error, setError] = useState(null); // Estado para manejar errores
+    const { baseDatosId } = useParams();
 
     const cost_center_ = [
         "C100000100", "C103500093", "C103500110", "C103500057",
@@ -306,98 +286,104 @@ const BaseDatosForm = () => {
         "SQL SERVER 2000 (SP4) ENTERPRISE EDITION"
     ];
 
+    //
+    const token = localStorage.getItem("authenticationToken");
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    useEffect(() => {
+        const fetchBaseDatosData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/base_datos/get_by_id/${baseDatosId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "authenticationToken"
+                            )}`,
+                        },
+                    }
+                );
 
-        const baseDatosData = {
-            instance_id: instance_id,
-            cost_center: cost_center,
-            category: category,
-            type: type,
-            item: item,
-            owner_contact: owner_contact,
-            name: name,
-            application_code: application_code,
-            inactive: inactive,
-            asset_life_cycle_status: asset_life_cycle_status,
-            system_environment: system_environment,
-            cloud: cloud,
-            version_number: version_number,
-            serial: serial,
-            ci_tag: ci_tag,
-            instance_name: instance_name,
-            model: model,
-            ha: ha,
-            port: port,
-            owner_name: owner_name,
-            department: department,
-            company: company,
-            manufacturer_name: manufacturer_name,
-            supplier_name: supplier_name,
-            supported: supported,
-            account_id: account_id,
-            create_date: create_date,
-            modified_date: modified_date,
+                if (!response.ok) {
+                    const errorData = await response.json(); // Intenta leer la respuesta en caso de error
+                    console.error("Error al obtener datos de la base de datos:", errorData); // Logs para depuración
+                    if (response.status === 404) {
+                        throw new Error("Base de datos no encontrada");
+                    } else if (response.status === 401) {
+                        throw new Error("No autorizado");
+                    } else {
+                        throw new Error(
+                            `Error HTTP ${response.status}: ${errorData.message || errorData.detail
+                            }`
+                        );
+                    }
+                }
+                const data = await response.json();
+                // console.log("Datos recibidos:", data);
+                // Actualiza los estados con los datos recibidos
+                if (data.status === "success" && data.data) {
+                    setInstanceId(data.data.instance_id || "");
+                    setCostCenter(data.data.cost_center || "");
+                    setCategory(data.data.category || "");
+                    setType(data.data.type || "");
+                    setItem(data.data.item || "");
+                    setOwnerContact(data.data.owner_contact || "");
+                    setName(data.data.name || "");
+                    setApplicationCode(data.data.application_code || "");
+                    setInactive(data.data.inactive || "");
+                    setAssetLifeCycleStatus(data.data.asset_life_cycle_status || "");
+                    setSystemEnvironment(data.data.system_environment || "");
+                    setCloud(data.data.cloud || "");
+                    setVersionNumber(data.data.version_number || "");
+                    setSerial(data.data.serial || "");
+                    setCiTag(data.data.ci_tag || "");
+                    setInstanceName(data.data.instance_name || "");
+                    setModel(data.data.model || "");
+                    setHa(data.data.ha || "");
+                    setPort(data.data.port || "");
+                    setOwnerName(data.data.owner_name || "");
+                    setDepartment(data.data.department || "");
+                    setCompany(data.data.company || "");
+                    setManufacturerName(data.data.manufacturer_name || "");
+                    setSupplierName(data.data.supplier_name || "");
+                    setSupported(data.data.supported || "");
+                    setAccountId(data.data.account_id || "");
+                    setCreateDate(data.data.create_date || "");
+                    setModifiedDate(data.data.modified_date || "");
+                } else {
+                    console.error("Estructura de datos inesperada:", data);
+                    setError("Estructura de datos inesperada de la base de datos");
+                }
+
+                console.error("Error en fetchBaseDatosData:", error);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        try {
-            const token = localStorage.getItem("authenticationToken");
-            if (!token) {
-                throw new Error("Token de autorización no encontrado.");
-            }
-
-            const response = await fetch(
-                "http://localhost:8000/base_datos/add",
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(baseDatosData),
-                }
-            );
-
-            if (!response.ok) {
-                let errorMessage = `Error HTTP ${response.status}`;
-                if (response.status === 422) {
-                    const errorData = await response.json();
-                    errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-                } else if (response.status === 401 || response.status === 403) {
-                    errorMessage =
-                        "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
-                } else {
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.message) errorMessage = errorData.message;
-                    } catch (e) { }
-                }
-                Swal.fire({
-                    icon: "error",
-                    title: "Error al crear la base de datos",
-                    text: errorMessage,
-                });
-            } else {
-                showSuccessToast();
-                navigate("/Base-De-Datos");
-            }
-        } catch (error) {
-            console.error("Error:", error); // Registra el error en la consola para depuración
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: error.message || "Ocurrió un error inesperado.",
-            });
+        if (baseDatosId) {
+            fetchBaseDatosData();
         }
-    };
+    }, [baseDatosId]);
+
+    useEffect(() => { }, [instance_id, instance_id]);
+
+    // Renderizado condicional: muestra un mensaje de carga o de error si es necesario
+    if (loading) {
+        return <div>Cargando datos de la base de datos...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form className={styles.form}>
             <div className={styles.containtTit}>
                 <h2 className={styles.tittle}>
-                    <IoIosAdd />
-                    Crear Base de Datos
+                    <MdVisibility  />
+                    Ver Base de Datos
                 </h2>
             </div>
             <div className={styles.container}>
@@ -666,10 +652,6 @@ const BaseDatosForm = () => {
                         <div className={styles.label}>Serial*</div>
                     </div>
 
-
-                    <button type="submit" className={styles.button}>
-                        Guardar
-                    </button>
                 </div>
 
                 {/*INICIO DE LA COLUMNA 2*/}
@@ -740,6 +722,8 @@ const BaseDatosForm = () => {
                         <div className={styles.labelSelect}>ha*</div>
                     </div>
 
+                    <hr className={styles.lines} />
+
                     <div className={styles.formGroup}>
                         <input
                             type="port"
@@ -751,8 +735,6 @@ const BaseDatosForm = () => {
                         />
                         <div className={styles.label}>port*</div>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -814,6 +796,8 @@ const BaseDatosForm = () => {
                         <div className={styles.labelSelect}>company*</div>
                     </div>
 
+                    <hr className={styles.lines} />
+
                     <div className={styles.formGroup}>
                         <select
                             id="manufacturer_name"
@@ -833,8 +817,6 @@ const BaseDatosForm = () => {
                         </select>
                         <div className={styles.labelSelect}>manufacturer_name*</div>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -876,8 +858,6 @@ const BaseDatosForm = () => {
                         <div className={styles.labelSelect}>supported*</div>
                     </div>
 
-                    <hr className={styles.lines} />
-
                     <div className={styles.formGroup}>
                         <input
                             type="account_id"
@@ -889,6 +869,8 @@ const BaseDatosForm = () => {
                         />
                         <div className={styles.label}>account_id*</div>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <input
@@ -920,4 +902,4 @@ const BaseDatosForm = () => {
     );
 };
 
-export default BaseDatosForm;
+export default VerBaseDatos;
