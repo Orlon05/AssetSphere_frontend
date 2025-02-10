@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-import { FaDatabase } from "react-icons/fa";
+import { MdCloud } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
@@ -380,7 +380,7 @@ const Storage = () => {
     <div className={style.container}>
       <div className={style.containerMain}>
         <h1 className={style.tittle}>
-          <FaDatabase /> Lista de Storages
+          <MdCloud /> Lista de Storages
         </h1>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear

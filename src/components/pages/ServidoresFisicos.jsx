@@ -4,7 +4,7 @@ import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { GrFormViewHide } from "react-icons/gr";
+import { MdVisibility } from "react-icons/md";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
@@ -482,7 +482,7 @@ const ServidoresFisicos = () => {
                 <td>{server.ip_address}</td>
                 <td>
                   <button className={style.btnVer} onClick={() => {}}>
-                    <GrFormViewHide />
+                    <MdVisibility />
                   </button>
                   <button
                     className={style.btnEdit}

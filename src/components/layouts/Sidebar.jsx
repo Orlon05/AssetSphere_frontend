@@ -5,7 +5,7 @@ import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
 import { FaDatabase } from "react-icons/fa";
-import { GiDatabase } from "react-icons/gi";
+import { MdCloud } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
 import { useAuth } from "../routes/AuthContext";
@@ -80,7 +80,7 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <GiDatabase className={Style.icon} />
+              <FaDatabase className={Style.icon} />
               Base de datos
             </NavLink>
           </li>
@@ -91,7 +91,7 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <FaDatabase  className={Style.icon} />
+              <MdCloud className={Style.icon} />
               Storage
             </NavLink>
           </li>
