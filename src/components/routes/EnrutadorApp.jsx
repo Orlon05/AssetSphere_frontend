@@ -12,6 +12,11 @@ import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
+import Pseries from "../pages/Pseries";
+import CrearPseries from "../pages/CrearPseries";
+import EditarPseries from "../pages/EditarPseries";
+import VerPseries from "../pages/VerPseries";  
+
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -72,6 +77,27 @@ export let EnrutadorApp = [
       {
         path: "/storage",
         element: <Storage/>
+      },
+      {
+        path: "/pseries",
+        element: <Pseries/>
+      },
+      {
+        path: "/CrearPseries",
+        element: <CrearPseries/>
+      },
+      {
+        path: "/EditarPseries",
+        element: <EditarPseries/>
+      },
+      {
+        path: "/editar/:pserieId/pseries",
+        element: < EditarPseries />
+      },
+
+      {
+        path: "/editverar/:pserieId/pseries",
+        element: < VerPseries />
       },
     ],
   },

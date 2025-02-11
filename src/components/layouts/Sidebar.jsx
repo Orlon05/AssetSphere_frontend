@@ -10,6 +10,8 @@ import { BsCloudUpload } from 'react-icons/bs';
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import { VscSaveAll } from "react-icons/vsc";
+
 
 const Sidebar = ({ isOpen }) => {
   const { logout } = useAuth();
@@ -92,6 +94,17 @@ const Sidebar = ({ isOpen }) => {
             >
               <FiUsers className={Style.icon} />
               Usuarios
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/pseries"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <VscSaveAll className={Style.icon} />
+              Pseries
             </NavLink>
           </li>
           <li>
