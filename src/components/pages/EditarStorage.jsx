@@ -126,74 +126,69 @@ const EditarStorage = () => {
     const token = localStorage.getItem("authenticationToken");
 
     useEffect(() => {
-        const fetchStorageData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(
-                    `http://localhost:8000/storage/get_by_id/${storageId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                "authenticationToken"
-                            )}`,
-                        },
+            const fetchStorageData = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await fetch(
+                        `http://localhost:8000/storage/get_by_id/${storageId}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+                            },
+                        }
+                    );
+        
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Error al obtener datos del storage:", errorData);
+                        if (response.status === 404) {
+                            throw new Error("Storage no encontrado");
+                        } else if (response.status === 401) {
+                            throw new Error("No autorizado");
+                        } else {
+                            throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
+                        }
                     }
-                );
-
-                if (!response.ok) {
-                    const errorData = await response.json(); // Intenta leer la respuesta en caso de error
-                    console.error("Error al obtener datos del storage:", errorData); // Logs para depuración
-                    if (response.status === 404) {
-                        throw new Error("Storage no encontrado");
-                    } else if (response.status === 401) {
-                        throw new Error("No autorizado");
+        
+                    const data = await response.json();
+                    if (data && data.status === "success" && data.data) {
+                        setCodItemConfiguracion(data.data.cod_item_configuracion || "");
+                        setName(data.data.name || "");
+                        setApplicationCode(data.data.application_code || "");
+                        setCostCenter(data.data.cost_center || "");
+                        setActive(data.data.active || "");
+                        setCategory(data.data.category || "");
+                        setType(data.data.type || "");
+                        setItem(data.data.item || "");
+                        setCompany(data.data.company || "");
+                        setOrganizationResponsible(data.data.organization_responsible || "");
+                        setHostName(data.data.host_name || "");
+                        setManufacturer(data.data.manufacturer || "");
+                        setStatus(data.data.status || "");
+                        setOwner(data.data.owner || "");
+                        setModel(data.data.model || "");
+                        setSerial(data.data.serial || "");
+                        setOrgMaintenance(data.data.org_maintenance || "");
+                        setIpAddress(data.data.ip_address || "");
+                        setDiskSize(data.data.disk_size || "");
+                        setLocation(data.data.location || "");
                     } else {
-                        throw new Error(
-                            `Error HTTP ${response.status}: ${errorData.message || errorData.detail
-                            }`
-                        );
+                        console.error("Estructura de datos inesperada:", data);
+                        setError("Estructura de datos inesperada del storage");
                     }
+                } catch (error) {
+                    console.error("Error al obtener datos del storage:", error);
+                    setError(error.message || "Hubo un error al cargar los datos.");
+                } finally {
+                    setLoading(false);
                 }
-                const data = await response.json();
-                // console.log("Datos recibidos:", data);
-                // Actualiza los estados con los datos recibidos
-                if (data.status === "success" && data.data) {
-                    setCodItemConfiguracion(data.data.cod_item_configuracion || "");
-                    setName(data.data.name || "");
-                    setApplicationCode(data.data.application_code || "");
-                    setCostCenter(data.data.cost_center || "");
-                    setActive(data.data.active || "");
-                    setCategory(data.data.category || "");
-                    setType(data.data.type || "");
-                    setItem(data.data.item || "");
-                    setCompany(data.data.company || "");
-                    setOrganizationResponsible(data.data.organization_responsible || "");
-                    setHostName(data.data.host_name || "");
-                    setManufacturer(data.data.manufacturer || "");
-                    setStatus(data.data.status || "");
-                    setOwner(data.data.owner || "");
-                    setModel(data.data.model || "");
-                    setSerial(data.data.serial || "");
-                    setOrgMaintenance(data.data.org_maintenance || "");
-                    setIpAddress(data.data.ip_address || "");
-                    setDiskSize(data.data.disk_size || "");
-                    setLocation(data.data.location || "");
-                } else {
-                    console.error("Estructura de datos inesperada:", data);
-                    setError("Estructura de datos inesperada del storage");
-                }
-
-                console.error("Error en fetchStorageData:", error);
-            } finally {
-                setLoading(false);
+            };
+        
+            if (storageId) {
+                fetchStorageData();
             }
-        };
-
-        if (storageId) {
-            fetchStorageData();
-        }
-    }, [storageId]);
+        }, [storageId]);
 
     useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
 

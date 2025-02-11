@@ -115,31 +115,25 @@ const VerStorage = () => {
                     `http://localhost:8000/storage/get_by_id/${storageId}`,
                     {
                         headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                "authenticationToken"
-                            )}`,
+                            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
                         },
                     }
                 );
-
+    
                 if (!response.ok) {
-                    const errorData = await response.json(); // Intenta leer la respuesta en caso de error
-                    console.error("Error al obtener datos del storage:", errorData); // Logs para depuración
+                    const errorData = await response.json();
+                    console.error("Error al obtener datos del storage:", errorData);
                     if (response.status === 404) {
                         throw new Error("Storage no encontrado");
                     } else if (response.status === 401) {
                         throw new Error("No autorizado");
                     } else {
-                        throw new Error(
-                            `Error HTTP ${response.status}: ${errorData.message || errorData.detail
-                            }`
-                        );
+                        throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
                     }
                 }
+    
                 const data = await response.json();
-                // console.log("Datos recibidos:", data);
-                // Actualiza los estados con los datos recibidos
-                if (data.status === "success" && data.data) {
+                if (data && data.status === "success" && data.data) {
                     setCodItemConfiguracion(data.data.cod_item_configuracion || "");
                     setName(data.data.name || "");
                     setApplicationCode(data.data.application_code || "");
@@ -164,17 +158,19 @@ const VerStorage = () => {
                     console.error("Estructura de datos inesperada:", data);
                     setError("Estructura de datos inesperada del storage");
                 }
-
-                console.error("Error en fetchStorageData:", error);
+            } catch (error) {
+                console.error("Error al obtener datos del storage:", error);
+                setError(error.message || "Hubo un error al cargar los datos.");
             } finally {
                 setLoading(false);
             }
         };
-
+    
         if (storageId) {
             fetchStorageData();
         }
     }, [storageId]);
+    
 
     useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
 
@@ -206,6 +202,7 @@ const VerStorage = () => {
                             value={cod_item_configuracion}
                             onChange={(e) => setCodItemConfiguracion(e.target.value)}
                             className={styles.input}
+                            
                         />
                         <div className={styles.label}>Cod_item_configuracion*</div>
                     </div>

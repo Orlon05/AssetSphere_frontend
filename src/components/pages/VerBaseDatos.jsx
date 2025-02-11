@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { MdVisibility  } from "react-icons/md";
+import { MdVisibility } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import styles from "./verBaseDatos.module.css";
+
+
 
 const VerBaseDatos = () => {
     const [instance_id, setInstanceId] = useState("");
@@ -30,8 +32,8 @@ const VerBaseDatos = () => {
     const [supplier_name, setSupplierName] = useState("");
     const [supported, setSupported] = useState("");
     const [account_id, setAccountId] = useState("");
-    const [create_date, setCreateDate] = useState("");
-    const [modified_date, setModifiedDate] = useState("");
+    const [create_date, setCreateDate] = useState(null);
+    const [modified_date, setModifiedDate] = useState(null);
     const [loading, setLoading] = useState(true); // Estado para indicar carga
     const [error, setError] = useState(null); // Estado para manejar errores
     const { baseDatosId } = useParams();
@@ -349,14 +351,17 @@ const VerBaseDatos = () => {
                     setSupplierName(data.data.supplier_name || "");
                     setSupported(data.data.supported || "");
                     setAccountId(data.data.account_id || "");
-                    setCreateDate(data.data.create_date || "");
-                    setModifiedDate(data.data.modified_date || "");
+                    setCreateDate(data.data.create_date ? new Date(data.data.create_date).toISOString().split("T")[0] : null);
+                    setModifiedDate(data.data.modified_date ? new Date(data.data.modified_date).toISOString().split("T")[0] : null);
+
+
                 } else {
                     console.error("Estructura de datos inesperada:", data);
                     setError("Estructura de datos inesperada de la base de datos");
                 }
-
-                console.error("Error en fetchBaseDatosData:", error);
+            } catch (error) {
+                console.error("Error al obtener datos del storage:", error);
+                setError(error.message || "Hubo un error al cargar los datos.");
             } finally {
                 setLoading(false);
             }
@@ -382,7 +387,7 @@ const VerBaseDatos = () => {
         <form className={styles.form}>
             <div className={styles.containtTit}>
                 <h2 className={styles.tittle}>
-                    <MdVisibility  />
+                    <MdVisibility />
                     Ver Base de Datos
                 </h2>
             </div>
@@ -877,7 +882,7 @@ const VerBaseDatos = () => {
                             type="date"
                             id="create_date"
                             name="create_date"
-                            value={create_date}
+                            value={create_date || ""}
                             onChange={(e) => setCreateDate(e.target.value)}
                             className={styles.input}
                         />
@@ -889,7 +894,7 @@ const VerBaseDatos = () => {
                             type="date"
                             id="modified_date"
                             name="modified_date"
-                            value={modified_date}
+                            value={modified_date || ""}
                             onChange={(e) => setModifiedDate(e.target.value)}
                             className={styles.input}
                         />

@@ -101,8 +101,7 @@ const EditarServer = () => {
             throw new Error("No autorizado");
           } else {
             throw new Error(
-              `Error HTTP ${response.status}: ${
-                errorData.message || errorData.detail
+              `Error HTTP ${response.status}: ${errorData.message || errorData.detail
               }`
             );
           }
@@ -147,7 +146,7 @@ const EditarServer = () => {
     }
   }, [serverId]);
 
-  useEffect(() => {}, [serial, nombreServidor]);
+  useEffect(() => { }, [serial, nombreServidor]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -332,7 +331,7 @@ const EditarServer = () => {
               onChange={(e) => setAmbiente(e.target.value)}
               className={styles.selected}
             >
-              <option value=""disabled>Selecciona el Ambiente</option>
+              <option value="" disabled>Selecciona el Ambiente</option>
               {ambienteServidores.map((ambiente) => (
                 <option key={ambiente} value={ambiente}>
                   {ambiente}
@@ -375,7 +374,7 @@ const EditarServer = () => {
               onChange={(e) => setCity(e.target.value)}
               className={styles.selected}
             >
-              <option value=""disabled>Selecciona una ciudad</option>
+              <option value="" disabled>Selecciona una ciudad</option>
               {ciudadesCapitalesColombia.map((ciudad) => (
                 <option key={ciudad} value={ciudad}>
                   {ciudad}
@@ -421,7 +420,7 @@ const EditarServer = () => {
               onChange={(e) => setEstado(e.target.value)}
               className={styles.selected}
             >
-              <option value=""disabled>Selecciona un estado</option>
+              <option value="" disabled>Selecciona un estado</option>
               {estadoServidores.map((estado) => (
                 <option key={estado} value={estado}>
                   {estado}
@@ -438,7 +437,7 @@ const EditarServer = () => {
               onChange={(e) => setMarca(e.target.value)}
               className={styles.selected}
             >
-              <option value=""disabled>Selecciona una marca</option>
+              <option value="" disabled>Selecciona una marca</option>
               {marcaServidores.map((marca) => (
                 <option key={marca} value={marca}>
                   {marca}
