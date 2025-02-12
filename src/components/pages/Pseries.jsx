@@ -442,11 +442,12 @@ const Pseries = () => {
                 />
               </th>
               <th>Nombre almacenamiento</th>
-              <th>Nombre del host</th>
+              <th>Hostname</th>
               <th>Modelo</th>
               <th>Cajón</th>
               <th>Status</th>
               <th>Filial</th>
+              <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
           <tbody>
