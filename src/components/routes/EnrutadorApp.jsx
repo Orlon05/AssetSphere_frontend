@@ -81,7 +81,7 @@ export let EnrutadorApp = [
         element: <Storage/>
       },
       {
-        path: "/crear-storages-f",
+        path: "/crear-storages",
         element: <CrearStorage/>
       },
       {

@@ -4,7 +4,7 @@ import { MdCloud } from "react-icons/md";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { MdVisibility  } from "react-icons/md";
+import { MdVisibility } from "react-icons/md";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
@@ -468,12 +468,12 @@ const Storage = () => {
                 <td>{storage.model}</td>
                 <td>{storage.ip_address}</td>
                 <td>
-                  <button 
+                  <button
                     className={style.btnVer}
-                     onClick={() => irVer(storage.id)}>
-                    <MdVisibility  />
+                    onClick={() => irVer(storage.id)}>
+                    <MdVisibility />
                   </button>
-                 
+
                   <button
                     className={style.btnEdit}
                     onClick={() => irEditar(storage.id)}
