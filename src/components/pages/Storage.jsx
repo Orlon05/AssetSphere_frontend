@@ -52,23 +52,23 @@ const Storage = () => {
           { name: "cod_item_configuracion", required: true, type: "string" },
           { name: "name", required: true, type: "string" },
           { name: "application_code", required: true, type: "string" },
-          { name: "cost_center", required: false, type: "string" },
-          { name: "active", required: false, type: "string" },
-          { name: "category", required: false, type: "string" },
-          { name: "type", required: false, type: "string" },
+          { name: "cost_center", required: true, type: "string" },
+          { name: "active", required: true, type: "string" },
+          { name: "category", required: true, type: "string" },
+          { name: "type", required: true, type: "string" },
           { name: "item", required: true, type: "string" },
           { name: "company", required: true, type: "string" },
-          { name: "organization_responsible", required: false, type: "string" },
-          { name: "host_name", required: false, type: "string" },
+          { name: "organization_responsible", required: true, type: "string" },
+          { name: "host_name", required: true, type: "string" },
           { name: "manufacturer", required: true, type: "string" },
           { name: "status", required: true, type: "string" },
           { name: "owner", required: true, type: "string" },
           { name: "model", required: true, type: "string" },
           { name: "serial", required: true, type: "string" },
           { name: "org_maintenance", required: true, type: "string" },
-          { name: "ip_address", required: false, type: "string" },
-          { name: "disk_size", required: false, type: "string" },
-          { name: "location", required: false, type: "string" },
+          { name: "ip_address", required: true, type: "string" },
+          { name: "disk_size", required: true, type: "string" },
+          { name: "location", required: true, type: "string" },
         ];
         const importer = (
           <ExcelImporter
@@ -110,10 +110,63 @@ const Storage = () => {
     });
   };
 
-  const handleImportComplete = (importedData) => {
-    console.log("datos importados:", importedData); // Aqui tendrias tu data
-    Swal.close();
+  const handleImportComplete = async (importedData) => {
+    console.log("Datos importados listos para enviar:", importedData);
+
+    if (!Array.isArray(importedData) || importedData.length === 0) {
+      Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const formattedData = importedData.map(row => ({
+        cod_item_configuracion: row.cod_item_configuracion || "",
+        name: row.name || "",
+        application_code: row.application_code || "",
+        cost_center: row.cost_center || "",
+        active: row.active || "",
+        category: row.category || "",
+        type: row.type || "",
+        item: row.item || "",
+        company: row.company || "",
+        organization_responsible: row.organization_responsible || "",
+        host_name: row.host_name || "",
+        manufacturer: row.manufacturer || "",
+        status: row.status || "",
+        owner: row.owner || "",
+        model: row.model || "",
+        serial: row.serial || "",
+        org_maintenance: row.org_maintenance || "",
+        ip_address: row.ip_address || "",
+        disk_size: row.disk_size || "",
+        location: row.location || "",
+      }));
+
+      const response = await fetch("http://localhost:8000/storage/add_from_excel", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      Swal.fire("Éxito", "Datos importados correctamente", "success");
+    } catch (error) {
+      console.error("Error al importar:", error);
+      Swal.fire("Error", error.message || "Error al importar datos", "error");
+    }
   };
+
 
   const selectedCount = selectedStorages.size;
 
@@ -126,7 +179,7 @@ const Storage = () => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
   const irCrear = () => {
-    navigate("/crear-storages-f");
+    navigate("/crear-storages");
   };
   const irVer = (storageId) => {
     navigate(`/ver/${storageId}/storages`);
