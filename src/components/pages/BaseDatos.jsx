@@ -4,7 +4,7 @@ import { FaDatabase } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { MdVisibility  } from "react-icons/md";
+import { MdVisibility } from "react-icons/md";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
@@ -52,14 +52,14 @@ const BaseDeDatos = () => {
                     { name: "instance_id", required: true, type: "string" },
                     { name: "cost_center", required: true, type: "string" },
                     { name: "category", required: true, type: "string" },
-                    { name: "type", required: false, type: "string" },
-                    { name: "item", required: false, type: "string" },
-                    { name: "owner_contact", required: false, type: "string" },
-                    { name: "name", required: false, type: "string" },
+                    { name: "type", required: true, type: "string" },
+                    { name: "item", required: true, type: "string" },
+                    { name: "owner_contact", required: true, type: "string" },
+                    { name: "name", required: true, type: "string" },
                     { name: "application_code", required: true, type: "string" },
                     { name: "inactive", required: true, type: "string" },
-                    { name: "asset_life_cycle_status", required: false, type: "string" },
-                    { name: "system_environment", required: false, type: "string" },
+                    { name: "asset_life_cycle_status", required: true, type: "string" },
+                    { name: "system_environment", required: true, type: "string" },
                     { name: "cloud", required: true, type: "string" },
                     { name: "version_number", required: true, type: "string" },
                     { name: "serial", required: true, type: "string" },
@@ -67,16 +67,16 @@ const BaseDeDatos = () => {
                     { name: "instance_name", required: true, type: "string" },
                     { name: "model", required: true, type: "string" },
                     { name: "ha", required: true, type: "string" },
-                    { name: "port", required: false, type: "string" },
-                    { name: "owner_name", required: false, type: "string" },
-                    { name: "department", required: false, type: "string" },
-                    { name: "company", required: false, type: "string" },
-                    { name: "manufacturer_name", required: false, type: "string" },
-                    { name: "supplier_name", required: false, type: "string" },
-                    { name: "supported", required: false, type: "string" },
-                    { name: "account_id", required: false, type: "string" },
-                    { name: "create_date", required: false, type: "DateTime" },
-                    { name: "modified_date", required: false, type: "DateTime" }
+                    { name: "port", required: true, type: "string" },
+                    { name: "owner_name", required: true, type: "string" },
+                    { name: "department", required: true, type: "string" },
+                    { name: "company", required: true, type: "string" },
+                    { name: "manufacturer_name", required: true, type: "string" },
+                    { name: "supplier_name", required: true, type: "string" },
+                    { name: "supported", required: true, type: "string" },
+                    { name: "account_id", required: true, type: "string" },
+                    { name: "create_date", required: true, type: "DateTime" },
+                    { name: "modified_date", required: true, type: "DateTime" }
                 ];
                 const importer = (
                     <ExcelImporter
@@ -118,9 +118,70 @@ const BaseDeDatos = () => {
         });
     };
 
-    const handleImportComplete = (importedData) => {
-        console.log("datos importados:", importedData); // Aqui tendrias tu data
-        Swal.close();
+    //La variable handleImportComplete es la que se encarga de tomar/mapear la información al importar el archivo de excel.
+    const handleImportComplete = async (importedData) => {
+        console.log("Datos importados listos para enviar:", importedData);
+
+        if (!Array.isArray(importedData) || importedData.length === 0) {
+            Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("authenticationToken");
+            if (!token) {
+                throw new Error("Token de autorización no encontrado.");
+            }
+            // Se deben colocar todas las propiedades/campos de la tabla a la cual se le este haciendo la vista a excepción de la clave prinaria, dicho campo no debe ir aquí
+            const formattedData = importedData.map(row => ({
+                instance_id: row.instance_id || "",
+                cost_center: row.cost_center || "",
+                category: row.category || "",
+                type: row.type || "",
+                item: row.item || "",
+                owner_contact: row.owner_contact || "",
+                name: row.name || "",
+                application_code: row.application_code || "",
+                inactive: row.inactive || "",
+                asset_life_cycle_status: row.asset_life_cycle_status || "",
+                system_environment: row.system_environment || "",
+                cloud: row.cloud || "",
+                version_number: row.version_number || "",
+                serial: row.serial || "",
+                ci_tag: row.ci_tag || "",
+                instance_name: row.instance_name || "",
+                model: row.model || "",
+                ha: row.ha || "",
+                port: row.port || "",
+                owner_name: row.owner_name || "",
+                department: row.department || "",
+                company: row.company || "",
+                manufacturer_name: row.manufacturer_name || "",
+                supplier_name: row.supplier_name || "",
+                supported: row.supported || "",
+                account_id: row.account_id || "",
+                create_date: row.create_date || "",
+                modified_date: row.modified_date || ""
+            }));
+            // Aquí se debe colocar la ruta del back-end que recibe la información del excel y la inserta en la BD
+            const response = await fetch("http://localhost:8000/base_datos/add_from_excel", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formattedData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP ${response.status}`);
+            }
+
+            Swal.fire("Éxito", "Datos importados correctamente", "success");
+        } catch (error) {
+            console.error("Error al importar:", error);
+            Swal.fire("Error", error.message || "Error al importar datos", "error");
+        }
     };
 
     const selectedCount = selectedBasesDeDatos.size;
@@ -133,6 +194,7 @@ const BaseDeDatos = () => {
     useEffect(() => {
         setShowSearch(selectedCount === 0);
     }, [selectedCount]);
+
     const irCrear = () => {
         navigate("/crear-base-de-datos");
     };
@@ -247,6 +309,7 @@ const BaseDeDatos = () => {
         }
     }, [isSearchButtonClicked, searchValue, unfilteredBasesDeDatos, rowsPerPage]);
 
+    
     const BaseDeDatosMapper = (baseDeDatos) => {
         return {
             "InstanceId": baseDeDatos.instance_id || "",
@@ -281,6 +344,7 @@ const BaseDeDatos = () => {
         };
     };
 
+    // Esta variable genera un archivo de excel con la información que se muestra en la vista principal
     const handleExport = () => {
         exportToExcel(base_datos, "baseDeDatos", BaseDeDatosMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
     };
@@ -316,8 +380,8 @@ const BaseDeDatos = () => {
         baseDeDatos.name.toLowerCase().includes(searchValue.toLowerCase())
     );
 
-    const indexOfLastServer = currentPage * rowsPerPage;
-    const indexOfFirstServer = indexOfLastServer - rowsPerPage;
+    const indexOfLastBaseDatos = currentPage * rowsPerPage;
+    const indexOfFirstBaseDatos = indexOfLastBaseDatos - rowsPerPage;
     const handleDeleteStorage = async (baseDeDatosId) => {
         Swal.fire({
             title: "¿Estás seguro?",
@@ -484,9 +548,9 @@ const BaseDeDatos = () => {
                                 <td>{baseDeDatos.cost_center}</td>
                                 <td>{baseDeDatos.category}</td>
                                 <td>
-                                    <button className={style.btnVer} 
+                                    <button className={style.btnVer}
                                         onClick={() => irVer(baseDeDatos.id)}>
-                                        <MdVisibility  />
+                                        <MdVisibility />
                                     </button>
                                     <button
                                         className={style.btnEdit}
@@ -532,8 +596,8 @@ const BaseDeDatos = () => {
                                 <div
                                     className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
                                 >
-                                    <span>{`${indexOfFirstServer + 1}-${Math.min(
-                                        indexOfLastServer,
+                                    <span>{`${indexOfFirstBaseDatos + 1}-${Math.min(
+                                        indexOfLastBaseDatos,
                                         filteredBasesDeDatos.length
                                     )} de ${filteredBasesDeDatos.length}`}</span>
                                 </div>

@@ -110,6 +110,7 @@ const Storage = () => {
     });
   };
 
+  //La variable handleImportComplete es la que se encarga de tomar/mapear la información al importar el archivo de excel.
   const handleImportComplete = async (importedData) => {
     console.log("Datos importados listos para enviar:", importedData);
 
@@ -123,7 +124,7 @@ const Storage = () => {
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
-
+      // Se deben colocar todas las propiedades/campos de la tabla a la cual se le este haciendo la vista a excepción de la clave prinaria, dicho campo no debe ir aquí
       const formattedData = importedData.map(row => ({
         cod_item_configuracion: row.cod_item_configuracion || "",
         name: row.name || "",
@@ -146,7 +147,7 @@ const Storage = () => {
         disk_size: row.disk_size || "",
         location: row.location || "",
       }));
-
+      // Aquí se debe colocar la ruta del back-end que recibe la información del excel y la inserta en la BD
       const response = await fetch("http://localhost:8000/storage/add_from_excel", {
         method: "POST",
         headers: {
@@ -317,7 +318,7 @@ const Storage = () => {
       // Agrega aquí otros campos que necesites
     };
   };
-
+  // Esta variable genera un archivo de excel con la información que se muestra en la vista principal
   const handleExport = () => {
     exportToExcel(storages, "storages", StorageDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
