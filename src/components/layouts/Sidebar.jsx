@@ -95,6 +95,20 @@ const Sidebar = ({ isOpen }) => {
               Storage
             </NavLink>
           </li>
+
+          <li>
+            <NavLink
+              to="/sucursales"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <MdCloud className={Style.icon} />
+              Sucursales
+            </NavLink>
+          </li>
+
+
           <li>
             <NavLink
               to="/usuarios"
