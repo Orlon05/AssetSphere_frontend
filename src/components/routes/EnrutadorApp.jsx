@@ -96,7 +96,7 @@ export let EnrutadorApp = [
       },
 
       {
-        path: "/editverar/:pserieId/pseries",
+        path: "/ver/:pserieId/pseries",
         element: < VerPseries />
       },
     ],

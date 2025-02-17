@@ -4,7 +4,6 @@ import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
@@ -13,6 +12,7 @@ import Swal from "sweetalert2";
 import style from "./Pseries.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
+import { MdVisibility  } from "react-icons/md";
 
 const Pseries = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -127,9 +127,15 @@ const Pseries = () => {
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
+  
   const irCrear = () => {
     navigate("/CrearPseries");
   };
+
+  const irVer = (pseriesId) => {
+    navigate(`/ver/${pseriesId}/pseries`);
+  };
+
   const irEditar = (pseriesId) => {
     navigate(`/editar/${pseriesId}/pseries`);
   };
@@ -475,9 +481,12 @@ const Pseries = () => {
                 <td>{pseries.subsidiary}</td>
                 <td>{pseries.ip_address}</td>
                 <td>
-                  <button className={style.btnVer} onClick={() => {}}>
-                    <GrFormViewHide />
+                <button 
+                    className={style.btnVer}
+                     onClick={() => irVer(pseries.id)}>
+                    <MdVisibility  />
                   </button>
+
                   <button
                     className={style.btnEdit}
                     onClick={() => irEditar(pseries.id)}

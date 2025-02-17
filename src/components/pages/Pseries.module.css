@@ -101,7 +101,7 @@
   position: relative;
   width: 64rem;
   height: 40px;
-  padding: 20px; 
+  padding: 30px;
   box-shadow: 0 0 5px var(--azul-oscuro);
   border-radius: 10px;
   margin-left: 20px;
@@ -127,7 +127,7 @@
 /* Estilos del input */
 .searchInput {
   position: absolute;
-  top: 5px;
+  top: 10px;
   width: 40%;
   height: 70%;
   border: none;
@@ -149,7 +149,7 @@
 /* Estilos del icono */
 .searchIcon {
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 40px;
   transform: translateY(-50%);
   color: var(--gris-oscuro);

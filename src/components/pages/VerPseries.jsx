@@ -29,42 +29,43 @@ const VerPseries = () => {
     const [processor_compatibility, setProcessorCompatibility] = useState("");
     const [loading, setLoading] = useState(true); // Estado para indicar carga
     const [error, setError] = useState(null); // Estado para manejar errores
+    
+    const { pserieId } = useParams();
 
-  const { pserieId } = useParams();
-
-  const environment_ = [
-    "Certificación",
-    "Desarrollo",
-    "Producción",
-    "Pruebas",
-    "VIOS-Producción"
-];
-
-const status_ = [
-    "Not Activated",
-    "Running",
-];
-
-const os_ = [
-    "Aixlinux",
-    "Vioserver"
-];
-
-const subsidiary_ = [
-    "Bancolombia",
-    "Banistmo",
-    "Filiales OffShore",
-    "Nequi"
-];
-
-const processor_compatibility_ = [
-    "Defalut",
-    "POWER7",
-    "POWER8",
-    "POWER9",
-    "POWER9_base",
-    "#N/D"
-];
+    const environment_ = [
+        "Certificación",
+        "Desarrollo",
+        "Producción",
+        "Pruebas",
+        "VIOS-Producción"
+    ];
+    
+    const status_ = [
+        "Not Activated",
+        "Running",
+    ];
+    
+    const os_ = [
+        "Aixlinux",
+        "Vioserver"
+    ];
+    
+    const subsidiary_ = [
+        "Bancolombia",
+        "Banistmo",
+        "Filiales OffShore",
+        "Nequi"
+    ];
+    
+    const processor_compatibility_ = [
+        "Defalut",
+        "POWER7",
+        "POWER8",
+        "POWER9",
+        "POWER9_base",
+        "#N/D"
+    ];
+    
 
     const token = localStorage.getItem("authenticationToken");
 
@@ -74,34 +75,28 @@ const processor_compatibility_ = [
             setError(null);
             try {
                 const response = await fetch(
-                    `http://localhost:8000/pseries/pseries/get_by_id/${pserieId}`,
+                    `http://localhost:8000/pseries/pseries/${pserieId}`,
                     {
                         headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                "authenticationToken"
-                            )}`,
+                            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
                         },
                     }
                 );
-
+    
                 if (!response.ok) {
-                    const errorData = await response.json(); // Intenta leer la respuesta en caso de error
-                    console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
+                    const errorData = await response.json();
+                    console.error("Error al obtener datos del servidor:", errorData);
                     if (response.status === 404) {
                         throw new Error("Servidor no encontrado");
                     } else if (response.status === 401) {
                         throw new Error("No autorizado");
                     } else {
-                        throw new Error(
-                            `Error HTTP ${response.status}: ${errorData.message || errorData.detail
-                            }`
-                        );
+                        throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
                     }
                 }
+    
                 const data = await response.json();
-                // console.log("Datos recibidos:", data);
-                // Actualiza los estados con los datos recibidos
-                if (data.status === "success" && data.data) {
+                if (data && data.status === "success" && data.data) {
                     setName(data.data.name || "");
                     setApplication(data.data.application || "");
                     setHostName(data.data.hostname || "");
@@ -125,24 +120,25 @@ const processor_compatibility_ = [
                     setExpansionFactor(data.data.expansion_factor || "");
                     setMemoryPerFactor(data.data.memory_per_factor || "");
                     setProcessorCompatibility(data.data.processor_compatibility || "");
-        
                 } else {
                     console.error("Estructura de datos inesperada:", data);
-                    setError("Estructura de datos inesperada del servidor");
+                    setError("Estructura de datos inesperada del storage");
                 }
-
-                console.error("Error en fetchPseriesData:", error);
+            } catch (error) {
+                console.error("Error al obtener datos del storage:", error);
+                setError(error.message || "Hubo un error al cargar los datos.");
             } finally {
                 setLoading(false);
             }
         };
-
+    
         if (pserieId) {
             fetchPseriesData();
         }
     }, [pserieId]);
+    
 
-    useEffect(() => {}, [name, application]);
+    useEffect(() => { }, [name, application]);
 
     // Renderizado condicional: muestra un mensaje de carga o de error si es necesario
     if (loading) {
@@ -154,17 +150,16 @@ const processor_compatibility_ = [
     }
 
     return (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form className={styles.form}>
             <div className={styles.containtTit}>
-            <h2 className={styles.tittle}>
+                <h2 className={styles.tittle}>
                     <MdVisibility  />
-                    Visualizar Campos
+                    Visualizar Servidores
                 </h2>
             </div>
-     
-                <div className={styles.container}>
-                    {/*INICIO DE LA COLUMNA 1*/}
-                    <div className={styles.columnUno}>
+            <div className={styles.container}>
+                {/*INICIO DE LA COLUMNA 1*/}
+                <div className={styles.columnUno}>
                         <div className={styles.formGroup}>
                             <input
                                 type="text"
@@ -344,10 +339,6 @@ const processor_compatibility_ = [
                             <div className={styles.label}>CPU MIN*</div>
                         </div>
     
-                        
-                        <button type="submit" className={styles.button}>
-                            Guardar
-                        </button>
                     </div>
     
                     {/*INICIO DE LA COLUMNA 2*/}
