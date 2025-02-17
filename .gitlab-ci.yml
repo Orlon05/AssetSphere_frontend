@@ -1,0 +1,22 @@
+stages:
+  - deploy
+
+deploy-app:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - export TEMP_CONTAINER=build-frontend-inveplus
+    - export FOLDER_NAME=inveplus
+  script:
+    - podman rm -f $TEMP_CONTAINER # Borrar contenedor de docker
+    - podman run -d --name $TEMP_CONTAINER -v .:/app 10.8.150.91:5050/transformacion/tcsito/node:18.20.4 sleep 3600 # Inicialice contenedor temporal
+    - podman exec $TEMP_CONTAINER bash -c "cd /app && npm install --registry=https://artifactory.apps.bancolombia.com/api/npm/npm-bancolombia/"
+    - podman exec $TEMP_CONTAINER bash -c "cd /app && npm run build" # Ejecutar comando dentro del contenedor
+    - podman rm -f $TEMP_CONTAINER # Borrar contenedor de docker
+    - mkdir -p /srv/frontends/$FOLDER_NAME/
+    - rm -rf /srv/frontends/$FOLDER_NAME/*
+    - cp -r dist/* /srv/frontends/$FOLDER_NAME
+    # - mv /srv/frontends/$FOLDER_NAME/dist/* /srv/frontends/$FOLDER_NAME
+    - chmod -R 775 /srv/frontends/$FOLDER_NAME
+
