@@ -453,6 +453,7 @@ const Pseries = () => {
               <th>Cajón</th>
               <th>Status</th>
               <th>Filial</th>
+              <th></th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
