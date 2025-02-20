@@ -1,23 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-// Iconos
-import { MdCloud } from "react-icons/md";
-// Iconos
+import { FaStore } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
-//
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-// Iconos
 import { MdVisibility } from "react-icons/md";
-//
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
-// Estilos
 import style from "./sucursal.module.css";
-//
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
@@ -326,7 +319,7 @@ const Sucursales = () => {
       if (searchValue.trim() === "") {
         setSucursales(unfilteredSucursales);
         setTotalPages(
-            unfilteredSucursales.length > 0
+          unfilteredSucursales.length > 0
             ? Math.ceil(unfilteredSucursales.length / rowsPerPage)
             : 0
         );
@@ -399,18 +392,18 @@ const Sucursales = () => {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
-        setSelectedSucursales(new Set());
+      setSelectedSucursales(new Set());
     } else {
-        setSelectedSucursales(new Set(sucursales.map((sucursal) => sucursal.id)));
+      setSelectedSucursales(new Set(sucursales.map((sucursal) => sucursal.id)));
     }
   };
 
   const toggleSelectSucursal = (sucursalId) => {
     const newSelectedSucursales = new Set(selectedSucursales);
     if (newSelectedSucursales.has(sucursalId)) {
-        newSelectedSucursales.delete(sucursalId);
+      newSelectedSucursales.delete(sucursalId);
     } else {
-        newSelectedSucursales.add(sucursalId);
+      newSelectedSucursales.add(sucursalId);
     }
     setSelectedSucursales(newSelectedSucursales);
   };
@@ -498,7 +491,7 @@ const Sucursales = () => {
     <div className={style.container}>
       <div className={style.containerMain}>
         <h1 className={style.tittle}>
-          <MdCloud /> Lista de sucursales
+          <FaStore /> Lista de sucursales
         </h1>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear
@@ -570,7 +563,7 @@ const Sucursales = () => {
               <tr
                 key={sucursal.id}
                 className={
-                    selectedSucursales.has(sucursal.id) ? style.selectedRow : ""
+                  selectedSucursales.has(sucursal.id) ? style.selectedRow : ""
                 }
               >
                 <td>

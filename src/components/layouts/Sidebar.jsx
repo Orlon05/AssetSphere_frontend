@@ -1,16 +1,18 @@
 import Style from "./sidebar.module.css";
 import Logo from "./Logo";
 import { NavLink, useNavigate } from "react-router-dom"; // Importamos useNavigate para el error 
-import { VscServerEnvironment } from "react-icons/vsc";
 import { GrHomeRounded } from "react-icons/gr";
 import { FaServer } from "react-icons/fa";
 import { FaDatabase } from "react-icons/fa";
+import { FaStore } from "react-icons/fa";
 import { MdCloud } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import { VscSaveAll } from "react-icons/vsc";
+
 
 const Sidebar = ({ isOpen }) => {
   const { logout } = useAuth();
@@ -64,12 +66,12 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
-              to="/servidoresv"
+              to="/sucursales"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <VscServerEnvironment className={Style.icon} />
+              <FaStore className={Style.icon} />
               Sucursales
             </NavLink>
           </li>
@@ -95,20 +97,6 @@ const Sidebar = ({ isOpen }) => {
               Storage
             </NavLink>
           </li>
-
-          <li>
-            <NavLink
-              to="/sucursales"
-              className={({ isActive }) =>
-                isActive ? `${Style.links} active` : Style.links
-              }
-            >
-              <MdCloud className={Style.icon} />
-              Sucursales
-            </NavLink>
-          </li>
-
-
           <li>
             <NavLink
               to="/usuarios"

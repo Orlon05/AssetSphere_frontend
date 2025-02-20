@@ -20,6 +20,9 @@ import CrearBaseDatos from "../pages/CrearBaseDatos";
 import VerBaseDatos from "../pages/VerBaseDatos";
 import EditarBaseDatos from "../pages/EditarBaseDatos";
 import Sucursales from "../pages/Sucursales";
+import CrearSucursales from "../pages/CrearSucursales";
+import EditarSucursal from "../pages/EditarSucursales";
+import VerSucursales from "../pages/VerSucursales";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -112,6 +115,18 @@ export let EnrutadorApp = [
       {
         path: "/sucursales",
         element: <Sucursales/>
+      },
+      {
+        path: "/ver/:sucursalId/sucursales",
+        element: < VerSucursales />
+      },
+      {
+        path: "/crear-sucursales",
+        element: <CrearSucursales/>
+      },
+      {
+        path: "/editar/:sucursalId/sucursales",
+        element: < EditarSucursal />
       },
     ],
   },
