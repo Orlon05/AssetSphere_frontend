@@ -1,3 +1,4 @@
+//Aquí se hacen las importaciones de todas las vistas
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
 import Dashboard from "../pages/Dashboard";
@@ -27,6 +28,7 @@ import VerSucursales from "../pages/VerSucursales";
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
   // la Auth es correcta sigue a las hijas si, no redireccionara al login
+  // Agregar el respectivo path y element de la vista que se desea agregar, se puede tomar como ejemplo las existentes.
   {
     element: <Login />,
     path: "login",

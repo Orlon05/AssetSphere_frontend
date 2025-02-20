@@ -1,7 +1,7 @@
 import Style from "./sidebar.module.css";
 import Logo from "./Logo";
 import { NavLink, useNavigate } from "react-router-dom"; // Importamos useNavigate para el error 
-import { GrHomeRounded } from "react-icons/gr";
+import { GrHomeRounded } from "react-icons/gr"; // íconos de las vistas, cambiar por los que se deseen, cambiarlos también el menú.
 import { FaServer } from "react-icons/fa";
 import { FaDatabase } from "react-icons/fa";
 import { FaStore } from "react-icons/fa";
@@ -35,7 +35,7 @@ const Sidebar = ({ isOpen }) => {
       }
     });
   };
-
+  // Aquí se encuentra el menú para agregar las diferentes vistas que se vayan creando
   return (
     <div className={`${Style.sidebar} ${isOpen ? "" : Style.closed}`}>
       <ul>
