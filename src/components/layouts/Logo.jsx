@@ -6,7 +6,7 @@ const Logo = () => {
     return (
         <div className={Style.logo}>
             <MdOutlineInventory className={Style.icon} />
-            <p className={Style.text}>ServerManage</p>
+            <p className={Style.text}>Inveplus</p>
         </div>
     );
 };
