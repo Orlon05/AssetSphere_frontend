@@ -323,7 +323,17 @@ const EditarSucursal = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!name || !name || !name || !brand) {
+        const requiredFields = [
+            name, brand, model, processor, cpu_cores, ram, total_disk_size, os_type, 
+            os_version, status, role, environment, serial, rack_id, unit, ip_address, 
+            city, location, asset_id, service_owner, warranty_start_date, warranty_end_date, 
+            application_code, responsible_evc, domain, subsidiary, responsible_organization, 
+            billable, oc_provisioning, oc_deletion, oc_modification, maintenance_period, 
+            maintenance_organization, cost_center, billing_type, branch_code, branch_name, 
+            region, department, comments
+        ];
+        
+        if (requiredFields.some(field => !field)) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos obligatorios",
@@ -331,6 +341,7 @@ const EditarSucursal = () => {
             });
             return;
         }
+        
 
         const sucursalData = {
             name: name,

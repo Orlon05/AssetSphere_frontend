@@ -195,14 +195,20 @@ const EditarStorage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!cod_item_configuracion || !cod_item_configuracion || !name || !application_code) {
+        const requiredFields = [
+            cod_item_configuracion, name, application_code, cost_center, active, category, 
+            type, item, company, organization_responsible, host_name, manufacturer, status, 
+            owner, model, serial, org_maintenance, ip_address, disk_size, location
+        ];
+        
+        if (requiredFields.some(field => !field)) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos obligatorios",
-                text: "Por favor, completa todos los campos obligatorios.",
+                text: "Por favor, completa todos los campos.",
             });
             return;
-        }
+        }        
 
         const storageData = {
             cod_item_configuracion: cod_item_configuracion,

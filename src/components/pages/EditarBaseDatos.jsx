@@ -396,14 +396,23 @@ const EditarBaseDatos = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!instance_id || !instance_id || !name || !category) {
+        const requiredFields = [
+            instance_id, cost_center, category, type, item, owner_contact, name, 
+            application_code, inactive, asset_life_cycle_status, system_environment, cloud, 
+            version_number, serial, ci_tag, instance_name, model, ha, port, owner_name, 
+            department, company, manufacturer_name, supplier_name, supported, account_id, 
+            create_date, modified_date
+        ];
+        
+        if (requiredFields.some(field => !field)) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos obligatorios",
-                text: "Por favor, completa todos los campos obligatorios.",
+                text: "Por favor, completa todos los campos.",
             });
             return;
         }
+        
 
         const BaseDatosData = {
             instance_id: instance_id,
