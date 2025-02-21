@@ -412,7 +412,7 @@ const BaseDatosForm = () => {
                             onChange={(e) => setInstanceId(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>instance_id*</div>
+                        <div className={styles.label}>ID de instancia*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -432,7 +432,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>cost_center*</div>
+                        <div className={styles.labelSelect}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -452,7 +452,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>category*</div>
+                        <div className={styles.labelSelect}>Categoría*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -472,7 +472,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>type*</div>
+                        <div className={styles.labelSelect}>Tipo*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -486,7 +486,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el item
+                                Selecciona el ítem
                             </option>
                             {item_.map((item) => (
                                 <option key={item} value={item}>
@@ -494,7 +494,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>item*</div>
+                        <div className={styles.labelSelect}>Ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -506,7 +506,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el owner_contact
+                                Selecciona el contacto del propietario
                             </option>
                             {owner_contact_.map((owner_contact) => (
                                 <option key={owner_contact} value={owner_contact}>
@@ -514,7 +514,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>owner_contact*</div>
+                        <div className={styles.labelSelect}>Contacto del propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -526,7 +526,7 @@ const BaseDatosForm = () => {
                             onChange={(e) => setName(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>Name*</div>
+                        <div className={styles.label}>Nombre*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -538,7 +538,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el Application Code
+                                Selecciona el código de aplicación
                             </option>
                             {application_code_.map((application_code) => (
                                 <option key={application_code} value={application_code}>
@@ -546,7 +546,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>application_code*</div>
+                        <div className={styles.labelSelect}>Código de aplicación*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -560,7 +560,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el inactive
+                                Selecciona el estado inactivo
                             </option>
                             {inactive_.map((inactive) => (
                                 <option key={inactive} value={inactive}>
@@ -568,7 +568,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>inactive*</div>
+                        <div className={styles.labelSelect}>Inactivo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -580,7 +580,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el asset_life_cycle_status
+                                Selecciona el estado del ciclo de vida del activo
                             </option>
                             {asset_life_cycle_status_.map((asset_life_cycle_status) => (
                                 <option key={asset_life_cycle_status} value={asset_life_cycle_status}>
@@ -588,11 +588,10 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>asset_life_cycle_status*</div>
+                        <div className={styles.labelSelect}>Estado del ciclo de vida del activo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-
                         <select
                             id="system_environment"
                             name="system_environment"
@@ -601,7 +600,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el system_environment
+                                Selecciona el entorno del sistema
                             </option>
                             {system_environment_.map((system_environment) => (
                                 <option key={system_environment} value={system_environment}>
@@ -609,7 +608,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>system_environment*</div>
+                        <div className={styles.labelSelect}>Entorno del sistema*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -621,7 +620,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el cloud
+                                Selecciona la nube
                             </option>
                             {cloud_.map((cloud) => (
                                 <option key={cloud} value={cloud}>
@@ -629,7 +628,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>cloud*</div>
+                        <div className={styles.labelSelect}>Nube*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -643,7 +642,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el version_number
+                                Selecciona el número de versión
                             </option>
                             {version_number_.map((version_number) => (
                                 <option key={version_number} value={version_number}>
@@ -651,7 +650,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>version_number*</div>
+                        <div className={styles.labelSelect}>Número de versión*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -663,9 +662,8 @@ const BaseDatosForm = () => {
                             onChange={(e) => setSerial(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>Serial*</div>
+                        <div className={styles.label}>Serie*</div>
                     </div>
-
 
                     <button type="submit" className={styles.button}>
                         Guardar
@@ -684,9 +682,8 @@ const BaseDatosForm = () => {
                             onChange={(e) => setCiTag(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>ci_tag*</div>
+                        <div className={styles.label}>Etiqueta CI*</div>
                     </div>
-
 
                     <div className={styles.formGroup}>
                         <input
@@ -697,7 +694,7 @@ const BaseDatosForm = () => {
                             onChange={(e) => setInstanceName(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>instance_name*</div>
+                        <div className={styles.label}>Nombre de instancia*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -717,7 +714,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>model*</div>
+                        <div className={styles.labelSelect}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -737,8 +734,10 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>ha*</div>
+                        <div className={styles.labelSelect}>HA*</div>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <input
@@ -749,10 +748,8 @@ const BaseDatosForm = () => {
                             onChange={(e) => setPort(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>port*</div>
+                        <div className={styles.label}>Puerto*</div>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -763,7 +760,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el owner_name
+                                Selecciona el nombre del propietario
                             </option>
                             {owner_name_.map((owner_name) => (
                                 <option key={owner_name} value={owner_name}>
@@ -771,7 +768,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>owner_name*</div>
+                        <div className={styles.labelSelect}>Nombre del propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -783,7 +780,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el department
+                                Selecciona el departamento
                             </option>
                             {department_.map((department) => (
                                 <option key={department} value={department}>
@@ -791,7 +788,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>department*</div>
+                        <div className={styles.labelSelect}>Departamento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -811,8 +808,10 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>company*</div>
+                        <div className={styles.labelSelect}>Compañía*</div>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -823,7 +822,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el manufacturer_name
+                                Selecciona el nombre del fabricante
                             </option>
                             {manufacturer_name_.map((manufacturer_name) => (
                                 <option key={manufacturer_name} value={manufacturer_name}>
@@ -831,10 +830,8 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>manufacturer_name*</div>
+                        <div className={styles.labelSelect}>Nombre del fabricante*</div>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <select
@@ -845,7 +842,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el supplier_name
+                                Selecciona el nombre del proveedor
                             </option>
                             {supplier_name_.map((supplier_name) => (
                                 <option key={supplier_name} value={supplier_name}>
@@ -853,7 +850,7 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>supplier_name*</div>
+                        <div className={styles.labelSelect}>Nombre del proveedor*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -865,7 +862,7 @@ const BaseDatosForm = () => {
                             className={styles.selected}
                         >
                             <option value="">
-                                Selecciona el supported
+                                Selecciona el soporte
                             </option>
                             {supported_.map((supported) => (
                                 <option key={supported} value={supported}>
@@ -873,10 +870,8 @@ const BaseDatosForm = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>supported*</div>
+                        <div className={styles.labelSelect}>Soporte*</div>
                     </div>
-
-                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <input
@@ -887,19 +882,21 @@ const BaseDatosForm = () => {
                             onChange={(e) => setAccountId(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>account_id*</div>
+                        <div className={styles.label}>ID de cuenta*</div>
                     </div>
+
+                    <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
                         <input
                             type="date"
                             id="create_date"
                             name="create_date"
-                            value={create_date}
+                            value={create_date || ""}
                             onChange={(e) => setCreateDate(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>create_date*</div>
+                        <div className={styles.label}>Fecha de creación*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -907,13 +904,12 @@ const BaseDatosForm = () => {
                             type="date"
                             id="modified_date"
                             name="modified_date"
-                            value={modified_date}
+                            value={modified_date || ""}
                             onChange={(e) => setModifiedDate(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>modified_date*</div>
+                        <div className={styles.label}>Fecha de modificación*</div>
                     </div>
-
                 </div>
             </div>
         </form>

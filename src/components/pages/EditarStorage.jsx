@@ -126,69 +126,69 @@ const EditarStorage = () => {
     const token = localStorage.getItem("authenticationToken");
 
     useEffect(() => {
-            const fetchStorageData = async () => {
-                setLoading(true);
-                setError(null);
-                try {
-                    const response = await fetch(
-                        `http://localhost:8000/storage/get_by_id/${storageId}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
-                            },
-                        }
-                    );
-        
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        console.error("Error al obtener datos del storage:", errorData);
-                        if (response.status === 404) {
-                            throw new Error("Storage no encontrado");
-                        } else if (response.status === 401) {
-                            throw new Error("No autorizado");
-                        } else {
-                            throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
-                        }
+        const fetchStorageData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/storage/get_by_id/${storageId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+                        },
                     }
-        
-                    const data = await response.json();
-                    if (data && data.status === "success" && data.data) {
-                        setCodItemConfiguracion(data.data.cod_item_configuracion || "");
-                        setName(data.data.name || "");
-                        setApplicationCode(data.data.application_code || "");
-                        setCostCenter(data.data.cost_center || "");
-                        setActive(data.data.active || "");
-                        setCategory(data.data.category || "");
-                        setType(data.data.type || "");
-                        setItem(data.data.item || "");
-                        setCompany(data.data.company || "");
-                        setOrganizationResponsible(data.data.organization_responsible || "");
-                        setHostName(data.data.host_name || "");
-                        setManufacturer(data.data.manufacturer || "");
-                        setStatus(data.data.status || "");
-                        setOwner(data.data.owner || "");
-                        setModel(data.data.model || "");
-                        setSerial(data.data.serial || "");
-                        setOrgMaintenance(data.data.org_maintenance || "");
-                        setIpAddress(data.data.ip_address || "");
-                        setDiskSize(data.data.disk_size || "");
-                        setLocation(data.data.location || "");
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error al obtener datos del storage:", errorData);
+                    if (response.status === 404) {
+                        throw new Error("Storage no encontrado");
+                    } else if (response.status === 401) {
+                        throw new Error("No autorizado");
                     } else {
-                        console.error("Estructura de datos inesperada:", data);
-                        setError("Estructura de datos inesperada del storage");
+                        throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
                     }
-                } catch (error) {
-                    console.error("Error al obtener datos del storage:", error);
-                    setError(error.message || "Hubo un error al cargar los datos.");
-                } finally {
-                    setLoading(false);
                 }
-            };
-        
-            if (storageId) {
-                fetchStorageData();
+
+                const data = await response.json();
+                if (data && data.status === "success" && data.data) {
+                    setCodItemConfiguracion(data.data.cod_item_configuracion || "");
+                    setName(data.data.name || "");
+                    setApplicationCode(data.data.application_code || "");
+                    setCostCenter(data.data.cost_center || "");
+                    setActive(data.data.active || "");
+                    setCategory(data.data.category || "");
+                    setType(data.data.type || "");
+                    setItem(data.data.item || "");
+                    setCompany(data.data.company || "");
+                    setOrganizationResponsible(data.data.organization_responsible || "");
+                    setHostName(data.data.host_name || "");
+                    setManufacturer(data.data.manufacturer || "");
+                    setStatus(data.data.status || "");
+                    setOwner(data.data.owner || "");
+                    setModel(data.data.model || "");
+                    setSerial(data.data.serial || "");
+                    setOrgMaintenance(data.data.org_maintenance || "");
+                    setIpAddress(data.data.ip_address || "");
+                    setDiskSize(data.data.disk_size || "");
+                    setLocation(data.data.location || "");
+                } else {
+                    console.error("Estructura de datos inesperada:", data);
+                    setError("Estructura de datos inesperada del storage");
+                }
+            } catch (error) {
+                console.error("Error al obtener datos del storage:", error);
+                setError(error.message || "Hubo un error al cargar los datos.");
+            } finally {
+                setLoading(false);
             }
-        }, [storageId]);
+        };
+
+        if (storageId) {
+            fetchStorageData();
+        }
+    }, [storageId]);
 
     useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
 
@@ -196,11 +196,11 @@ const EditarStorage = () => {
         event.preventDefault();
 
         const requiredFields = [
-            cod_item_configuracion, name, application_code, cost_center, active, category, 
-            type, item, company, organization_responsible, host_name, manufacturer, status, 
+            cod_item_configuracion, name, application_code, cost_center, active, category,
+            type, item, company, organization_responsible, host_name, manufacturer, status,
             owner, model, serial, org_maintenance, ip_address, disk_size, location
         ];
-        
+
         if (requiredFields.some(field => !field)) {
             Swal.fire({
                 icon: "warning",
@@ -208,7 +208,7 @@ const EditarStorage = () => {
                 text: "Por favor, completa todos los campos.",
             });
             return;
-        }        
+        }
 
         const storageData = {
             cod_item_configuracion: cod_item_configuracion,
@@ -314,7 +314,7 @@ const EditarStorage = () => {
                             onChange={(e) => setCodItemConfiguracion(e.target.value)}
                             className={styles.input}
                         />
-                        <div className={styles.label}>Cod_item_configuracion*</div>
+                        <div className={styles.label}>Código de configuración de ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -344,7 +344,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Application Code*</div>
+                        <div className={styles.labelSelect}>Código de aplicación*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -364,7 +364,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Cost Center*</div>
+                        <div className={styles.labelSelect}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -382,7 +382,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Active*</div>
+                        <div className={styles.labelSelect}>Activo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -400,7 +400,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Category*</div>
+                        <div className={styles.labelSelect}>Categoría*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -420,7 +420,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Type*</div>
+                        <div className={styles.labelSelect}>Tipo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -438,7 +438,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Item*</div>
+                        <div className={styles.labelSelect}>Ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -456,7 +456,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Company*</div>
+                        <div className={styles.labelSelect}>Empresa*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -474,7 +474,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Organization responsible*</div>
+                        <div className={styles.labelSelect}>Organización responsable*</div>
                     </div>
 
                     <button type="submit" className={styles.button}>
@@ -511,7 +511,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Manufacturer*</div>
+                        <div className={styles.labelSelect}>Fabricante*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -529,7 +529,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Status*</div>
+                        <div className={styles.labelSelect}>Estado*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -549,7 +549,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Owner*</div>
+                        <div className={styles.labelSelect}>Propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -567,7 +567,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Model*</div>
+                        <div className={styles.labelSelect}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -599,7 +599,7 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Org Maintenance*</div>
+                        <div className={styles.labelSelect}>Organización de mantenimiento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -641,10 +641,11 @@ const EditarStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Location*</div>
+                        <div className={styles.labelSelect}>Ubicación*</div>
                     </div>
                 </div>
             </div>
+
         </form>
 
     );

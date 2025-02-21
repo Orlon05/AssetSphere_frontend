@@ -119,7 +119,7 @@ const VerStorage = () => {
                         },
                     }
                 );
-    
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error("Error al obtener datos del storage:", errorData);
@@ -131,7 +131,7 @@ const VerStorage = () => {
                         throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
                     }
                 }
-    
+
                 const data = await response.json();
                 if (data && data.status === "success" && data.data) {
                     setCodItemConfiguracion(data.data.cod_item_configuracion || "");
@@ -165,12 +165,12 @@ const VerStorage = () => {
                 setLoading(false);
             }
         };
-    
+
         if (storageId) {
             fetchStorageData();
         }
     }, [storageId]);
-    
+
 
     useEffect(() => { }, [cod_item_configuracion, cod_item_configuracion]);
 
@@ -187,7 +187,7 @@ const VerStorage = () => {
         <form className={styles.form}>
             <div className={styles.containtTit}>
                 <h2 className={styles.tittle}>
-                    <MdVisibility  />
+                    <MdVisibility />
                     Ver Storages
                 </h2>
             </div>
@@ -202,9 +202,8 @@ const VerStorage = () => {
                             value={cod_item_configuracion}
                             onChange={(e) => setCodItemConfiguracion(e.target.value)}
                             className={styles.input}
-                            
                         />
-                        <div className={styles.label}>Cod_item_configuracion*</div>
+                        <div className={styles.label}>Código de configuración de ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -234,8 +233,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        
-                        <div className={styles.labelSelect}>Application Code*</div>
+                        <div className={styles.labelSelect}>Código de aplicación*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -255,7 +253,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Cost Center*</div>
+                        <div className={styles.labelSelect}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -273,7 +271,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Active*</div>
+                        <div className={styles.labelSelect}>Activo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -291,7 +289,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Category*</div>
+                        <div className={styles.labelSelect}>Categoría*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -311,7 +309,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Type*</div>
+                        <div className={styles.labelSelect}>Tipo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -329,7 +327,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Item*</div>
+                        <div className={styles.labelSelect}>Ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -347,7 +345,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Company*</div>
+                        <div className={styles.labelSelect}>Empresa*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -365,9 +363,8 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Organization responsible*</div>
+                        <div className={styles.labelSelect}>Organización responsable*</div>
                     </div>
-                  
                 </div>
 
                 {/*INICIO DE LA COLUMNA 2*/}
@@ -399,7 +396,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Manufacturer*</div>
+                        <div className={styles.labelSelect}>Fabricante*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -417,7 +414,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Status*</div>
+                        <div className={styles.labelSelect}>Estado*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -437,7 +434,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Owner*</div>
+                        <div className={styles.labelSelect}>Propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -455,7 +452,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Model*</div>
+                        <div className={styles.labelSelect}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -487,7 +484,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Org Maintenance*</div>
+                        <div className={styles.labelSelect}>Organización de mantenimiento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -529,7 +526,7 @@ const VerStorage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className={styles.labelSelect}>Location*</div>
+                        <div className={styles.labelSelect}>Ubicación*</div>
                     </div>
                 </div>
             </div>
