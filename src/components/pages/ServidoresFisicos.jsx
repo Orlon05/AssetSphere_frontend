@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
+import { MdVisibility  } from "react-icons/md";
 
 const ServidoresFisicos = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -128,6 +129,11 @@ const ServidoresFisicos = () => {
   const irCrear = () => {
     navigate("/crear-servidores-f");
   };
+
+  const irVer = (serverId) => {
+    navigate(`/ver/${serverId}/servers`);
+  };
+
   const irEditar = (serverId) => {
     navigate(`/editar/${serverId}/servidores`);
   };
@@ -481,9 +487,12 @@ const ServidoresFisicos = () => {
                 <td>{server.serial}</td>
                 <td>{server.ip_address}</td>
                 <td>
-                  <button className={style.btnVer} onClick={() => {}}>
-                    <GrFormViewHide />
+                  <button 
+                    className={style.btnVer}
+                     onClick={() => irVer(server.id)}>
+                    <MdVisibility  />
                   </button>
+
                   <button
                     className={style.btnEdit}
                     onClick={() => irEditar(server.id)}

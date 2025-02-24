@@ -6,6 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
 import CrearServerF from "../pages/CrearServidor";
 import EditarServer from "../pages/EditarServidor";
+import VerServers from "../pages/VerServers";  
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
@@ -54,6 +55,12 @@ export let EnrutadorApp = [
         path: "/editar/:serverId/servidores",
         element: < EditarServer />
       },
+
+      {
+        path: "/ver/:serverId/servers",
+        element: < VerServers />
+      },
+
       {
         path: "perfil",
         element: < Perfil />
