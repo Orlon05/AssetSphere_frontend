@@ -16,9 +16,13 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     const [sheetNames, setSheetNames] = useState([]);
     const [selectedSheet, setSelectedSheet] = useState("");
     const [workbookData, setWorkbookData] = useState({});
-    const [columnWidths, setColumnWidths] = useState({}); // Estado para anchos de columna
+    const [columnWidths, setColumnWidths] = useState({});
     const [resizingColumn, setResizingColumn] = useState(null);
-    const startX = useRef(0)
+    const startX = useRef(0);
+
+    // Paginación
+    const [rowsPerPage, setRowsPerPage] = useState(10); // Cantidad de filas por página
+    const [currentPage, setCurrentPage] = useState(1); // Página actual
 
     const handleFileChange = (e) => {
         setFileError("");
@@ -47,9 +51,8 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: "array" });
                 setSheetNames(workbook.SheetNames);
-                setWorkbookData(workbook)
+                setWorkbookData(workbook);
                 console.log("Workbook Data:", workbook.SheetNames);
-
             }
             catch (error) {
                 console.error("Error al leer archivo:", error);
@@ -57,16 +60,14 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 setExcelData([]);
                 setShowTable(false);
                 setSheetNames([]);
-
             }
-
         };
         reader.readAsArrayBuffer(file);
     };
 
     const handleSheetChange = (e) => {
         const selectedSheet = e.target.value;
-        setSelectedSheet(selectedSheet)
+        setSelectedSheet(selectedSheet);
         try {
             const worksheet = workbookData.Sheets[selectedSheet];
             const jsonData = XLSX.utils.sheet_to_json(worksheet, {
@@ -74,12 +75,10 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 defval: null,
             });
 
-
             if (jsonData && jsonData.length > 0) {
                 const headers = jsonData[0].map((header) => header || `Column ${columns.length + 1}`);
                 const dataRows = jsonData.slice(1);
                 console.log("Sheet Data:", dataRows);
-
 
                 setColumns(headers);
                 setExcelData(dataRows);
@@ -124,31 +123,20 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         });
     };
 
-    const handleResizeStart = (e, index) => {
-        startX.current = e.clientX;
-        setResizingColumn(index);
-        document.addEventListener('mousemove', handleResize);
-        document.addEventListener('mouseup', handleResizeEnd);
+    // Paginación: Cambiar página
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
     };
 
-    const handleResize = (e) => {
-        if (resizingColumn === null) return;
-
-        const newWidth = (e.clientX - startX.current);
-
-        setColumnWidths(prevWidths => ({
-            ...prevWidths,
-            [resizingColumn]: (prevWidths[resizingColumn] || 0) + newWidth,
-        }));
-        startX.current = e.clientX;
+    const handleRowsPerPageChange = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(1); // Resetear a la primera página cuando cambie el número de filas por página
     };
 
-    const handleResizeEnd = () => {
-        setResizingColumn(null)
-        document.removeEventListener('mousemove', handleResize);
-        document.removeEventListener('mouseup', handleResizeEnd);
-    };
-
+    // Calcular las filas que se mostrarán según la página actual y la cantidad de filas por página
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = excelData.slice(indexOfFirstRow, indexOfLastRow);
 
     const handleSaveData = useCallback(async () => {
         const validationErrors = validateData(tableMetadata);
@@ -171,7 +159,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             didOpen: () => {
                 Swal.showLoading();
             }
-        })
+        });
         try {
             // Simulación de guardado
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula una llamada async a la base de datos
@@ -181,7 +169,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 text: "Los datos se han guardado correctamente.",
             });
             if (typeof onImportComplete === 'function') {
-                const mappedData = mapExcelData(excelData, tableMetadata)
+                const mappedData = mapExcelData(excelData, tableMetadata);
                 onImportComplete(mappedData);
             }
             setExcelData([]);
@@ -189,7 +177,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             setShowTable(false);
             setSheetNames([]);
             setSelectedSheet("");
-
         }
         catch (error) {
             console.error("Error al guardar:", error);
@@ -202,7 +189,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             setIsSaving(false);
         }
     }, [excelData, onImportComplete, tableMetadata]);
-
 
     const validateData = (tableMetadata) => {
         const errors = [];
@@ -232,7 +218,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         return errors;
     };
 
-
     return (
         <div className={style.container}>
             <input
@@ -258,57 +243,84 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             )}
             {showTable && (
                 <div className={style.tableContainer}>
-                    <Table striped bordered hover responsive >
-                        <thead>
-                            <tr>
-                                {columns.map((header, index) => (
-                                    <th key={index} style={{ width: columnWidths[index] }}>
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                            <span> {header} </span>
-                                            <span
-                                                className={style.resizeHandle}
-                                                onMouseDown={(e) => handleResizeStart(e, index)}
-                                            >
-                                            </span>
-                                        </div>
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {excelData.map((row, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {row.map((cell, colIndex) => (
-                                        <td key={colIndex} style={{ width: columnWidths[colIndex] }} className={cell === null || cell === undefined || cell === "" ? style.emptyCell : ""}>
-                                            <Form.Control
-                                                type="text"
-                                                value={cell === null ? "" : cell}
-                                                placeholder={cell === null ? "Rellenar aquí" : ""}
-                                                onChange={(e) =>
-                                                    handleCellValueChange(rowIndex, colIndex, e.target.value)
-                                                }
-                                            />
-                                        </td>
+                    <div className="table-responsive"> {/* Contenedor de desplazamiento */}
+                        <Table striped bordered hover responsive>
+                            <thead>
+                                <tr>
+                                    {columns.map((header, index) => (
+                                        <th key={index} style={{ width: columnWidths[index] }}>
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                                <span> {header} </span>
+                                                <span
+                                                    className={style.resizeHandle}
+                                                    onMouseDown={(e) => handleResizeStart(e, index)}
+                                                >
+                                                </span>
+                                            </div>
+                                        </th>
                                     ))}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                    <Button variant="primary" onClick={handleSaveData} disabled={isSaving} >
+                            </thead>
+                            <tbody>
+                                {currentRows.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                        {row.map((cell, colIndex) => (
+                                            <td key={colIndex} style={{ width: columnWidths[colIndex] }} className={cell === null || cell === undefined || cell === "" ? style.emptyCell : ""}>
+                                                <Form.Control
+                                                    type="text"
+                                                    value={cell === null ? "" : cell}
+                                                    placeholder={cell === null ? "Rellenar aquí" : ""}
+                                                    onChange={(e) =>
+                                                        handleCellValueChange(rowIndex, colIndex, e.target.value)
+                                                    }
+                                                />
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div className={style.paginationControls}>
+                        <div>
+                            Filas por página:
+                            <select value={rowsPerPage} onChange={handleRowsPerPageChange}>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </select>
+                        </div>
+                        <div>
+                            Página:
+                            <button
+                                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                                disabled={currentPage === 1}
+                            >
+                                Anterior
+                            </button>
+                            <span>{currentPage}</span>
+                            <button
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={indexOfLastRow >= excelData.length}
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                    <Button variant="primary" onClick={handleSaveData} disabled={isSaving}>
                         Guardar Datos
                     </Button>
                 </div>
             )}
+
+
         </div>
     );
 };
 
 ExcelImporter.propTypes = {
-    onImportComplete: PropTypes.func.isRequired,
-    tableMetadata: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        required: PropTypes.bool,
-        type: PropTypes.oneOf(['string', 'number', 'integer'])
-    })),
+    onImportComplete: PropTypes.func,
+    tableMetadata: PropTypes.array.isRequired,
 };
+
 export default ExcelImporter;
