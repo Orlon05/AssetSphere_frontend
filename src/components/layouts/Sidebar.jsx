@@ -109,6 +109,17 @@ const Sidebar = ({ isOpen }) => {
             </NavLink>
           </li>
           <li>
+            <NavLink
+              to="/pseries"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <VscSaveAll className={Style.icon} />
+              Pseries
+            </NavLink>
+          </li>
+          <li>
             <hr className={Style.line} />
             <NavLink
               onClick={handleLogout}

@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
 import CrearServerF from "../pages/CrearServidor";
 import EditarServer from "../pages/EditarServidor";
+import VerServers from "../pages/VerServers";  
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
@@ -24,6 +25,11 @@ import Sucursales from "../pages/Sucursales";
 import CrearSucursales from "../pages/CrearSucursales";
 import EditarSucursal from "../pages/EditarSucursales";
 import VerSucursales from "../pages/VerSucursales";
+import Pseries from "../pages/Pseries";
+import CrearPseries from "../pages/CrearPseries";
+import EditarPseries from "../pages/EditarPseries";
+import VerPseries from "../pages/VerPseries";  
+
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -62,6 +68,12 @@ export let EnrutadorApp = [
         path: "/editar/:serverId/servidores",
         element: < EditarServer />
       },
+
+      {
+        path: "/ver/:serverId/servers",
+        element: < VerServers />
+      },
+
       {
         path: "perfil",
         element: < Perfil />
@@ -129,6 +141,27 @@ export let EnrutadorApp = [
       {
         path: "/editar/:sucursalId/sucursales",
         element: < EditarSucursal />
+      },
+      {
+        path: "/pseries",
+        element: <Pseries/>
+      },
+      {
+        path: "/CrearPseries",
+        element: <CrearPseries/>
+      },
+      {
+        path: "/EditarPseries",
+        element: <EditarPseries/>
+      },
+      {
+        path: "/editar/:pserieId/pseries",
+        element: < EditarPseries />
+      },
+
+      {
+        path: "/ver/:pserieId/pseries",
+        element: < VerPseries />
       },
     ],
   },
