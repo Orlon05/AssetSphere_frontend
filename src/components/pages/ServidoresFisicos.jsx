@@ -4,7 +4,7 @@ import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { MdVisibility } from "react-icons/md";
+import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
@@ -49,27 +49,45 @@ const ServidoresFisicos = () => {
         didOpen: () => {
             const container = document.getElementById("excel-importer-container");
               const tableMetadata =  [
-                { name: "name", required: true, type:"string"},
-                  { name: "brand", required: true, type:"string"},
-                  { name: "model", required: true, type:"string"},
-                 { name: "processor", required: false, type:"string"},
+                [
+                  { name: "name", required: false, type:"string"},
+                  { name: "brand", required: false, type:"string"},
+                  { name: "model", required: false, type:"string"},
+                  { name: "processor", required: false, type:"string"},
                   { name: "cpu_cores", required: false, type:"integer"},
                   { name: "ram", required: false, type:"integer"},
-                 { name: "total_disk_size", required: false, type:"string"},
-                 { name: "os", required: true, type:"string"},
-                  { name: "status", required: true, type:"string"},
-                { name: "role", required: false, type:"string"},
-                { name: "environment", required: false, type:"string"},
-                 { name: "serial", required: true, type:"string"},
-                 { name: "rack_id", required: true, type:"string"},
-                { name: "unit", required: true, type:"string"},
-                   { name: "ip_address", required: true, type:"string"},
-                 { name: "city", required: true, type:"string"},
-                   { name: "location", required: true, type:"string"},
-                 { name: "chassis", required: true, type:"string"},
-                  { name: "rack_asset_type", required: false, type:"string"},
-                  { name: "owner", required: false, type:"string"},
-                   { name: "comments", required: false, type:"string"}
+                  { name: "total_disk_size", required: false, type:"string"},
+                  { name: "os_type", required: false, type:"string"},
+                  { name: "os_version", required: false, type:"string"},
+                  { name: "status", required: false, type:"string"},
+                  { name: "role", required: false, type:"string"},
+                  { name: "environment", required: false, type:"string"},
+                  { name: "serial", required: false, type:"string"},
+                  { name: "rack_id", required: false, type:"string"},
+                  { name: "unit", required: false, type:"string"},
+                  { name: "ip_address", required: false, type:"string"},
+                  { name: "city", required: false, type:"string"},
+                  { name: "location", required: false, type:"string"},
+                  { name: "asset_id", required: false, type:"string"},
+                  { name: "service_owner", required: false, type:"string"},
+                  { name: "warranty_start_date", required: false, type:"string"},
+                  { name: "warranty_end_date", required: false, type:"string"},
+                  { name: "application_code", required: false, type:"string"},
+                  { name: "responsible_evc", required: false, type:"string"},
+                  { name: "domain", required: false, type:"string"},
+                  { name: "subsidiary", required: false, type:"string"},
+                  { name: "responsible_organization", required: false, type:"string"},
+                  { name: "billable", required: false, type:"string"},
+                  { name: "oc_provisioning", required: false, type:"string"},
+                  { name: "oc_deletion", required: false, type:"string"},
+                  { name: "oc_modification", required: false, type:"string"},
+                  { name: "maintenance_period", required: false, type:"string"},
+                  { name: "maintenance_organization", required: false, type:"string"},
+                  { name: "cost_center", required: false, type:"string"},
+                  { name: "billing_type", required: false, type:"string"},
+                  { name: "comments", required: false, type:"string"}
+                ]
+                
                ]
             const importer = <ExcelImporter onImportComplete={handleImportComplete} tableMetadata={tableMetadata} />;
             if (container) {
@@ -243,30 +261,44 @@ const ServidoresFisicos = () => {
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
   const serverDataMapper = (server) => {
-    return {
+    return{
       "Nombre": server.name || "",
       "Marca": server.brand || "",
       "Modelo": server.model || "",
       "Procesador": server.processor || "",
       "Núcleos CPU": server.cpu_cores || "",
       "RAM": server.ram || "",
-      "Tamaño Total Disco": server.total_disk_size || "",
-      "Sistema Operativo": server.os || "",
+      "Tamaño Disco Total": server.total_disk_size || "",
+      "Tipo de OS": server.os_type || "",
+      "Versión de OS": server.os_version || "",
       "Estado": server.status || "",
       "Rol": server.role || "",
       "Entorno": server.environment || "",
       "Serial": server.serial || "",
-      "ID Rack": server.rack_id || "",
+      "Rack ID": server.rack_id || "",
       "Unidad": server.unit || "",
       "Dirección IP": server.ip_address || "",
       "Ciudad": server.city || "",
       "Ubicación": server.location || "",
-      "Chasis": server.chassis || "",
-      "Tipo Rack": server.rack_asset_type || "",
-      "Propietario": server.owner || "",
+      "ID de Activo": server.asset_id || "",
+      "Propietario del Servicio": server.service_owner || "",
+      "Fecha Inicio Garantía": server.warranty_start_date || "",
+      "Fecha Fin Garantía": server.warranty_end_date || "",
+      "Código de Aplicación": server.application_code || "",
+      "Responsable EVC": server.responsible_evc || "",
+      "Dominio": server.domain || "",
+      "Sucursal": server.subsidiary || "",
+      "Organización Responsable": server.responsible_organization || "",
+      "Facturable": server.billable || "",
+      "Provisionamiento OC": server.oc_provisioning || "",
+      "Eliminación OC": server.oc_deletion || "",
+      "Modificación OC": server.oc_modification || "",
+      "Periodo de Mantenimiento": server.maintenance_period || "",
+      "Organización de Mantenimiento": server.maintenance_organization || "",
+      "Centro de Costos": server.cost_center || "",
+      "Tipo de Facturación": server.billing_type || "",
       "Comentarios": server.comments || "",
-      // Agrega aquí otros campos que necesites
-    };
+  };
   };
 
    const handleExport = () => {
