@@ -1,3 +1,4 @@
+//Aquí se hacen las importaciones de todas las vistas
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
 import Dashboard from "../pages/Dashboard";
@@ -6,22 +7,28 @@ import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
 import CrearServerF from "../pages/CrearServidor";
 import EditarServer from "../pages/EditarServidor";
-import VerServers from "../pages/VerServers";  
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
-import Pseries from "../pages/Pseries";
-import CrearPseries from "../pages/CrearPseries";
-import EditarPseries from "../pages/EditarPseries";
-import VerPseries from "../pages/VerPseries";  
-
+import CrearStorage from "../pages/CrearStorage";
+import VerStorage from "../pages/VerStorage";
+import EditarStorage from "../pages/EditarStorage";
+import BaseDatos from "../pages/BaseDatos";
+import CrearBaseDatos from "../pages/CrearBaseDatos";
+import VerBaseDatos from "../pages/VerBaseDatos";
+import EditarBaseDatos from "../pages/EditarBaseDatos";
+import Sucursales from "../pages/Sucursales";
+import CrearSucursales from "../pages/CrearSucursales";
+import EditarSucursal from "../pages/EditarSucursales";
+import VerSucursales from "../pages/VerSucursales";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
   // la Auth es correcta sigue a las hijas si, no redireccionara al login
+  // Agregar el respectivo path y element de la vista que se desea agregar, se puede tomar como ejemplo las existentes.
   {
     element: <Login />,
     path: "login",
@@ -55,12 +62,6 @@ export let EnrutadorApp = [
         path: "/editar/:serverId/servidores",
         element: < EditarServer />
       },
-
-      {
-        path: "/ver/:serverId/servers",
-        element: < VerServers />
-      },
-
       {
         path: "perfil",
         element: < Perfil />
@@ -86,25 +87,48 @@ export let EnrutadorApp = [
         element: <Storage/>
       },
       {
-        path: "/pseries",
-        element: <Pseries/>
+        path: "/crear-storages",
+        element: <CrearStorage/>
       },
       {
-        path: "/CrearPseries",
-        element: <CrearPseries/>
+        path: "/ver/:storageId/storages",
+        element: < VerStorage />
       },
       {
-        path: "/EditarPseries",
-        element: <EditarPseries/>
+        path: "/editar/:storageId/storages",
+        element: < EditarStorage />
       },
       {
-        path: "/editar/:pserieId/pseries",
-        element: < EditarPseries />
+        path: "/Base-De-Datos",
+        element: <BaseDatos/>
       },
-
       {
-        path: "/ver/:pserieId/pseries",
-        element: < VerPseries />
+        path: "/crear-base-de-datos",
+        element: <CrearBaseDatos/>
+      },
+      {
+        path: "/ver/:baseDatosId/basedatos",
+        element: < VerBaseDatos />
+      },
+      {
+        path: "/editar/:baseDatosId/basedatos",
+        element: < EditarBaseDatos />
+      },
+      {
+        path: "/sucursales",
+        element: <Sucursales/>
+      },
+      {
+        path: "/ver/:sucursalId/sucursales",
+        element: < VerSucursales />
+      },
+      {
+        path: "/crear-sucursales",
+        element: <CrearSucursales/>
+      },
+      {
+        path: "/editar/:sucursalId/sucursales",
+        element: < EditarSucursal />
       },
     ],
   },
