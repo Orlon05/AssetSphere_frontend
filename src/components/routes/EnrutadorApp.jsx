@@ -1,4 +1,3 @@
-//Aquí se hacen las importaciones de todas las vistas
 import ServidoresF from "../pages/ServidoresFisicos";
 import ServidoresV from "../pages/ServidoresVirtuales";
 import Dashboard from "../pages/Dashboard";
@@ -14,17 +13,6 @@ import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
-import CrearStorage from "../pages/CrearStorage";
-import VerStorage from "../pages/VerStorage";
-import EditarStorage from "../pages/EditarStorage";
-import BaseDatos from "../pages/BaseDatos";
-import CrearBaseDatos from "../pages/CrearBaseDatos";
-import VerBaseDatos from "../pages/VerBaseDatos";
-import EditarBaseDatos from "../pages/EditarBaseDatos";
-import Sucursales from "../pages/Sucursales";
-import CrearSucursales from "../pages/CrearSucursales";
-import EditarSucursal from "../pages/EditarSucursales";
-import VerSucursales from "../pages/VerSucursales";
 import Pseries from "../pages/Pseries";
 import CrearPseries from "../pages/CrearPseries";
 import EditarPseries from "../pages/EditarPseries";
@@ -34,7 +22,6 @@ import VerPseries from "../pages/VerPseries";
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
   // la Auth es correcta sigue a las hijas si, no redireccionara al login
-  // Agregar el respectivo path y element de la vista que se desea agregar, se puede tomar como ejemplo las existentes.
   {
     element: <Login />,
     path: "login",
@@ -97,50 +84,6 @@ export let EnrutadorApp = [
       {
         path: "/storage",
         element: <Storage/>
-      },
-      {
-        path: "/crear-storages",
-        element: <CrearStorage/>
-      },
-      {
-        path: "/ver/:storageId/storages",
-        element: < VerStorage />
-      },
-      {
-        path: "/editar/:storageId/storages",
-        element: < EditarStorage />
-      },
-      {
-        path: "/Base-De-Datos",
-        element: <BaseDatos/>
-      },
-      {
-        path: "/crear-base-de-datos",
-        element: <CrearBaseDatos/>
-      },
-      {
-        path: "/ver/:baseDatosId/basedatos",
-        element: < VerBaseDatos />
-      },
-      {
-        path: "/editar/:baseDatosId/basedatos",
-        element: < EditarBaseDatos />
-      },
-      {
-        path: "/sucursales",
-        element: <Sucursales/>
-      },
-      {
-        path: "/ver/:sucursalId/sucursales",
-        element: < VerSucursales />
-      },
-      {
-        path: "/crear-sucursales",
-        element: <CrearSucursales/>
-      },
-      {
-        path: "/editar/:sucursalId/sucursales",
-        element: < EditarSucursal />
       },
       {
         path: "/pseries",
