@@ -7,7 +7,7 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { MdVisibility } from "react-icons/md";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
@@ -26,18 +26,18 @@ const ServidoresFisicos = () => {
   const [selectedServers, setSelectedServers] = useState(new Set());
   const navigate = useNavigate();
   const { exportToExcel } = useExport();
-  
+
   //USO DEL IMPORT
   const handleImport = () => {
     Swal.fire({
-        title: 'Importar desde Excel',
-        html: '<div id="excel-importer-container"></div>',
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-         width: '80%',
-         height: '80%',
-         /*
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      /*
         customClass: {
            container: 'swal-custom-container',
            popup: 'swal-custom-popup',
@@ -45,47 +45,50 @@ const ServidoresFisicos = () => {
         },
         grow:false,
       */
-        didOpen: () => {
-            const container = document.getElementById("excel-importer-container");
-              const tableMetadata =  [
-                { name: "name", required: true, type:"string"},
-                  { name: "brand", required: true, type:"string"},
-                  { name: "model", required: true, type:"string"},
-                 { name: "processor", required: false, type:"string"},
-                  { name: "cpu_cores", required: false, type:"integer"},
-                  { name: "ram", required: false, type:"integer"},
-                 { name: "total_disk_size", required: false, type:"string"},
-                 { name: "os", required: true, type:"string"},
-                  { name: "status", required: true, type:"string"},
-                { name: "role", required: false, type:"string"},
-                { name: "environment", required: false, type:"string"},
-                 { name: "serial", required: true, type:"string"},
-                 { name: "rack_id", required: true, type:"string"},
-                { name: "unit", required: true, type:"string"},
-                   { name: "ip_address", required: true, type:"string"},
-                 { name: "city", required: true, type:"string"},
-                   { name: "location", required: true, type:"string"},
-                 { name: "chassis", required: true, type:"string"},
-                  { name: "rack_asset_type", required: false, type:"string"},
-                  { name: "owner", required: false, type:"string"},
-                   { name: "comments", required: false, type:"string"}
-               ]
-            const importer = <ExcelImporter onImportComplete={handleImportComplete} tableMetadata={tableMetadata} />;
-            if (container) {
-            
-               const root = createRoot(container)
-                  root.render(importer)
-              }
+      didOpen: () => {
+        const container = document.getElementById("excel-importer-container");
+        const tableMetadata = [
+          { name: "name", required: true, type: "string" },
+          { name: "brand", required: true, type: "string" },
+          { name: "model", required: true, type: "string" },
+          { name: "processor", required: false, type: "string" },
+          { name: "cpu_cores", required: false, type: "integer" },
+          { name: "ram", required: false, type: "integer" },
+          { name: "total_disk_size", required: false, type: "string" },
+          { name: "os", required: true, type: "string" },
+          { name: "status", required: true, type: "string" },
+          { name: "role", required: false, type: "string" },
+          { name: "environment", required: false, type: "string" },
+          { name: "serial", required: true, type: "string" },
+          { name: "rack_id", required: true, type: "string" },
+          { name: "unit", required: true, type: "string" },
+          { name: "ip_address", required: true, type: "string" },
+          { name: "city", required: true, type: "string" },
+          { name: "location", required: true, type: "string" },
+          { name: "chassis", required: true, type: "string" },
+          { name: "rack_asset_type", required: false, type: "string" },
+          { name: "owner", required: false, type: "string" },
+          { name: "comments", required: false, type: "string" },
+        ];
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleImportComplete}
+            tableMetadata={tableMetadata}
+          />
+        );
+        if (container) {
+          const root = createRoot(container);
+          root.render(importer);
+        }
       },
       willClose: () => {
-         const container = document.getElementById("excel-importer-container");
-           if(container){
-         
-               const root = createRoot(container)
-                 root.unmount()
-            }
-         },
-      });
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
+    });
   };
 
   const Toast = Swal.mixin({
@@ -107,13 +110,10 @@ const ServidoresFisicos = () => {
     });
   };
 
-
-
-
-    const handleImportComplete = (importedData) => {
-        console.log("datos importados:", importedData); // Aqui tendrias tu data
-        Swal.close();
-    }
+  const handleImportComplete = (importedData) => {
+    console.log("datos importados:", importedData); // Aqui tendrias tu data
+    Swal.close();
+  };
 
   const selectedCount = selectedServers.size;
 
@@ -238,33 +238,33 @@ const ServidoresFisicos = () => {
 
   const serverDataMapper = (server) => {
     return {
-      "Nombre": server.name || "",
-      "Marca": server.brand || "",
-      "Modelo": server.model || "",
-      "Procesador": server.processor || "",
+      Nombre: server.name || "",
+      Marca: server.brand || "",
+      Modelo: server.model || "",
+      Procesador: server.processor || "",
       "Núcleos CPU": server.cpu_cores || "",
-      "RAM": server.ram || "",
+      RAM: server.ram || "",
       "Tamaño Total Disco": server.total_disk_size || "",
       "Sistema Operativo": server.os || "",
-      "Estado": server.status || "",
-      "Rol": server.role || "",
-      "Entorno": server.environment || "",
-      "Serial": server.serial || "",
+      Estado: server.status || "",
+      Rol: server.role || "",
+      Entorno: server.environment || "",
+      Serial: server.serial || "",
       "ID Rack": server.rack_id || "",
-      "Unidad": server.unit || "",
+      Unidad: server.unit || "",
       "Dirección IP": server.ip_address || "",
-      "Ciudad": server.city || "",
-      "Ubicación": server.location || "",
-      "Chasis": server.chassis || "",
+      Ciudad: server.city || "",
+      Ubicación: server.location || "",
+      Chasis: server.chassis || "",
       "Tipo Rack": server.rack_asset_type || "",
-      "Propietario": server.owner || "",
-      "Comentarios": server.comments || "",
+      Propietario: server.owner || "",
+      Comentarios: server.comments || "",
       // Agrega aquí otros campos que necesites
     };
   };
 
-   const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos", serverDataMapper);//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+  const handleExport = () => {
+    exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
 
   const handleSearchChange = (e) => {
@@ -328,37 +328,35 @@ const ServidoresFisicos = () => {
             let errorData;
 
             try {
-                errorData = await response.json();
+              errorData = await response.json();
               if (response.status === 422 && errorData && errorData.detail) {
-                   errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
               } else if (response.status === 401 || response.status === 403) {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
                 errorMessage = "El servidor no existe.";
               } else if (errorData && errorData.message) {
-                   errorMessage = errorData.message;
-               }
-
-             } catch (errorParse) {
-               console.error("Error parsing error response:", errorParse);
-                errorMessage = `Error al procesar la respuesta del servidor.`;
-                handleError(errorParse);
+                errorMessage = errorData.message;
+              }
+            } catch (errorParse) {
+              console.error("Error parsing error response:", errorParse);
+              errorMessage = `Error al procesar la respuesta del servidor.`;
+              handleError(errorParse);
             }
 
-
-           Swal.fire({
+            Swal.fire({
               icon: "error",
               title: "Error al eliminar el servidor",
               text: errorMessage,
-           });
+            });
           } else {
             setServers(servers.filter((server) => server.id !== serverId));
             showSuccessToast();
           }
         } catch (error) {
           console.error("Error al eliminar el servidor:", error);
-           handleError(error);
+          handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -448,7 +446,7 @@ const ServidoresFisicos = () => {
             </tr>
           </thead>
           <tbody>
-            {servers.map((server) => (
+            {filteredServers.map((server) => (
               <tr
                 key={server.id}
                 className={

@@ -66,6 +66,17 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
+              to="/servidoresv"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <FaServer className={Style.icon} />
+              Virtuales
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to="/sucursales"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links

@@ -447,8 +447,9 @@ const Storage = () => {
         </button>
       </div>
       <div
-        className={`${style.searchContainer} ${selectedCount > 0 ? style.searchContainerSelected : ""
-          }`}
+        className={`${style.searchContainer} ${
+          selectedCount > 0 ? style.searchContainerSelected : ""
+        }`}
       >
         {showSearch && (
           <>
@@ -502,7 +503,7 @@ const Storage = () => {
             </tr>
           </thead>
           <tbody>
-            {storages.map((storage) => (
+            {filteredStorages.map((storage) => (
               <tr
                 key={storage.id}
                 className={
@@ -524,7 +525,8 @@ const Storage = () => {
                 <td>
                   <button
                     className={style.btnVer}
-                    onClick={() => irVer(storage.id)}>
+                    onClick={() => irVer(storage.id)}
+                  >
                     <MdVisibility />
                   </button>
 

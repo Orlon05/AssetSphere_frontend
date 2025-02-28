@@ -24,6 +24,9 @@ import Sucursales from "../pages/Sucursales";
 import CrearSucursales from "../pages/CrearSucursales";
 import EditarSucursal from "../pages/EditarSucursales";
 import VerSucursales from "../pages/VerSucursales";
+import VirtualForm from "../pages/crearServidorv";
+import EditarServerVirtual from "../pages/editarServidorv";
+import VerServidoresVirtuales from "../pages/verServidoresVirtuales";
 
 export let EnrutadorApp = [
   //Generamos la variable para la routa protegida y sus hijas si,
@@ -55,12 +58,24 @@ export let EnrutadorApp = [
         element: <ServidoresV />,
       },
       {
+        path: "servidoresv",
+        element: <ServidoresV />,
+      },
+      {
         path: "crear-servidores-f",
         element: < CrearServerF />
       },
       {
+        path: "crear-servidores-v",
+        element: < VirtualForm />
+      },
+      {
         path: "/editar/:serverId/servidores",
         element: < EditarServer />
+      },
+      {
+        path: "/editar/:serverId/servidoresv",
+        element: < EditarServerVirtual />
       },
       {
         path: "perfil",
@@ -93,6 +108,10 @@ export let EnrutadorApp = [
       {
         path: "/ver/:storageId/storages",
         element: < VerStorage />
+      },
+      {
+        path: "/ver/:serverId/servidoresv",
+        element: < VerServidoresVirtuales />
       },
       {
         path: "/editar/:storageId/storages",
