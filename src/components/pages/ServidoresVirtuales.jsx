@@ -56,6 +56,7 @@ const ServidoresVirtuales = () => {
           { name: "ram", required: false, type: "integer" },
           { name: "total_disk_size", required: false, type: "string" },
           { name: "os_type", required: true, type: "string" },
+          { name: "os_version", required: false, type: "string" }, 
           { name: "status", required: true, type: "string" },
           { name: "role", required: false, type: "string" },
           { name: "environment", required: false, type: "string" },
@@ -63,11 +64,25 @@ const ServidoresVirtuales = () => {
           { name: "city", required: true, type: "string" },
           { name: "location", required: true, type: "string" },
           { name: "service_owner", required: false, type: "string" },
+          { name: "application_code", required: false, type: "string" }, 
+          { name: "responsible_evc", required: false, type: "string" },
+          { name: "domain", required: false, type: "string" }, 
+          { name: "subsidiary", required: false, type: "string" }, 
+          { name: "responsible_organization", required: false, type: "string" },
+          { name: "billable", required: false, type: "string" }, 
+          { name: "oc_provisioning", required: false, type: "string" }, 
+          { name: "oc_deletion", required: false, type: "string" }, 
+          { name: "oc_modification", required: false, type: "string" }, 
+          { name: "maintenance_period", required: false, type: "string" }, 
+          { name: "maintenance_organization", required: false, type: "string" }, 
+          { name: "cost_center", required: false, type: "string" }, 
+          { name: "billing_type", required: false, type: "string" }, 
           { name: "comments", required: false, type: "string" },
         ];
         const importer = (
           <ExcelImporter
             onImportComplete={handleImportComplete}
+            onImportError={handleImportError}
             tableMetadata={tableMetadata}
           />
         );
