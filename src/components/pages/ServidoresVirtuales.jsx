@@ -52,24 +52,17 @@ const ServidoresVirtuales = () => {
         const tableMetadata = [
           { name: "name", required: true, type: "string" },
           { name: "brand", required: true, type: "string" },
-          { name: "model", required: true, type: "string" },
-          { name: "processor", required: false, type: "string" },
           { name: "cpu_cores", required: false, type: "integer" },
           { name: "ram", required: false, type: "integer" },
           { name: "total_disk_size", required: false, type: "string" },
-          { name: "os", required: true, type: "string" },
+          { name: "os_type", required: true, type: "string" },
           { name: "status", required: true, type: "string" },
           { name: "role", required: false, type: "string" },
           { name: "environment", required: false, type: "string" },
-          { name: "serial", required: true, type: "string" },
-          { name: "rack_id", required: true, type: "string" },
-          { name: "unit", required: true, type: "string" },
           { name: "ip_address", required: true, type: "string" },
           { name: "city", required: true, type: "string" },
           { name: "location", required: true, type: "string" },
-          { name: "chassis", required: true, type: "string" },
-          { name: "rack_asset_type", required: false, type: "string" },
-          { name: "owner", required: false, type: "string" },
+          { name: "service_owner", required: false, type: "string" },
           { name: "comments", required: false, type: "string" },
         ];
         const importer = (
@@ -405,7 +398,7 @@ const ServidoresVirtuales = () => {
     <div className={style.container}>
       <div className={style.containerMain}>
         <h1 className={style.tittle}>
-          <FaServer /> Lista de Servidores
+          <FaServer /> Lista de Servidores Virtuales
         </h1>
         <button className={style.btnAdd} onClick={irCrear}>
           <IoIosAdd className={style.icon} /> Crear

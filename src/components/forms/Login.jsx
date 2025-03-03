@@ -44,11 +44,9 @@ const Login = () => {
       }
 
       const tokenFromResponse = data.data.accessToken;
-      console.log("Token de la respuesta del login:", tokenFromResponse); // Nuevo log para el token de la respuesta
 
       user.login(tokenFromResponse);
       const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
-      console.log("Token guardado en localStorage:", tokenFromLocalStorage); // Nuevo log para el token en localStorage
 
       localStorage.setItem("userInfo", JSON.stringify(data.data));
       navigate("/analitica");

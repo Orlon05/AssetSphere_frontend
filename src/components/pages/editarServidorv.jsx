@@ -253,7 +253,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setNombreServidor(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Nombre del Servidor*</div>
+            <div className={styles.label}>Nombre del Servidor</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -265,7 +265,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setMarca(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Marca*</div>
+            <div className={styles.label}>Marca</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -277,7 +277,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setCores(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Cores*</div>
+            <div className={styles.label}>Cores</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -289,7 +289,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setRam(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Ram*</div>
+            <div className={styles.label}>Ram</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -301,7 +301,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setDiscos(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Disco*</div>
+            <div className={styles.label}>Disco</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -313,7 +313,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setSo(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Sistema Operativo*</div>
+            <div className={styles.label}>Sistema Operativo</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -325,7 +325,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setSov(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Versión SO*</div>
+            <div className={styles.label}>Versión SO</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -337,7 +337,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setEstado(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Estado*</div>
+            <div className={styles.label}>Estado</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -349,7 +349,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setRol(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Rol*</div>
+            <div className={styles.label}>Rol</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -361,7 +361,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setAmbiente(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Ambiente*</div>
+            <div className={styles.label}>Ambiente</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -373,7 +373,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setIp(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>IP*</div>
+            <div className={styles.label}>IP</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -385,7 +385,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setCity(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Ciudad*</div>
+            <div className={styles.label}>Ciudad</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -397,7 +397,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setLocation(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Ubicación*</div>
+            <div className={styles.label}>Ubicación</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -409,7 +409,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setPropietario(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Propietario*</div>
+            <div className={styles.label}>Propietario</div>
           </div>
           <button type="submit" className={styles.button}>
             Guardar
@@ -427,7 +427,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setAppcode(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Código de Aplicación*</div>
+            <div className={styles.label}>Código de Aplicación</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -439,7 +439,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setResevc(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Responsable EVC*</div>
+            <div className={styles.label}>Responsable EVC</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -451,7 +451,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setDominio(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Dominio*</div>
+            <div className={styles.label}>Dominio</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -463,7 +463,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setSub(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Subsidiaria*</div>
+            <div className={styles.label}>Subsidiaria</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -475,7 +475,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setResorg(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Organización Responsable*</div>
+            <div className={styles.label}>Organización Responsable</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -487,7 +487,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setBill(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Facturable*</div>
+            <div className={styles.label}>Facturable</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -499,7 +499,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setOprovi(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Aprovisionamiento OC*</div>
+            <div className={styles.label}>Aprovisionamiento OC</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -511,7 +511,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setOdel(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Eliminación OC*</div>
+            <div className={styles.label}>Eliminación OC</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -523,7 +523,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setOmodi(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Modificación OC*</div>
+            <div className={styles.label}>Modificación OC</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -535,7 +535,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setMperiod(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Periodo de Mantenimiento*</div>
+            <div className={styles.label}>Periodo de Mantenimiento</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -547,7 +547,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setMorg(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Organización de Mantenimiento*</div>
+            <div className={styles.label}>Organización de Mantenimiento</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -559,7 +559,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setCost(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Centro de Costos*</div>
+            <div className={styles.label}>Centro de Costos</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -571,7 +571,7 @@ const EditarServerVirtual = () => {
               onChange={(e) => setBulling(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Tipo de Facturación*</div>
+            <div className={styles.label}>Tipo de Facturación</div>
           </div>
 
           <div className={styles.formGroup}>
