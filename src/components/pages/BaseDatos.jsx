@@ -457,175 +457,180 @@ const BaseDeDatos = () => {
         return <div>Error: {error.message}</div>;
     }
     return (
-        <div className={style.container}>
-            <div className={style.containerMain}>
-                <h1 className={style.tittle}>
-                    <FaDatabase /> Lista de Bases de datos
-                </h1>
-                <button className={style.btnAdd} onClick={irCrear}>
-                    <IoIosAdd className={style.icon} /> Crear
-                </button>
-                <button className={style.btnImport} onClick={handleImport}>
-                    <CiImport className={style.icon} /> Importar
-                </button>
-                <button className={style.btnExport} onClick={handleExport}>
-                    <CiExport className={style.icon} /> Exportar
-                </button>
-            </div>
-            <div
-                className={`${style.searchContainer} ${selectedCount > 0 ? style.searchContainerSelected : ""
-                    }`}
-            >
-                {showSearch && (
-                    <>
-                        <input
-                            className={style.searchInput}
-                            type="search"
-                            placeholder="Buscar base de datos..."
-                            value={searchValue}
-                            onChange={handleSearchChange}
-                            ref={searchInputRef}
-                        />
-                        <button
-                            className={style.searchIcon}
-                            onClick={handleSearchButtonClick}
-                        >
-                            <CiSearch className={style.iconS} />
-                        </button>
-                    </>
-                )}
-                {selectedCount > 0 && (
-                    <span className={style.selectedCount}>
-                        <span>{selectedCount}</span>
-                        <span>
-                            Base de datos{selectedCount !== 1 ? "es" : ""} Seleccionada
-                            {selectedCount !== 1 ? "s" : ""}
-                        </span>
-                    </span>
-                )}
-            </div>
-            <div className={style.container}>
-                <Table className={`${style.table} ${style.customTable}`}>
-                    <thead>
-                        <tr>
-                            <th className={style.contChek}>
-                                <input
-                                    type="checkbox"
-                                    className={style.customCheckbox}
-                                    checked={
-                                        base_datos.length > 0 &&
-                                        selectedBasesDeDatos.size === base_datos.length
-                                    }
-                                    onChange={toggleSelectAll}
-                                />
-                                {/* Modificar hacia abajo */}
-                            </th>
-                            <th>name</th>
-                            <th>instance_id</th>
-                            <th>cost_center</th>
-                            <th>category</th>
-                            <th className={style.contBtns}>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {base_datos.map((baseDeDatos) => (
-                            <tr
-                                key={baseDeDatos.id}
-                                className={
-                                    selectedBasesDeDatos.has(baseDeDatos.id) ? style.selectedRow : ""
-                                }
-                            >
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        className={style.customCheckbox}
-                                        checked={selectedBasesDeDatos.has(baseDeDatos.id)}
-                                        onChange={() => toggleSelectBasesDeDatos(baseDeDatos.id)}
-                                    />
-                                </td>
-                                <td>{baseDeDatos.name}</td>
-                                <td>{baseDeDatos.instance_id}</td>
-                                <td>{baseDeDatos.cost_center}</td>
-                                <td>{baseDeDatos.category}</td>
-                                <td>
-                                    <button className={style.btnVer}
-                                        onClick={() => irVer(baseDeDatos.id)}>
-                                        <MdVisibility />
-                                    </button>
-                                    <button
-                                        className={style.btnEdit}
-                                        onClick={() => irEditar(baseDeDatos.id)}
-                                    >
-                                        <MdEdit />
-                                    </button>
-                                    <button
-                                        className={style.btnDelete}
-                                        onClick={() => {
-                                            handleDeleteStorage(baseDeDatos.id);
-                                        }}
-                                    >
-                                        <MdDelete />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td className={style.contFil} colSpan="2">
-                                <div
-                                    className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
-                                >
-                                    <span className={style.textfoot}>Filas por página:</span>
-                                    <Form.Select
-                                        value={rowsPerPage}
-                                        onChange={(e) =>
-                                            setRowsPerPage(parseInt(e.target.value, 10))
-                                        }
-                                        className={style.selectLine}
-                                    >
-                                        <option value={5}>5</option>
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={50}>50</option>
-                                        <option value={100}>100</option>
-                                    </Form.Select>
-                                </div>
-                            </td>
-                            <td colSpan="1">
-                                <div
-                                    className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
-                                >
-                                    <span>{`${indexOfFirstBaseDatos + 1}-${Math.min(
-                                        indexOfLastBaseDatos,
-                                        filteredBasesDeDatos.length
-                                    )} de ${filteredBasesDeDatos.length}`}</span>
-                                </div>
-                            </td>
-                            <td className={style.contFilDos} colSpan="3">
-                                <div
-                                    className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
-                                >
-                                    <Pagination className={style.pestanas}>
-                                        <Pagination.Prev
-                                            onClick={() =>
-                                                setCurrentPage(Math.max(1, currentPage - 1))
-                                            }
-                                        />
-                                        <Pagination.Item>{currentPage}</Pagination.Item>
-                                        <Pagination.Next
-                                            onClick={() =>
-                                                setCurrentPage(Math.min(totalPages, currentPage + 1))
-                                            }
-                                        />
-                                    </Pagination>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </Table>
-            </div>
+      <div className={style.container}>
+        <div className={style.containerMain}>
+          <h1 className={style.tittle}>
+            <FaDatabase /> Lista de Bases de datos
+          </h1>
+          <button className={style.btnAdd} onClick={irCrear}>
+            <IoIosAdd className={style.icon} /> Crear
+          </button>
+          <button className={style.btnImport} onClick={handleImport}>
+            <CiImport className={style.icon} /> Importar
+          </button>
+          <button className={style.btnExport} onClick={handleExport}>
+            <CiExport className={style.icon} /> Exportar
+          </button>
         </div>
+        <div
+          className={`${style.searchContainer} ${
+            selectedCount > 0 ? style.searchContainerSelected : ""
+          }`}
+        >
+          {showSearch && (
+            <>
+              <input
+                className={style.searchInput}
+                type="search"
+                placeholder="Buscar base de datos..."
+                value={searchValue}
+                onChange={handleSearchChange}
+                ref={searchInputRef}
+              />
+              <button
+                className={style.searchIcon}
+                onClick={handleSearchButtonClick}
+              >
+                <CiSearch className={style.iconS} />
+              </button>
+            </>
+          )}
+          {selectedCount > 0 && (
+            <span className={style.selectedCount}>
+              <span>{selectedCount}</span>
+              <span>
+                Base de datos{selectedCount !== 1 ? "es" : ""} Seleccionada
+                {selectedCount !== 1 ? "s" : ""}
+              </span>
+            </span>
+          )}
+        </div>
+        <div className={style.container}>
+          <Table className={`${style.table} ${style.customTable}`}>
+            <thead>
+              <tr>
+                <th className={style.contChek}>
+                  <input
+                    type="checkbox"
+                    className={style.customCheckbox}
+                    checked={
+                      base_datos.length > 0 &&
+                      selectedBasesDeDatos.size === base_datos.length
+                    }
+                    onChange={toggleSelectAll}
+                  />
+                  {/* Modificar hacia abajo */}
+                </th>
+                <th>name</th>
+                <th>instance_id</th>
+                <th>cost_center</th>
+                <th>category</th>
+                <th className={style.contBtns}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBasesDeDatos.map((baseDeDatos) => (
+                <tr
+                  key={baseDeDatos.id}
+                  className={
+                    selectedBasesDeDatos.has(baseDeDatos.id)
+                      ? style.selectedRow
+                      : ""
+                  }
+                >
+                  <td>
+                    <input
+                      type="checkbox"
+                      className={style.customCheckbox}
+                      checked={selectedBasesDeDatos.has(baseDeDatos.id)}
+                      onChange={() => toggleSelectBasesDeDatos(baseDeDatos.id)}
+                    />
+                  </td>
+                  <td>{baseDeDatos.name}</td>
+                  <td>{baseDeDatos.instance_id}</td>
+                  <td>{baseDeDatos.cost_center}</td>
+                  <td>{baseDeDatos.category}</td>
+                  <td>
+                    <button
+                      className={style.btnVer}
+                      onClick={() => irVer(baseDeDatos.id)}
+                    >
+                      <MdVisibility />
+                    </button>
+                    <button
+                      className={style.btnEdit}
+                      onClick={() => irEditar(baseDeDatos.id)}
+                    >
+                      <MdEdit />
+                    </button>
+                    <button
+                      className={style.btnDelete}
+                      onClick={() => {
+                        handleDeleteStorage(baseDeDatos.id);
+                      }}
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td className={style.contFil} colSpan="2">
+                  <div
+                    className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+                  >
+                    <span className={style.textfoot}>Filas por página:</span>
+                    <Form.Select
+                      value={rowsPerPage}
+                      onChange={(e) =>
+                        setRowsPerPage(parseInt(e.target.value, 10))
+                      }
+                      className={style.selectLine}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                    </Form.Select>
+                  </div>
+                </td>
+                <td colSpan="1">
+                  <div
+                    className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+                  >
+                    <span>{`${indexOfFirstBaseDatos + 1}-${Math.min(
+                      indexOfLastBaseDatos,
+                      filteredBasesDeDatos.length
+                    )} de ${filteredBasesDeDatos.length}`}</span>
+                  </div>
+                </td>
+                <td className={style.contFilDos} colSpan="3">
+                  <div
+                    className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+                  >
+                    <Pagination className={style.pestanas}>
+                      <Pagination.Prev
+                        onClick={() =>
+                          setCurrentPage(Math.max(1, currentPage - 1))
+                        }
+                      />
+                      <Pagination.Item>{currentPage}</Pagination.Item>
+                      <Pagination.Next
+                        onClick={() =>
+                          setCurrentPage(Math.min(totalPages, currentPage + 1))
+                        }
+                      />
+                    </Pagination>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </Table>
+        </div>
+      </div>
     );
 };
 

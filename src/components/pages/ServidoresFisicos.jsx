@@ -7,7 +7,7 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
@@ -27,18 +27,18 @@ const ServidoresFisicos = () => {
   const [selectedServers, setSelectedServers] = useState(new Set());
   const navigate = useNavigate();
   const { exportToExcel } = useExport();
-  
+
   //USO DEL IMPORT
   const handleImport = () => {
     Swal.fire({
-        title: 'Importar desde Excel',
-        html: '<div id="excel-importer-container"></div>',
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-         width: '80%',
-         height: '80%',
-         /*
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      /*
         customClass: {
            container: 'swal-custom-container',
            popup: 'swal-custom-popup',
@@ -97,14 +97,13 @@ const ServidoresFisicos = () => {
               }
       },
       willClose: () => {
-         const container = document.getElementById("excel-importer-container");
-           if(container){
-         
-               const root = createRoot(container)
-                 root.unmount()
-            }
-         },
-      });
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
+    });
   };
 
   const Toast = Swal.mixin({
@@ -126,13 +125,10 @@ const ServidoresFisicos = () => {
     });
   };
 
-
-
-
-    const handleImportComplete = (importedData) => {
-        console.log("datos importados:", importedData); // Aqui tendrias tu data
-        Swal.close();
-    }
+  const handleImportComplete = (importedData) => {
+    console.log("datos importados:", importedData); // Aqui tendrias tu data
+    Swal.close();
+  };
 
   const selectedCount = selectedServers.size;
 
@@ -301,8 +297,8 @@ const ServidoresFisicos = () => {
   };
   };
 
-   const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos", serverDataMapper);//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+  const handleExport = () => {
+    exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
 
   const handleSearchChange = (e) => {
@@ -366,37 +362,35 @@ const ServidoresFisicos = () => {
             let errorData;
 
             try {
-                errorData = await response.json();
+              errorData = await response.json();
               if (response.status === 422 && errorData && errorData.detail) {
-                   errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
               } else if (response.status === 401 || response.status === 403) {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
                 errorMessage = "El servidor no existe.";
               } else if (errorData && errorData.message) {
-                   errorMessage = errorData.message;
-               }
-
-             } catch (errorParse) {
-               console.error("Error parsing error response:", errorParse);
-                errorMessage = `Error al procesar la respuesta del servidor.`;
-                handleError(errorParse);
+                errorMessage = errorData.message;
+              }
+            } catch (errorParse) {
+              console.error("Error parsing error response:", errorParse);
+              errorMessage = `Error al procesar la respuesta del servidor.`;
+              handleError(errorParse);
             }
 
-
-           Swal.fire({
+            Swal.fire({
               icon: "error",
               title: "Error al eliminar el servidor",
               text: errorMessage,
-           });
+            });
           } else {
             setServers(servers.filter((server) => server.id !== serverId));
             showSuccessToast();
           }
         } catch (error) {
           console.error("Error al eliminar el servidor:", error);
-           handleError(error);
+          handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -486,7 +480,7 @@ const ServidoresFisicos = () => {
             </tr>
           </thead>
           <tbody>
-            {servers.map((server) => (
+            {filteredServers.map((server) => (
               <tr
                 key={server.id}
                 className={
