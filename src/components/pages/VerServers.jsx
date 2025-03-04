@@ -1,172 +1,155 @@
-import React, { useState } from "react";
-import styles from "./crearServidor.module.css";
-import { IoIosAdd } from "react-icons/io";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { MdVisibility } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import styles from "./verServers.module.css";
 
-const ServerForm = () => {
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [processor, setProcessor] = useState("");
-  const [cpu_cores, setCpuCores] = useState(0);
-  const [ram, setRam] = useState(0);
-  const [total_disk_size, setTotalDiskSize] = useState("");
-  const [os_type, setOsType] = useState("");
-  const [os_version, setOsVersion] = useState("");
-  const [status, setStatus] = useState("");
-  const [role, setRole] = useState("");
-  const [environment, setEnvironment] = useState("");
-  const [serial, setSerial] = useState("");
-  const [rack_id, setRackId] = useState("");
-  const [unit, setUnit] = useState("");
-  const [ip_address, setIpAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [location, setLocation] = useState("");
-  const [asset_id, setAssetId] = useState("");
-  const [service_owner, setServiceOwner] = useState("");
-  const [warranty_start_date, setWarrantyStartDate] = useState(null);
-  const [warranty_end_date, setWarrantyEndDate] = useState(null);
-  const [application_code, setApplicationCode] = useState("");
-  const [responsible_evc, setResponsibleEvc] = useState("");
-  const [domain, setDomain] = useState("");
-  const [subsidiary, setSubsidiary] = useState("");
-  const [responsible_organization, setResponsibleOrganization] = useState("");
-  const [billable, setBillable] = useState("");
-  const [oc_provisioning, setOcProvisioning] = useState("");
-  const [oc_deletion, setOcDeletion] = useState("");
-  const [oc_modification, setOcModification] = useState("");
-  const [maintenance_period, setMaintenancePeriod] = useState("");
-  const [maintenance_organization, setMaintenanceOrganization] = useState("");
-  const [cost_center, setCostCenter] = useState("");
-  const [billing_type, setBillingType] = useState("");
-  const [comments, setComments] = useState("");
-  const navigate = useNavigate();
-
-  // Crea la instancia de Toast
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000, // Duración del Toast (3 segundos)
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
-
-  // Función para mostrar un Toast de éxito después de crear una receta
-  const showSuccessToast = () => {
-    Toast.fire({
-      icon: "success",
-      title: "Servidor creado exitosamente",
-    });
-  };
+const VerServers = () => {
+    const [name, setName] = useState("");
+    const [brand, setBrand] = useState("");
+    const [model, setModel] = useState("");
+    const [processor, setProcessor] = useState("");
+    const [cpu_cores, setCpuCores] = useState(0);
+    const [ram, setRam] = useState(0);
+    const [total_disk_size, setTotalDiskSize] = useState("");
+    const [os_type, setOsType] = useState("");
+    const [os_version, setOsVersion] = useState("");
+    const [status, setStatus] = useState("");
+    const [role, setRole] = useState("");
+    const [environment, setEnvironment] = useState("");
+    const [serial, setSerial] = useState("");
+    const [rack_id, setRackId] = useState("");
+    const [unit, setUnit] = useState("");
+    const [ip_address, setIpAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [location, setLocation] = useState("");
+    const [asset_id, setAssetId] = useState("");
+    const [service_owner, setServiceOwner] = useState("");
+    const [warranty_start_date, setWarrantyStartDate] = useState(null);
+    const [warranty_end_date, setWarrantyEndDate] = useState(null);
+    const [application_code, setApplicationCode] = useState("");
+    const [responsible_evc, setResponsibleEvc] = useState("");
+    const [domain, setDomain] = useState("");
+    const [subsidiary, setSubsidiary] = useState("");
+    const [responsible_organization, setResponsibleOrganization] = useState("");
+    const [billable, setBillable] = useState("");
+    const [oc_provisioning, setOcProvisioning] = useState("");
+    const [oc_deletion, setOcDeletion] = useState("");
+    const [oc_modification, setOcModification] = useState("");
+    const [maintenance_period, setMaintenancePeriod] = useState("");
+    const [maintenance_organization, setMaintenanceOrganization] = useState("");
+    const [cost_center, setCostCenter] = useState("");
+    const [billing_type, setBillingType] = useState("");
+    const [comments, setComments] = useState("");
+    const [loading, setLoading] = useState(true); // Estado para indicar carga
+    const [error, setError] = useState(null); // Estado para manejar errores
+    
+    const { serverId } = useParams();
 
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const serverData = {
-        name: name,
-        brand: brand,
-        model: model,
-        processor: processor,
-        cpu_cores: parseInt(cpu_cores, 10) || 0, // Manejo de error para cores
-        ram: ram,
-        total_disk_size: total_disk_size,
-        os_type: os_type,
-        os_version: os_version,
-        status: status,
-        role: role,
-        environment: environment,
-        serial: serial,
-        rack_id: rack_id,
-        unit: unit,
-        ip_address: ip_address,
-        city: city,
-        location: location,
-        asset_id: asset_id,
-        service_owner: service_owner,
-        warranty_start_date: warranty_start_date,
-        warranty_end_date: warranty_end_date,
-        application_code: application_code,
-        responsible_evc: responsible_evc,
-        domain: domain,
-        subsidiary: subsidiary,
-        responsible_organization: responsible_organization,
-        billable: billable,
-        oc_provisioning: oc_provisioning,
-        oc_deletion: oc_deletion,
-        oc_modification: oc_modification,
-        maintenance_period: maintenance_period,
-        maintenance_organization: maintenance_organization,
-        cost_center: cost_center,
-        billing_type: billing_type,
-        comments: comments,
-      };
-
-    try {
-      const token = localStorage.getItem("authenticationToken");
-      if (!token) {
-        throw new Error("Token de autorización no encontrado.");
-      }
-
-      const response = await fetch(
-        "http://localhost:8000/servers/physical/add",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(serverData),
+    useEffect(() => {
+        const fetchServerData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/servers/physical/${serverId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("authenticationToken")}`,
+                        },
+                    }
+                );
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error al obtener datos del servidor:", errorData);
+                    if (response.status === 404) {
+                        throw new Error("Servidor no encontrado");
+                    } else if (response.status === 401) {
+                        throw new Error("No autorizado");
+                    } else {
+                        throw new Error(`Error HTTP ${response.status}: ${errorData.message || errorData.detail}`);
+                    }
+                }
+    
+                const data = await response.json();
+                if (data && data.status === "success" && data.data) {
+                    setName(data.data.server_info.name || "");
+                    setBrand(data.data.server_info.brand || "");
+                    setModel(data.data.server_info.model || "");
+                    setProcessor(data.data.server_info.processor || "");
+                    setCpuCores(parseInt(data.data.server_info.cpu_cores, 10) || 0); // Manejo de error para cores
+                    setRam(data.data.server_info.ram || 0);
+                    setTotalDiskSize(data.data.server_info.total_disk_size || "");
+                    setOsType(data.data.server_info.os_type || "");
+                    setOsVersion(data.data.server_info.os_version || "");
+                    setStatus(data.data.server_info.status || "");
+                    setRole(data.data.server_info.role || "");
+                    setEnvironment(data.data.server_info.environment || "");
+                    setSerial(data.data.server_info.serial || "");
+                    setRackId(data.data.server_info.rack_id || "");
+                    setUnit(data.data.server_info.unit || "");
+                    setIpAddress(data.data.server_info.ip_address || "");
+                    setCity(data.data.server_info.city || "");
+                    setLocation(data.data.server_info.location || "");
+                    setAssetId(data.data.server_info.asset_id || "");
+                    setServiceOwner(data.data.server_info.service_owner || "");
+                    setWarrantyStartDate(data.data.server_info.warranty_start_date || null);
+                    setWarrantyEndDate(data.data.server_info.warranty_end_date || null);
+                    setApplicationCode(data.data.server_info.application_code || "");
+                    setResponsibleEvc(data.data.server_info.responsible_evc || "");
+                    setDomain(data.data.server_info.domain || "");
+                    setSubsidiary(data.data.server_info.subsidiary || "");
+                    setResponsibleOrganization(data.data.server_info.responsible_organization || "");
+                    setBillable(data.data.server_info.billable || "");
+                    setOcProvisioning(data.data.server_info.oc_provisioning || "");
+                    setOcDeletion(data.data.server_info.oc_deletion || "");
+                    setOcModification(data.data.server_info.oc_modification || "");
+                    setMaintenancePeriod(data.data.server_info.maintenance_period || "");
+                    setMaintenanceOrganization(data.data.server_info.maintenance_organization || "");
+                    setCostCenter(data.data.server_info.cost_center || "");
+                    setBillingType(data.data.server_info.billing_type || "");
+                    setComments(data.data.server_info.comments || "");
+                } else {
+                    console.error("Estructura de datos inesperada:", data);
+                    setError("Estructura de datos inesperada del storage");
+                }
+            } catch (error) {
+                console.error("Error al obtener datos del storage:", error);
+                setError(error.message || "Hubo un error al cargar los datos.");
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        if (serverId) {
+            fetchServerData();
         }
-      );
+    }, [serverId]);
+    
 
-      if (!response.ok) {
-        let errorMessage = `Error HTTP ${response.status}`;
-        if (response.status === 422) {
-          const errorData = await response.json();
-          errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-        } else if (response.status === 401 || response.status === 403) {
-          errorMessage =
-            "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
-        } else {
-          try {
-            const errorData = await response.json();
-            if (errorData.message) errorMessage = errorData.message;
-          } catch (e) {}
-        }
-        Swal.fire({
-          icon: "error",
-          title: "Error al crear el servidor",
-          text: errorMessage,
-        });
-      } else {
-        showSuccessToast();
-        navigate("/servidoresf");
-      }
-    } catch (error) {
-      console.error("Error:", error); // Registra el error en la consola para depuración
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.message || "Ocurrió un error inesperado.",
-      });
+    useEffect(() => { }, [name, brand]);
+
+    // Renderizado condicional: muestra un mensaje de carga o de error si es necesario
+    if (loading) {
+        return <div>Cargando datos...</div>;
     }
-  };
 
-  return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>
-        <IoIosAdd />
-        Crear Servidores
-      </h2>
-      <div className={styles.container}>
-        {/*INICIO DE LA COLUMNA 1*/}
-        <div className={styles.columnUno}>
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    return (
+        <form className={styles.form}>
+            <div className={styles.containtTit}>
+                <h2 className={styles.tittle}>
+                    <MdVisibility  />
+                    Visualizar Servidores
+                </h2>
+            </div>
+            <div className={styles.container}>
+                {/*INICIO DE LA COLUMNA 1*/}
+                <div className={styles.columnUno}>
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -242,8 +225,6 @@ const ServerForm = () => {
               <div className={styles.label}>Ram*</div>
             </div>
 
-          <hr className={styles.lines} />
-
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -255,6 +236,8 @@ const ServerForm = () => {
             />
             <div className={styles.label}>Tamaño del disco*</div>
           </div>
+
+          <hr className={styles.lines} />
 
           <div className={styles.formGroup}>
             <input
@@ -330,6 +313,8 @@ const ServerForm = () => {
             <div className={styles.label}>Serial*</div>
           </div>
 
+          <hr className={styles.lines} />
+
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -341,6 +326,8 @@ const ServerForm = () => {
             />
             <div className={styles.label}>Id del rack*</div>
           </div>
+
+          <hr className={styles.lines} />
 
           <div className={styles.formGroup}>
             <input
@@ -378,9 +365,7 @@ const ServerForm = () => {
             />
             <div className={styles.labelTarea}>Observaciones</div>
           </div>
-          <button type="submit" className={styles.button}>
-            Guardar
-          </button>
+
         </div>
 
         {/*INICIO DE LA COLUMNA 2*/}
@@ -618,11 +603,11 @@ const ServerForm = () => {
               className={styles.input}
             />
             <div className={styles.label}>Tipo de cobro*</div>
+            </div>
           </div>
         </div>
-      </div>
     </form>
   );
 };
 
-export default ServerForm;
+export default VerServers;

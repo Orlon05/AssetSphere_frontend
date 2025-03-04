@@ -5,27 +5,41 @@ import Swal from "sweetalert2";
 import styles from "./editarServidor.module.css";
 
 const EditarServer = () => {
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [processor, setProcessor] = useState("");
+  const [cpu_cores, setCpuCores] = useState(0);
+  const [ram, setRam] = useState(0);
+  const [total_disk_size, setTotalDiskSize] = useState("");
+  const [os_type, setOsType] = useState("");
+  const [os_version, setOsVersion] = useState("");
+  const [status, setStatus] = useState("");
+  const [role, setRole] = useState("");
+  const [environment, setEnvironment] = useState("");
   const [serial, setSerial] = useState("");
-  const [nombreServidor, setNombreServidor] = useState("");
-  const [propietario, setPropietario] = useState("");
-  const [chasis, setChasis] = useState("");
-  const [estado, setEstado] = useState("");
-  const [marca, setMarca] = useState("");
-  const [rack, setRack] = useState("");
-  const [unidad, setUnidad] = useState("");
-  const [ip, setIp] = useState("");
-  const [rol, setRol] = useState("");
-  const [so, setSo] = useState("");
-  const [tipo_activo_rack, setTipoActivoRack] = useState("");
-  const [modelo, setModelo] = useState("");
-  const [ambiente, setAmbiente] = useState("");
-  const [procesador, setProcesador] = useState("");
-  const [cores, setCores] = useState("");
-  const [discos, setDiscos] = useState("");
-  const [observaciones, setObservaciones] = useState("");
-  const [ram, setRam] = useState("");
+  const [rack_id, setRackId] = useState("");
+  const [unit, setUnit] = useState("");
+  const [ip_address, setIpAddress] = useState("");
   const [city, setCity] = useState("");
   const [location, setLocation] = useState("");
+  const [asset_id, setAssetId] = useState("");
+  const [service_owner, setServiceOwner] = useState("");
+  const [warranty_start_date, setWarrantyStartDate] = useState(null);
+  const [warranty_end_date, setWarrantyEndDate] = useState(null);
+  const [application_code, setApplicationCode] = useState("");
+  const [responsible_evc, setResponsibleEvc] = useState("");
+  const [domain, setDomain] = useState("");
+  const [subsidiary, setSubsidiary] = useState("");
+  const [responsible_organization, setResponsibleOrganization] = useState("");
+  const [billable, setBillable] = useState("");
+  const [oc_provisioning, setOcProvisioning] = useState("");
+  const [oc_deletion, setOcDeletion] = useState("");
+  const [oc_modification, setOcModification] = useState("");
+  const [maintenance_period, setMaintenancePeriod] = useState("");
+  const [maintenance_organization, setMaintenanceOrganization] = useState("");
+  const [cost_center, setCostCenter] = useState("");
+  const [billing_type, setBillingType] = useState("");
   const [loading, setLoading] = useState(true); // Estado para indicar carga
   const [error, setError] = useState(null); // Estado para manejar errores
 
@@ -48,31 +62,6 @@ const EditarServer = () => {
   const showSuccessToast = () => {
     Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
-
-  const ciudadesCapitalesColombia = [
-    "Bogotá",
-    "Medellín",
-    "Bello",
-    "Sincelejo",
-    "Ibague",
-    "Valledupar",
-  ];
-
-  const ambienteServidores = ["Producción", "Certificación"];
-
-  const estadoServidores = ["Encendido", "Apagado", "Mantenimiento"];
-
-  const marcaServidores = ["Cisco", "HP", "Lenovo", "DELL"];
-
-  const rolServidores = [
-    "NUTANIX",
-    "AXIOM10",
-    "OLVM",
-    "CITRIX BANCOLOMBIA",
-    "CITRIX",
-    "WINDOWS",
-    "LINUX",
-  ];
 
   const token = localStorage.getItem("authenticationToken");
 
@@ -110,27 +99,41 @@ const EditarServer = () => {
         // console.log("Datos recibidos:", data);
         // Actualiza los estados con los datos recibidos
         if (data.status === "success" && data.data && data.data.server_info) {
+          setName(data.data.server_info.name || "");
+          setBrand(data.data.server_info.brand || "");
+          setModel(data.data.server_info.model || "");
+          setProcessor(data.data.server_info.processor || "");
+          setCpuCores(parseInt(data.data.server_info.cpu_cores, 10) || 0); // Manejo de error para cores
+          setRam(data.data.server_info.ram || 0);
+          setTotalDiskSize(data.data.server_info.total_disk_size || "");
+          setOsType(data.data.server_info.os_type || "");
+          setOsVersion(data.data.server_info.os_version || "");
+          setStatus(data.data.server_info.status || "");
+          setRole(data.data.server_info.role || "");
+          setEnvironment(data.data.server_info.environment || "");
           setSerial(data.data.server_info.serial || "");
-          setNombreServidor(data.data.server_info.name || "");
-          setPropietario(data.data.server_info.owner || "");
-          setChasis(data.data.server_info.chassis || "");
-          setEstado(data.data.server_info.status || "");
-          setMarca(data.data.server_info.brand || "");
-          setRack(data.data.server_info.rack_id || "");
-          setUnidad(data.data.server_info.unit || "");
-          setIp(data.data.server_info.ip_address || "");
-          setRol(data.data.server_info.role || "");
-          setSo(data.data.server_info.os || "");
-          setTipoActivoRack(data.data.server_info.rack_asset_type || "");
-          setModelo(data.data.server_info.model || "");
-          setAmbiente(data.data.server_info.environment || "");
-          setProcesador(data.data.server_info.processor || "");
-          setCores(data.data.server_info.cpu_cores || "");
-          setDiscos(data.data.server_info.total_disk_size || "");
-          setObservaciones(data.data.server_info.comments || "");
-          setRam(data.data.server_info.ram || "");
+          setRackId(data.data.server_info.rack_id || "");
+          setUnit(data.data.server_info.unit || "");
+          setIpAddress(data.data.server_info.ip_address || "");
           setCity(data.data.server_info.city || "");
           setLocation(data.data.server_info.location || "");
+          setAssetId(data.data.server_info.asset_id || "");
+          setServiceOwner(data.data.server_info.service_owner || "");
+          setWarrantyStartDate(data.data.server_info.warranty_start_date || null);
+          setWarrantyEndDate(data.data.server_info.warranty_end_date || null);
+          setApplicationCode(data.data.server_info.application_code || "");
+          setResponsibleEvc(data.data.server_info.responsible_evc || "");
+          setDomain(data.data.server_info.domain || "");
+          setSubsidiary(data.data.server_info.subsidiary || "");
+          setResponsibleOrganization(data.data.server_info.responsible_organization || "");
+          setBillable(data.data.server_info.billable || "");
+          setOcProvisioning(data.data.server_info.oc_provisioning || "");
+          setOcDeletion(data.data.server_info.oc_deletion || "");
+          setOcModification(data.data.server_info.oc_modification || "");
+          setMaintenancePeriod(data.data.server_info.maintenance_period || "");
+          setMaintenanceOrganization(data.data.server_info.maintenance_organization || "");
+          setCostCenter(data.data.server_info.cost_center || "");
+          setBillingType(data.data.server_info.billing_type || "");
         } else {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");
@@ -146,12 +149,12 @@ const EditarServer = () => {
     }
   }, [serverId]);
 
-  useEffect(() => { }, [serial, nombreServidor]);
+  useEffect(() => {}, [serial, name]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!nombreServidor || !serial || !marca || !modelo) {
+    if (!name || !serial || !brand || !model) {
       Swal.fire({
         icon: "warning",
         title: "Campos obligatorios",
@@ -161,27 +164,41 @@ const EditarServer = () => {
     }
 
     const serverData = {
-      name: nombreServidor,
-      brand: marca,
-      model: modelo,
-      processor: procesador,
+      name: name,
+      brand: brand,
+      model: model,
+      processor: processor,
+      cpu_cores: parseInt(cpu_cores, 10) || 0, // Manejo de error para cores
       ram: ram,
-      cpu_cores: parseInt(cores, 10),
-      total_disk_size: discos,
-      os: so,
-      status: estado,
-      role: rol,
-      environment: ambiente,
+      total_disk_size: total_disk_size,
+      os_type: os_type,
+      os_version: os_version,
+      status: status,
+      role: role,
+      environment: environment,
       serial: serial,
-      rack_id: rack,
-      unit: unidad,
-      ip_address: ip,
+      rack_id: rack_id,
+      unit: unit,
+      ip_address: ip_address,
       city: city,
       location: location,
-      chassis: chasis,
-      rack_asset_type: tipo_activo_rack,
-      owner: propietario,
-      comments: observaciones,
+      asset_id: asset_id,
+      service_owner: service_owner,
+      warranty_start_date: warranty_start_date,
+      warranty_end_date: warranty_end_date,
+      application_code: application_code,
+      responsible_evc: responsible_evc,
+      domain: domain,
+      subsidiary: subsidiary,
+      responsible_organization: responsible_organization,
+      billable: billable,
+      oc_provisioning: oc_provisioning,
+      oc_deletion: oc_deletion,
+      oc_modification: oc_modification,
+      maintenance_period: maintenance_period,
+      maintenance_organization: maintenance_organization,
+      cost_center: cost_center,
+      billing_type: billing_type,
     };
 
     console.log(
@@ -251,11 +268,163 @@ const EditarServer = () => {
         <h2 className={styles.tittle}>
           <MdEdit />
           Editar Servidores
-        </h2>
-      </div>
+          </h2>
+        </div>
+
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Nombre del servidor*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="brand"
+              name="brand"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Marca*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="model"
+              name="model"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Modelo*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="processor"
+              name="processor"
+              value={processor}
+              onChange={(e) => setProcessor(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Procesador*</div>
+          </div>
+
+          
+          <div className={styles.formGroup}>
+            <input
+              type="text" 
+              id="cpu_cores"
+              name="cpu_cores"
+              value={cpu_cores}
+              onChange={(e) => setCpuCores(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Cpu Cores*</div>
+          </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="ram"
+              name="ram"
+              value={ram}
+              onChange={(e) => setRam(e.target.value)}
+              className={styles.input}
+              />
+              <div className={styles.label}>Ram*</div>
+            </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="total_disk_size"
+              name="total_disk_size"
+              value={total_disk_size}
+              onChange={(e) => setTotalDiskSize(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Tamaño del disco*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="os_type"
+              name="os_type"
+              value={os_type}
+              onChange={(e) => setOsType(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Sistema Operativo*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="os_version"
+              name="os_version"
+              value={os_version}
+              onChange={(e) => setOsVersion(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Version sistema operativo*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="status"
+              name="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Estado*</div>
+          </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="role"
+              name="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Rol*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="environment"
+              name="environment"
+              value={environment}
+              onChange={(e) => setEnvironment(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Ambiente*</div>
+          </div>
+
           <div className={styles.formGroup}>
             <input
               type="text"
@@ -271,128 +440,41 @@ const EditarServer = () => {
           <div className={styles.formGroup}>
             <input
               type="text"
-              id="propietario"
-              name="propietario"
-              value={propietario}
-              onChange={(e) => setPropietario(e.target.value)}
+              id="rack_id"
+              name="rack_id"
+              value={rack_id}
+              onChange={(e) => setRackId(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Propietario*</div>
+            <div className={styles.label}>Id del rack*</div>
           </div>
 
           <div className={styles.formGroup}>
             <input
               type="text"
-              id="nombreServidor"
-              name="nombreServidor"
-              value={nombreServidor}
-              onChange={(e) => setNombreServidor(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Nombre del Servidor*</div>
-          </div>
-
-          <hr className={styles.lines} />
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="unidad"
-              name="unidad"
-              value={unidad}
-              onChange={(e) => setUnidad(e.target.value)}
+              id="unit"
+              name="unit"
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
               className={styles.input}
             />
             <div className={styles.label}>Unidad*</div>
           </div>
 
-          <div className={styles.formGroup}>
-            <select
-              id="rol"
-              name="rol"
-              value={rol}
-              onChange={(e) => setRol(e.target.value)}
-              className={styles.selected}
-            >
-              <option value="" disabled>Selecciona el rol</option>
-              {rolServidores.map((rol) => (
-                <option key={rol} value={rol}>
-                  {rol}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <select
-              id="ambiente"
-              name="ambiente"
-              value={ambiente}
-              onChange={(e) => setAmbiente(e.target.value)}
-              className={styles.selected}
-            >
-              <option value="" disabled>Selecciona el Ambiente</option>
-              {ambienteServidores.map((ambiente) => (
-                <option key={ambiente} value={ambiente}>
-                  {ambiente}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <hr className={styles.lines} />
 
           <div className={styles.formGroup}>
             <input
               type="text"
-              id="procesador"
-              name="procesador"
-              value={procesador}
-              onChange={(e) => setProcesador(e.target.value)}
+              id="ip_address"
+              name="ip_address"
+              value={ip_address}
+              onChange={(e) => setIpAddress(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Procesador*</div>
+            <div className={styles.label}>Version sistema operativo*</div>
           </div>
 
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="so"
-              name="so"
-              value={so}
-              onChange={(e) => setSo(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Sistema Operativo*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <select
-              id="city"
-              name="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className={styles.selected}
-            >
-              <option value="" disabled>Selecciona una ciudad</option>
-              {ciudadesCapitalesColombia.map((ciudad) => (
-                <option key={ciudad} value={ciudad}>
-                  {ciudad}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <textarea
-              id="observaciones"
-              name="observaciones"
-              value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
-              className={styles.texTarea}
-            />
-            <div className={styles.labelTarea}>Observaciones</div>
-          </div>
           <button type="submit" className={styles.button}>
             Guardar
           </button>
@@ -403,135 +485,13 @@ const EditarServer = () => {
           <div className={styles.formGroup}>
             <input
               type="text"
-              id="chasis"
-              name="chasis"
-              value={chasis}
-              onChange={(e) => setChasis(e.target.value)}
+              id="city"
+              name="city"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Chasis*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <select
-              id="estado"
-              name="estado"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-              className={styles.selected}
-            >
-              <option value="" disabled>Selecciona un estado</option>
-              {estadoServidores.map((estado) => (
-                <option key={estado} value={estado}>
-                  {estado}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <select
-              id="marca"
-              name="marca"
-              value={marca}
-              onChange={(e) => setMarca(e.target.value)}
-              className={styles.selected}
-            >
-              <option value="" disabled>Selecciona una marca</option>
-              {marcaServidores.map((marca) => (
-                <option key={marca} value={marca}>
-                  {marca}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <hr className={styles.lines} />
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="rack"
-              name="rack"
-              value={rack}
-              onChange={(e) => setRack(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Rack*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="ip"
-              name="ip"
-              value={ip}
-              onChange={(e) => setIp(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ip*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="modelo"
-              name="modelo"
-              value={modelo}
-              onChange={(e) => setModelo(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Modelo*</div>
-          </div>
-
-          <hr className={styles.lines} />
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="cores"
-              name="cores"
-              value={cores}
-              onChange={(e) => setCores(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Cores*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="ram"
-              name="ram"
-              value={ram}
-              onChange={(e) => setRam(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Ram*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="discos"
-              name="discos"
-              value={discos}
-              onChange={(e) => setDiscos(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Disco*</div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <input
-              type="text"
-              id="tipo_activo_rack"
-              name="tipo_activo_rack"
-              value={tipo_activo_rack}
-              onChange={(e) => setTipoActivoRack(e.target.value)}
-              className={styles.input}
-            />
-            <div className={styles.label}>Tipo Activo*</div>
+            <div className={styles.label}>Ciudad*</div>
           </div>
 
           <div className={styles.formGroup}>
@@ -543,7 +503,218 @@ const EditarServer = () => {
               onChange={(e) => setLocation(e.target.value)}
               className={styles.input}
             />
-            <div className={styles.label}>Ubicación</div>
+            <div className={styles.label}>Ubicación*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+          <input
+              type="text"
+              id="asset_id"
+              name="asset_id"
+              value={asset_id}
+              onChange={(e) => setAssetId(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Id del activo*</div>
+          </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="service_owner"
+              name="service_owner"
+              value={service_owner}
+              onChange={(e) => setServiceOwner(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Propietario*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="date"
+              id="warranty_start_date"
+              name="warranty_start_date"
+              value={warranty_start_date}
+              onChange={(e) => setWarrantyStartDate(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Fecha inicio garantía*</div>
+          </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="date"
+              id="warranty_end_date"
+              name="warranty_end_date"
+              value={warranty_end_date}
+              onChange={(e) => setWarrantyEndDate(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Fecha fin garantía*</div>
+          </div>
+
+          <hr className={styles.lines} />
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="application_code"
+              name="application_code"
+              value={application_code}
+              onChange={(e) => setApplicationCode(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Código de aplicación*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="responsible_evc"
+              name="responsible_evc"
+              value={responsible_evc}
+              onChange={(e) => setResponsibleEvc(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>EVC responsable*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="domain"
+              name="domain"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Dominio*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="subsidiary"
+              name="subsidiary"
+              value={subsidiary}
+              onChange={(e) => setSubsidiary(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Filial*</div>
+          </div>
+          
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="responsible_organization"
+              name="responsible_organization"
+              value={responsible_organization}
+              onChange={(e) => setResponsibleOrganization(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Organización responsable</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="billable"
+              name="billable"
+              value={billable}
+              onChange={(e) => setBillable(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Facturable*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="oc_provisioning"
+              name="oc_provisioning"
+              value={oc_provisioning}
+              onChange={(e) => setOcProvisioning(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>OC de aprovisionamiento*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="oc_deletion"
+              name="oc_deletion"
+              value={oc_deletion}
+              onChange={(e) => setOcDeletion(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>OC de eliminación*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="oc_modification"
+              name="oc_modification"
+              value={oc_modification}
+              onChange={(e) => setOcModification(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>OC de modificación*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="maintenance_period"
+              name="maintenance_period"
+              value={maintenance_period}
+              onChange={(e) => setMaintenancePeriod(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Periodo de mantenimiento*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="maintenance_organization"
+              name="maintenance_organization"
+              value={maintenance_organization}
+              onChange={(e) => setMaintenanceOrganization(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Organización de mantenimiento*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="cost_center"
+              name="cost_center"
+              value={cost_center}
+              onChange={(e) => setCostCenter(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Centro de costos*</div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <input
+              type="text"
+              id="billing_type"
+              name="billing_type"
+              value={billing_type}
+              onChange={(e) => setBillingType(e.target.value)}
+              className={styles.input}
+            />
+            <div className={styles.label}>Tipo de cobro*</div>
           </div>
         </div>
       </div>

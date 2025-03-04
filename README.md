@@ -25,7 +25,7 @@ El proyecto sigue una arquitectura basada en componentes, con separación clara 
 - **FastAPI**: Para crear la API del backend.
 - **XAMPP**: Para gestionar el servidor y la base de datos MySQL.
 - **MySQL**: Para la gestión de datos del inventario.
-- **JWT**: (opcional) Para la autenticación de usuarios.
+- **JWT**: Para la autenticación de usuarios.
 
 ---
 

@@ -4,41 +4,40 @@ import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
 import { CiImport, CiExport, CiSearch } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { createRoot } from "react-dom/client";
+import { createRoot } from 'react-dom/client';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
-import style from "./fisicos.module.css";
+import style from "./Pseries.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { MdVisibility  } from "react-icons/md";
 
-const ServidoresFisicos = () => {
+const Pseries = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [servers, setServers] = useState([]);
+  const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedServers, setSelectedServers] = useState(new Set());
+  const [selectedPseries, setSelectedPseries] = useState(new Set());
   const navigate = useNavigate();
   const { exportToExcel } = useExport();
-
+  
   //USO DEL IMPORT
   const handleImport = () => {
     Swal.fire({
-      title: "Importar desde Excel",
-      html: '<div id="excel-importer-container"></div>',
-      showConfirmButton: false,
-      showCancelButton: true,
-      cancelButtonText: "Cancelar",
-      width: "80%",
-      height: "80%",
-      /*
+        title: 'Importar desde Excel',
+        html: '<div id="excel-importer-container"></div>',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+         width: '80%',
+         height: '80%',
+         /*
         customClass: {
            container: 'swal-custom-container',
            popup: 'swal-custom-popup',
@@ -49,46 +48,30 @@ const ServidoresFisicos = () => {
         didOpen: () => {
             const container = document.getElementById("excel-importer-container");
               const tableMetadata =  [
-                [
-                  { name: "name", required: false, type:"string"},
-                  { name: "brand", required: false, type:"string"},
-                  { name: "model", required: false, type:"string"},
-                  { name: "processor", required: false, type:"string"},
-                  { name: "cpu_cores", required: false, type:"integer"},
-                  { name: "ram", required: false, type:"integer"},
-                  { name: "total_disk_size", required: false, type:"string"},
-                  { name: "os_type", required: false, type:"string"},
-                  { name: "os_version", required: false, type:"string"},
-                  { name: "status", required: false, type:"string"},
-                  { name: "role", required: false, type:"string"},
-                  { name: "environment", required: false, type:"string"},
-                  { name: "serial", required: false, type:"string"},
-                  { name: "rack_id", required: false, type:"string"},
-                  { name: "unit", required: false, type:"string"},
-                  { name: "ip_address", required: false, type:"string"},
-                  { name: "city", required: false, type:"string"},
-                  { name: "location", required: false, type:"string"},
-                  { name: "asset_id", required: false, type:"string"},
-                  { name: "service_owner", required: false, type:"string"},
-                  { name: "warranty_start_date", required: false, type:"string"},
-                  { name: "warranty_end_date", required: false, type:"string"},
-                  { name: "application_code", required: false, type:"string"},
-                  { name: "responsible_evc", required: false, type:"string"},
-                  { name: "domain", required: false, type:"string"},
-                  { name: "subsidiary", required: false, type:"string"},
-                  { name: "responsible_organization", required: false, type:"string"},
-                  { name: "billable", required: false, type:"string"},
-                  { name: "oc_provisioning", required: false, type:"string"},
-                  { name: "oc_deletion", required: false, type:"string"},
-                  { name: "oc_modification", required: false, type:"string"},
-                  { name: "maintenance_period", required: false, type:"string"},
-                  { name: "maintenance_organization", required: false, type:"string"},
-                  { name: "cost_center", required: false, type:"string"},
-                  { name: "billing_type", required: false, type:"string"},
-                  { name: "comments", required: false, type:"string"}
-                ]
-                
-               ]
+                { name: "name", required: true, type:"string"},
+                { name: "application", required: true, type:"string"},
+                { name: "hostname", required: true, type:"string"},
+               { name: "ip_address", required: false, type:"string"},
+                { name: "environment", required: false, type:"string"},
+                { name: "slot", required: false, type:"string"},
+               { name: "lpar_id", required: false, type:"string"},
+               { name: "status", required: true, type:"string"},
+                { name: "os", required: true, type:"string"},
+              { name: "version", required: false, type:"string"},
+              { name: "subsidiary", required: false, type:"string"},
+               { name: "min_cpu", required: true, type:"string"},
+               { name: "act_cpu", required: true, type:"string"},
+              { name: "max_cpu", required: true, type:"string"},
+                 { name: "min_v_cpu", required: true, type:"string"},
+               { name: "act_v_cpu", required: true, type:"string"},
+                 { name: "max_v_cpu", required: true, type:"string"},
+               { name: "min_memory", required: true, type:"string"},
+                { name: "act_memory", required: false, type:"string"},
+                { name: "max_memory", required: false, type:"string"},
+                 { name: "expansion_factor", required: false, type:"string"},
+                 { name: "memory_per_factor", required: false, type:"string"},
+                { name: "processor_compatibility", required: false, type:"string"}
+             ]
             const importer = <ExcelImporter onImportComplete={handleImportComplete} tableMetadata={tableMetadata} />;
             if (container) {
             
@@ -97,13 +80,14 @@ const ServidoresFisicos = () => {
               }
       },
       willClose: () => {
-        const container = document.getElementById("excel-importer-container");
-        if (container) {
-          const root = createRoot(container);
-          root.unmount();
-        }
-      },
-    });
+         const container = document.getElementById("excel-importer-container");
+           if(container){
+         
+               const root = createRoot(container)
+                 root.unmount()
+            }
+         },
+      });
   };
 
   const Toast = Swal.mixin({
@@ -125,44 +109,48 @@ const ServidoresFisicos = () => {
     });
   };
 
-  const handleImportComplete = (importedData) => {
-    console.log("datos importados:", importedData); // Aqui tendrias tu data
-    Swal.close();
-  };
 
-  const selectedCount = selectedServers.size;
+
+
+    const handleImportComplete = (importedData) => {
+        console.log("datos importados:", importedData); // Aqui tendrias tu data
+        Swal.close();
+    }
+
+  const selectedCount = selectedPseries.size;
 
   const [showSearch, setShowSearch] = useState(true);
-  const [unfilteredServers, setUnfilteredServers] = useState([]);
+  const [unfilteredPseries, setUnfilteredPseries] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
+  
   const irCrear = () => {
-    navigate("/crear-servidores-f");
+    navigate("/CrearPseries");
   };
 
-  const irVer = (serverId) => {
-    navigate(`/ver/${serverId}/servers`);
+  const irVer = (pseriesId) => {
+    navigate(`/ver/${pseriesId}/pseries`);
   };
 
-  const irEditar = (serverId) => {
-    navigate(`/editar/${serverId}/servidores`);
+  const irEditar = (pseriesId) => {
+    navigate(`/editar/${pseriesId}/pseries`);
   };
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener servidores:", error);
   };
   const token = localStorage.getItem("authenticationToken");
-  const fetchServers = async (page, limit, search = "") => {
+  const fetchPseries = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&name=${search}`,
+        `http://localhost:8000/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -177,8 +165,8 @@ const ServidoresFisicos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredServers(data.data.servers);
-        setServers(data.data.servers);
+        setUnfilteredPseries(data.data.pseries);
+        setPseries(data.data.pseries);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -202,7 +190,7 @@ const ServidoresFisicos = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -217,7 +205,7 @@ const ServidoresFisicos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setServers(data.data.servers);
+        setPseries(data.data.pseries);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -236,16 +224,16 @@ const ServidoresFisicos = () => {
   };
 
   useEffect(() => {
-    fetchServers(currentPage, rowsPerPage);
+    fetchPseries(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
-        setServers(unfilteredServers);
+        setPseries(unfilteredPseries);
         setTotalPages(
-          unfilteredServers.length > 0
-            ? Math.ceil(unfilteredServers.length / rowsPerPage)
+          unfilteredPseries.length > 0
+            ? Math.ceil(unfilteredPseries.length / rowsPerPage)
             : 0
         );
       } else {
@@ -254,51 +242,36 @@ const ServidoresFisicos = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
+  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
 
-  const serverDataMapper = (server) => {
-    return{
-      "Nombre": server.name || "",
-      "Marca": server.brand || "",
-      "Modelo": server.model || "",
-      "Procesador": server.processor || "",
-      "Núcleos CPU": server.cpu_cores || "",
-      "RAM": server.ram || "",
-      "Tamaño Disco Total": server.total_disk_size || "",
-      "Tipo de OS": server.os_type || "",
-      "Versión de OS": server.os_version || "",
-      "Estado": server.status || "",
-      "Rol": server.role || "",
-      "Entorno": server.environment || "",
-      "Serial": server.serial || "",
-      "Rack ID": server.rack_id || "",
-      "Unidad": server.unit || "",
-      "Dirección IP": server.ip_address || "",
-      "Ciudad": server.city || "",
-      "Ubicación": server.location || "",
-      "ID de Activo": server.asset_id || "",
-      "Propietario del Servicio": server.service_owner || "",
-      "Fecha Inicio Garantía": server.warranty_start_date || "",
-      "Fecha Fin Garantía": server.warranty_end_date || "",
-      "Código de Aplicación": server.application_code || "",
-      "Responsable EVC": server.responsible_evc || "",
-      "Dominio": server.domain || "",
-      "Sucursal": server.subsidiary || "",
-      "Organización Responsable": server.responsible_organization || "",
-      "Facturable": server.billable || "",
-      "Provisionamiento OC": server.oc_provisioning || "",
-      "Eliminación OC": server.oc_deletion || "",
-      "Modificación OC": server.oc_modification || "",
-      "Periodo de Mantenimiento": server.maintenance_period || "",
-      "Organización de Mantenimiento": server.maintenance_organization || "",
-      "Centro de Costos": server.cost_center || "",
-      "Tipo de Facturación": server.billing_type || "",
-      "Comentarios": server.comments || "",
-  };
+  const PseriesDataMapper = (pseries) => {
+    return {
+      "Nombre Lpar en la HMC": pseries.name || "",
+      "Aplicación ": pseries.application || "",
+      "Hostname": pseries.hostname || "",
+      "IP": pseries.ip || "",
+      "Ambientes": pseries.environment || "",
+      "Cajón": pseries.slot || "",
+      "ID Lpar": pseries.total_disk_size || "",
+      "Estado": pseries.status || "",
+      "S.O": pseries.os || "",
+      "Versión": pseries.version || "",
+      "Filial": pseries.subsidiary || "",
+      "CPU MIN": pseries.min_cpu || "",
+      "CPU MAX": pseries.max_cpu || "",
+      "CPU V MIN": pseries.min_v_cpu || "",
+      "CPU V MAX": pseries.max_v_cpu || "",
+      "Memoria MIN": pseries.min_memory || "",
+      "Memoria ACT": pseries.act_memory || "",
+      "Factor de expansión": pseries.expansion_factor || "",
+      "Memoria por factor": pseries.expansion_factor || "",
+      "Proc Compat": pseries.processor_compatibility || "",
+      // Agrega aquí otros campos que necesites
+    };
   };
 
-  const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+   const handleExport = () => {
+    exportToExcel(pseries, "pseries", PseriesDataMapper);//AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
   };
 
   const handleSearchChange = (e) => {
@@ -313,28 +286,28 @@ const ServidoresFisicos = () => {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
-      setSelectedServers(new Set());
+      setSelectedPseries(new Set());
     } else {
-      setSelectedServers(new Set(servers.map((server) => server.id)));
+      setSelectedPseries(new Set(pseries.map((pseries) => pseries.id)));
     }
   };
 
-  const toggleSelectServer = (serverId) => {
-    const newSelectedServers = new Set(selectedServers);
-    if (newSelectedServers.has(serverId)) {
-      newSelectedServers.delete(serverId);
+  const toggleSelectPseries = (pseriesId) => {
+    const newSelectedPseries = new Set(selectedPseries);
+    if (newSelectedPseries.has(pseriesId)) {
+      newSelectedPseries.delete(pseriesId);
     } else {
-      newSelectedServers.add(serverId);
+      newSelectedPseries.add(pseriesId);
     }
-    setSelectedServers(newSelectedServers);
+    setSelectedPseries(newSelectedPseries);
   };
-  const filteredServers = servers.filter((server) =>
-    server.name.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredPseries = pseries.filter((pseries) =>
+    pseries.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const indexOfLastServer = currentPage * rowsPerPage;
-  const indexOfFirstServer = indexOfLastServer - rowsPerPage;
-  const handleDeleteServer = async (serverId) => {
+  const indexOfLastPseries = currentPage * rowsPerPage;
+  const indexOfFirstPseries = indexOfLastPseries - rowsPerPage;
+  const handleDeletePseries = async (pseriesId) => {
     Swal.fire({
       title: "¿Estás seguro?",
       text: "¿Deseas eliminar este servidor?",
@@ -348,7 +321,7 @@ const ServidoresFisicos = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/servers/physical/${serverId}`,
+            `http://localhost:8000/pseries/pseries/${pseriesId}`,
             {
               method: "DELETE",
               headers: {
@@ -362,35 +335,37 @@ const ServidoresFisicos = () => {
             let errorData;
 
             try {
-              errorData = await response.json();
+                errorData = await response.json();
               if (response.status === 422 && errorData && errorData.detail) {
-                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+                   errorMessage = errorData.detail.map((e) => e.msg).join(", ");
               } else if (response.status === 401 || response.status === 403) {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
                 errorMessage = "El servidor no existe.";
               } else if (errorData && errorData.message) {
-                errorMessage = errorData.message;
-              }
-            } catch (errorParse) {
-              console.error("Error parsing error response:", errorParse);
-              errorMessage = `Error al procesar la respuesta del servidor.`;
-              handleError(errorParse);
+                   errorMessage = errorData.message;
+               }
+
+             } catch (errorParse) {
+               console.error("Error parsing error response:", errorParse);
+                errorMessage = `Error al procesar la respuesta del servidor.`;
+                handleError(errorParse);
             }
 
-            Swal.fire({
+
+           Swal.fire({
               icon: "error",
               title: "Error al eliminar el servidor",
               text: errorMessage,
-            });
+           });
           } else {
-            setServers(servers.filter((server) => server.id !== serverId));
+            setPseries(pseries.filter((pseries) => pseries.id !== pseriesId));
             showSuccessToast();
           }
         } catch (error) {
           console.error("Error al eliminar el servidor:", error);
-          handleError(error);
+           handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -466,69 +441,63 @@ const ServidoresFisicos = () => {
                   type="checkbox"
                   className={style.customCheckbox}
                   checked={
-                    servers.length > 0 &&
-                    selectedServers.size === servers.length
+                    pseries.length > 0 &&
+                    selectedPseries.size === Pseries.length
                   }
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th>Servidor</th>
-              <th>Estado</th>
-              <th>Serial</th>
-              <th>IP</th>
+              <th>Nombre almacenamiento</th>
+              <th>Hostname</th>
+              <th>Modelo</th>
+              <th>Cajón</th>
+              <th>Status</th>
+              <th>Filial</th>
+              <th></th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {filteredServers.map((server) => (
+            {pseries.map((pseries) => (
               <tr
-                key={server.id}
+                key={pseries.id}
                 className={
-                  selectedServers.has(server.id) ? style.selectedRow : ""
+                  selectedPseries.has(pseries.id) ? style.selectedRow : ""
                 }
               >
                 <td>
                   <input
                     type="checkbox"
                     className={style.customCheckbox}
-                    checked={selectedServers.has(server.id)}
-                    onChange={() => toggleSelectServer(server.id)}
+                    checked={selectedPseries.has(pseries.id)}
+                    onChange={() => toggleSelectPseries(pseries.id)}
                   />
                 </td>
-                <td>{server.name}</td>
+                <td>{pseries.name}</td>
+
+                <td>{pseries.hostname}</td>
+                <td>{pseries.environment}</td>
+                <td>{pseries.slot}</td>
+                <td>{pseries.status}</td>
+                <td>{pseries.subsidiary}</td>
+                <td>{pseries.ip_address}</td>
                 <td>
-                  <div className={style.serverStatus}>
-                    <span
-                      className={
-                        server.status.toLowerCase() === "encendido"
-                          ? style.online
-                          : server.status.toLowerCase() === "mantenimiento"
-                          ? style.maintenance
-                          : style.offline
-                      }
-                    ></span>
-                    {server.status}
-                  </div>
-                </td>
-                <td>{server.serial}</td>
-                <td>{server.ip_address}</td>
-                <td>
-                  <button 
+                <button 
                     className={style.btnVer}
-                     onClick={() => irVer(server.id)}>
+                     onClick={() => irVer(pseries.id)}>
                     <MdVisibility  />
                   </button>
 
                   <button
                     className={style.btnEdit}
-                    onClick={() => irEditar(server.id)}
+                    onClick={() => irEditar(pseries.id)}
                   >
                     <MdEdit />
                   </button>
                   <button
                     className={style.btnDelete}
                     onClick={() => {
-                      handleDeleteServer(server.id);
+                      handleDeletePseries(pseries.id);
                     }}
                   >
                     <MdDelete />
@@ -563,10 +532,10 @@ const ServidoresFisicos = () => {
                 <div
                   className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
                 >
-                  <span>{`${indexOfFirstServer + 1}-${Math.min(
-                    indexOfLastServer,
-                    filteredServers.length
-                  )} de ${filteredServers.length}`}</span>
+                  <span>{`${indexOfFirstPseries + 1}-${Math.min(
+                    indexOfLastPseries,
+                    filteredPseries.length
+                  )} de ${filteredPseries.length}`}</span>
                 </div>
               </td>
               <td className={style.contFilDos} colSpan="3">
@@ -596,4 +565,4 @@ const ServidoresFisicos = () => {
   );
 };
 
-export default ServidoresFisicos;
+export default Pseries;

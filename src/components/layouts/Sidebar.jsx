@@ -110,6 +110,17 @@ const Sidebar = ({ isOpen }) => {
           </li>
           <li>
             <NavLink
+              to="/pseries"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <VscSaveAll className={Style.icon} />
+              Pseries
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to="/usuarios"
               className={({ isActive }) =>
                 isActive ? `${Style.links} active` : Style.links
