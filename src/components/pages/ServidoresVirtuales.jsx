@@ -25,6 +25,7 @@ const ServidoresVirtuales = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
+  const [allServers, setAllServers] = useState([]); 
   const [selectedServers, setSelectedServers] = useState(new Set());
   const navigate = useNavigate();
   const { exportToExcel } = useExport();
@@ -56,7 +57,7 @@ const ServidoresVirtuales = () => {
           { name: "ram", required: false, type: "integer" },
           { name: "total_disk_size", required: false, type: "string" },
           { name: "os_type", required: true, type: "string" },
-          { name: "os_version", required: false, type: "string" }, 
+          { name: "os_version", required: false, type: "string" },
           { name: "status", required: true, type: "string" },
           { name: "role", required: false, type: "string" },
           { name: "environment", required: false, type: "string" },
@@ -64,19 +65,19 @@ const ServidoresVirtuales = () => {
           { name: "city", required: true, type: "string" },
           { name: "location", required: true, type: "string" },
           { name: "service_owner", required: false, type: "string" },
-          { name: "application_code", required: false, type: "string" }, 
+          { name: "application_code", required: false, type: "string" },
           { name: "responsible_evc", required: false, type: "string" },
-          { name: "domain", required: false, type: "string" }, 
-          { name: "subsidiary", required: false, type: "string" }, 
+          { name: "domain", required: false, type: "string" },
+          { name: "subsidiary", required: false, type: "string" },
           { name: "responsible_organization", required: false, type: "string" },
-          { name: "billable", required: false, type: "string" }, 
-          { name: "oc_provisioning", required: false, type: "string" }, 
-          { name: "oc_deletion", required: false, type: "string" }, 
-          { name: "oc_modification", required: false, type: "string" }, 
-          { name: "maintenance_period", required: false, type: "string" }, 
-          { name: "maintenance_organization", required: false, type: "string" }, 
-          { name: "cost_center", required: false, type: "string" }, 
-          { name: "billing_type", required: false, type: "string" }, 
+          { name: "billable", required: false, type: "string" },
+          { name: "oc_provisioning", required: false, type: "string" },
+          { name: "oc_deletion", required: false, type: "string" },
+          { name: "oc_modification", required: false, type: "string" },
+          { name: "maintenance_period", required: false, type: "string" },
+          { name: "maintenance_organization", required: false, type: "string" },
+          { name: "cost_center", required: false, type: "string" },
+          { name: "billing_type", required: false, type: "string" },
           { name: "comments", required: false, type: "string" },
         ];
         const importer = (
@@ -172,7 +173,51 @@ const ServidoresVirtuales = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredServers(data.data.servers);
+        setUnfilteredServers(data.data.servers); 
+        setServers(data.data.servers); 
+        setTotalPages(data.data.total_pages || 0);
+
+    /*  console.log("Datos de los servidores:", data.data.servers); */
+
+      } else {
+        throw new Error("Respuesta inesperada de la API");
+      }
+    } catch (error) {
+      handleError(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.msg || error.message || "Ha ocurrido un error.",
+      });
+    } finally {
+      setLoading(false);
+      setIsSearching(false);
+    }
+  };
+
+  const fetchSearch = async (search) => {
+    if (isSearching) return;
+    setIsSearching(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/vservers/search/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw await response.json();
+      }
+
+      const data = await response.json();
+      if (data && data.status === "success" && data.data) {
         setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
       } else {
@@ -190,47 +235,6 @@ const ServidoresVirtuales = () => {
       setIsSearching(false);
     }
   };
-  const fetchSearch = async (search) => {
-    if (isSearching) return; 
-    setIsSearching(true); 
-    setLoading(true); 
-    setError(null);
-
-    try {
-      const response = await fetch(
-        `http://localhost:8000/vservers/search/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw await response.json(); 
-      }
-
-      const data = await response.json();
-      if (data && data.status === "success" && data.data) {
-        setServers(data.data.servers); 
-        setTotalPages(data.data.total_pages || 0); 
-      } else {
-        throw new Error("Respuesta inesperada de la API");
-      }
-    } catch (error) {
-      handleError(error); 
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: error.msg || error.message || "Ha ocurrido un error.",
-      });
-    } finally {
-      setLoading(false); 
-      setIsSearching(false); 
-    }
-  };
-
 
   useEffect(() => {
     fetchServers(currentPage, rowsPerPage);
@@ -252,7 +256,6 @@ const ServidoresVirtuales = () => {
       setIsSearchButtonClicked(false);
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
-
 
   const serverDataMapper = (server) => {
     return {
@@ -297,7 +300,7 @@ const ServidoresVirtuales = () => {
   };
 
   const handleSearchButtonClick = () => {
-    setIsSearchButtonClicked(true); 
+    setIsSearchButtonClicked(true);
     if (searchValue.trim() === "") {
       setServers(unfilteredServers);
       setTotalPages(
@@ -306,35 +309,38 @@ const ServidoresVirtuales = () => {
           : 0
       );
     } else {
-      setCurrentPage(1); 
-      fetchSearch(searchValue); 
+      setCurrentPage(1);
+      fetchSearch(searchValue);
     }
   };
 
   const toggleSelectAll = () => {
-    setSelectAll(!selectAll);
-    if (selectAll) {
-      setSelectedServers(new Set());
-    } else {
-      setSelectedServers(new Set(servers.map((server) => server.id)));
-    }
+    const isChecked = selectedServers.size !== servers.length;
+    const newSelectedServers = new Set(
+      isChecked ? servers.map((server) => server.id) : []
+    );
+    setSelectedServers(newSelectedServers);
   };
 
-  const toggleSelectServer = (serverId) => {
+  const toggleSelectServer = (id) => {
     const newSelectedServers = new Set(selectedServers);
-    if (newSelectedServers.has(serverId)) {
-      newSelectedServers.delete(serverId);
+    if (newSelectedServers.has(id)) {
+      newSelectedServers.delete(id);
     } else {
-      newSelectedServers.add(serverId);
+      newSelectedServers.add(id);
     }
     setSelectedServers(newSelectedServers);
   };
+
   const filteredServers = servers.filter((server) =>
     server.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
+  console.log(filteredServers); 
+
   const indexOfLastServer = currentPage * rowsPerPage;
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
+
   const handleDeleteServer = async (serverId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -474,6 +480,8 @@ const ServidoresVirtuales = () => {
                 />
               </th>
               <th>Nombre</th>
+              <th>Ram</th>
+              <th>Marca</th>
               <th>Estado</th>
               <th>Direccion IP</th>
               <th className={style.contBtns}>Acciones</th>
@@ -496,6 +504,8 @@ const ServidoresVirtuales = () => {
                   />
                 </td>
                 <td>{server.name}</td>
+                <td>{server.ram}</td>
+                <td>{server.brand}</td>
                 <td>
                   <div className={style.serverStatus}>
                     <span
