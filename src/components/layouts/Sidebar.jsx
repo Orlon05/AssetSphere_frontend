@@ -1,18 +1,22 @@
 import Style from "./sidebar.module.css";
 import Logo from "./Logo";
-import { NavLink, navigate } from "react-router-dom";
-import { VscServerEnvironment } from "react-icons/vsc";
-import { GrHomeRounded } from "react-icons/gr";
+import { NavLink, useNavigate } from "react-router-dom"; // Importamos useNavigate para el error 
+import { GrHomeRounded } from "react-icons/gr"; // íconos de las vistas, cambiar por los que se deseen, cambiarlos también el menú.
 import { FaServer } from "react-icons/fa";
+import { FaDatabase } from "react-icons/fa";
+import { FaStore } from "react-icons/fa";
+import { MdCloud } from "react-icons/md";
 import { FiUsers } from "react-icons/fi";
 import { CiLogout } from "react-icons/ci";
-import { BsCloudUpload } from 'react-icons/bs';
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 import PropTypes from 'prop-types';
+import { VscSaveAll } from "react-icons/vsc";
+
 
 const Sidebar = ({ isOpen }) => {
   const { logout } = useAuth();
+  const navigate = useNavigate(); // Obtenemos la función navigate usando useNavigate
 
   const handleLogout = () => {
     Swal.fire({
@@ -27,11 +31,11 @@ const Sidebar = ({ isOpen }) => {
       if (result.isConfirmed) {
         localStorage.removeItem("autenticacionToken");
         logout();
-        navigate("/login");
+        navigate("/login"); // Usamos navigate para redireccionar
       }
     });
   };
-
+  // Aquí se encuentra el menú para agregar las diferentes vistas que se vayan creando
   return (
     <div className={`${Style.sidebar} ${isOpen ? "" : Style.closed}`}>
       <ul>
@@ -67,8 +71,30 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <VscServerEnvironment className={Style.icon} />
+              <FaServer className={Style.icon} />
+              Virtuales
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/sucursales"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <FaStore className={Style.icon} />
               Sucursales
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/Base-De-Datos"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <FaDatabase className={Style.icon} />
+              Base de datos
             </NavLink>
           </li>
           <li>
@@ -78,8 +104,19 @@ const Sidebar = ({ isOpen }) => {
                 isActive ? `${Style.links} active` : Style.links
               }
             >
-              <BsCloudUpload className={Style.icon} />
+              <MdCloud className={Style.icon} />
               Storage
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/pseries"
+              className={({ isActive }) =>
+                isActive ? `${Style.links} active` : Style.links
+              }
+            >
+              <VscSaveAll className={Style.icon} />
+              Pseries
             </NavLink>
           </li>
           <li>
@@ -99,7 +136,7 @@ const Sidebar = ({ isOpen }) => {
               onClick={handleLogout}
               className={({ isActive }) =>
                 isActive ? `${Style.btnLogout} active` : Style.links
-            }
+              }
             >
               <CiLogout className={Style.icon} />
               Cerrar sesión
@@ -110,9 +147,9 @@ const Sidebar = ({ isOpen }) => {
     </div>
   );
 };
+
 Sidebar.propTypes = {
   isOpen: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;
-

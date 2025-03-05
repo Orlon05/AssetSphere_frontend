@@ -1,52 +1,69 @@
-/* excelImporter.module.css */
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 15px;
-}
-
-.inputExcel{
-   padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.selectLine{
-     margin-bottom: 10px;
-}
+/* Contenedor general */
 .tableContainer {
-     width: 100%;
-    overflow-x: auto; /* Para scroll horizontal si la tabla es muy ancha */
-    overflow-y:auto; /* Para scroll vertical si la tabla es muy alta */
-}
-.error {
-    color: red;
-    margin-bottom: 10px;
+    margin-top: 20px;
+    overflow-x: auto;
+    /* Desplazamiento horizontal si la tabla es ancha */
 }
 
-th, td {
-    font-size: 0.8rem; /* Puedes ajustar el tamaño de la fuente */
-     white-space: nowrap; /* Evita que el texto se desborde y lo ponga en una sola linea*/
-    width: auto; /* Permite que la celda se ajuste al contenido */
-      max-width: 100%;
+.table-responsive {
+    min-width: 1000px;
+    /* Para asegurarse de que se necesite desplazamiento si la tabla es muy ancha */
 }
-.tableContainer td > .form-control {
+
+/* Aumentar el tamaño de los inputs para aprovechar más espacio */
+th,
+td {
+    font-size: 0.9rem;
+    /* Tamaño de fuente mayor */
+    padding: 12px;
+    /* Aumento del espacio de relleno para mejor visibilidad */
+    white-space: nowrap;
+    /* Evita que el texto se ajuste o se muestre diagonalmente */
+}
+
+/* Asegura que los inputs de las celdas ocupen todo el ancho de la celda */
+.tableContainer td>.form-control {
     width: 100%;
-    box-sizing: border-box; /* para que el padding no aumente el ancho */
-    min-height: 2.5rem; /* Altura minima del input */
-     overflow: hidden;
+    box-sizing: border-box;
+    /* Para que el relleno y los bordes no afecten el tamaño del campo */
+    min-height: 2.5rem;
+    /* Aumenta la altura mínima de los inputs */
+    padding: 8px;
+    /* Agrega algo de padding a los inputs */
 }
 
+/* Estilo para resaltar celdas vacías */
 .emptyCell {
-    background-color: #fac5c5; /* Un rojo claro para resaltar las celdas vacías */
+    background-color: #f8f9fa;
 }
+
+/* Manija de redimensionado de columnas */
 .resizeHandle {
-  cursor: ew-resize;
-  padding: 0 2px;
-  margin-left: 2px;
-  border-left: 2px solid #ccc;
-  user-select: none;
+    cursor: ew-resize;
+    width: 5px;
+    height: 100%;
+    background-color: gray;
+}
+
+/* Ajustes para la paginación */
+.paginationControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.paginationControls select {
+    margin-left: 5px;
+}
+
+.paginationControls button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.paginationControls button:disabled {
+    cursor: not-allowed;
+    background-color: #ccc;
 }

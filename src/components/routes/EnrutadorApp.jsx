@@ -6,16 +6,33 @@ import ProtectedRoute from "./ProtectedRoute";
 import Analitica from "../pages/Analitica";
 import CrearServerF from "../pages/CrearServidor";
 import EditarServer from "../pages/EditarServidor";
+import VerServers from "../pages/VerServers";  
 import Perfil from "../perfil/Perfil";
 import Usuarios from "../pages/Usuarios";
 import CrearUsuario from "../forms/CrearUsuario";
 import EditarUsuario from "../forms/EditarUsuario";
 import Logs from "../pages/Logs";
 import Storage from "../pages/Storage";
+import Pseries from "../pages/Pseries";
+import CrearPseries from "../pages/CrearPseries";
+import EditarPseries from "../pages/EditarPseries";
+import VerPseries from "../pages/VerPseries";
+import CrearStorage from "../pages/CrearStorage";
+import EditarStorage from "../pages/EditarStorage";
+import VerStorage from "../pages/VerStorage";
+import BaseDatos from "../pages/BaseDatos";
+import CrearBaseDatos from "../pages/CrearBaseDatos";
+import VerBaseDatos from "../pages/VerBaseDatos";
+import EditarBaseDatos from "../pages/EditarBaseDatos";
+import Sucursales from "../pages/Sucursales";
+import CrearSucursales from "../pages/CrearSucursales";
+import EditarSucursal from "../pages/EditarSucursales";
+import VerSucursales from "../pages/VerSucursales";
+import VirtualForm from "../pages/crearServidorv";
+import EditarServerVirtual from "../pages/editarServidorv";
+import VerServidoresVirtuales from "../pages/verServidoresVirtuales";
 
 export let EnrutadorApp = [
-  //Generamos la variable para la routa protegida y sus hijas si,
-  // la Auth es correcta sigue a las hijas si, no redireccionara al login
   {
     element: <Login />,
     path: "login",
@@ -24,7 +41,6 @@ export let EnrutadorApp = [
     path: "/",
     element: (
       <ProtectedRoute>
-        {/*aquí se proteje el acceso al Dashboard*/}
         <Dashboard />
       </ProtectedRoute>
     ),
@@ -42,36 +58,116 @@ export let EnrutadorApp = [
         element: <ServidoresV />,
       },
       {
+        path: "servidoresv",
+        element: <ServidoresV />,
+      },
+      {
         path: "crear-servidores-f",
-        element: < CrearServerF />
+        element: <CrearServerF />,
+      },
+      {
+        path: "crear-servidores-v",
+        element: < VirtualForm />
       },
       {
         path: "/editar/:serverId/servidores",
-        element: < EditarServer />
+        element: <EditarServer />,
+      },
+      {
+        path: "/ver/:serverId/servers",
+        element: <VerServers />,
+      },
+      {
+        path: "/editar/:serverId/servidoresv",
+        element: < EditarServerVirtual />
       },
       {
         path: "perfil",
-        element: < Perfil />
+        element: <Perfil />,
       },
       {
         path: "usuarios",
-        element: <Usuarios/>
+        element: <Usuarios />,
       },
       {
         path: "crear-usuarios",
-        element: <CrearUsuario/>
-      },
-      {
-        path: "ver-logs",
-        element: <Logs/>
+        element: <CrearUsuario />,
       },
       {
         path: "/editar-usuarios",
-        element: <EditarUsuario/>
+        element: <EditarUsuario />,
+      },
+      {
+        path: "ver-logs",
+        element: <Logs />,
       },
       {
         path: "/storage",
-        element: <Storage/>
+        element: <Storage />,
+      },
+      {
+        path: "/crear-storages",
+        element: <CrearStorage />,
+      },
+      {
+        path: "/ver/:storageId/storages",
+        element: <VerStorage />,
+      },
+      {
+        path: "/ver/:serverId/servidoresv",
+        element: < VerServidoresVirtuales />
+      },
+      {
+        path: "/editar/:storageId/storages",
+        element: <EditarStorage />,
+      },
+      {
+        path: "/Base-De-Datos",
+        element: <BaseDatos />,
+      },
+      {
+        path: "/crear-base-de-datos",
+        element: <CrearBaseDatos />,
+      },
+      {
+        path: "/ver/:baseDatosId/basedatos",
+        element: <VerBaseDatos />,
+      },
+      {
+        path: "/editar/:baseDatosId/basedatos",
+        element: <EditarBaseDatos />,
+      },
+      {
+        path: "/sucursales",
+        element: <Sucursales />,
+      },
+      {
+        path: "/ver/:sucursalId/sucursales",
+        element: <VerSucursales />,
+      },
+      {
+        path: "/crear-sucursales",
+        element: <CrearSucursales />,
+      },
+      {
+        path: "/editar/:sucursalId/sucursales",
+        element: <EditarSucursal />,
+      },
+      {
+        path: "/pseries",
+        element: <Pseries />,
+      },
+      {
+        path: "/crear-pseries",
+        element: <CrearPseries />,
+      },
+      {
+        path: "/editar/:pserieId/pseries",
+        element: <EditarPseries />,
+      },
+      {
+        path: "/ver/:pserieId/pseries",
+        element: <VerPseries />,
       },
     ],
   },

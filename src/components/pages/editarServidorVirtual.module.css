@@ -142,6 +142,7 @@
 .texTarea{
   position: absolute;
   width: 100%;
+  height: 42px;
   outline: none;
   font-size: 0.8rem;
   padding: 0 20px;
@@ -233,6 +234,7 @@
     height:auto;
   }
 
+  /* Columnas se ajustan al ancho completo */
   .columnUno {
     width: 90%;
     margin-right: 60px;

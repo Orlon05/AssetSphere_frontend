@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [remainingTime, setRemainingTime] = useState(0);
 
   useEffect(() => {
-    console.log("HOLA")
     const checkTokenExpiration = () => {
       if (token) {
         try {

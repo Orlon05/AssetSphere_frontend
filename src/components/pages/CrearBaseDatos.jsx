@@ -1,0 +1,919 @@
+import React, { useState } from "react";
+import styles from "./crearBaseDatos.module.css";
+import { IoIosAdd } from "react-icons/io";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
+const BaseDatosForm = () => {
+    const [instance_id, setInstanceId] = useState("");
+    const [cost_center, setCostCenter] = useState("");
+    const [category, setCategory] = useState("");
+    const [type, setType] = useState("");
+    const [item, setItem] = useState("");
+    const [owner_contact, setOwnerContact] = useState("");
+    const [name, setName] = useState("");
+    const [application_code, setApplicationCode] = useState("");
+    const [inactive, setInactive] = useState("");
+    const [asset_life_cycle_status, setAssetLifeCycleStatus] = useState("");
+    const [system_environment, setSystemEnvironment] = useState("");
+    const [cloud, setCloud] = useState("");
+    const [version_number, setVersionNumber] = useState("");
+    const [serial, setSerial] = useState("");
+    const [ci_tag, setCiTag] = useState("");
+    const [instance_name, setInstanceName] = useState("");
+    const [model, setModel] = useState("");
+    const [ha, setHa] = useState("");
+    const [port, setPort] = useState("");
+    const [owner_name, setOwnerName] = useState("");
+    const [department, setDepartment] = useState("");
+    const [company, setCompany] = useState("");
+    const [manufacturer_name, setManufacturerName] = useState("");
+    const [supplier_name, setSupplierName] = useState("");
+    const [supported, setSupported] = useState("");
+    const [account_id, setAccountId] = useState("");
+    const [create_date, setCreateDate] = useState("");
+    const [modified_date, setModifiedDate] = useState("");
+    const navigate = useNavigate();
+
+    // Crea la instancia de Toast
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000, // Duración del Toast (3 segundos)
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    // Función para mostrar un Toast de éxito después de crear una receta
+    const showSuccessToast = () => {
+        Toast.fire({
+            icon: "success",
+            title: "Base de datos creada exitosamente",
+        });
+    };
+
+    const cost_center_ = [
+        "C100000100", "C103500093", "C103500110", "C103500057",
+        "Unallocated", "C103500121", "C103500234", "C105000230",
+        "C103500107", "C103500216", "C103500180", "C103500166",
+        "C103500259", "C103500271", "C103500265", "C105000211",
+        "C103500342", "C103500096", "C103500094", "C103500095",
+        "C103504000", "C103500214", "C103500268",
+        "C103500092", "C103500155", "C103500350", "C102800000",
+        "C104300000", "C103500130", "C103500181", "C103500169",
+        "C103500100", "C103500105", "C103500255", "C103500091",
+        "C103500327", "C103500099", "C103500167", "C103500108",
+        "C103500102", "C103500097", "C103500098", "C103500104",
+        "C103500103", "C103500101", "C103500106", "C103500109",
+        "C103500201"
+    ];
+
+    const category_ = [
+        "Miscellaneous"
+    ];
+
+    const type_ = [
+        "Instance",
+    ];
+
+    const item_ = [
+        "Database"
+    ];
+
+    const department_ = [
+        "GCIA BASE DE DATOS", "LDC FC BASE DE DATOS TI", "FILIALES DEL EXTERIOR",
+        "ENTORNO NEGOCIO ESPECIALIZAD TI", "LDC-FC-BASE-DE-DATOS-TI", "ADC DISEÑO Y OPERACION TELCO TI",
+        "LDC FC FILIALES DEL EXTERIOR TI", "LDC FC PROCESOS DEVEXP TI", "LDC FC BASE DE DATOS TI 3",
+        "LDC FC BASE DE DATOS TI 1", "SERVICIOS DE PLATAFORMAS TI", "PLATAFORMAS CENTRALES TI",
+        "EVC GALATEA MODERN CANALES TI", "ADC CANALES DIGITALES NEGOCIOS TI"
+    ];
+
+    const company_ = [
+        "BANCOLOMBIA S.A.",
+        "NEQUI S.A.",
+        "VALORES BANCOLOMBIA S.A.",
+        "FIDUCIARIA BANCOLOMBIA S.A."
+    ];
+
+    const manufacturer_name_ = [
+        "BANCOLOMBIA S.A.", "AMAZON WEB SERVICES", "MONGODB INC", "ORACLE", "MICROSOFT CORPORATION",
+        "IBM", "POSTGRESS", "JAVA", "NEQUI S.A.", "BANCOLOMBIA", "VALORES BANCOLOMBIA S.A.", "Hana", "ON-REDIS"
+    ];
+
+    const supplier_name_ = [
+        "BANCOLOMBIA S.A.",
+        "ASIC",
+        "KYNDRYL COLOMBIA S.A",
+        "TATA",
+        "IBM",
+        "NEQUI S.A.",
+    ];
+
+    const supported_ = [
+        "Si",
+        "No"
+    ];
+
+    const ha_ = [
+        "Si",
+        "No"
+    ];
+
+    const model_ = [
+        "Database"
+    ];
+
+    const owner_name_ = [
+        "Jennifer Yolima"
+    ]
+
+    const owner_contact_ = [
+        "JAIRO MANUEL RAMIREZ", "HAROLD JORGE APOLINAR CRUZ", "JUAN CAMILOVALENZUELA CARRERO",
+        "HENRY ACEROS SIERRA", "CDE PLATAFORMAS Y DISPONIBILIDAD TI LDC FC BASE DE DATOS TI SOPORTE DE BASES DE DATOS", "JOSE IGNACIOPINZON VALLESTEROS",
+        "BELISARIO JUNIORDE LA MATA BELEÑO", "HECTOR FABIO CABRERA NUÑEZ", "JAIRO MANUELRAMIREZ MONROY",
+        "BRAHIAN ALEXISOCAMPO URIBE", "JULIAN DAVIDORTIZ IDROBO", "SERGIO ANIBALAGUDELO CORREA",
+        "IVAN DARIOSANCHEZ MORENO", "SANDRA PATRICIAGRACIA CORREA", "OC BANCA DIGITAL AGILIDAD DEL NEGOCIO TI BASES DE DATOS NEQUI",
+        "YIBRIN NOEAPONTE DOMINGUEZ", "Juan Camilo Valenzuela Carrero", "JOSE MAURICIO CAMACHO BRAVO",
+        "BRIANBAENA MUNERA", "CAMILO ANDRES BARAJAS HERNANDEZ", "HAROLD APOLINAR CRUZ",
+        "OLIVERIO ORTIZ PEDROZA", "SERGIO LEON CORREA CANO", "BELFOR FERNEY SUAREZ PEREZ",
+        "GUILLERMO LEON HAAD ATUESTA", "VICTOR AUGUSTO BENJUMEA VARELA", "JORGE ANDRES GRISALES CASTRO",
+        "NATALIA ANDREA OSORIO CASTAÑEDA", "Sergio Agudelo", "CARLOS ARTURO PACHECO CARDENAS",
+        "DAVID GOMEZ CORTES", "JEFRY RENEE ARIAS QUINTANA", "JONATAN GOMEZ RODRIGUEZ",
+        "LIBARDO ANDRES CACERES JAIME", "BRIAN BAENA MUNERA", "CARLOS ALBERTO CASTELLANOS RODRIGUEZ",
+        "JUAN CARLOS VELASQUEZ ATENCIO", "RUBEN DARIO PADRON RODRIGUEZ", "JOHN CARLOS GALLEGO",
+        "WILLIAM DAVID CASTRO BARBOSA", "JHAN FARLEY RESTREPO MARTINEZ", "DEIBIS ESTID OSPINA ARENAS",
+        "JEISON FERLEY CUBILLOS ROJAS", "JUAN PABLO GOMEZ QUIROGA", "WILSON HUERTAS MARTIN",
+        "PABLO ARTURO GOMEZ TABA", "DANIEL ESTEBAN YEPES PALACIO", "MARIA ANGELICA GRISALES MONTOYA",
+        "JOSE IGNACIO PINZON VALLESTEROS", "DANIEL BUSTAMANTE OSPINA", "GERMAN MAURICIO GUTIERREZ CUBILLOS",
+        "JHONATAN HARLEY REYES QUERUBIN", "ALFREDO MARTINEZ CAMPOS", "MARYORY ELIANA MORENO MARIN",
+        "ALVARO JOSE OZUNA MARTINEZ", "CESAR EMILIANO PARRA ZAMORA", "ANDRES FELIPE BOLIVAR VANEGAS",
+        "CLAUDIA PATRICIA CARDENO CANO", "CAMILO PIEDRAHITA MACIAS", "ANDRES ARANGO ALVAREZ",
+        "DIEGO ARMANDO ARIAS HURTADO", "ABISH ANDREA JARAMILLO ARENAS", "HERNAN MAURICIO CASTRILLON CARMONA",
+        "IVAN DARIO OTALVARO MARIN", "JHON JAIRO RIVERA CASADO", "JAIRO MANUEL RAMIREZ MONROY",
+        "JAIME ANDRES REGINO DIAZ", "JOSE IGNACIO PINZON BALLESTEROS", "JHOHAN DAVID ARGAEZ MORENO",
+        "JOSE LUIS QUINTERO CAÑIZALEZ", "MIGUEL LEONARDO ALVARADO CAMARGO", "JUAN CARLOS ROBAYO QUINTERO",
+        "WILFREDO RIOS MONTILLA", "ANDRES RUGE GAMBA", "JUAN CAMILO GONZALEZ BETANCUR",
+        "SANDRA PATRICIA GRACIA CORREA", "DIANA CAROLINA MONROY AMAYA", "JAVIER ALEXANDER LOPERA CARMONA",
+        "JULIAN DAVID ORTIZ IDROBO", "JUAN FERNANDO MEJÍA OSPINA", "MAURICIO GALLEGO ZULETA",
+        "ROSMARA CONSOLACION SANTANDER RAMIREZ", "PAOLA ANDREA PINO MALEZ", "KEVIN ANDREE VIVEROS",
+        "JUAN CARLOS MANJARRES BETANCOURT", "JUAN PABLO ARDILA MATEUS", "KEVIN ANDREE VIBEROS",
+        "DIDIER ROBINSON GIRALDO GIRALDO", "CESAR VILLALOBOS MONTAÑA", "ANDRES FELIPE ISAZA VERGARA",
+        "BELISARIO JUNIOR DE LA MATA BELEÑO", "YONY ARLEY ESCOBAR CEBALLOS", "EDWUAR JONATHAN CLAVIJO CALLEJAS",
+        "GUSTAVO ALVEIRO JARAMILLO CASTRILLON", "CINDY JOHANA CASTAÑO BLANDON", "FERNEY CAMILO ZAPATA MONTOYA",
+        "ENA TERESA JUVINAO DUQUE", "ANDERSON DAVILA HERRERA", "ANA PATRICIA QUINTERO CARDENAS",
+        "MARIA ISABEL GARZON ALVAREZ", "ARMANDO CARLOS PALMERA SANCHEZ", "ANGEL DAVID JIMENEZ PACHECO",
+        "ELIANA LUCERO GIRALDO SALAZAR", "CARLOS ARTURO REBAGE ALDANA", "PEDRO FERNANDO BEDOYA OVIEDO",
+        "TANIA LUGO GARCIA", "LEONARDO ARDILA GONZALEZ", "LUISA FERNANDA RODRIGUEZ BEDOYA",
+        "YOHAN MAURICIO JUNCO ALDANA", "VICTOR ANDRES MARTINEZ VASQUEZ", "MARTIN EMILIO DURAN DIAZ",
+        "ROGELIO ADOLFO DUQUE MARTINEZ", "MARTIN EMILIO DURAN RUIZ", "YEISSON ALEJANDRO ARROYAVE VALLE",
+        "JUAN PABLO MARTINEZ CANOLA", "ANGEL DAVIDJIMENEZ PACHECO", "BRAHIAN ALEXIS OCAMPO URIBE",
+        "MAURICIO ALBERTO CASTAÑEDA MONSALVE"
+    ];
+
+    const application_code_ = [
+        "NU0394001",
+        "EUC00087",
+        "AW1151001",
+        "NU0142001",
+        "CITRIX",
+        "WINDOWS",
+        "LINUX",
+    ];
+
+    const inactive_ = [
+        "Si",
+        "No"
+    ];
+
+    const asset_life_cycle_status_ = [
+        "Eliminar",
+        "Aplicado"
+    ];
+
+    const system_environment_ = [
+        "dev",
+        "qa",
+        "pdn",
+        "ref",
+    ];
+
+    const cloud_ = [
+        "Si",
+        "No"
+    ];
+
+    const version_number_ = [
+        "POSTGRESQL 13",
+        "POSTGRESQL 14",
+        "AURORA POSTGRESQL 15",
+        "Oracle 19.19",
+        "MONGODB ATLAS 7.0.11 SERVERLESS",
+        "AURORA POSTGRESQL 11",
+        "Oracle 12.1.0.2.0",
+        "SQL SERVER 2017 (RTM) STANDARD EDITION",
+        "SQL SERVER 2012 (SP4) STANDARD EDITION",
+        "POSTGRESQL 10",
+        "POSTGRESQL 11",
+        "MYSQL 5.1.51",
+        "SQL SERVER 2012 (SP4) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "AURORA POSTGRESQL 13",
+        "ORACLE 19.18",
+        "DB2 11",
+        "SQL SERVER 2012 (SP4) ENTERPRISE EDITION",
+        "ORACLE 19.10.0.0.0",
+        "ORACLE 19.0.0",
+        "SQL SERVER 2017 (RTM) DEVELOPER EDITION",
+        "SQL SERVER 2017 (RTM) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "SQL SERVER 2017 (RTM) ENTERPRISE EDITION",
+        "SQL SERVER 2019 (RTM) ENTERPRISE EDITION",
+        "ORACLE 19.16",
+        "Oracle 19.3.0.0.0",
+        "MYSQL 8.0",
+        "Oracle 11.2.0.4.0",
+        "AURORA POSTGRESQL 10",
+        "ORACLE 19.15",
+        "Oracle 19.14.0.0.0",
+        "MYSQL 5.7",
+        "SQL SERVER 2016 (SP2) ENTERPRISE EDITION",
+        "ORACLE 19.17",
+        "SQL SERVER 2019 (RTM) STANDARD EDITION",
+        "SQL SERVER 2012 ENTERPRISE ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "AURORA POSTGRESQL 12",
+        "SQL SERVER AZURE (RTM)",
+        "MONGODB ATLAS 6.0.1 DEDICATED",
+        "POSTGRESQL 15",
+        "SQL SERVER 2016 (SP1) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "SQL SERVER 2012 (SP3) ENTERPRISE EDITION",
+        "SQL SERVER 2014 (SP2) ENTERPRISE EDITION",
+        "Oracle 19.25",
+        "DB2 11.5",
+        "MONGODB ATLAS 6.3.0 SERVERLESS",
+        "AURORA POSTGRESQL 14",
+        "ORACLE 19.24",
+        "ORACLE 19.21",
+        "19.25",
+        "Oracle 8.1.6.0",
+        "ORACLE 12.2.0.1.0",
+        "NEO4J",
+        "Aurora MySQL 5.6",
+        "SQL SERVER 2016 (SP1) ENTERPRISE EDITION",
+        "SQL SERVER 2016 (SP2) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "SQL SERVER 2019 (RTM) DEVELOPER EDITION",
+        "SQL SERVER 2012 (SP3) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "ORACLE 19.20",
+        "SQL SERVER 2012 (SP2) ENTERPRISE EDITION",
+        "POSTGRESQL 12",
+        "POSTGRESQL 16",
+        "Oracle 19.17.0.0.0",
+        "Sap-Hana.100_122_11",
+        "Oracle 19.9.0.0.0",
+        "SQL SERVER 2022 (RTM) ENTERPRISE EDITION",
+        "ORACLE 10.2.0.5.0",
+        "ORACLE 19.23",
+        "11.5",
+        "ORACLE 19.26",
+        "Oracle 19.22",
+        "AURORA POSTGRESQL 19",
+        "DOCUMENTDB 4.0.0",
+        "MONGODB ATLAS 6.0.5 DEDICATED",
+        "DYNAMODB 2019",
+        "REDIS 7.0",
+        "SQL SERVER 2014 (SP3) STANDARD EDITION",
+        "SQL SERVER 2022 (RTM) STANDARD EDITION",
+        "AURORA MYSQL 5.7",
+        "SQL SERVER 2016 (SP2) STANDARD EDITION",
+        "ORACLE 19.11.0.0.0",
+        "SQL SERVER 2012 (SP2) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "ORACLE 19.12.0.0.0",
+        "ORACLE 10.2.0.4.0",
+        "AURORA MYSQL 5.8",
+        "SQL SERVER 2008 R2 (SP3) ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "MONGODB ATLAS 7.0.12 DEDICATED",
+        "MONGODB ATLAS 7.3.2 SERVERLESS",
+        "AURORA POSTGRESQL 18",
+        "AURORA POSTGRESQL 17",
+        "SQL SERVER 2000 ENTERPRISE EDITION",
+        "SQL SERVER 2016 RTM DEVELOPER EDITION",
+        "SQL SERVER 2019",
+        "SQL SERVER 2016 RTM ENTERPRISE EDITION: CORE-BASED LICENSING",
+        "SQL SERVER 2016 (SP1) DEVELOPER EDITION",
+        "SQL SERVER 2016 RTM ENTERPRISE EDITION",
+        "SQL SERVER 2016 (SP3) ENTERPRISE EDITION",
+        "SQL SERVER 2000 (SP4) ENTERPRISE EDITION"
+    ];
+
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const baseDatosData = {
+            instance_id: instance_id,
+            cost_center: cost_center,
+            category: category,
+            type: type,
+            item: item,
+            owner_contact: owner_contact,
+            name: name,
+            application_code: application_code,
+            inactive: inactive,
+            asset_life_cycle_status: asset_life_cycle_status,
+            system_environment: system_environment,
+            cloud: cloud,
+            version_number: version_number,
+            serial: serial,
+            ci_tag: ci_tag,
+            instance_name: instance_name,
+            model: model,
+            ha: ha,
+            port: port,
+            owner_name: owner_name,
+            department: department,
+            company: company,
+            manufacturer_name: manufacturer_name,
+            supplier_name: supplier_name,
+            supported: supported,
+            account_id: account_id,
+            create_date: create_date,
+            modified_date: modified_date,
+        };
+
+        try {
+            const token = localStorage.getItem("authenticationToken");
+            if (!token) {
+                throw new Error("Token de autorización no encontrado.");
+            }
+
+            const response = await fetch(
+                "http://localhost:8000/base_datos/add",
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(baseDatosData),
+                }
+            );
+
+            if (!response.ok) {
+                let errorMessage = `Error HTTP ${response.status}`;
+                if (response.status === 422) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+                } else if (response.status === 401 || response.status === 403) {
+                    errorMessage =
+                        "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+                } else {
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.message) errorMessage = errorData.message;
+                    } catch (e) { }
+                }
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al crear la base de datos",
+                    text: errorMessage,
+                });
+            } else {
+                showSuccessToast();
+                navigate("/Base-De-Datos");
+            }
+        } catch (error) {
+            console.error("Error:", error); // Registra el error en la consola para depuración
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.message || "Ocurrió un error inesperado.",
+            });
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.containtTit}>
+                <h2 className={styles.tittle}>
+                    <IoIosAdd />
+                    Crear Base de Datos
+                </h2>
+            </div>
+            <div className={styles.container}>
+                {/*INICIO DE LA COLUMNA 1*/}
+                <div className={styles.columnUno}>
+                    <div className={styles.formGroup}>
+                        <input
+                            type="text"
+                            id="instance_id"
+                            name="instance_id"
+                            value={instance_id}
+                            onChange={(e) => setInstanceId(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>ID de instancia*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="cost_center"
+                            name="cost_center"
+                            value={cost_center}
+                            onChange={(e) => setCostCenter(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el centro de costos
+                            </option>
+                            {cost_center_.map((cost_center) => (
+                                <option key={cost_center} value={cost_center}>
+                                    {cost_center}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Centro de costos*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="category"
+                            name="category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona la categoría
+                            </option>
+                            {category_.map((category) => (
+                                <option key={category} value={category}>
+                                    {category}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Categoría*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="type"
+                            name="type"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el tipo
+                            </option>
+                            {type_.map((type) => (
+                                <option key={type} value={type}>
+                                    {type}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Tipo*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="item"
+                            name="item"
+                            value={item}
+                            onChange={(e) => setItem(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el ítem
+                            </option>
+                            {item_.map((item) => (
+                                <option key={item} value={item}>
+                                    {item}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Ítem*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="owner_contact"
+                            name="owner_contact"
+                            value={owner_contact}
+                            onChange={(e) => setOwnerContact(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el contacto del propietario
+                            </option>
+                            {owner_contact_.map((owner_contact) => (
+                                <option key={owner_contact} value={owner_contact}>
+                                    {owner_contact}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Contacto del propietario*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nombre*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="application_code"
+                            name="application_code"
+                            value={application_code}
+                            onChange={(e) => setApplicationCode(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el código de aplicación
+                            </option>
+                            {application_code_.map((application_code) => (
+                                <option key={application_code} value={application_code}>
+                                    {application_code}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Código de aplicación*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="inactive"
+                            name="inactive"
+                            value={inactive}
+                            onChange={(e) => setInactive(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el estado inactivo
+                            </option>
+                            {inactive_.map((inactive) => (
+                                <option key={inactive} value={inactive}>
+                                    {inactive}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Inactivo*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="asset_life_cycle_status"
+                            name="asset_life_cycle_status"
+                            value={asset_life_cycle_status}
+                            onChange={(e) => setAssetLifeCycleStatus(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el estado del ciclo de vida del activo
+                            </option>
+                            {asset_life_cycle_status_.map((asset_life_cycle_status) => (
+                                <option key={asset_life_cycle_status} value={asset_life_cycle_status}>
+                                    {asset_life_cycle_status}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Estado del ciclo de vida del activo*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="system_environment"
+                            name="system_environment"
+                            value={system_environment}
+                            onChange={(e) => setSystemEnvironment(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el entorno del sistema
+                            </option>
+                            {system_environment_.map((system_environment) => (
+                                <option key={system_environment} value={system_environment}>
+                                    {system_environment}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Entorno del sistema*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="cloud"
+                            name="cloud"
+                            value={cloud}
+                            onChange={(e) => setCloud(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona la nube
+                            </option>
+                            {cloud_.map((cloud) => (
+                                <option key={cloud} value={cloud}>
+                                    {cloud}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Nube*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="version_number"
+                            name="version_number"
+                            value={version_number}
+                            onChange={(e) => setVersionNumber(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el número de versión
+                            </option>
+                            {version_number_.map((version_number) => (
+                                <option key={version_number} value={version_number}>
+                                    {version_number}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Número de versión*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="text"
+                            id="serial"
+                            name="serial"
+                            value={serial}
+                            onChange={(e) => setSerial(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Serie*</div>
+                    </div>
+
+                    <button type="submit" className={styles.button}>
+                        Guardar
+                    </button>
+                </div>
+
+                {/*INICIO DE LA COLUMNA 2*/}
+                <div className={styles.columnDos}>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="ci_tag"
+                            id="ci_tag"
+                            name="ci_tag"
+                            value={ci_tag}
+                            onChange={(e) => setCiTag(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Etiqueta CI*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="instance_name"
+                            id="instance_name"
+                            name="instance_name"
+                            value={instance_name}
+                            onChange={(e) => setInstanceName(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nombre de instancia*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="model"
+                            name="model"
+                            value={model}
+                            onChange={(e) => setModel(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el modelo
+                            </option>
+                            {model_.map((model) => (
+                                <option key={model} value={model}>
+                                    {model}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Modelo*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="ha"
+                            name="ha"
+                            value={ha}
+                            onChange={(e) => setHa(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el HA
+                            </option>
+                            {ha_.map((ha) => (
+                                <option key={ha} value={ha}>
+                                    {ha}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>HA*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="port"
+                            id="port"
+                            name="port"
+                            value={port}
+                            onChange={(e) => setPort(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Puerto*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="owner_name"
+                            name="owner_name"
+                            value={owner_name}
+                            onChange={(e) => setOwnerName(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el nombre del propietario
+                            </option>
+                            {owner_name_.map((owner_name) => (
+                                <option key={owner_name} value={owner_name}>
+                                    {owner_name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Nombre del propietario*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="department"
+                            name="department"
+                            value={department}
+                            onChange={(e) => setDepartment(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el departamento
+                            </option>
+                            {department_.map((department) => (
+                                <option key={department} value={department}>
+                                    {department}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Departamento*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="company"
+                            name="company"
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona la compañía
+                            </option>
+                            {company_.map((company) => (
+                                <option key={company} value={company}>
+                                    {company}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Compañía*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="manufacturer_name"
+                            name="manufacturer_name"
+                            value={manufacturer_name}
+                            onChange={(e) => setManufacturerName(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el nombre del fabricante
+                            </option>
+                            {manufacturer_name_.map((manufacturer_name) => (
+                                <option key={manufacturer_name} value={manufacturer_name}>
+                                    {manufacturer_name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Nombre del fabricante*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="supplier_name"
+                            name="supplier_name"
+                            value={supplier_name}
+                            onChange={(e) => setSupplierName(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el nombre del proveedor
+                            </option>
+                            {supplier_name_.map((supplier_name) => (
+                                <option key={supplier_name} value={supplier_name}>
+                                    {supplier_name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Nombre del proveedor*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <select
+                            id="supported"
+                            name="supported"
+                            value={supported}
+                            onChange={(e) => setSupported(e.target.value)}
+                            className={styles.selected}
+                        >
+                            <option value="">
+                                Selecciona el soporte
+                            </option>
+                            {supported_.map((supported) => (
+                                <option key={supported} value={supported}>
+                                    {supported}
+                                </option>
+                            ))}
+                        </select>
+                        <div className={styles.labelSelect}>Soporte*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="account_id"
+                            id="account_id"
+                            name="account_id"
+                            value={account_id}
+                            onChange={(e) => setAccountId(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>ID de cuenta*</div>
+                    </div>
+
+                    <hr className={styles.lines} />
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="date"
+                            id="create_date"
+                            name="create_date"
+                            value={create_date || ""}
+                            onChange={(e) => setCreateDate(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Fecha de creación*</div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <input
+                            type="date"
+                            id="modified_date"
+                            name="modified_date"
+                            value={modified_date || ""}
+                            onChange={(e) => setModifiedDate(e.target.value)}
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Fecha de modificación*</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    );
+};
+
+export default BaseDatosForm;
