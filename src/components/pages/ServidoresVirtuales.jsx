@@ -480,8 +480,6 @@ const ServidoresVirtuales = () => {
                 />
               </th>
               <th>Nombre</th>
-              <th>Ram</th>
-              <th>Marca</th>
               <th>Estado</th>
               <th>Direccion IP</th>
               <th className={style.contBtns}>Acciones</th>
@@ -504,8 +502,6 @@ const ServidoresVirtuales = () => {
                   />
                 </td>
                 <td>{server.name}</td>
-                <td>{server.ram}</td>
-                <td>{server.brand}</td>
                 <td>
                   <div className={style.serverStatus}>
                     <span

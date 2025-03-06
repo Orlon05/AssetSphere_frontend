@@ -163,11 +163,11 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         try {
             // Simulación de guardado
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula una llamada async a la base de datos
-            Swal.fire({
+             Swal.fire({
                 icon: "success",
                 title: "Datos Guardados",
                 text: "Los datos se han guardado correctamente.",
-            });
+            }); 
             if (typeof onImportComplete === 'function') {
                 const mappedData = mapExcelData(excelData, tableMetadata);
                 onImportComplete(mappedData);
