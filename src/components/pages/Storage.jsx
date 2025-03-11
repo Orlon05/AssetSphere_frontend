@@ -37,7 +37,7 @@ const Storage = () => {
       showCancelButton: true,
       cancelButtonText: "Cancelar",
       width: "80%",
-      height: "80%",
+      //height: "80%",
       /*
      customClass: {
         container: 'swal-custom-container',
@@ -112,10 +112,13 @@ const Storage = () => {
 
   //La variable handleImportComplete es la que se encarga de tomar/mapear la información al importar el archivo de excel.
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados listos para enviar:", importedData);
 
     if (!Array.isArray(importedData) || importedData.length === 0) {
-      Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
+      Swal.fire(
+        "Error",
+        "No se encontraron datos válidos en el archivo",
+        "error"
+      );
       return;
     }
 
@@ -148,14 +151,17 @@ const Storage = () => {
         location: row.location || "",
       }));
       // Aquí se debe colocar la ruta del back-end que recibe la información del excel y la inserta en la BD
-      const response = await fetch("http://localhost:8000/storage/add_from_excel", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formattedData),
-      });
+      const response = await fetch(
+        "http://localhost:8000/storage/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
@@ -168,7 +174,6 @@ const Storage = () => {
       Swal.fire("Error", error.message || "Error al importar datos", "error");
     }
   };
-
 
   const selectedCount = selectedStorages.size;
 
@@ -296,26 +301,26 @@ const Storage = () => {
 
   const StorageDataMapper = (storage) => {
     return {
-      "CodItemConfiguracion": storage.cod_item_configuracion || "",
-      "Nombre": storage.name || "",
-      "ApplicationCode": storage.application_code || "",
-      "CostCenter": storage.cost_center || "",
-      "Activo": storage.active || "",
-      "Category": storage.category || "",
-      "Type": storage.type || "",
-      "Item": storage.item || "",
-      "Compañia": storage.company || "",
-      "OrganizacionResponsable": storage.organization_responsible || "",
-      "NombreHost": storage.host_name || "",
-      "Fabricante": storage.manufacturer || "",
-      "Estado": storage.status || "",
-      "Responsable": storage.owner || "",
-      "Modelo": storage.model || "",
-      "Serial": storage.serial || "",
-      "OrgMantenimiento": storage.org_maintenance || "",
-      "DireccionIP": storage.ip_address || "",
-      "CapacidadDiscoBytes": storage.disk_size || "",
-      "Sitio": storage.location || "",
+      CodItemConfiguracion: storage.cod_item_configuracion || "",
+      Nombre: storage.name || "",
+      ApplicationCode: storage.application_code || "",
+      CostCenter: storage.cost_center || "",
+      Activo: storage.active || "",
+      Category: storage.category || "",
+      Type: storage.type || "",
+      Item: storage.item || "",
+      Compañia: storage.company || "",
+      OrganizacionResponsable: storage.organization_responsible || "",
+      NombreHost: storage.host_name || "",
+      Fabricante: storage.manufacturer || "",
+      Estado: storage.status || "",
+      Responsable: storage.owner || "",
+      Modelo: storage.model || "",
+      Serial: storage.serial || "",
+      OrgMantenimiento: storage.org_maintenance || "",
+      DireccionIP: storage.ip_address || "",
+      CapacidadDiscoBytes: storage.disk_size || "",
+      Sitio: storage.location || "",
       // Agrega aquí otros campos que necesites
     };
   };
