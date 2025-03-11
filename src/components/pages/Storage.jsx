@@ -126,7 +126,7 @@ const Storage = () => {
       }
       // Se deben colocar todas las propiedades/campos de la tabla a la cual se le este haciendo la vista a excepción de la clave prinaria, dicho campo no debe ir aquí
       const formattedData = importedData.map(row => ({
-        cod_item_configuracion: row.cod_item_configuracion || "",
+        cod_item_configuracion: String(row.cod_item_configuracion || ""),
         name: row.name || "",
         application_code: row.application_code || "",
         cost_center: row.cost_center || "",
