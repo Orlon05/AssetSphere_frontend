@@ -94,8 +94,8 @@ const VerServers = () => {
                     setLocation(data.data.server_info.location || "");
                     setAssetId(data.data.server_info.asset_id || "");
                     setServiceOwner(data.data.server_info.service_owner || "");
-                    setWarrantyStartDate(data.data.server_info.warranty_start_date || null);
-                    setWarrantyEndDate(data.data.server_info.warranty_end_date || null);
+                    setWarrantyStartDate(data.data.server_info.warranty_start_date || "");
+                    setWarrantyEndDate(data.data.server_info.warranty_end_date || "");
                     setApplicationCode(data.data.server_info.application_code || "");
                     setResponsibleEvc(data.data.server_info.responsible_evc || "");
                     setDomain(data.data.server_info.domain || "");

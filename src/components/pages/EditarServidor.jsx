@@ -225,6 +225,7 @@ const EditarServer = () => {
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         try {
+          console.log("Datos a enviar", errorData);
           const errorData = await response.json();
           console.error("Detalles del error (JSON):", errorData);
           if (errorData && Array.isArray(errorData.detail)) {
