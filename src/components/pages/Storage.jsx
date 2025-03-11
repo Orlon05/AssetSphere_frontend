@@ -164,7 +164,7 @@ const Storage = () => {
       );
 
       if (!response.ok) {
-        const errorDetail = await response.text();
+        const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
