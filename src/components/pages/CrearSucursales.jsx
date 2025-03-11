@@ -365,23 +365,16 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="model"
                             name="model"
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el modelo
-                            </option>
-                            {model_.map((model) => (
-                                <option key={model} value={model}>
-                                    {model}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Modelo*</div>
+                            className={styles.input}
+                        
+                        />
+                        <div className={styles.label}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -435,63 +428,39 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="os_type"
                             name="os_type"
                             value={os_type}
                             onChange={(e) => setOsType(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el tipo de OS
-                            </option>
-                            {os_type_.map((os_type) => (
-                                <option key={os_type} value={os_type}>
-                                    {os_type}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Tipo OS*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Tipo OS*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="os_version"
                             name="os_version"
                             value={os_version}
                             onChange={(e) => setOsVersion(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la versión del OS
-                            </option>
-                            {os_version_.map((os_version) => (
-                                <option key={os_version} value={os_version}>
-                                    {os_version}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Versión OS*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Versión OS*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="status"
                             name="status"
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el estado
-                            </option>
-                            {status_.map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Estado*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Estado*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -509,23 +478,15 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="environment"
                             name="environment"
                             value={environment}
                             onChange={(e) => setEnvironment(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el ambiente
-                            </option>
-                            {environment_.map((environment) => (
-                                <option key={environment} value={environment}>
-                                    {environment}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ambiente*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ambiente*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -579,43 +540,26 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input type="text" 
                             id="city"
                             name="city"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la ciudad
-                            </option>
-                            {city_.map((city) => (
-                                <option key={city} value={city}>
-                                    {city}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ciudad*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ciudad*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="location"
                             name="location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la ubicación
-                            </option>
-                            {location_.map((location) => (
-                                <option key={location} value={location}>
-                                    {location}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ubicación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ubicación*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -674,23 +618,15 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="application_code"
                             name="application_code"
                             value={application_code}
                             onChange={(e) => setApplicationCode(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el código de aplicación
-                            </option>
-                            {application_code_.map((application_code) => (
-                                <option key={application_code} value={application_code}>
-                                    {application_code}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Código de aplicación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Código de aplicación*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -744,23 +680,15 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="billable"
                             name="billable"
                             value={billable}
                             onChange={(e) => setBillable(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona si es facturable
-                            </option>
-                            {billable_.map((billable) => (
-                                <option key={billable} value={billable}>
-                                    {billable}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Facturable*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Facturable*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -826,43 +754,27 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="cost_center"
                             name="cost_center"
                             value={cost_center}
                             onChange={(e) => setCostCenter(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el centro de costos
-                            </option>
-                            {cost_center_.map((cost_center) => (
-                                <option key={cost_center} value={cost_center}>
-                                    {cost_center}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Centro de costos*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="billing_type"
                             name="billing_type"
                             value={billing_type}
                             onChange={(e) => setBillingType(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el tipo de facturación
-                            </option>
-                            {billing_type_.map((billing_type) => (
-                                <option key={billing_type} value={billing_type}>
-                                    {billing_type}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Tipo de facturación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Tipo de facturación*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -880,63 +792,39 @@ const SucursalForm = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="branch_name"
                             name="branch_name"
                             value={branch_name}
                             onChange={(e) => setBranchName(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el nombre de la surcursal
-                            </option>
-                            {branch_name_.map((branch_name) => (
-                                <option key={branch_name} value={branch_name}>
-                                    {branch_name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Nombre sucursal*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nombre sucursal*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="region"
                             name="region"
                             value={region}
                             onChange={(e) => setRegion(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la región
-                            </option>
-                            {region_.map((region) => (
-                                <option key={region} value={region}>
-                                    {region}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Región*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Región*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="department"
                             name="department"
                             value={department}
                             onChange={(e) => setDepartment(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el departamento
-                            </option>
-                            {department_.map((department) => (
-                                <option key={department} value={department}>
-                                    {department}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Departamento*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Departamento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
