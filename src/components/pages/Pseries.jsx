@@ -129,7 +129,7 @@ const Pseries = () => {
   }, [selectedCount]);
   
   const irCrear = () => {
-    navigate("/CrearPseries");
+    navigate("/crear-pseries");
   };
 
   const irVer = (pseriesId) => {
@@ -442,7 +442,7 @@ const Pseries = () => {
                   className={style.customCheckbox}
                   checked={
                     pseries.length > 0 &&
-                    selectedPseries.size === Pseries.length
+                    selectedPseries.size === pseries.length
                   }
                   onChange={toggleSelectAll}
                 />

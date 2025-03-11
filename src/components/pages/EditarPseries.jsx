@@ -51,40 +51,6 @@ const EditarPseries = () => {
     Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
 
-  const environment_ = [
-    "Certificación",
-    "Desarrollo",
-    "Producción",
-    "Pruebas",
-    "VIOS-Producción"
-];
-
-const status_ = [
-    "Not Activated",
-    "Running",
-];
-
-const os_ = [
-    "Aixlinux",
-    "Vioserver"
-];
-
-const subsidiary_ = [
-    "Bancolombia",
-    "Banistmo",
-    "Filiales OffShore",
-    "Nequi"
-];
-
-const processor_compatibility_ = [
-    "Defalut",
-    "POWER7",
-    "POWER8",
-    "POWER9",
-    "POWER9_base",
-    "#N/D"
-];
-
   const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
@@ -324,23 +290,15 @@ const processor_compatibility_ = [
                     </div>
                         
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="environment"
                             name="environment"
                             value={environment}
                             onChange={(e) => setEnvironment(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona
-                            </option>
-                            {environment_.map((environment) => (
-                                <option key={environment} value={environment}>
-                                    {environment}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ambiente*</div>
+                            className={styles.input}
+                        />                        
+                        <div className={styles.label}>Ambiente*</div>
                     </div>
 
 
@@ -369,43 +327,27 @@ const processor_compatibility_ = [
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="status"
                             name="status"
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el status
-                            </option>
-                            {status_.map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Estado*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Estado*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
+                            name="os" 
                             id="os"
-                            name="os"
                             value={os}
                             onChange={(e) => setOs(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona
-                            </option>
-                            {os_.map((os) => (
-                                <option key={os} value={os}>
-                                    {os}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Sistema Operativo*</div>
+                            className={styles.input}
+                         />
+                        <div className={styles.label}>Sistema Operativo*</div>
                     </div>
                     
                     <div className={styles.formGroup}>
@@ -421,23 +363,14 @@ const processor_compatibility_ = [
                     </div>
                                   
                     <div className={styles.formGroup}>
-                        <select
-                            id="subsidiary"
+                        <input 
+                            type="text"
                             name="subsidiary"
                             value={subsidiary}
                             onChange={(e) => setSubsidiary(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona
-                            </option>
-                            {subsidiary_.map((subsidiary) => (
-                                <option key={subsidiary} value={subsidiary}>
-                                    {subsidiary}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Filial*</div>
+                            className={styles.input}                        
+                        />
+                        <div className={styles.label}>Filial*</div>
                     </div>
 
                 
@@ -594,24 +527,15 @@ const processor_compatibility_ = [
 
                             
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="processor_compatibility"
                             name="processor_compatibility"
                             value={processor_compatibility}
                             onChange={(e) => setProcessorCompatibility(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona
-                            </option>
-                            {processor_compatibility_.map((processor_compatibility) => (
-                                <option key={processor_compatibility} value={processor_compatibility}>
-                                    {processor_compatibility}
-                                </option>
-
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Procesador compatible*</div>
+                            className={styles.input} 
+                        />
+                        <div className={styles.label}>Procesador compatible*</div>
                     </div>
                 </div>
             </div>
