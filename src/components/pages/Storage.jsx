@@ -128,8 +128,8 @@ const Storage = () => {
         throw new Error("Token de autorización no encontrado.");
       }
       // Se deben colocar todas las propiedades/campos de la tabla a la cual se le este haciendo la vista a excepción de la clave prinaria, dicho campo no debe ir aquí
-      const formattedData = importedData.map((row) => ({
-        cod_item_configuracion: String(row.cod_item_configuracion) || "",
+      const formattedData = importedData.map(row => ({
+        cod_item_configuracion: String(row.cod_item_configuracion || ""),
         name: row.name || "",
         application_code: row.application_code || "",
         cost_center: row.cost_center || "",
@@ -164,7 +164,7 @@ const Storage = () => {
       );
 
       if (!response.ok) {
-        const errorDetail = await response.text();
+        const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
