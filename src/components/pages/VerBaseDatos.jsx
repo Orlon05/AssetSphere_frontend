@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MdVisibility } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./verBaseDatos.module.css";
-
 
 
 const VerBaseDatos = () => {
@@ -390,6 +389,9 @@ const VerBaseDatos = () => {
                     <MdVisibility />
                     Ver Base de Datos
                 </h2>
+                <Link to="/Base-De-Datos" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

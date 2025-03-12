@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { FaDatabase } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
@@ -505,7 +504,7 @@ const BaseDeDatos = () => {
             </span>
           )}
         </div>
-        <div className={style.container}>
+        
           <Table className={`${style.table} ${style.customTable}`}>
             <thead>
               <tr>
@@ -630,7 +629,6 @@ const BaseDeDatos = () => {
             </tfoot>
           </Table>
         </div>
-      </div>
     );
 };
 

@@ -54,8 +54,8 @@ const ServidoresFisicos = () => {
                   { name: "brand", required: false, type:"string"},
                   { name: "model", required: false, type:"string"},
                   { name: "processor", required: false, type:"string"},
-                  { name: "cpu_cores", required: false, type:"integer"},
-                  { name: "ram", required: false, type:"integer"},
+                  { name: "cpu_cores", required: false, type:"string"},
+                  { name: "ram", required: false, type:"string"},
                   { name: "total_disk_size", required: false, type:"string"},
                   { name: "os_type", required: false, type:"string"},
                   { name: "os_version", required: false, type:"string"},
@@ -70,8 +70,8 @@ const ServidoresFisicos = () => {
                   { name: "location", required: false, type:"string"},
                   { name: "asset_id", required: false, type:"string"},
                   { name: "service_owner", required: false, type:"string"},
-                  { name: "warranty_start_date", required: false, type:"string"},
-                  { name: "warranty_end_date", required: false, type:"string"},
+                  { name: "warranty_start_date", required: false, type:"date"},
+                  { name: "warranty_end_date", required: false, type:"date"},
                   { name: "application_code", required: false, type:"string"},
                   { name: "responsible_evc", required: false, type:"string"},
                   { name: "domain", required: false, type:"string"},
@@ -457,7 +457,7 @@ const ServidoresFisicos = () => {
           </span>
         )}
       </div>
-      <div className={style.container}>
+
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
@@ -592,7 +592,6 @@ const ServidoresFisicos = () => {
           </tfoot>
         </Table>
       </div>
-    </div>
   );
 };
 

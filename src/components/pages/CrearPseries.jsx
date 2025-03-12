@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./crearPseries.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PseriesForm = () => {
     const [name, setName] = useState("");
@@ -138,8 +138,10 @@ const PseriesForm = () => {
                 <IoIosAdd />
                 Crear Campos
             </h2>
+            <Link to="/pseries" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
         </div>
-
             
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

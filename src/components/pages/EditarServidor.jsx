@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./editarServidor.module.css";
 
@@ -25,8 +25,8 @@ const EditarServer = () => {
   const [location, setLocation] = useState("");
   const [asset_id, setAssetId] = useState("");
   const [service_owner, setServiceOwner] = useState("");
-  const [warranty_start_date, setWarrantyStartDate] = useState(null);
-  const [warranty_end_date, setWarrantyEndDate] = useState(null);
+  const [warranty_start_date, setWarrantyStartDate] = useState("");
+  const [warranty_end_date, setWarrantyEndDate] = useState("");
   const [application_code, setApplicationCode] = useState("");
   const [responsible_evc, setResponsibleEvc] = useState("");
   const [domain, setDomain] = useState("");
@@ -119,8 +119,8 @@ const EditarServer = () => {
           setLocation(data.data.server_info.location || "");
           setAssetId(data.data.server_info.asset_id || "");
           setServiceOwner(data.data.server_info.service_owner || "");
-          setWarrantyStartDate(data.data.server_info.warranty_start_date || null);
-          setWarrantyEndDate(data.data.server_info.warranty_end_date || null);
+          setWarrantyStartDate(data.data.server_info.warranty_start_date || "");
+          setWarrantyEndDate(data.data.server_info.warranty_end_date || "");
           setApplicationCode(data.data.server_info.application_code || "");
           setResponsibleEvc(data.data.server_info.responsible_evc || "");
           setDomain(data.data.server_info.domain || "");
@@ -225,6 +225,7 @@ const EditarServer = () => {
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         try {
+          console.log("Datos a enviar", errorData);
           const errorData = await response.json();
           console.error("Detalles del error (JSON):", errorData);
           if (errorData && Array.isArray(errorData.detail)) {
@@ -269,6 +270,9 @@ const EditarServer = () => {
           <MdEdit />
           Editar Servidores
           </h2>
+          <Link to="/servidoresf" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
         </div>
 
       <div className={styles.container}>

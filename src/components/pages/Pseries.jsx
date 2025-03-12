@@ -432,7 +432,7 @@ const Pseries = () => {
           </span>
         )}
       </div>
-      <div className={style.container}>
+
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
@@ -561,7 +561,6 @@ const Pseries = () => {
           </tfoot>
         </Table>
       </div>
-    </div>
   );
 };
 

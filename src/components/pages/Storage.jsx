@@ -485,7 +485,7 @@ const Storage = () => {
           </span>
         )}
       </div>
-      <div className={style.container}>
+
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
@@ -609,7 +609,6 @@ const Storage = () => {
           </tfoot>
         </Table>
       </div>
-    </div>
   );
 };
 
