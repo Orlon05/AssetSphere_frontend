@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./crearServidor.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ServerForm = () => {
   const [name, setName] = useState("");
@@ -160,10 +160,16 @@ const ServerForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.containtTit}>
       <h2 className={styles.tittle}>
         <IoIosAdd />
         Crear Servidores
       </h2>
+        <Link to="/servidoresf" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
+      </div>
+
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>

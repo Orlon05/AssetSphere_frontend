@@ -535,7 +535,7 @@ const Sucursales = () => {
           </span>
         )}
       </div>
-      <div className={style.container}>
+
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
@@ -658,7 +658,6 @@ const Sucursales = () => {
           </tfoot>
         </Table>
       </div>
-    </div>
   );
 };
 

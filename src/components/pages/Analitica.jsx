@@ -2,8 +2,9 @@ import React from "react";
 import styles from "./analitica.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-
-const PseriesForm = () => {
+ 
+ 
+const AnaliticaForm = () => {
   // Crea la instancia de Toast
   const Toast = Swal.mixin({
     toast: true,
@@ -16,7 +17,7 @@ const PseriesForm = () => {
       toast.onmouseleave = Swal.resumeTimer;
     },
   });
-
+ 
   // Función para mostrar un Toast de éxito
   const showSuccessToast = () => {
     Toast.fire({
@@ -24,17 +25,19 @@ const PseriesForm = () => {
       title: "Bienvenido al formulario de creación de servidores",
     });
   };
-
+ 
   return (
-    <div className={styles.containtTit}>
+    <div className={styles.analiticaContainer}>
       <h2 className={styles.tittle}>
         <IoIosAdd /> Crear Campos
       </h2>
-      <button onClick={showSuccessToast} className={styles.button}>
-        Mostrar mensaje
-      </button>
+      <div>
+        <button onClick={showSuccessToast} className={styles.button}>
+          Mostrar mensaje
+        </button>
+      </div>
     </div>
   );
 };
-
-export default PseriesForm;
+ 
+export default AnaliticaForm;

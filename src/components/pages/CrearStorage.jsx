@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./crearStorage.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const StorageForm = () => {
     const [cod_item_configuracion, setCodItemConfiguracion] = useState("");
@@ -207,6 +207,9 @@ const StorageForm = () => {
                     <IoIosAdd />
                     Crear Storages
                 </h2>
+                <Link to="/storage" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

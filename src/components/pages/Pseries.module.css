@@ -18,50 +18,53 @@
   --rojo: #f70511;
   --rojo-claro: #c5060f;
 }
+ 
 /*********************CONTENEDOR PRINCIPAL*************/
 .container {
-  width: 1078px;
-  height: 110vh;
-  left: 0;
+  width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
+  height: 100vh;
+  margin-left: 18rem; /* Añade margen izquierdo para el menú */
+  margin-top: 0rem; /* Ajusta este valor según sea necesario */
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
 }
-
+ 
 /***********************ENCABEZADO*************************/
 .containerMain {
   display: flex;
   top: 40px;
   margin-left: 20px;
   position: relative;
-  width: 64rem;
+  width: calc(100% - 40px); /* Ajusta el ancho */
   height: 80px;
 }
+ 
 .btnImport {
   position: absolute;
   left: 0;
   bottom: 5px;
   margin-right: 10px;
   padding: 4px 8px;
-
-  &:hover {
-    background: var(--gris-claro);
-    color: var(--azul-profundo-oscuro);
-  }
 }
-
+ 
+.btnImport:hover {
+  background: var(--gris-claro);
+  color: var(--azul-profundo-oscuro);
+}
+ 
 .btnExport {
   position: absolute;
   left: 8rem;
   bottom: 5px;
   padding: 4px 8px;
-
-  &:hover {
-    background: var(--gris-claro);
-    color: var(--azul-profundo-oscuro);
-  }
 }
-
+ 
+.btnExport:hover {
+  background: var(--gris-claro);
+  color: var(--azul-profundo-oscuro);
+}
+ 
 .btnAdd {
   position: absolute;
   right: 0;
@@ -69,18 +72,18 @@
   padding: 7px 14px;
   background: var(--azul-profundo-oscuro);
   color: var(--blanco);
-
-  &:hover {
-    background: var(--azul-profundo);
-  }
 }
-
+ 
+.btnAdd:hover {
+  background: var(--azul-profundo);
+}
+ 
 .tittle {
   font-size: 25px;
   font-family: sans-serif;
   color: var(--azul-oscuro);
 }
-
+ 
 .btnAdd,
 .btnExport,
 .btnImport {
@@ -89,14 +92,13 @@
   justify-content: space-between;
   box-shadow: 0 0 5px var(--azul-oscuro);
 }
-
+ 
 .icon {
   font-size: 20px;
   margin-right: 5px;
 }
+ 
 /***********INPUT SEARCH**********************/
-
-/* Estilos generales del contenedor */
 .searchContainer {
   position: relative;
   width: 64rem;
@@ -107,13 +109,15 @@
   margin-left: 20px;
   margin-top: 80px;
   margin-right: 20px;
+  margin-bottom: 19px;
   background: var(--blanco);
 }
-
+ 
 .searchContainerSelected {
   background-color: var(--azul-celeste);
+ 
 }
-
+ 
 .selectedCount {
   display: flex; /* Para controlar el alineamiento */
   align-items: center; /* Alinea verticalmente al centro */
@@ -123,8 +127,7 @@
   top: 20px;
   position: absolute;
 }
-
-/* Estilos del input */
+ 
 .searchInput {
   position: absolute;
   top: 10px;
@@ -136,17 +139,17 @@
   border-radius: 10px;
   cursor: pointer;
   text-indent: 35px;
-  &:hover {
-    border: 1px solid var(--gris-oscuro);
-  }
-  /* Estilos al enfocar el input */
-  &:focus {
-    outline: none;
-    border: 1px solid var(--azul-profundo-oscuro);
-  }
 }
-
-/* Estilos del icono */
+ 
+.searchInput:hover {
+  border: 1px solid var(--gris-oscuro);
+}
+ 
+.searchInput:focus {
+  outline: none;
+  border: 1px solid var(--azul-profundo-oscuro);
+}
+ 
 .searchIcon {
   position: absolute;
   top: 50%;
@@ -159,101 +162,83 @@
   border: none;
   background: transparent;
 }
-
+ 
 .iconS {
   transition: transform 0.3s ease;
-  /* Estilos al pasar el mouse sobre el icono */
-  &:hover {
-    color: var(--azul-claro);
-    transform: translateZ(10px) scale(1.1);
-  }
 }
-
+ 
+.iconS:hover {
+  color: var(--azul-claro);
+  transform: translateZ(10px) scale(1.1);
+}
+ 
 /*********************TABLA*******************/
-
-/*CHECKBOX*/
-.customCheckbox {
-  display: flex;
-  align-items: center;
-  width: 20px; /* Tamaño del checkbox */
-  height: 20px;
-  border: 2px solid var(--gris-oscuro); /* Color y grosor del borde */
-  border-radius: 4px; /* Opcional: para bordes redondeados */
-  transition: border-color 0.3s ease; /* Efecto de transición */
-  cursor: pointer;
-
-  &:hover {
-    background: var(--azul-celeste);
-  }
+.tableContainer {
+  margin-top: 2rem; /* Ajusta este valor según sea necesario */
 }
-
-.customTable {
-  font-size: 16px;
+ 
+.table {
+  width: calc(100% - 20px); /* Ajusta según el margen deseado */
+  margin-top: 5;
+  margin: 0 10px;
+  border-radius: 10px;
   box-shadow: 0 0 5px var(--azul-oscuro);
 }
-
+ 
 .table td,
 .table th {
   border-left: none; /* Quitar borde izquierdo */
   border-right: none; /* Quitar borde derecho */
 }
-
-.table {
-  width: 64rem;
-  margin-left: 20px;
-  margin-right: 20px;
-  top: 40px;
-  position: relative;
-  border-radius: 10px;
-}
-
+ 
 .table thead th {
   border-bottom: 2px solid var(--gris-claro); /* Mantener borde inferior en el encabezado */
   color: var(--azul-oscuro);
 }
-
-.contChek{
-  border-top-left-radius: 10px;
-}
-
-.table .contBtns{
-  border-top-right-radius: 10px;
-}
-
+ 
 .table tbody tr {
   border-bottom: 1px solid var(--azul-claro); /* Líneas horizontales */
 }
-
+ 
 .table tbody td {
   border-bottom: 1px solid var(--gris-claro); /* Mantener las líneas horizontales entre filas */
   color: var(--azul-oscuro);
 }
-/* En tu archivo CSS */
+ 
 .table tfoot {
-  height: 3.8rem; 
+  height: 3.8rem;
 }
-
+ 
 .table tfoot td {
-  padding: 5px; 
+  padding: 5px;
 }
-
-.contFil{
+ 
+.contChek {
+  border-top-left-radius: 10px;
+}
+ 
+.contBtns {
+  border-top-right-radius: 10px;
+}
+ 
+.contFil {
   border-bottom-left-radius: 10px;
 }
-.contFilDos{
+ 
+.contFilDos {
   border-bottom-right-radius: 10px;
 }
-
+ 
 .textfoot {
   margin-left: 10px;
 }
-
+ 
 .selectLine {
   padding: 0;
   width: 3.5rem;
   margin-left: 10px;
 }
-
+ 
 .pestanas {
   padding: 0;
   width: 3rem;
@@ -261,8 +246,7 @@
   height: 1rem;
   margin-top: 0;
 }
-/*******************BOTONES CRUD*****************/
-
+ 
 .btnVer,
 .btnEdit,
 .btnDelete {
@@ -273,41 +257,44 @@
   border-radius: 4px;
   color: var(--blanco);
 }
-
+ 
 .btnVer {
   background: var(--azul-profundo);
-  &:hover {
-    background: var(--azul-profundo-oscuro);
-  }
 }
-
+ 
+.btnVer:hover {
+  background: var(--azul-profundo-oscuro);
+}
+ 
 .btnEdit {
   background: var(--naranja);
-  &:hover {
-    background: var(--naranja-claro);
-  }
 }
-
+ 
+.btnEdit:hover {
+  background: var(--naranja-claro);
+}
+ 
 .btnDelete {
   background: var(--rojo);
-  &:hover {
-    background: var(--rojo-claro);
-  }
 }
-
+ 
+.btnDelete:hover {
+  background: var(--rojo-claro);
+}
+ 
 @media (max-width: 768px) {
   .container {
     left: 0; /* O un valor más pequeño si quieres un margen */
     width: 100%; /* Asegura que el contenedor use todo el ancho */
   }
 }
-
+ 
 .serverStatus {
   display: flex;
   align-items: center;
   gap: 5px;
 }
-
+ 
 .serverStatus .online {
   width: 10px;
   height: 10px;
@@ -315,7 +302,7 @@
   border-radius: 50%;
   background-color: var(--verde-claro);
 }
-
+ 
 .serverStatus .offline {
   width: 10px;
   height: 10px;
@@ -323,7 +310,7 @@
   border-radius: 50%;
   background-color: var(--rojo);
 }
-
+ 
 .serverStatus .maintenance {
   width: 10px;
   height: 10px;

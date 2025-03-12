@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdVisibility } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./verSucursal.module.css";
 
 const VerSucursal = () => {
@@ -318,6 +318,9 @@ const VerSucursal = () => {
                     <MdVisibility />
                     Ver Sucursales
                 </h2>
+                <Link to="/sucursales" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

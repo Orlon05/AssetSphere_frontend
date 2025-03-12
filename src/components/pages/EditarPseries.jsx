@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./editarPseries.module.css";
 
@@ -235,6 +235,9 @@ const EditarPseries = () => {
                 <MdEdit />
                 Editar Campos
             </h2>
+            <Link to="/pseries" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
         </div>
  
             <div className={styles.container}>

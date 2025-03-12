@@ -1,6 +1,3 @@
-"use client";
-
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
@@ -464,7 +461,7 @@ const ServidoresVirtuales = () => {
           </span>
         )}
       </div>
-      <div className={style.container}>
+
         <Table className={`${style.table} ${style.customTable}`}>
           <thead>
             <tr>
@@ -597,7 +594,6 @@ const ServidoresVirtuales = () => {
           </tfoot>
         </Table>
       </div>
-    </div>
   );
 };
 
