@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdVisibility } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./verPseries.module.css";
 
 const VerPseries = () => {
@@ -156,6 +156,9 @@ const VerPseries = () => {
                     <MdVisibility  />
                     Visualizar Servidores
                 </h2>
+                <Link to="/pseries" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

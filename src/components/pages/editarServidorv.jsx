@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./editarServidorVirtual.module.css";
 
@@ -241,6 +241,9 @@ const EditarServerVirtual = () => {
         <MdEdit />
         Editar Servidor
       </h2>
+      <Link to="/servidoresv" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>

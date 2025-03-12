@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdVisibility } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./verServidoresVirtuales.module.css";
 
 const verServidoresVirtuales = () => {
@@ -135,6 +135,9 @@ const verServidoresVirtuales = () => {
         <MdVisibility />
         Ver Servidor
       </h2>
+      <Link to="/servidoresv" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>

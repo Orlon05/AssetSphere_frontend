@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./crearSucursal.module.css";
 import { IoIosAdd } from "react-icons/io";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SucursalForm = () => {
     const [name, setName] = useState("");
@@ -336,6 +336,9 @@ const SucursalForm = () => {
                     <IoIosAdd />
                     Crear Sucursales
                 </h2>
+                <Link to="/sucursales" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

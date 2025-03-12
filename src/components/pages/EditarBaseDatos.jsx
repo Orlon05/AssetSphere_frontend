@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./editarBaseDatos.module.css";
 
@@ -513,6 +513,9 @@ const EditarBaseDatos = () => {
                     <MdEdit />
                     Editar Base de Datos
                 </h2>
+                <Link to="/Base-De-Datos" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MdEdit } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./editarStorage.module.css";
 
@@ -301,6 +301,9 @@ const EditarStorage = () => {
                     <MdEdit />
                     Editar Storages
                 </h2>
+                <Link to="/storage" className={styles.botonRegresar}>
+                    Regresar
+                </Link>
             </div>
             <div className={styles.container}>
                 {/*INICIO DE LA COLUMNA 1*/}
@@ -330,151 +333,103 @@ const EditarStorage = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="application_code"
                             name="application_code"
                             value={application_code}
                             onChange={(e) => setApplicationCode(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar código de aplicación</option>
-                            {application_code_.map((application_code) => (
-                                <option key={application_code} value={application_code}>
-                                    {application_code}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Código de aplicación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Código de aplicación*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="cost_center"
                             name="cost_center"
                             value={cost_center}
                             onChange={(e) => setCostCenter(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar centro de costos</option>
-                            {cost_center_.map((cost_center) => (
-                                <option key={cost_center} value={cost_center}>
-                                    {cost_center}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Centro de costos*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="active"
                             name="active"
                             value={active}
                             onChange={(e) => setActive(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar activo</option>
-                            {active_.map((active) => (
-                                <option key={active} value={active}>
-                                    {active}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Activo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Activo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="category"
                             name="category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar categoría</option>
-                            {category_.map((category) => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Categoría*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Categoría*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
-                    <div className={styles.formGroup}>
-                        <select
+                    <div className={styles.formGroup}>  
+                        <input 
+                            type="text" 
                             id="type"
                             name="type"
                             value={type}
                             onChange={(e) => setType(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar tipo</option>
-                            {type_.map((type) => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Tipo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Tipo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="item"
                             name="item"
                             value={item}
                             onChange={(e) => setItem(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar ítem</option>
-                            {item_.map((item) => (
-                                <option key={item} value={item}>
-                                    {item}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ítem*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="company"
                             name="company"
                             value={company}
                             onChange={(e) => setCompany(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar empresa</option>
-                            {company_.map((company) => (
-                                <option key={company} value={company}>
-                                    {company}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Empresa*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Empresa*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="organization_responsible"
                             name="organization_responsible"
                             value={organization_responsible}
                             onChange={(e) => setOrganizationResponsible(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar organización responsable</option>
-                            {organization_responsible_.map((organization_responsible) => (
-                                <option key={organization_responsible} value={organization_responsible}>
-                                    {organization_responsible}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Organización responsable*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Organización responsable*</div>
                     </div>
 
                     <button type="submit" className={styles.button}>
@@ -497,77 +452,53 @@ const EditarStorage = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="manufacturer"
                             name="manufacturer"
                             value={manufacturer}
                             onChange={(e) => setManufacturer(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar fabricante</option>
-                            {manufacturer_.map((manufacturer) => (
-                                <option key={manufacturer} value={manufacturer}>
-                                    {manufacturer}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Fabricante*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Fabricante*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="status"
                             name="status"
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar estado</option>
-                            {status_.map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Estado*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Estado*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="owner"
                             name="owner"
                             value={owner}
                             onChange={(e) => setOwner(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar propietario</option>
-                            {owner_.map((owner) => (
-                                <option key={owner} value={owner}>
-                                    {owner}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Propietario*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="model"
                             name="model"
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar modelo</option>
-                            {model_.map((model) => (
-                                <option key={model} value={model}>
-                                    {model}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Modelo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -585,21 +516,15 @@ const EditarStorage = () => {
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="org_maintenance"
                             name="org_maintenance"
                             value={org_maintenance}
                             onChange={(e) => setOrgMaintenance(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar organización de mantenimiento</option>
-                            {org_maintenance_.map((org_maintenance) => (
-                                <option key={org_maintenance} value={org_maintenance}>
-                                    {org_maintenance}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Organización de mantenimiento*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Organización de mantenimiento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -627,21 +552,15 @@ const EditarStorage = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="location"
                             name="location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">Seleccionar ubicación</option>
-                            {location_.map((location) => (
-                                <option key={location} value={location}>
-                                    {location}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ubicación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ubicación*</div>
                     </div>
                 </div>
             </div>
