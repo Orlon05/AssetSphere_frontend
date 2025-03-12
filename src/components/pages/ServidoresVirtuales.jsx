@@ -336,8 +336,6 @@ const ServidoresVirtuales = () => {
     server.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  console.log(filteredServers); 
-
   const indexOfLastServer = currentPage * rowsPerPage;
   const indexOfFirstServer = indexOfLastServer - rowsPerPage;
 
