@@ -141,13 +141,15 @@ const VirtualForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>
-        <IoIosAdd />
-        Crear Servidores
-      </h2>
+    <div className={styles.containtTit}>
+    <h2 className={styles.tittle}>
+      <IoIosAdd />
+      Crear Servidores
+    </h2>
       <Link to="/servidoresv" className={styles.botonRegresar}>
-                    Regresar
-                </Link>
+                  Regresar
+              </Link>
+    </div>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>

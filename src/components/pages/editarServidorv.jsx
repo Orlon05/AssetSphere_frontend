@@ -235,15 +235,17 @@ const EditarServerVirtual = () => {
     return <div>Error: {error}</div>;
   }
 
-  return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.tittle}>
-        <MdEdit />
-        Editar Servidor
-      </h2>
-      <Link to="/servidoresv" className={styles.botonRegresar}>
-                    Regresar
-                </Link>
+    return (
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.containtTit}>
+          <h2 className={styles.tittle}>
+            <MdEdit />
+            Editar Servidor
+            </h2>
+              <Link to="/servidoresv" className={styles.botonRegresar}>
+                Regresar
+            </Link>
+              </div>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>

@@ -9,8 +9,8 @@ const EditarServer = () => {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [processor, setProcessor] = useState("");
-  const [cpu_cores, setCpuCores] = useState(0);
-  const [ram, setRam] = useState(0);
+  const [cpu_cores, setCpuCores] = useState("");
+  const [ram, setRam] = useState("");
   const [total_disk_size, setTotalDiskSize] = useState("");
   const [os_type, setOsType] = useState("");
   const [os_version, setOsVersion] = useState("");
@@ -103,7 +103,7 @@ const EditarServer = () => {
           setBrand(data.data.server_info.brand || "");
           setModel(data.data.server_info.model || "");
           setProcessor(data.data.server_info.processor || "");
-          setCpuCores(parseInt(data.data.server_info.cpu_cores, 10) || 0); // Manejo de error para cores
+          setCpuCores(data.data.server_info.cpu_cores || "");
           setRam(data.data.server_info.ram || 0);
           setTotalDiskSize(data.data.server_info.total_disk_size || "");
           setOsType(data.data.server_info.os_type || "");
@@ -168,7 +168,7 @@ const EditarServer = () => {
       brand: brand,
       model: model,
       processor: processor,
-      cpu_cores: parseInt(cpu_cores, 10) || 0, // Manejo de error para cores
+      cpu_cores: cpu_cores,
       ram: ram,
       total_disk_size: total_disk_size,
       os_type: os_type,
