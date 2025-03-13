@@ -1,61 +1,48 @@
-:root{
-    --azul-celeste: #8AFFE6;
-    --azul-oscuro: #1B3F4B;
-    --azul-oscuro-intermedio: #3b5d68;
-    --gris-claro: #CBCBCB;
-    --azul-claro: #4E8AC4;
-    --azul-claro-intermedio: #6cb5fa;
-    --negro: #000000;
-    --blanco: #fff;
-  }
-
-  .analiticaContainer {
-    display: flex;
-  flex-direction: column;
-    padding: 20px;
-    width: 1076px;
-    height: 900px;
-    overflow-y: auto;
-  }
-  
-  .cardContainer {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 20px;
-  }
-
-  .graficos{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 30px;
-    margin-top: 30px;
-  }
-
-  .barras{
-    width: 580px;
-    height: 400px;
-  }
-
-  .donut{
-    width: 400px;
-    height: 400px;
-  }
-
-
- /* Media Query para pantallas más pequeñas */
-@media (max-width: 768px) {
-  /* Hacer que las cards se apilen */
-  .cards-container {
-    flex-direction: column;
-   }
-  /* Hacer que las cards ocupen todo el ancho*/
-  .card{
-      flex: 1 1 100%;
-  }
-/* Hacer que los gráficos ocupen todo el ancho */
-.barras, .donut {
-  flex: 1 1 100%;
+:root {
+  --azul-celeste: #8AFFE6;
+  --azul-oscuro: #1B3F4B;
+  --azul-oscuro-intermedio: #3b5d68;
+  --gris-claro: #CBCBCB;
+  --azul-claro: #4E8AC4;
+  --azul-claro-intermedio: #6cb5fa;
+  --negro: #000000;
+  --blanco: #fff;
 }
+ 
+.analiticaContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
+  max-width: 1200px;
+  height: 100%;
+  overflow-y: auto;
+  margin: 0 auto;
+  margin-left: 18rem; /* Añade margen izquierdo para el menú */
+  z-index: 999; /* Asegura que el contenido esté por encima del menú */
+}
+ 
+.button {
+  width: auto; /* Ajusta el ancho automáticamente */
+  padding: 10px 20px; /* Ajusta el relleno para que el botón sea más pequeño */
+  display: inline-block; /* Asegura que el botón no ocupe todo el ancho */
+  margin: 10px 0; /* Añade margen para separarlo de otros elementos */
+  text-align: left; /* Alinea el texto a la izquierda */
+}
+ 
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+ 
+/* Media Query para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .analiticaContainer {
+    width: 100%; /* Ajusta el ancho para pantallas pequeñas */
+    margin-left: 0; /* Elimina el margen izquierdo para pantallas pequeñas */
+    margin-top: 60px; /* Añade margen superior para el menú */
+  }
 }

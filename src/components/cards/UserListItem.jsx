@@ -42,10 +42,10 @@ const UserListItem = ({ user }) => {
     return (
       <li className={styles["list-item"]}>
           <div>
-              <img
+            <img
                   src={
                       user.avatar ||
-                      `https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${user.name}`
+                      `https://api.dicebear.com/9.x/initials/svg?seed=${user.name}`
                   }
                   alt="Avatar"
                   className={styles["list-item-image"]}

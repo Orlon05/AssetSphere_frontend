@@ -50,7 +50,7 @@ const Usuarios = () => {
   const token = localStorage.getItem("authenticationToken");
   useEffect(() => {
     try {
-      fetch(`http://localhost:8000/users`, {
+      fetch(`http://localhost:8000/users/get_all`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

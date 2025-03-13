@@ -101,7 +101,7 @@ const Navegacion = ({ toggleSidebar }) => {
         </div>
         <div className={Style.userContainer} onClick={toggleModal}>
           <img
-            src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${userName}`}
+            src={`https://api.dicebear.com/9.x/initials/svg?seed=${userName}`}
             alt="user"
             className={Style.userIcon}
           />
@@ -111,7 +111,7 @@ const Navegacion = ({ toggleSidebar }) => {
             <ul className={Style.modalOptions}>
               <p className={Style.mailUser}>{userEmail}</p>
               <hr />
-              <li>Perfil</li>
+              <li onClick={() => navigate("/profile")}>Perfil</li>
               <li>Configuraciones</li>
               <hr />
               <li className={Style.btnLogout} onClick={handleLogout}>
