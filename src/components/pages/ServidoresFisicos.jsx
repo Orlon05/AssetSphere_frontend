@@ -500,9 +500,9 @@ const ServidoresFisicos = () => {
                   <div className={style.serverStatus}>
                     <span
                       className={
-                        server.status.toLowerCase() === "encendido"
+                        server.status.toLowerCase() === "active"
                           ? style.online
-                          : server.status.toLowerCase() === "mantenimiento"
+                          : server.status.toLowerCase() === "inactive"
                           ? style.maintenance
                           : style.offline
                       }
