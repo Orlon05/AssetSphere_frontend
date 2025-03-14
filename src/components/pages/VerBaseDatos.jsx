@@ -409,105 +409,65 @@ const VerBaseDatos = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="cost_center"
                             name="cost_center"
                             value={cost_center}
                             onChange={(e) => setCostCenter(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el centro de costos
-                            </option>
-                            {cost_center_.map((cost_center) => (
-                                <option key={cost_center} value={cost_center}>
-                                    {cost_center}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Centro de costos*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Centro de costos*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="category"
                             name="category"
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la categoría
-                            </option>
-                            {category_.map((category) => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Categoría*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Categoría*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="type"
                             name="type"
                             value={type}
                             onChange={(e) => setType(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el tipo
-                            </option>
-                            {type_.map((type) => (
-                                <option key={type} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Tipo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Tipo*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="item"
                             name="item"
                             value={item}
                             onChange={(e) => setItem(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el ítem
-                            </option>
-                            {item_.map((item) => (
-                                <option key={item} value={item}>
-                                    {item}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Ítem*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Ítem*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="owner_contact"
                             name="owner_contact"
                             value={owner_contact}
                             onChange={(e) => setOwnerContact(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el contacto del propietario
-                            </option>
-                            {owner_contact_.map((owner_contact) => (
-                                <option key={owner_contact} value={owner_contact}>
-                                    {owner_contact}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Contacto del propietario*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Contacto del propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -523,127 +483,79 @@ const VerBaseDatos = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="application_code"
                             name="application_code"
                             value={application_code}
                             onChange={(e) => setApplicationCode(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el código de aplicación
-                            </option>
-                            {application_code_.map((application_code) => (
-                                <option key={application_code} value={application_code}>
-                                    {application_code}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Código de aplicación*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Código de aplicación*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="inactive"
                             name="inactive"
                             value={inactive}
                             onChange={(e) => setInactive(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el estado inactivo
-                            </option>
-                            {inactive_.map((inactive) => (
-                                <option key={inactive} value={inactive}>
-                                    {inactive}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Inactivo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Inactivo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="asset_life_cycle_status"
                             name="asset_life_cycle_status"
                             value={asset_life_cycle_status}
                             onChange={(e) => setAssetLifeCycleStatus(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el estado del ciclo de vida del activo
-                            </option>
-                            {asset_life_cycle_status_.map((asset_life_cycle_status) => (
-                                <option key={asset_life_cycle_status} value={asset_life_cycle_status}>
-                                    {asset_life_cycle_status}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Estado del ciclo de vida del activo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Estado del ciclo de vida del activo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="system_environment"
                             name="system_environment"
                             value={system_environment}
                             onChange={(e) => setSystemEnvironment(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el entorno del sistema
-                            </option>
-                            {system_environment_.map((system_environment) => (
-                                <option key={system_environment} value={system_environment}>
-                                    {system_environment}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Entorno del sistema*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Entorno del sistema*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="cloud"
                             name="cloud"
                             value={cloud}
                             onChange={(e) => setCloud(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la nube
-                            </option>
-                            {cloud_.map((cloud) => (
-                                <option key={cloud} value={cloud}>
-                                    {cloud}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Nube*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nube*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text"
                             id="version_number"
                             name="version_number"
                             value={version_number}
                             onChange={(e) => setVersionNumber(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el número de versión
-                            </option>
-                            {version_number_.map((version_number) => (
-                                <option key={version_number} value={version_number}>
-                                    {version_number}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Número de versión*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Número de versión*</div>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -687,43 +599,27 @@ const VerBaseDatos = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="model"
                             name="model"
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el modelo
-                            </option>
-                            {model_.map((model) => (
-                                <option key={model} value={model}>
-                                    {model}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Modelo*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Modelo*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="ha"
                             name="ha"
                             value={ha}
                             onChange={(e) => setHa(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el HA
-                            </option>
-                            {ha_.map((ha) => (
-                                <option key={ha} value={ha}>
-                                    {ha}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>HA*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>HA*</div>
                     </div>
 
                     <hr className={styles.lines} />
@@ -741,125 +637,77 @@ const VerBaseDatos = () => {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="owner_name"
                             name="owner_name"
                             value={owner_name}
                             onChange={(e) => setOwnerName(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el nombre del propietario
-                            </option>
-                            {owner_name_.map((owner_name) => (
-                                <option key={owner_name} value={owner_name}>
-                                    {owner_name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Nombre del propietario*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nombre del propietario*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="department"
                             name="department"
                             value={department}
                             onChange={(e) => setDepartment(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el departamento
-                            </option>
-                            {department_.map((department) => (
-                                <option key={department} value={department}>
-                                    {department}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Departamento*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Departamento*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="company"
                             name="company"
                             value={company}
                             onChange={(e) => setCompany(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona la compañía
-                            </option>
-                            {company_.map((company) => (
-                                <option key={company} value={company}>
-                                    {company}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Compañía*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Compañía*</div>
                     </div>
 
                     <hr className={styles.lines} />
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="manufacturer_name"
                             name="manufacturer_name"
                             value={manufacturer_name}
                             onChange={(e) => setManufacturerName(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el nombre del fabricante
-                            </option>
-                            {manufacturer_name_.map((manufacturer_name) => (
-                                <option key={manufacturer_name} value={manufacturer_name}>
-                                    {manufacturer_name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Nombre del fabricante*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Nombre del fabricante*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="supplier_name"
                             name="supplier_name"
                             value={supplier_name}
                             onChange={(e) => setSupplierName(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el nombre del proveedor
-                            </option>
-                            {supplier_name_.map((supplier_name) => (
-                                <option key={supplier_name} value={supplier_name}>
-                                    {supplier_name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Nombre del proveedor*</div>
+                            className={styles.input}
+                        />  
+                        <div className={styles.label}>Nombre del proveedor*</div>
                     </div>
 
                     <div className={styles.formGroup}>
-                        <select
+                        <input 
+                            type="text" 
                             id="supported"
                             name="supported"
                             value={supported}
                             onChange={(e) => setSupported(e.target.value)}
-                            className={styles.selected}
-                        >
-                            <option value="">
-                                Selecciona el soporte
-                            </option>
-                            {supported_.map((supported) => (
-                                <option key={supported} value={supported}>
-                                    {supported}
-                                </option>
-                            ))}
-                        </select>
-                        <div className={styles.labelSelect}>Soporte*</div>
+                            className={styles.input}
+                        />
+                        <div className={styles.label}>Soporte*</div>
                     </div>
 
                     <div className={styles.formGroup}>
