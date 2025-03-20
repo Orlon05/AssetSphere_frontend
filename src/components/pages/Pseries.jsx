@@ -110,10 +110,7 @@ const Pseries = () => {
     });
   };
 
-
-
-
-  const handleImportComplete = async (importedData) => {
+const handleImportComplete = async (importedData) => {
     console.log("Datos importados listos para enviar:", importedData);
  
     if (!Array.isArray(importedData) || importedData.length === 0) {
@@ -466,7 +463,7 @@ const Pseries = () => {
         {showSearch && (
           <>
             <input
-               className={style.searchInput}
+              className={style.searchInput}
               type="search"
               placeholder="Buscar servidor..."
               value={searchValue}
@@ -477,7 +474,7 @@ const Pseries = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <FaSearch className={style.iconS} />
+              <CiSearch className={style.iconS} />
             </button>
           </>
         )}
@@ -507,12 +504,9 @@ const Pseries = () => {
                 />
               </th>
               <th>Nombre almacenamiento</th>
-              <th>Hostname</th>
               <th>Modelo</th>
               <th>Cajón</th>
               <th>Status</th>
-              <th>Filial</th>
-              <th></th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
@@ -533,13 +527,9 @@ const Pseries = () => {
                   />
                 </td>
                 <td>{pseries.name}</td>
-
-                <td>{pseries.hostname}</td>
                 <td>{pseries.environment}</td>
                 <td>{pseries.slot}</td>
                 <td>{pseries.status}</td>
-                <td>{pseries.subsidiary}</td>
-                <td>{pseries.ip_address}</td>
                 <td>
                 <button 
                     className={style.btnVer}
