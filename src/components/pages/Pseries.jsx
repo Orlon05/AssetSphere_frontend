@@ -110,10 +110,7 @@ const Pseries = () => {
     });
   };
 
-
-
-
-  const handleImportComplete = async (importedData) => {
+const handleImportComplete = async (importedData) => {
     console.log("Datos importados listos para enviar:", importedData);
  
     if (!Array.isArray(importedData) || importedData.length === 0) {
@@ -388,41 +385,43 @@ const Pseries = () => {
               },
             }
           );
-  
+
           if (!response.ok) {
             let errorMessage = `Error HTTP ${response.status}`;
             let errorData;
-  
+
             try {
-              errorData = await response.json();
+                errorData = await response.json();
               if (response.status === 422 && errorData && errorData.detail) {
-                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+                   errorMessage = errorData.detail.map((e) => e.msg).join(", ");
               } else if (response.status === 401 || response.status === 403) {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
                 errorMessage = "El servidor no existe.";
               } else if (errorData && errorData.message) {
-                errorMessage = errorData.message;
-              }
-            } catch (errorParse) {
-              console.error("Error parsing error response:", errorParse);
-              errorMessage = `Error al procesar la respuesta del servidor.`;
-              handleError(errorParse);
+                   errorMessage = errorData.message;
+               }
+
+             } catch (errorParse) {
+               console.error("Error parsing error response:", errorParse);
+                errorMessage = `Error al procesar la respuesta del servidor.`;
+                handleError(errorParse);
             }
-  
-            Swal.fire({
+
+
+           Swal.fire({
               icon: "error",
               title: "Error al eliminar el servidor",
               text: errorMessage,
-            });
+           });
           } else {
             setPseries(pseries.filter((pseries) => pseries.id !== pseriesId));
             showSuccessToast();
           }
         } catch (error) {
           console.error("Error al eliminar el servidor:", error);
-          handleError(error);
+           handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -464,7 +463,7 @@ const Pseries = () => {
         {showSearch && (
           <>
             <input
-               className={style.searchInput}
+              className={style.searchInput}
               type="search"
               placeholder="Buscar servidor..."
               value={searchValue}
@@ -475,7 +474,7 @@ const Pseries = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <FaSearch className={style.iconS} />
+              <CiSearch className={style.iconS} />
             </button>
           </>
         )}
@@ -505,12 +504,9 @@ const Pseries = () => {
                 />
               </th>
               <th>Nombre almacenamiento</th>
-              <th>Hostname</th>
               <th>Modelo</th>
               <th>Cajón</th>
               <th>Status</th>
-              <th>Filial</th>
-              <th></th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
@@ -522,152 +518,99 @@ const Pseries = () => {
                   selectedPseries.has(pseries.id) ? style.selectedRow : ""
                 }
               >
-                <CiSearch className={style.iconS} />
-              </button>
-            </>
-          )}
-          {selectedCount > 0 && (
-            <span className={style.selectedCount}>
-              <span>{selectedCount}</span>
-              <span>
-                Servidor{selectedCount !== 1 ? "es" : ""} Seleccionado
-                {selectedCount !== 1 ? "s" : ""}
-              </span>
-            </span>
-          )}
-        </div>
-        <div className={style.container}>
-          <Table className={`${style.table} ${style.customTable}`}>
-            <thead>
-              <tr>
-                <th className={style.contChek}>
+                <td>
                   <input
                     type="checkbox"
                     className={style.customCheckbox}
-                    checked={
-                      pseries.length > 0 &&
-                      selectedPseries.size === Pseries.length
-                    }
-                    onChange={toggleSelectAll}
+                    checked={selectedPseries.has(pseries.id)}
+                    onChange={() => toggleSelectPseries(pseries.id)}
                   />
-                </th>
-                <th>Nombre almacenamiento</th>
-                <th>Hostname</th>
-                <th>Modelo</th>
-                <th>Cajón</th>
-                <th>Status</th>
-                <th>Filial</th>
-                <th></th>
-                <th className={style.contBtns}>Acciones</th>
+                </td>
+                <td>{pseries.name}</td>
+                <td>{pseries.environment}</td>
+                <td>{pseries.slot}</td>
+                <td>{pseries.status}</td>
+                <td>
+                <button 
+                    className={style.btnVer}
+                     onClick={() => irVer(pseries.id)}>
+                    <MdVisibility  />
+                  </button>
+
+                  <button
+                    className={style.btnEdit}
+                    onClick={() => irEditar(pseries.id)}
+                  >
+                    <MdEdit />
+                  </button>
+                  <button
+                    className={style.btnDelete}
+                    onClick={() => {
+                      handleDeletePseries(pseries.id);
+                    }}
+                  >
+                    <MdDelete />
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {pseries.map((pseries) => (
-                <tr
-                  key={pseries.id}
-                  className={
-                    selectedPseries.has(pseries.id) ? style.selectedRow : ""
-                  }
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td className={style.contFil} colSpan="2">
+                <div
+                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
                 >
-                  <td>
-                    <input
-                      type="checkbox"
-                      className={style.customCheckbox}
-                      checked={selectedPseries.has(pseries.id)}
-                      onChange={() => toggleSelectPseries(pseries.id)}
-                    />
-                  </td>
-                  <td>{pseries.name}</td>
-  
-                  <td>{pseries.hostname}</td>
-                  <td>{pseries.environment}</td>
-                  <td>{pseries.slot}</td>
-                  <td>{pseries.status}</td>
-                  <td>{pseries.subsidiary}</td>
-                  <td>{pseries.ip_address}</td>
-                  <td>
-                  <button 
-                      className={style.btnVer}
-                       onClick={() => irVer(pseries.id)}>
-                      <MdVisibility  />
-                    </button>
-  
-                    <button
-                      className={style.btnEdit}
-                      onClick={() => irEditar(pseries.id)}
-                    >
-                      <MdEdit />
-                    </button>
-                    <button
-                      className={style.btnDelete}
-                      onClick={() => {
-                        handleDeletePseries(pseries.id);
-                      }}
-                    >
-                      <MdDelete />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td className={style.contFil} colSpan="2">
-                  <div
-                    className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+                  <span className={style.textfoot}>Filas por página:</span>
+                  <Form.Select
+                    value={rowsPerPage}
+                    onChange={(e) =>
+                      setRowsPerPage(parseInt(e.target.value, 10))
+                    }
+                    className={style.selectLine}
                   >
-                    <span className={style.textfoot}>Filas por página:</span>
-                    <Form.Select
-                      value={rowsPerPage}
-                      onChange={(e) =>
-                        setRowsPerPage(parseInt(e.target.value, 10))
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </Form.Select>
+                </div>
+              </td>
+              <td colSpan="1">
+                <div
+                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+                >
+                  <span>{`${indexOfFirstPseries + 1}-${Math.min(
+                    indexOfLastPseries,
+                    filteredPseries.length
+                  )} de ${filteredPseries.length}`}</span>
+                </div>
+              </td>
+              <td className={style.contFilDos} colSpan="3">
+                <div
+                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+                >
+                  <Pagination className={style.pestanas}>
+                    <Pagination.Prev
+                      onClick={() =>
+                        setCurrentPage(Math.max(1, currentPage - 1))
                       }
-                      className={style.selectLine}
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                    </Form.Select>
-                  </div>
-                </td>
-                <td colSpan="1">
-                  <div
-                    className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
-                  >
-                    <span>{`${indexOfFirstPseries + 1}-${Math.min(
-                      indexOfLastPseries,
-                      filteredPseries.length
-                    )} de ${filteredPseries.length}`}</span>
-                  </div>
-                </td>
-                <td className={style.contFilDos} colSpan="3">
-                  <div
-                    className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
-                  >
-                    <Pagination className={style.pestanas}>
-                      <Pagination.Prev
-                        onClick={() =>
-                          setCurrentPage(Math.max(1, currentPage - 1))
-                        }
-                      />
-                      <Pagination.Item>{currentPage}</Pagination.Item>
-                      <Pagination.Next
-                        onClick={() =>
-                          setCurrentPage(Math.min(totalPages, currentPage + 1))
-                        }
-                      />
-                    </Pagination>
-                  </div>
-                </td>
-              </tr>
-            </tfoot>
-          </Table>
-        </div>
+                    />
+                    <Pagination.Item>{currentPage}</Pagination.Item>
+                    <Pagination.Next
+                      onClick={() =>
+                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                      }
+                    />
+                  </Pagination>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </Table>
       </div>
-    );
-  };
-  
-  export default Pseries;
-  
+  );
+};
+
+export default Pseries;
