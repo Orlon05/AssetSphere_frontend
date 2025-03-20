@@ -14,6 +14,7 @@ import style from "./sucursal.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
+import { FaSearch } from "react-icons/fa";
 
 const Sucursales = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -521,7 +522,7 @@ const Sucursales = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <CiSearch className={style.iconS} />
+              <FaSearch className={style.iconS} />
             </button>
           </>
         )}

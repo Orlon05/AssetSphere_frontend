@@ -9,6 +9,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import Swal from "sweetalert2";
 import UserList from "../cards/UserList";
+import { FaSearch } from "react-icons/fa";
 
 
 const Usuarios = () => {
@@ -89,7 +90,7 @@ const Usuarios = () => {
             placeholder="Buscar usuario..."
           />
           <span className={style.searchIcon}>
-            <CiSearch className={style.iconS} />
+            <FaSearch className={style.iconS} />
           </span>
         </>
       </div>
