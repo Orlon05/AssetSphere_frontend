@@ -13,6 +13,7 @@ import style from "./Pseries.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { MdVisibility  } from "react-icons/md";
+import { FaSearch } from "react-icons/fa";
 
 const Pseries = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -109,13 +110,68 @@ const Pseries = () => {
     });
   };
 
-
-
-
-    const handleImportComplete = (importedData) => {
-        console.log("datos importados:", importedData); // Aqui tendrias tu data
-        Swal.close();
+const handleImportComplete = async (importedData) => {
+    console.log("Datos importados listos para enviar:", importedData);
+ 
+    if (!Array.isArray(importedData) || importedData.length === 0) {
+      Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
+      return;
     }
+ 
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+ 
+      // Mapeo de datos para Pseries (convertir campos numéricos a string)
+      const formattedData = importedData.map(row => ({
+        name: String(row.name || ""),
+        application: String(row.application || ""),
+        hostname: String(row.hostname || ""),
+        ip_address: String(row.ip_address || ""),
+        environment: String(row.environment || ""),
+        slot: String(row.slot || ""),
+        lpar_id: String(row.lpar_id || ""), // Convertir a string
+        status: String(row.status || ""),
+        os: String(row.os || ""),
+        version: String(row.version || ""),
+        subsidiary: String(row.subsidiary || ""),
+        min_cpu: String(row.min_cpu || ""), // Convertir a string
+        act_cpu: String(row.act_cpu || ""), // Convertir a string
+        max_cpu: String(row.max_cpu || ""), // Convertir a string
+        min_v_cpu: String(row.min_v_cpu || ""), // Convertir a string
+        act_v_cpu: String(row.act_v_cpu || ""), // Convertir a string
+        max_v_cpu: String(row.max_v_cpu || ""), // Convertir a string
+        min_memory: String(row.min_memory || ""), // Convertir a string
+        act_memory: String(row.act_memory || ""), // Convertir a string
+        max_memory: String(row.max_memory || ""), // Convertir a string
+        expansion_factor: String(row.expansion_factor || ""), // Convertir a string
+        memory_per_factor: String(row.memory_per_factor || ""), // Convertir a string
+        processor_compatibility: String(row.processor_compatibility || ""), // Convertir a string
+      }));
+ 
+      // Envío al backend
+      const response = await fetch("http://localhost:8000/pseries/add_from_excel", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+ 
+      if (!response.ok) {
+        const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
+        throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
+      }
+ 
+      Swal.fire("Éxito", "Datos importados correctamente", "success");
+    } catch (error) {
+      console.error("Error al importar:", error);
+      Swal.fire("Error", error.message || "Error al importar datos", "error");
+    }
+  };
 
   const selectedCount = selectedPseries.size;
 
@@ -448,12 +504,9 @@ const Pseries = () => {
                 />
               </th>
               <th>Nombre almacenamiento</th>
-              <th>Hostname</th>
               <th>Modelo</th>
               <th>Cajón</th>
               <th>Status</th>
-              <th>Filial</th>
-              <th></th>
               <th className={style.contBtns}>Acciones</th>
             </tr>
           </thead>
@@ -474,13 +527,9 @@ const Pseries = () => {
                   />
                 </td>
                 <td>{pseries.name}</td>
-
-                <td>{pseries.hostname}</td>
                 <td>{pseries.environment}</td>
                 <td>{pseries.slot}</td>
                 <td>{pseries.status}</td>
-                <td>{pseries.subsidiary}</td>
-                <td>{pseries.ip_address}</td>
                 <td>
                 <button 
                     className={style.btnVer}

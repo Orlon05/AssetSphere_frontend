@@ -8,8 +8,8 @@ const VerServers = () => {
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
     const [processor, setProcessor] = useState("");
-    const [cpu_cores, setCpuCores] = useState(0);
-    const [ram, setRam] = useState(0);
+    const [cpu_cores, setCpuCores] = useState("");
+    const [ram, setRam] = useState("");
     const [total_disk_size, setTotalDiskSize] = useState("");
     const [os_type, setOsType] = useState("");
     const [os_version, setOsVersion] = useState("");

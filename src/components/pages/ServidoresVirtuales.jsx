@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
+import { FaSearch } from "react-icons/fa";
 
 const ServidoresVirtuales = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -471,7 +472,7 @@ const ServidoresVirtuales = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <CiSearch className={style.iconS} />
+              <FaSearch className={style.iconS} />
             </button>
           </>
         )}
