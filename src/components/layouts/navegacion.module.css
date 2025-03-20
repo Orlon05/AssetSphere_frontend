@@ -13,7 +13,7 @@
 
 /* Estilo general del navbar */
 .navbar {
-  background-color: var(--blanco);
+  background-color: var(--azul-navbar);
   padding: 10px 20px;
   z-index: 9;
   position: relative;
@@ -106,7 +106,7 @@
 }
 
 .userName {
-  color: var(--azul-oscuro);
+  color: var(--blanco);
   font-weight: bold;
 }
 .mailUser {

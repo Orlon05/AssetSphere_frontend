@@ -2,9 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { FaServer } from "react-icons/fa";
 import { IoIosAdd } from "react-icons/io";
-import { CiImport, CiExport, CiSearch } from "react-icons/ci";
+import { CiImport, CiExport } from "react-icons/ci";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { GrFormViewHide } from "react-icons/gr";
 import { Table, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { createRoot } from "react-dom/client";
@@ -14,6 +13,7 @@ import style from "./fisicos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { MdVisibility  } from "react-icons/md";
+import { FaSearch } from "react-icons/fa";
 
 const ServidoresFisicos = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -443,7 +443,7 @@ const ServidoresFisicos = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <CiSearch className={style.iconS} />
+              <FaSearch className={style.iconS} />
             </button>
           </>
         )}

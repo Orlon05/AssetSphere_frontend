@@ -1,13 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 :root{
-    --azul-celeste: #8AFFE6;
-    --azul-oscuro: #1B3F4B;
-    --azul-oscuro-intermedio: #3b5d68;
-    --gris-claro: #CBCBCB;
-    --azul-claro: #4E8AC4;
-    --azul-claro-intermedio: #6cb5fa;
-    --negro: #000000;
-    --blanco: #fff;
+  --azul-celeste: #ffffff;
+  --azul-oscuro: #000202;
+  --azul-sombra: #142C34;
+  --gris-claro: #CBCBCB;
+  --azul-claro: #000000;
+  --negro: #000000;
+  --blanco: #fff;
   }
 
   .container {
@@ -15,7 +14,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(90deg,var(--azul-claro), var(--azul-claro-intermedio)); 
+    background: radial-gradient(circle, #6cb5fa, #000000);
     overflow-y: hidden;
   }
   
@@ -124,14 +123,14 @@
     background: #fff;
     font-size: 14px;
     margin-top: 30px;
-    padding: 16px 20px;
+    padding: 8px 20px;
     border-radius: 26px;
     border: 1px solid #D4D3E8;
     text-transform: uppercase;
     font-weight: 700;
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 80%;
     color: var(--azul-claro);
     box-shadow: 0px 2px 2px var(--azul-oscuro-intermedio);
     cursor: pointer;

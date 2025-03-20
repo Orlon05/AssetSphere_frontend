@@ -13,6 +13,7 @@ import style from "./Pseries.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { MdVisibility  } from "react-icons/md";
+import { FaSearch } from "react-icons/fa";
 
 const Pseries = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -114,18 +115,18 @@ const Pseries = () => {
 
   const handleImportComplete = async (importedData) => {
     console.log("Datos importados listos para enviar:", importedData);
-  
+ 
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
       return;
     }
-  
+ 
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
-  
+ 
       // Mapeo de datos para Pseries (convertir campos numéricos a string)
       const formattedData = importedData.map(row => ({
         name: String(row.name || ""),
@@ -152,7 +153,7 @@ const Pseries = () => {
         memory_per_factor: String(row.memory_per_factor || ""), // Convertir a string
         processor_compatibility: String(row.processor_compatibility || ""), // Convertir a string
       }));
-  
+ 
       // Envío al backend
       const response = await fetch("http://localhost:8000/pseries/add_from_excel", {
         method: "POST",
@@ -162,12 +163,12 @@ const Pseries = () => {
         },
         body: JSON.stringify(formattedData),
       });
-  
+ 
       if (!response.ok) {
         const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
-  
+ 
       Swal.fire("Éxito", "Datos importados correctamente", "success");
     } catch (error) {
       console.error("Error al importar:", error);
@@ -431,48 +432,95 @@ const Pseries = () => {
       }
     });
   };
-  
-    if (loading) {
-      return <div>Loading...</div>;
-    }
-  
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    }
-    return (
-      <div className={style.container}>
-        <div className={style.containerMain}>
-          <h1 className={style.tittle}>
-            <FaServer /> Lista de Servidores
-          </h1>
-          <button className={style.btnAdd} onClick={irCrear}>
-            <IoIosAdd className={style.icon} /> Crear
-          </button>
-          <button className={style.btnImport} onClick={handleImport}>
-            <CiImport className={style.icon} /> Importar
-          </button>
-          <button className={style.btnExport} onClick={handleExport}>
-            <CiExport className={style.icon} /> Exportar
-          </button>
-        </div>
-        <div
-          className={`${style.searchContainer} ${
-            selectedCount > 0 ? style.searchContainerSelected : ""
-          }`}
-        >
-          {showSearch && (
-            <>
-              <input
-                className={style.searchInput}
-                type="search"
-                placeholder="Buscar servidor..."
-                value={searchValue}
-                onChange={handleSearchChange}
-                ref={searchInputRef}
-              />
-              <button
-                className={style.searchIcon}
-                onClick={handleSearchButtonClick}
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  return (
+    <div className={style.container}>
+      <div className={style.containerMain}>
+        <h1 className={style.tittle}>
+          <FaServer /> Lista de Servidores
+        </h1>
+        <button className={style.btnAdd} onClick={irCrear}>
+          <IoIosAdd className={style.icon} /> Crear
+        </button>
+        <button className={style.btnImport} onClick={handleImport}>
+          <CiImport className={style.icon} /> Importar
+        </button>
+        <button className={style.btnExport} onClick={handleExport}>
+          <CiExport className={style.icon} /> Exportar
+        </button>
+      </div>
+      <div
+        className={`${style.searchContainer} ${
+          selectedCount > 0 ? style.searchContainerSelected : ""
+        }`}
+      >
+        {showSearch && (
+          <>
+            <input
+               className={style.searchInput}
+              type="search"
+              placeholder="Buscar servidor..."
+              value={searchValue}
+              onChange={handleSearchChange}
+              ref={searchInputRef}
+            />
+            <button
+              className={style.searchIcon}
+              onClick={handleSearchButtonClick}
+            >
+              <FaSearch className={style.iconS} />
+            </button>
+          </>
+        )}
+        {selectedCount > 0 && (
+          <span className={style.selectedCount}>
+            <span>{selectedCount}</span>
+            <span>
+              Servidor{selectedCount !== 1 ? "es" : ""} Seleccionado
+              {selectedCount !== 1 ? "s" : ""}
+            </span>
+          </span>
+        )}
+      </div>
+
+        <Table className={`${style.table} ${style.customTable}`}>
+          <thead>
+            <tr>
+              <th className={style.contChek}>
+                <input
+                  type="checkbox"
+                  className={style.customCheckbox}
+                  checked={
+                    pseries.length > 0 &&
+                    selectedPseries.size === pseries.length
+                  }
+                  onChange={toggleSelectAll}
+                />
+              </th>
+              <th>Nombre almacenamiento</th>
+              <th>Hostname</th>
+              <th>Modelo</th>
+              <th>Cajón</th>
+              <th>Status</th>
+              <th>Filial</th>
+              <th></th>
+              <th className={style.contBtns}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pseries.map((pseries) => (
+              <tr
+                key={pseries.id}
+                className={
+                  selectedPseries.has(pseries.id) ? style.selectedRow : ""
+                }
               >
                 <CiSearch className={style.iconS} />
               </button>

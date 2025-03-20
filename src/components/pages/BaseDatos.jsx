@@ -13,6 +13,7 @@ import style from "./baseDatos.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
+import { FaSearch } from "react-icons/fa";
 
 const BaseDeDatos = () => {
     const [searchValue, setSearchValue] = useState("");
@@ -490,7 +491,7 @@ const BaseDeDatos = () => {
                 className={style.searchIcon}
                 onClick={handleSearchButtonClick}
               >
-                <CiSearch className={style.iconS} />
+                <FaSearch className={style.iconS} />
               </button>
             </>
           )}

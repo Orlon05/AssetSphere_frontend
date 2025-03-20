@@ -11,38 +11,33 @@
  
 .analiticaContainer {
   display: flex;
-  flex-direction: column;
-  padding: 20px;
-  width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
-  max-width: 1200px;
-  height: 100%;
-  overflow-y: auto;
-  margin: 0 auto;
-  margin-left: 18rem; /* Añade margen izquierdo para el menú */
-  z-index: 999; /* Asegura que el contenido esté por encima del menú */
-}
- 
-.button {
-  width: auto; /* Ajusta el ancho automáticamente */
-  padding: 10px 20px; /* Ajusta el relleno para que el botón sea más pequeño */
-  display: inline-block; /* Asegura que el botón no ocupe todo el ancho */
-  margin: 10px 0; /* Añade margen para separarlo de otros elementos */
-  text-align: left; /* Alinea el texto a la izquierda */
-}
- 
-.cardContainer {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 8px;
+  align-items: center;
+  padding: 0;
+  width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  margin: 0;
+  margin-left: 18rem; /* Añade margen izquierdo para el menú */
+  overflow: hidden;
+  position: relative; /* Elimina el scroll */
 }
  
-/* Media Query para pantallas más pequeñas */
+.fullImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  left: 18rem;
+  top: 0;
+}
+ /* Media Query para pantallas más pequeñas */
 @media (max-width: 768px) {
   .analiticaContainer {
     width: 100%; /* Ajusta el ancho para pantallas pequeñas */
     margin-left: 0; /* Elimina el margen izquierdo para pantallas pequeñas */
-    margin-top: 60px; /* Añade margen superior para el menú */
+    margin-top: 60px;
+  }
+  .fullImage {
+    height: calc(100vh - 60px);
+    left: 0;
   }
 }
