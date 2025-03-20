@@ -131,29 +131,29 @@
 .searchInput {
   position: absolute;
   top: 10px;
-  width: 40%;
+  width: 50%;
   height: 70%;
   border: none;
   font-size: 16px;
   color: var(--gris-oscuro);
-  border-radius: 10px;
+  border-radius: 90px;
   cursor: pointer;
   text-indent: 35px;
 }
  
 .searchInput:hover {
-  border: 1px solid var(--gris-oscuro);
+  border: 2px solid var(--azul-profundo-oscuro);
 }
  
 .searchInput:focus {
   outline: none;
-  border: 1px solid var(--azul-profundo-oscuro);
+  border: 2px solid var(--azul-profundo-oscuro);
 }
  
 .searchIcon {
   position: absolute;
   top: 50%;
-  left: 40px;
+  left: 27px;
   transform: translateY(-50%);
   color: var(--gris-oscuro);
   font-size: 20px;

@@ -18,25 +18,27 @@
     --rojo: #f70511;
     --rojo-claro: #c5060f;
   }
-  /*********************CONTENEDOR PRINCIPAL*************/
-  .container {
-    width: 1078px;
-    height: 110vh;
-    left: 0;
-    align-items: center;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
   
-  /***********************ENCABEZADO*************************/
-  .containerMain {
-    display: flex;
-    top: 40px;
-    margin-left: 20px;
-    position: relative;
-    width: 64rem;
-    height: 80px;
-  }
+/*********************CONTENEDOR PRINCIPAL*************/
+.container {
+  width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
+  height: 100vh;
+  margin-left: 18rem; /* Añade margen izquierdo para el menú */
+  margin-top: 0rem; /* Ajusta este valor según sea necesario */
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+ 
+/***********************ENCABEZADO*************************/
+.containerMain {
+  display: flex;
+  top: 40px;
+  margin-left: 20px;
+  position: relative;
+  width: calc(100% - 40px); /* Ajusta el ancho */
+  height: 80px;
+}
   .btnImport {
     position: absolute;
     left: 0;

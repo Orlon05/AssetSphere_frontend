@@ -13,6 +13,7 @@ import style from "./Pseries.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { MdVisibility  } from "react-icons/md";
+import { FaSearch } from "react-icons/fa";
 
 const Pseries = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -111,18 +112,18 @@ const Pseries = () => {
 
 const handleImportComplete = async (importedData) => {
     console.log("Datos importados listos para enviar:", importedData);
-  
+ 
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
       return;
     }
-  
+ 
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
-  
+ 
       // Mapeo de datos para Pseries (convertir campos numéricos a string)
       const formattedData = importedData.map(row => ({
         name: String(row.name || ""),
@@ -149,7 +150,7 @@ const handleImportComplete = async (importedData) => {
         memory_per_factor: String(row.memory_per_factor || ""), // Convertir a string
         processor_compatibility: String(row.processor_compatibility || ""), // Convertir a string
       }));
-  
+ 
       // Envío al backend
       const response = await fetch("http://localhost:8000/pseries/add_from_excel", {
         method: "POST",
@@ -159,12 +160,12 @@ const handleImportComplete = async (importedData) => {
         },
         body: JSON.stringify(formattedData),
       });
-  
+ 
       if (!response.ok) {
         const errorDetail = await response.text();  // O `response.json()` si el backend devuelve JSON
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
-  
+ 
       Swal.fire("Éxito", "Datos importados correctamente", "success");
     } catch (error) {
       console.error("Error al importar:", error);

@@ -1,9 +1,12 @@
 :root{
-  --azul-celeste: #8AFFE6;
-  --azul-oscuro: #1B3F4B;
+  --azul-celeste: #ffff;
+  --azul-oscuro: #000202;
   --azul-sombra: #142C34;
   --gris-claro: #CBCBCB;
-  --azul-claro: #4E8AC4;
+  --azul-claro: #000000;
   --negro: #000000;
   --blanco: #fff;
+  --azul-oscuro-m: #232b51;
+  --azul-claro-m: #ced1f4;
+  --azul-navbar: #161b34;
 }
