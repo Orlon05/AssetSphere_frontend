@@ -14,6 +14,7 @@ import style from "./storage.module.css";
 import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
+import { FaSearch } from "react-icons/fa";
 
 const Storage = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -471,7 +472,7 @@ const Storage = () => {
               className={style.searchIcon}
               onClick={handleSearchButtonClick}
             >
-              <CiSearch className={style.iconS} />
+              <FaSearch className={style.iconS} />
             </button>
           </>
         )}

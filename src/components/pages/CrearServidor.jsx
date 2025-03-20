@@ -25,8 +25,8 @@ const ServerForm = () => {
   const [location, setLocation] = useState("");
   const [asset_id, setAssetId] = useState("");
   const [service_owner, setServiceOwner] = useState("");
-  const [warranty_start_date, setWarrantyStartDate] = useState(null);
-  const [warranty_end_date, setWarrantyEndDate] = useState(null);
+  const [warranty_start_date, setWarrantyStartDate] = useState("");
+  const [warranty_end_date, setWarrantyEndDate] = useState("");
   const [application_code, setApplicationCode] = useState("");
   const [responsible_evc, setResponsibleEvc] = useState("");
   const [domain, setDomain] = useState("");

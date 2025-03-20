@@ -96,9 +96,11 @@ const Navegacion = ({ toggleSidebar }) => {
         <button className={Style.hamburger} onClick={toggleSidebar}>
           <RiMenu4Fill className={Style.iconHam} />
         </button>
+ 
         <div className={Style.containerNameUser}>
           <p className={Style.userName}>{userName}</p>
         </div>
+ 
         <div className={Style.userContainer} onClick={toggleModal}>
           <img
             src={`https://api.dicebear.com/9.x/initials/svg?seed=${userName}`}
@@ -106,8 +108,10 @@ const Navegacion = ({ toggleSidebar }) => {
             className={Style.userIcon}
           />
         </div>
+       
         {showModal && (
-          <div className={Style.modalContent}>
+          <div className={Style.modalContent} onMouseEnter={() => setShowModal(true)}
+          onMouseLeave={() => setShowModal(false)}>
             <ul className={Style.modalOptions}>
               <p className={Style.mailUser}>{userEmail}</p>
               <hr />
@@ -129,6 +133,5 @@ const Navegacion = ({ toggleSidebar }) => {
       </div>
     </nav>
   );
-};
-
+}
 export default Navegacion;
