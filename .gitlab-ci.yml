@@ -19,4 +19,5 @@ deploy-app:
     - cp -r dist/* /srv/frontends/$FOLDER_NAME
     # - mv /srv/frontends/$FOLDER_NAME/dist/* /srv/frontends/$FOLDER_NAME
     - chmod -R 775 /srv/frontends/$FOLDER_NAME
+    
 
