@@ -131,6 +131,7 @@ const verServidoresVirtuales = () => {
 
   return (
     <form className={styles.form}>
+        <div className={styles.containtTit}>
       <h2 className={styles.tittle}>
         <MdVisibility />
         Ver Servidor
@@ -138,6 +139,7 @@ const verServidoresVirtuales = () => {
       <Link to="/servidoresv" className={styles.botonRegresar}>
                     Regresar
                 </Link>
+                </div>
       <div className={styles.container}>
         {/*INICIO DE LA COLUMNA 1*/}
         <div className={styles.columnUno}>
@@ -483,5 +485,4 @@ const verServidoresVirtuales = () => {
     </form>
   );
 };
-
 export default verServidoresVirtuales;
