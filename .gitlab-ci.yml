@@ -3,8 +3,8 @@ stages:
 
 deploy-app:
   stage: deploy
-  only:
-  - main
+   only:
+     - main
   before_script:
     - export TEMP_CONTAINER=build-frontend-inveplus
     - export FOLDER_NAME=inveplus
