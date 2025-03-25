@@ -24,7 +24,7 @@
   width: calc(100% - 18rem); /* Ajusta el ancho para no superponerse con el menú */
   height: 100vh;
   margin-left: 18rem; /* Añade margen izquierdo para el menú */
-  margin-top: 0rem; /* Ajusta este valor según sea necesario */
+  margin-top: 0rem;
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
@@ -36,7 +36,7 @@
   top: 40px;
   margin-left: 20px;
   position: relative;
-  width: calc(100% - 40px); /* Ajusta el ancho */
+  width: calc(100% - 40px);
   height: 80px;
 }
  
@@ -121,7 +121,7 @@
   align-items: center; /* Alinea verticalmente al centro */
   gap: 5px; /* Separa los textos */
   font-weight: bold; /* Negrita */
-  color: var(--azul-profundo); /* O cualquier otro color */
+  color: var(--azul-profundo);
   top: 20px;
   position: absolute;
 }
@@ -173,11 +173,11 @@
  
 /*********************TABLA*******************/
 .tableContainer {
-  margin-top: 2rem; /* Ajusta este valor según sea necesario */
+  margin-top: 2rem;
 }
  
 .table {
-  width: calc(100% - 20px); /* Ajusta según el margen deseado */
+  width: calc(100% - 20px);
   margin-top: 5;
   margin: 0 10px;
   border-radius: 10px;
@@ -250,8 +250,8 @@
 .btnEdit,
 .btnDelete {
   border: none;
-  padding: 5px 7px; /* Ajusta el padding según tus necesidades */
-  margin-right: 7px; /* Espacio entre los botones */
+  padding: 5px 7px;
+  margin-right: 7px;
   cursor: pointer;
   border-radius: 4px;
   color: var(--blanco);
@@ -283,8 +283,8 @@
  
 @media (max-width: 768px) {
   .container {
-    left: 0; /* O un valor más pequeño si quieres un margen */
-    width: 100%; /* Asegura que el contenedor use todo el ancho */
+    left: 0; 
+    width: 100%; 
   }
 }
  
