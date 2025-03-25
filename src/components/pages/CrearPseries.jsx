@@ -10,7 +10,7 @@ const PseriesForm = () => {
     const [hostname, setHostName] = useState("");
     const [ip_address, setIpAddress] = useState("");
     const [environment, setEnvironment] = useState("");
-    const [slot, setSlot] = useState(0);
+    const [slot, setSlot] = useState("");
     const [lpar_id, setLparId] = useState("");
     const [status, setStatus] = useState("");
     const [os, setOs] = useState("");
