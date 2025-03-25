@@ -288,9 +288,35 @@ const ServidoresVirtuales = () => {
     };
   };
 
-  const handleExport = () => {
-    exportToExcel(servers, "servidores_virtuales", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+  const handleExport = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/vservers/virtual/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al exportar los servidores");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "servidores_virtuales.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
+
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
