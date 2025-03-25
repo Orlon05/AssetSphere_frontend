@@ -101,15 +101,13 @@
 /***********INPUT SEARCH**********************/
 .searchContainer {
   position: relative;
-  width: 64rem;
+  width: 100%;
+  max-width: 79rem;
   height: 40px;
   padding: 30px;
   box-shadow: 0 0 5px var(--azul-oscuro);
   border-radius: 10px;
-  margin-left: 20px;
-  margin-top: 80px;
-  margin-right: 20px;
-  margin-bottom: 19px;
+  margin: 80px auto 19px auto;
   background: var(--blanco);
 }
  
@@ -163,6 +161,7 @@
   background: transparent;
 }
  
+
 .iconS {
   transition: transform 0.3s ease;
 }
