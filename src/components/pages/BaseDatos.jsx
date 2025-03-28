@@ -309,41 +309,6 @@ const BaseDeDatos = () => {
         }
     }, [isSearchButtonClicked, searchValue, unfilteredBasesDeDatos, rowsPerPage]);
 
-    
-    const BaseDeDatosMapper = (baseDeDatos) => {
-        return {
-            "InstanceId": baseDeDatos.instance_id || "",
-            "Cost Center": baseDeDatos.cost_center || "",
-            "Category": baseDeDatos.category || "",
-            "Type": baseDeDatos.type || "",
-            "Item": baseDeDatos.item || "",
-            "OwnerContact": baseDeDatos.owner_contact || "",
-            "Name": baseDeDatos.name || "",
-            "ApplicationCode": baseDeDatos.application_code || "",
-            "Inactive": baseDeDatos.inactive || "",
-            "AssetLifecycleStatus": baseDeDatos.asset_life_cycle_status || "",
-            "SystemEnvironment": baseDeDatos.system_environment || "",
-            "isCloud": baseDeDatos.cloud || "",
-            "VersionNumber": baseDeDatos.version_number || "",
-            "SerialNumber": baseDeDatos.serial || "",
-            "CITag": baseDeDatos.ci_tag || "",
-            "InstanceName": baseDeDatos.instance_name || "",
-            "Model": baseDeDatos.model || "",
-            "HA": baseDeDatos.ha || "",
-            "Port": baseDeDatos.port || "",
-            "OwnerName": baseDeDatos.owner_name || "",
-            "Department": baseDeDatos.department || "",
-            "Company": baseDeDatos.company || "",
-            "ManufacturerName": baseDeDatos.manufacturer_name || "",
-            "Supplier Name+": baseDeDatos.supplier_name || "",
-            "Supported": baseDeDatos.supported || "",
-            "AccountID": baseDeDatos.account_id || "",
-            "CreateDate": baseDeDatos.create_date || "",
-            "ModifiedDate": baseDeDatos.modified_date || "",
-
-        };
-    };
-
     const handleExport = async () => {
       try {
         const token = localStorage.getItem("authenticationToken");

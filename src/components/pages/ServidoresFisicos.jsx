@@ -256,49 +256,36 @@ const ServidoresFisicos = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
-  const serverDataMapper = (server) => {
-    return{
-      "Nombre": server.name || "",
-      "Marca": server.brand || "",
-      "Modelo": server.model || "",
-      "Procesador": server.processor || "",
-      "Núcleos CPU": server.cpu_cores || "",
-      "RAM": server.ram || "",
-      "Tamaño Disco Total": server.total_disk_size || "",
-      "Tipo de OS": server.os_type || "",
-      "Versión de OS": server.os_version || "",
-      "Estado": server.status || "",
-      "Rol": server.role || "",
-      "Entorno": server.environment || "",
-      "Serial": server.serial || "",
-      "Rack ID": server.rack_id || "",
-      "Unidad": server.unit || "",
-      "Dirección IP": server.ip_address || "",
-      "Ciudad": server.city || "",
-      "Ubicación": server.location || "",
-      "ID de Activo": server.asset_id || "",
-      "Propietario del Servicio": server.service_owner || "",
-      "Fecha Inicio Garantía": server.warranty_start_date || "",
-      "Fecha Fin Garantía": server.warranty_end_date || "",
-      "Código de Aplicación": server.application_code || "",
-      "Responsable EVC": server.responsible_evc || "",
-      "Dominio": server.domain || "",
-      "Sucursal": server.subsidiary || "",
-      "Organización Responsable": server.responsible_organization || "",
-      "Facturable": server.billable || "",
-      "Provisionamiento OC": server.oc_provisioning || "",
-      "Eliminación OC": server.oc_deletion || "",
-      "Modificación OC": server.oc_modification || "",
-      "Periodo de Mantenimiento": server.maintenance_period || "",
-      "Organización de Mantenimiento": server.maintenance_organization || "",
-      "Centro de Costos": server.cost_center || "",
-      "Tipo de Facturación": server.billing_type || "",
-      "Comentarios": server.comments || "",
-  };
-  };
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
 
-  const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+      const response = await fetch("http://localhost:8000/servers/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "servers.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const handleSearchChange = (e) => {

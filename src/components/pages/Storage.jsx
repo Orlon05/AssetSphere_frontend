@@ -300,35 +300,38 @@ const Storage = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredStorages, rowsPerPage]);
 
-  const StorageDataMapper = (storage) => {
-    return {
-      CodItemConfiguracion: storage.cod_item_configuracion || "",
-      Nombre: storage.name || "",
-      ApplicationCode: storage.application_code || "",
-      CostCenter: storage.cost_center || "",
-      Activo: storage.active || "",
-      Category: storage.category || "",
-      Type: storage.type || "",
-      Item: storage.item || "",
-      Compañia: storage.company || "",
-      OrganizacionResponsable: storage.organization_responsible || "",
-      NombreHost: storage.host_name || "",
-      Fabricante: storage.manufacturer || "",
-      Estado: storage.status || "",
-      Responsable: storage.owner || "",
-      Modelo: storage.model || "",
-      Serial: storage.serial || "",
-      OrgMantenimiento: storage.org_maintenance || "",
-      DireccionIP: storage.ip_address || "",
-      CapacidadDiscoBytes: storage.disk_size || "",
-      Sitio: storage.location || "",
-      // Agrega aquí otros campos que necesites
-    };
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch("http://localhost:8000/storage/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "storages.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
-  // Esta variable genera un archivo de excel con la información que se muestra en la vista principal
-  const handleExport = () => {
-    exportToExcel(storages, "storages", StorageDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
-  };
+
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
