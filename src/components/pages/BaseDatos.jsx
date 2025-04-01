@@ -309,45 +309,44 @@ const BaseDeDatos = () => {
         }
     }, [isSearchButtonClicked, searchValue, unfilteredBasesDeDatos, rowsPerPage]);
 
-    
-    const BaseDeDatosMapper = (baseDeDatos) => {
-        return {
-            "InstanceId": baseDeDatos.instance_id || "",
-            "Cost Center": baseDeDatos.cost_center || "",
-            "Category": baseDeDatos.category || "",
-            "Type": baseDeDatos.type || "",
-            "Item": baseDeDatos.item || "",
-            "OwnerContact": baseDeDatos.owner_contact || "",
-            "Name": baseDeDatos.name || "",
-            "ApplicationCode": baseDeDatos.application_code || "",
-            "Inactive": baseDeDatos.inactive || "",
-            "AssetLifecycleStatus": baseDeDatos.asset_life_cycle_status || "",
-            "SystemEnvironment": baseDeDatos.system_environment || "",
-            "isCloud": baseDeDatos.cloud || "",
-            "VersionNumber": baseDeDatos.version_number || "",
-            "SerialNumber": baseDeDatos.serial || "",
-            "CITag": baseDeDatos.ci_tag || "",
-            "InstanceName": baseDeDatos.instance_name || "",
-            "Model": baseDeDatos.model || "",
-            "HA": baseDeDatos.ha || "",
-            "Port": baseDeDatos.port || "",
-            "OwnerName": baseDeDatos.owner_name || "",
-            "Department": baseDeDatos.department || "",
-            "Company": baseDeDatos.company || "",
-            "ManufacturerName": baseDeDatos.manufacturer_name || "",
-            "Supplier Name+": baseDeDatos.supplier_name || "",
-            "Supported": baseDeDatos.supported || "",
-            "AccountID": baseDeDatos.account_id || "",
-            "CreateDate": baseDeDatos.create_date || "",
-            "ModifiedDate": baseDeDatos.modified_date || "",
+    const handleExport = async () => {
+      try {
+        const token = localStorage.getItem("authenticationToken");
+        if (!token) {
+          throw new Error("Token de autorización no encontrado.");
+        }
 
-        };
+        const response = await fetch(
+          "http://localhost:8000/base_datos/export",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const errorDetail = await response.text(); 
+          throw new Error(
+            `Error al exportar las bases de datos: ${errorDetail}`
+          );
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "bases_de_datos.xlsx";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error al exportar el archivo Excel:", error);
+        alert(`Error: ${error.message}`);
+      }
     };
 
-    // Esta variable genera un archivo de excel con la información que se muestra en la vista principal
-    const handleExport = () => {
-        exportToExcel(base_datos, "baseDeDatos", BaseDeDatosMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
-    };
+
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
