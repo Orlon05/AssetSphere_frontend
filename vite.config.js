@@ -15,15 +15,15 @@ export default defineConfig({
       ],
     }),
   ],
-  // build: {
-  //   outDir: "dist",
-  //   // assetsDir: 'assets',
-  //   emptyOutDir: true,
-  // },
-  // base: "/inveplus/",
-  // server: {
-  //   hmr: {
-  //     port: 443,
-  //   },
-  // },
+  build: {
+    outDir: "dist",
+    // assetsDir: 'assets',
+    emptyOutDir: true,
+  },
+  base: "/inveplus/",
+  server: {
+    hmr: {
+      port: 443,
+    },
+  },
 });
