@@ -10,7 +10,6 @@ import { createRoot } from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Swal from "sweetalert2";
 import style from "./fisicos.module.css";
-import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import { FaSearch } from "react-icons/fa";
 
@@ -22,11 +21,8 @@ const ServidoresVirtuales = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [selectAll, setSelectAll] = useState(false);
-  const [allServers, setAllServers] = useState([]); 
   const [selectedServers, setSelectedServers] = useState(new Set());
   const navigate = useNavigate();
-  const { exportToExcel } = useExport();
 
   //USO DEL IMPORT
   const handleImport = () => {
@@ -38,14 +34,6 @@ const ServidoresVirtuales = () => {
       cancelButtonText: "Cancelar",
       width: "80%",
       height: "80%",
-      /*
-        customClass: {
-           container: 'swal-custom-container',
-           popup: 'swal-custom-popup',
-           content: 'swal-custom-content'
-        },
-        grow:false,
-      */
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
         const tableMetadata = [
@@ -171,12 +159,9 @@ const ServidoresVirtuales = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredServers(data.data.servers); 
-        setServers(data.data.servers); 
+        setUnfilteredServers(data.data.servers);
+        setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
-
-    /*  console.log("Datos de los servidores:", data.data.servers); */
-
       } else {
         throw new Error("Respuesta inesperada de la API");
       }
@@ -255,41 +240,33 @@ const ServidoresVirtuales = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
-  const serverDataMapper = (server) => {
-    return {
-      name: server.name || "",
-      brand: server.brand || "",
-      cpu_cores: server.cpu_cores || "",
-      ram: server.ram || "",
-      total_disk_size: server.total_disk_size || "",
-      os_type: server.os_type || "",
-      os_version: server.os_version || "",
-      status: server.status || "",
-      role: server.role || "",
-      environment: server.environment || "",
-      ip_address: server.ip_address || "",
-      city: server.city || "",
-      location: server.location || "",
-      service_owner: server.service_owner || "",
-      application_code: server.application_code || "",
-      responsible_evc: server.responsible_evc || "",
-      domain: server.domain || "",
-      subsidiary: server.subsidiary || "",
-      responsible_organization: server.responsible_organization || "",
-      billable: server.billable || "",
-      oc_provisioning: server.oc_provisioning || "",
-      oc_deletion: server.oc_deletion || "",
-      oc_modification: server.oc_modification || "",
-      maintenance_period: server.maintenance_period || "",
-      maintenance_organization: server.maintenance_organization || "",
-      cost_center: server.cost_center || "",
-      billing_type: server.billing_type || "",
-      comments: server.comments || "",
-    };
-  };
+  const handleExport = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/vservers/virtual/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  const handleExport = () => {
-    exportToExcel(servers, "servidores_virtuales", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
+      if (!response.ok) {
+        throw new Error("Error al exportar los servidores");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "servidores_virtuales.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -461,138 +438,135 @@ const ServidoresVirtuales = () => {
         )}
       </div>
 
-        <Table className={`${style.table} ${style.customTable}`}>
-          <thead>
-            <tr>
-              <th className={style.contChek}>
+      <Table className={`${style.table} ${style.customTable}`}>
+        <thead>
+          <tr>
+            <th className={style.contChek}>
+              <input
+                type="checkbox"
+                className={style.customCheckbox}
+                checked={
+                  servers.length > 0 && selectedServers.size === servers.length
+                }
+                onChange={toggleSelectAll}
+              />
+            </th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Direccion IP</th>
+            <th className={style.contBtns}>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredServers.map((server) => (
+            <tr
+              key={server.id}
+              className={
+                selectedServers.has(server.id) ? style.selectedRow : ""
+              }
+            >
+              <td>
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
-                  checked={
-                    servers.length > 0 &&
-                    selectedServers.size === servers.length
-                  }
-                  onChange={toggleSelectAll}
+                  checked={selectedServers.has(server.id)}
+                  onChange={() => toggleSelectServer(server.id)}
                 />
-              </th>
-              <th>Nombre</th>
-              <th>Estado</th>
-              <th>Direccion IP</th>
-              <th className={style.contBtns}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredServers.map((server) => (
-              <tr
-                key={server.id}
-                className={
-                  selectedServers.has(server.id) ? style.selectedRow : ""
-                }
-              >
-                <td>
-                  <input
-                    type="checkbox"
-                    className={style.customCheckbox}
-                    checked={selectedServers.has(server.id)}
-                    onChange={() => toggleSelectServer(server.id)}
-                  />
-                </td>
-                <td>{server.name}</td>
-                <td>
-                  <div className={style.serverStatus}>
-                    <span
-                      className={
-                        server.status.toLowerCase() === "encendido"
-                          ? style.online
-                          : server.status.toLowerCase() === "mantenimiento"
-                          ? style.maintenance
-                          : style.offline
-                      }
-                    ></span>
-                    {server.status}
-                  </div>
-                </td>
-                <td>{server.ip_address}</td>
-                <td>
-                  <button
-                    className={style.btnVer}
-                    onClick={() => irVer(server.id)}
-                  >
-                    <MdVisibility />
-                  </button>
-                  <button
-                    className={style.btnEdit}
-                    onClick={() => irEditar(server.id)}
-                  >
-                    <MdEdit />
-                  </button>
-                  <button
-                    className={style.btnDelete}
-                    onClick={() => {
-                      handleDeleteServer(server.id);
-                    }}
-                  >
-                    <MdDelete />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td className={style.contFil} colSpan="2">
-                <div
-                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
-                >
-                  <span className={style.textfoot}>Filas por página:</span>
-                  <Form.Select
-                    value={rowsPerPage}
-                    onChange={(e) =>
-                      setRowsPerPage(Number.parseInt(e.target.value, 10))
+              </td>
+              <td>{server.name}</td>
+              <td>
+                <div className={style.serverStatus}>
+                  <span
+                    className={
+                      server.status.toLowerCase() === "encendido"
+                        ? style.online
+                        : server.status.toLowerCase() === "mantenimiento"
+                        ? style.maintenance
+                        : style.offline
                     }
-                    className={style.selectLine}
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </Form.Select>
+                  ></span>
+                  {server.status}
                 </div>
               </td>
-              <td colSpan="1">
-                <div
-                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+              <td>{server.ip_address}</td>
+              <td>
+                <button
+                  className={style.btnVer}
+                  onClick={() => irVer(server.id)}
                 >
-                  <span>{`${indexOfFirstServer + 1}-${Math.min(
-                    indexOfLastServer,
-                    filteredServers.length
-                  )} de ${filteredServers.length}`}</span>
-                </div>
-              </td>
-              <td className={style.contFilDos} colSpan="3">
-                <div
-                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+                  <MdVisibility />
+                </button>
+                <button
+                  className={style.btnEdit}
+                  onClick={() => irEditar(server.id)}
                 >
-                  <Pagination className={style.pestanas}>
-                    <Pagination.Prev
-                      onClick={() =>
-                        setCurrentPage(Math.max(1, currentPage - 1))
-                      }
-                    />
-                    <Pagination.Item>{currentPage}</Pagination.Item>
-                    <Pagination.Next
-                      onClick={() =>
-                        setCurrentPage(Math.min(totalPages, currentPage + 1))
-                      }
-                    />
-                  </Pagination>
-                </div>
+                  <MdEdit />
+                </button>
+                <button
+                  className={style.btnDelete}
+                  onClick={() => {
+                    handleDeleteServer(server.id);
+                  }}
+                >
+                  <MdDelete />
+                </button>
               </td>
             </tr>
-          </tfoot>
-        </Table>
-      </div>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td className={style.contFil} colSpan="2">
+              <div
+                className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+              >
+                <span className={style.textfoot}>Filas por página:</span>
+                <Form.Select
+                  value={rowsPerPage}
+                  onChange={(e) =>
+                    setRowsPerPage(Number.parseInt(e.target.value, 10))
+                  }
+                  className={style.selectLine}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </Form.Select>
+              </div>
+            </td>
+            <td colSpan="1">
+              <div
+                className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+              >
+                <span>{`${indexOfFirstServer + 1}-${Math.min(
+                  indexOfLastServer,
+                  filteredServers.length
+                )} de ${filteredServers.length}`}</span>
+              </div>
+            </td>
+            <td className={style.contFilDos} colSpan="3">
+              <div
+                className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+              >
+                <Pagination className={style.pestanas}>
+                  <Pagination.Prev
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  />
+                  <Pagination.Item>{currentPage}</Pagination.Item>
+                  <Pagination.Next
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
+                  />
+                </Pagination>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </Table>
+    </div>
   );
 };
 

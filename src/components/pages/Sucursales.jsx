@@ -136,7 +136,11 @@ const Sucursales = () => {
     console.log("Datos importados listos para enviar:", importedData);
 
     if (!Array.isArray(importedData) || importedData.length === 0) {
-      Swal.fire("Error", "No se encontraron datos válidos en el archivo", "error");
+      Swal.fire(
+        "Error",
+        "No se encontraron datos válidos en el archivo",
+        "error"
+      );
       return;
     }
 
@@ -146,7 +150,7 @@ const Sucursales = () => {
         throw new Error("Token de autorización no encontrado.");
       }
       // Se deben colocar todas las propiedades/campos de la tabla a la cual se le este haciendo la vista a excepción de la clave prinaria, dicho campo no debe ir aquí
-      const formattedData = importedData.map(row => ({
+      const formattedData = importedData.map((row) => ({
         name: row.name || "",
         brand: row.brand || "",
         model: row.model || "",
@@ -184,17 +188,20 @@ const Sucursales = () => {
         branch_name: row.branch_name || "",
         region: row.region || "",
         department: row.department || "",
-        comments: row.comments || ""
+        comments: row.comments || "",
       }));
       // Aquí se debe colocar la ruta del back-end que recibe la información del excel y la inserta en la BD
-      const response = await fetch("http://localhost:8000/sucursales/add_from_excel", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formattedData),
-      });
+      const response = await fetch(
+        "http://localhost:8000/sucursales/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error HTTP ${response.status}`);
@@ -206,7 +213,6 @@ const Sucursales = () => {
       Swal.fire("Error", error.message || "Error al importar datos", "error");
     }
   };
-
 
   const selectedCount = selectedSucursales.size;
 
@@ -332,55 +338,38 @@ const Sucursales = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredSucursales, rowsPerPage]);
 
-  const SucursalDataMapper = (sucursal) => {
-    return {
-      "name": sucursal.name || "",
-      "brand": sucursal.brand || "",
-      "model": sucursal.model || "",
-      "processor": sucursal.processor || "",
-      "cpu_cores": sucursal.cpu_cores || "",
-      "ram": sucursal.ram || "",
-      "total_disk_size": sucursal.total_disk_size || "",
-      "os_type": sucursal.os_type || "",
-      "os_version": sucursal.os_version || "",
-      "status": sucursal.status || "",
-      "role": sucursal.role || "",
-      "environment": sucursal.environment || "",
-      "serial": sucursal.serial || "",
-      "rack_id": sucursal.rack_id || "",
-      "unit": sucursal.unit || "",
-      "ip_address": sucursal.ip_address || "",
-      "city": sucursal.city || "",
-      "location": sucursal.location || "",
-      "asset_id": sucursal.asset_id || "",
-      "service_owner": sucursal.service_owner || "",
-      "warranty_start_date": sucursal.warranty_start_date || "",
-      "warranty_end_date": sucursal.warranty_end_date || "",
-      "application_code": sucursal.application_code || "",
-      "responsible_evc": sucursal.responsible_evc || "",
-      "domain": sucursal.domain || "",
-      "subsidiary": sucursal.subsidiary || "",
-      "responsible_organization": sucursal.responsible_organization || "",
-      "billable": sucursal.billable || "",
-      "oc_deletion": sucursal.oc_deletion || "",
-      "oc_modification": sucursal.oc_modification || "",
-      "maintenance_period": sucursal.maintenance_period || "",
-      "maintenance_organization": sucursal.maintenance_organization || "",
-      "cost_center": sucursal.cost_center || "",
-      "billing_type": sucursal.billing_type || "",
-      "branch_code": sucursal.branch_code || "",
-      "branch_name": sucursal.branch_name || "",
-      "region": sucursal.region || "",
-      "department": sucursal.department || "",
-      "comments": sucursal.comments || "",
-      // Agrega aquí otros campos que necesites
-    };
-  };
-  // Esta variable genera un archivo de excel con la información que se muestra en la vista principal
-  const handleExport = () => {
-    exportToExcel(sucursales, "sucursales", SucursalDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
-  };
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
 
+      const response = await fetch("http://localhost:8000/sucursales/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sucursales.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
+  };
+  
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     searchInputRef.current.focus();
@@ -465,7 +454,9 @@ const Sucursales = () => {
               text: errorMessage,
             });
           } else {
-            setSucursales(sucursales.filter((sucursal) => sucursal.id !== sucursalId));
+            setSucursales(
+              sucursales.filter((sucursal) => sucursal.id !== sucursalId)
+            );
             showSuccessToast();
           }
         } catch (error) {
@@ -505,8 +496,9 @@ const Sucursales = () => {
         </button>
       </div>
       <div
-        className={`${style.searchContainer} ${selectedCount > 0 ? style.searchContainerSelected : ""
-          }`}
+        className={`${style.searchContainer} ${
+          selectedCount > 0 ? style.searchContainerSelected : ""
+        }`}
       >
         {showSearch && (
           <>
@@ -537,128 +529,125 @@ const Sucursales = () => {
         )}
       </div>
 
-        <Table className={`${style.table} ${style.customTable}`}>
-          <thead>
-            <tr>
-              <th className={style.contChek}>
+      <Table className={`${style.table} ${style.customTable}`}>
+        <thead>
+          <tr>
+            <th className={style.contChek}>
+              <input
+                type="checkbox"
+                className={style.customCheckbox}
+                checked={
+                  sucursales.length > 0 &&
+                  selectedSucursales.size === sucursales.length
+                }
+                onChange={toggleSelectAll}
+              />
+              {/* Modificar hacia abajo */}
+            </th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Processor</th>
+            <th className={style.contBtns}>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sucursales.map((sucursal) => (
+            <tr
+              key={sucursal.id}
+              className={
+                selectedSucursales.has(sucursal.id) ? style.selectedRow : ""
+              }
+            >
+              <td>
                 <input
                   type="checkbox"
                   className={style.customCheckbox}
-                  checked={
-                    sucursales.length > 0 &&
-                    selectedSucursales.size === sucursales.length
-                  }
-                  onChange={toggleSelectAll}
+                  checked={selectedSucursales.has(sucursal.id)}
+                  onChange={() => toggleSelectSucursal(sucursal.id)}
                 />
-                {/* Modificar hacia abajo */}
-              </th>
-              <th>Name</th>
-              <th>Brand</th>
-              <th>Model</th>
-              <th>Processor</th>
-              <th className={style.contBtns}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sucursales.map((sucursal) => (
-              <tr
-                key={sucursal.id}
-                className={
-                  selectedSucursales.has(sucursal.id) ? style.selectedRow : ""
-                }
-              >
-                <td>
-                  <input
-                    type="checkbox"
-                    className={style.customCheckbox}
-                    checked={selectedSucursales.has(sucursal.id)}
-                    onChange={() => toggleSelectSucursal(sucursal.id)}
-                  />
-                </td>
-                <td>{sucursal.name}</td>
-                <td>{sucursal.brand}</td>
-                <td>{sucursal.model}</td>
-                <td>{sucursal.processor}</td>
-                <td>
-                  <button
-                    className={style.btnVer}
-                    onClick={() => irVer(sucursal.id)}>
-                    <MdVisibility />
-                  </button>
+              </td>
+              <td>{sucursal.name}</td>
+              <td>{sucursal.brand}</td>
+              <td>{sucursal.model}</td>
+              <td>{sucursal.processor}</td>
+              <td>
+                <button
+                  className={style.btnVer}
+                  onClick={() => irVer(sucursal.id)}
+                >
+                  <MdVisibility />
+                </button>
 
-                  <button
-                    className={style.btnEdit}
-                    onClick={() => irEditar(sucursal.id)}
-                  >
-                    <MdEdit />
-                  </button>
-                  <button
-                    className={style.btnDelete}
-                    onClick={() => {
-                      handleDeleteStorage(sucursal.id);
-                    }}
-                  >
-                    <MdDelete />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td className={style.contFil} colSpan="2">
-                <div
-                  className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+                <button
+                  className={style.btnEdit}
+                  onClick={() => irEditar(sucursal.id)}
                 >
-                  <span className={style.textfoot}>Filas por página:</span>
-                  <Form.Select
-                    value={rowsPerPage}
-                    onChange={(e) =>
-                      setRowsPerPage(parseInt(e.target.value, 10))
-                    }
-                    className={style.selectLine}
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </Form.Select>
-                </div>
-              </td>
-              <td colSpan="1">
-                <div
-                  className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+                  <MdEdit />
+                </button>
+                <button
+                  className={style.btnDelete}
+                  onClick={() => {
+                    handleDeleteStorage(sucursal.id);
+                  }}
                 >
-                  <span>{`${indexOfFirstServer + 1}-${Math.min(
-                    indexOfLastServer,
-                    filteredSucursales.length
-                  )} de ${filteredSucursales.length}`}</span>
-                </div>
-              </td>
-              <td className={style.contFilDos} colSpan="3">
-                <div
-                  className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
-                >
-                  <Pagination className={style.pestanas}>
-                    <Pagination.Prev
-                      onClick={() =>
-                        setCurrentPage(Math.max(1, currentPage - 1))
-                      }
-                    />
-                    <Pagination.Item>{currentPage}</Pagination.Item>
-                    <Pagination.Next
-                      onClick={() =>
-                        setCurrentPage(Math.min(totalPages, currentPage + 1))
-                      }
-                    />
-                  </Pagination>
-                </div>
+                  <MdDelete />
+                </button>
               </td>
             </tr>
-          </tfoot>
-        </Table>
-      </div>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td className={style.contFil} colSpan="2">
+              <div
+                className={`d-flex justify-content-start align-items-center ${style.tfootSmall}`}
+              >
+                <span className={style.textfoot}>Filas por página:</span>
+                <Form.Select
+                  value={rowsPerPage}
+                  onChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
+                  className={style.selectLine}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </Form.Select>
+              </div>
+            </td>
+            <td colSpan="1">
+              <div
+                className={`d-flex justify-content-center align-items-center ${style.tfootSmall}`}
+              >
+                <span>{`${indexOfFirstServer + 1}-${Math.min(
+                  indexOfLastServer,
+                  filteredSucursales.length
+                )} de ${filteredSucursales.length}`}</span>
+              </div>
+            </td>
+            <td className={style.contFilDos} colSpan="3">
+              <div
+                className={`d-flex justify-content-end align-items-center ${style.tfootSmall}`}
+              >
+                <Pagination className={style.pestanas}>
+                  <Pagination.Prev
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  />
+                  <Pagination.Item>{currentPage}</Pagination.Item>
+                  <Pagination.Next
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
+                  />
+                </Pagination>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </Table>
+    </div>
   );
 };
 
