@@ -310,32 +310,6 @@ const Pseries = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
 
-  const PseriesDataMapper = (pseries) => {
-    return {
-      "Nombre Lpar en la HMC": pseries.name || "",
-      "Aplicación ": pseries.application || "",
-      Hostname: pseries.hostname || "",
-      IP: pseries.ip || "",
-      Ambientes: pseries.environment || "",
-      Cajón: pseries.slot || "",
-      "ID Lpar": pseries.total_disk_size || "",
-      Estado: pseries.status || "",
-      "S.O": pseries.os || "",
-      Versión: pseries.version || "",
-      Filial: pseries.subsidiary || "",
-      "CPU MIN": pseries.min_cpu || "",
-      "CPU MAX": pseries.max_cpu || "",
-      "CPU V MIN": pseries.min_v_cpu || "",
-      "CPU V MAX": pseries.max_v_cpu || "",
-      "Memoria MIN": pseries.min_memory || "",
-      "Memoria ACT": pseries.act_memory || "",
-      "Factor de expansión": pseries.expansion_factor || "",
-      "Memoria por factor": pseries.expansion_factor || "",
-      "Proc Compat": pseries.processor_compatibility || "",
-      // Agrega aquí otros campos que necesites
-    };
-  };
-
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
