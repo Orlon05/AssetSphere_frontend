@@ -113,7 +113,7 @@ const Login = () => {
             <div className={style.socialLogin}>
               <img
                 className={style.socialLoginIcon}
-                src="/src/assets/tcs_logo.png"
+                src="./src/assets/tcs_logo.png"
                 alt="logo TATA"
               />
             </div>
