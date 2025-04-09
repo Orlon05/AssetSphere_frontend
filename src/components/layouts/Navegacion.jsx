@@ -115,7 +115,7 @@ const Navegacion = ({ toggleSidebar }) => {
             <ul className={Style.modalOptions}>
               <p className={Style.mailUser}>{userEmail}</p>
               <hr />
-              <li onClick={() => navigate("/profile")}>Perfil</li>
+              <li onClick={() => navigate("/inveplus/profile")}>Perfil</li>
               <li>Configuraciones</li>
               <hr />
               <li className={Style.btnLogout} onClick={handleLogout}>
