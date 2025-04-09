@@ -141,15 +141,15 @@ const ServidoresFisicos = () => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
   const irCrear = () => {
-    navigate("/crear-servidores-f");
+    navigate("/inveplus/crear-servidores-f");
   };
 
   const irVer = (serverId) => {
-    navigate(`/ver/${serverId}/servers`);
+    navigate(`/inveplus/ver/${serverId}/servers`);
   };
 
   const irEditar = (serverId) => {
-    navigate(`/editar/${serverId}/servidores`);
+    navigate(`/inveplus/editar/${serverId}/servidores`);
   };
   const handleError = (error) => {
     setError(error);

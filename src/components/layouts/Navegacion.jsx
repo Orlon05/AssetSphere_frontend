@@ -50,7 +50,7 @@ const Navegacion = ({ toggleSidebar }) => {
       if (result.isConfirmed) {
         localStorage.removeItem("authenticationToken");
         logout();
-        navigate("/login");
+        navigate("/inveplus/login");
       }
     });
   };

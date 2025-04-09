@@ -18,10 +18,10 @@ const Usuarios = () => {
   const [usersData, setUsersData] = useState([]);
 
   const irCrear = () => {
-    navigate("/crear-usuarios");
+    navigate("/inveplus/crear-usuarios");
   };
   const irLogs = () => {
-    navigate("/ver-logs");
+    navigate("/inveplus/ver-logs");
   };
 
   //FUNCION PARA EXPORTAR

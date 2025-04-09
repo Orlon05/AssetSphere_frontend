@@ -5,449 +5,172 @@ import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 
 const PseriesForm = () => {
-    const [name, setName] = useState("");
-    const [application, setApplication] = useState("");
-    const [hostname, setHostName] = useState("");
-    const [ip_address, setIpAddress] = useState("");
-    const [environment, setEnvironment] = useState("");
-    const [slot, setSlot] = useState("");
-    const [lpar_id, setLparId] = useState("");
-    const [status, setStatus] = useState("");
-    const [os, setOs] = useState("");
-    const [version, setVersion] = useState("");
-    const [subsidiary, setSubsidiary] = useState("");
-    const [min_cpu, setMinCpu] = useState("");
-    const [act_cpu, setActCpu] = useState("");
-    const [max_cpu, setMaxCpu] = useState("");
-    const [min_v_cpu, setMinVCpu] = useState("");
-    const [act_v_cpu, setActVCpu] = useState("");
-    const [max_v_cpu, setMaxVCpu] = useState("");
-    const [min_memory, setMinMemory] = useState("");
-    const [act_memory, setActMemory] = useState("");
-    const [max_memory, setMaxMemory] = useState("");
-    const [expansion_factor, setExpansionFactor] = useState("");
-    const [memory_per_factor, setMemoryPerFactor] = useState("");
-    const [processor_compatibility, setProcessorCompatibility] = useState("");
-    const navigate = useNavigate();
+  const initialFormState = {
+    name: "",
+    application: "",
+    hostname: "",
+    ip_address: "",
+    environment: "",
+    slot: "",
+    lpar_id: "",
+    status: "",
+    os: "",
+    version: "",
+    subsidiary: "",
+    min_cpu: "",
+    act_cpu: "",
+    max_cpu: "",
+    min_v_cpu: "",
+    act_v_cpu: "",
+    max_v_cpu: "",
+    min_memory: "",
+    act_memory: "",
+    max_memory: "",
+    expansion_factor: "",
+    memory_per_factor: "",
+    processor_compatibility: ""
+  };
 
-  // Crea la instancia de Toast
+  const [formData, setFormData] = useState(initialFormState);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Configuración de Toast reusable
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000, // Duración del Toast (3 segundos)
+    timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.onmouseenter = Swal.stopTimer;
       toast.onmouseleave = Swal.resumeTimer;
-    },
+    }
   });
 
-  // Función para mostrar un Toast de éxito después de crear una receta
-  const showSuccessToast = () => {
-    Toast.fire({
-      icon: "success",
-      title: "Servidor creado exitosamente",
-    });
+  const showToast = (icon, title) => {
+    Toast.fire({ icon, title });
+  };
+
+  const showErrorAlert = (title, text) => {
+    Swal.fire({ icon: "error", title, text });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const pserieData = {
-        name: name,
-        application: application,
-        hostname: hostname,
-        ip_address: ip_address,
-        environment: environment,
-        slot: slot,
-        lpar_id: lpar_id,
-        status: status,
-        os: os,
-        version: version,
-        subsidiary: subsidiary,
-        min_cpu: min_cpu,
-        act_cpu: act_cpu,
-        max_cpu: max_cpu,
-        min_v_cpu: min_v_cpu,
-        act_v_cpu: act_v_cpu,
-        max_v_cpu: max_v_cpu,
-        min_memory: min_memory,
-        act_memory: act_memory,
-        max_memory: max_memory,
-        expansion_factor: expansion_factor,
-        memory_per_factor: memory_per_factor,
-        processor_compatibility: processor_compatibility,
-      };
-      
     try {
       const token = localStorage.getItem("authenticationToken");
-      if (!token) {
-        throw new Error("Token de autorización no encontrado.");
-      }
+      if (!token) throw new Error("Token de autorización no encontrado.");
 
-      const response = await fetch(
-        "http://localhost:8000/pseries/pseries/add",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(pserieData),
-        }
-      );
+      const response = await fetch("http://localhost:8000/pseries/pseries/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         if (response.status === 422) {
           const errorData = await response.json();
-          errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+          errorMessage = errorData.detail.map(e => e.msg).join(", ");
         } else if (response.status === 401 || response.status === 403) {
-          errorMessage =
-            "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+          errorMessage = "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
         } else {
           try {
             const errorData = await response.json();
             if (errorData.message) errorMessage = errorData.message;
           } catch (e) {}
         }
-        Swal.fire({
-          icon: "error",
-          title: "Error al crear el servidor",
-          text: errorMessage,
-        });
+        showErrorAlert("Error al crear el servidor", errorMessage);
       } else {
-        showSuccessToast();
-        navigate("/pseries");
+        showToast("success", "Servidor creado exitosamente");
+        navigate("/inveplus/pseries");
       }
     } catch (error) {
-      console.error("Error:", error); // Registra el error en la consola para depuración
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.message || "Ocurrió un error inesperado.",
-      });
+      console.error("Error:", error);
+      showErrorAlert("Error", error.message || "Ocurrió un error inesperado.");
     }
   };
 
+  // Componente reutilizable para inputs
+  const FormInput = ({ name, label, required = true }) => (
+    <div className={styles.formGroup}>
+      <input
+        type="text"
+        id={name}
+        name={name}
+        value={formData[name]}
+        onChange={handleInputChange}
+        className={styles.input}
+      />
+      <div className={styles.label}>{label}{required && "*"}</div>
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.containtTit}>
+      <div className={styles.containtTit}>
         <h2 className={styles.tittle}>
-                <IoIosAdd />
-                Crear Campos
-            </h2>
-            <Link to="/pseries" className={styles.botonRegresar}>
-                    Regresar
-                </Link>
+          <IoIosAdd />
+          Crear Campos
+        </h2>
+        <Link to="/inveplus/pseries" className={styles.botonRegresar}>
+          Regresar
+        </Link>
+      </div>
+      
+      <div className={styles.container}>
+        {/* COLUMNA 1 */}
+        <div className={styles.columnUno}>
+          <FormInput name="name" label="Nombre Lpar en la HMC" />
+          <FormInput name="application" label="Aplicación" />
+          <FormInput name="hostname" label="Hostname" />
+          <FormInput name="ip_address" label="Ip" />
+          <FormInput name="environment" label="Ambiente" />
+          <FormInput name="slot" label="Cajón" />
+          <FormInput name="lpar_id" label="Id Lpar" />
+          <FormInput name="status" label="Estado" />
+          <FormInput name="os" label="Sistema Operativo" />
+          <FormInput name="version" label="Versión" />
+          <FormInput name="subsidiary" label="Filial" />
+          <FormInput name="min_cpu" label="CPU MIN" />
+          
+          <button type="submit" className={styles.button}>
+            Guardar
+          </button>
         </div>
-            
-            <div className={styles.container}>
-                {/*INICIO DE LA COLUMNA 1*/}
-                <div className={styles.columnUno}>
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Nombre Lpar en la HMC*</div>
-                    </div>
 
-                    <div className={styles.formGroup}>
-                        <input
-                            
-                            id="application"
-                            name="application"
-                            value={application}
-                            onChange={(e) => setApplication(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Aplicación*</div>
-                    </div>
+        {/* COLUMNA 2 */}
+        <div className={styles.columnDos}>
+          <FormInput name="act_cpu" label="CPU ACT" />
+          <FormInput name="max_cpu" label="CPU MAX" />
+          <FormInput name="min_v_cpu" label="CPU V MIN" />
+          
+          <hr className={styles.lines} />
 
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="hostname"
-                            name="hostname"
-                            value={hostname}
-                            onChange={(e) => setHostName(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Hostname*</div>
-                    </div>
+          <FormInput name="act_v_cpu" label="CPU V ACT" />
+          <FormInput name="max_v_cpu" label="CPU V MAX" />
+          <FormInput name="min_memory" label="Memoria MIN" />
+          
+          <hr className={styles.lines} />
 
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="ip_address"
-                            name="ip_address"
-                            value={ip_address}
-                            onChange={(e) => setIpAddress(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Ip*</div>
-                    </div>
-                        
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text" 
-                            id="environment"
-                            name="environment"
-                            value={environment}
-                            onChange={(e) => setEnvironment(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Ambiente*</div>
-                    </div>
-
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="slot"
-                            name="slot"
-                            value={slot}
-                            onChange={(e) => setSlot(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Cajón*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="lpar_id"
-                            name="lpar_id"
-                            value={lpar_id}
-                            onChange={(e) => setLparId(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Id Lpar*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text"
-                            id="status"
-                            name="status"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Estado*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text"
-                            id="os"
-                            name="os"
-                            value={os}
-                            onChange={(e) => setOs(e.target.value)}
-                            className={styles.input}
-                        />                        
-                        <div className={styles.label}>Sistema Operativo*</div>
-                    </div>
-                    
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="version"
-                            name="version"
-                            value={version}
-                            onChange={(e) => setVersion(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Versión*</div>
-                    </div>
-                                  
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text"
-                            id="subsidiary"
-                            name="subsidiary"
-                            value={subsidiary}
-                            onChange={(e) => setSubsidiary(e.target.value)}
-                            className={styles.input}
-                        />                        
-                        <div className={styles.label}>Filial*</div>
-                    </div>
-
-                
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="min_cpu"
-                            name="min_cpu"
-                            value={min_cpu}
-                            onChange={(e) => setMinCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU MIN*</div>
-                    </div>
-
-                    
-                    <button type="submit" className={styles.button}>
-                        Guardar
-                    </button>
-                </div>
-
-                {/*INICIO DE LA COLUMNA 2*/}
-                <div className={styles.columnDos}>
-
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text"
-                            id="act_cpu"
-                            name="act_cpu"
-                            value={act_cpu}
-                            onChange={(e) => setActCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU ACT*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="max_cpu"
-                            name="max_cpu"
-                            value={max_cpu}
-                            onChange={(e) => setMaxCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU MAX*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="min_v_cpu"
-                            name="min_v_cpu"
-                            value={min_v_cpu}
-                            onChange={(e) => setMinVCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU V MIN*</div>
-                    </div>
-
-
-                    <hr className={styles.lines} />
-
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="act_v_cpu"
-                            name="act_v_cpu"
-                            value={act_v_cpu}
-                            onChange={(e) => setActVCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU V MAX*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="max_v_cpu"
-                            name="max_v_cpu"
-                            value={max_v_cpu}
-                            onChange={(e) => setMaxVCpu(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>CPU V MAX*</div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="min_memory"
-                            name="min_memory"
-                            value={min_memory}
-                            onChange={(e) => setMinMemory(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Memoria MIN*</div>
-                    </div>
-
-                    <hr className={styles.lines} />
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="act_memory"
-                            name="act_memory"
-                            value={act_memory}
-                            onChange={(e) => setActMemory(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Memoria ACT*</div>
-                    </div>
-
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="max_memory"
-                            name="max_memory"
-                            value={max_memory}
-                            onChange={(e) => setMaxMemory(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Memoria Max*</div>
-                    </div>
-
-
-
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="expansion_factor"
-                            name="expansion_factor"
-                            value={expansion_factor}
-                            onChange={(e) => setExpansionFactor(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Factor de expansión*</div>
-                    </div>
-
-                    
-                    <div className={styles.formGroup}>
-                        <input
-                            type="text"
-                            id="memory_per_factor"
-                            name="memory_per_factor"
-                            value={memory_per_factor}
-                            onChange={(e) => setMemoryPerFactor(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Memoria por factor*</div>
-                    </div>
-
-                            
-                    <div className={styles.formGroup}>
-                        <input 
-                            type="text"
-                            id="processor_compatibility"
-                            name="processor_compatibility"
-                            value={processor_compatibility}
-                            onChange={(e) => setProcessorCompatibility(e.target.value)}
-                            className={styles.input}
-                        />
-                        <div className={styles.label}>Procesador compatible*</div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    );
+          <FormInput name="act_memory" label="Memoria ACT" />
+          <FormInput name="max_memory" label="Memoria Max" />
+          <FormInput name="expansion_factor" label="Factor de expansión" />
+          <FormInput name="memory_per_factor" label="Memoria por factor" />
+          <FormInput name="processor_compatibility" label="Procesador compatible" />
+        </div>
+      </div>
+    </form>
+  );
 };
 
 export default PseriesForm;

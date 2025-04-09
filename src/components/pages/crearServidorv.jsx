@@ -127,7 +127,7 @@ const VirtualForm = () => {
         });
       } else {
         showSuccessToast();
-        navigate("/servidoresv");
+        navigate("/inveplus/servidoresv");
       }
     } catch (error) {
       console.error("Error:", error); // Registra el error en la consola para depuración
@@ -146,7 +146,7 @@ const VirtualForm = () => {
       <IoIosAdd />
       Crear Servidores
     </h2>
-      <Link to="/servidoresv" className={styles.botonRegresar}>
+      <Link to="/inveplus/servidoresv" className={styles.botonRegresar}>
                   Regresar
               </Link>
     </div>

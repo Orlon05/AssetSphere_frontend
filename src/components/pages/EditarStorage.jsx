@@ -48,81 +48,6 @@ const EditarStorage = () => {
         Toast.fire({ icon: "success", title: "Storage actualizado exitosamente" });
     };
 
-    const application_code_ = [
-        "AP0240001",
-        "POWERMAX2500"
-    ];
-
-    const cost_center_ = [
-        "C103500120",
-    ];
-
-    const active_ = [
-        "Si",
-        "No"
-    ];
-
-    const category_ = [
-        "Hardware"
-    ];
-
-    const type_ = [
-        "Storage"
-    ];
-
-    const item_ = [
-        "NAS",
-        "Storage",
-        "SAN"
-    ];
-
-    const company_ = [
-        "BANCOLOMBIA S.A.",
-        "BANISTMO S.A."
-    ];
-
-    const organization_responsible_ = [
-        "PLATAFORMAS CENTRALES TI"
-    ];
-
-    const manufacturer_ = [
-        "Dell",
-        "Hitachi",
-        "Brocade"
-    ];
-
-    const status_ = [
-        "Aplicado",
-        "Eliminar",
-    ];
-
-    const owner_ = [
-        "Jenifer Yolima Gonzalez Munoz",
-    ];
-
-    const model_ = [
-        "Isilon H400",
-        "ECS Gen3 EX300",
-        "Ds-6620BDs-6620B",
-        "ED-DCX6-8BED",
-        "Data Domain 6900",
-        "A9000R",
-        "Powermax 2500",
-        "Powermax 8000",
-        "Unity 650F",
-        "VSP E1090"
-    ];
-
-    const org_maintenance_ = [
-        "TCS",
-        "BANISTMO S.A."
-    ];
-
-    const location_ = [
-        "EDIFICIO CENTRO COMPUTO NIQUIA BANCOLOMB",
-        "EDIFICIO CENTRO COMPUTO NIQUIA BANCOLOMBIA BANISTMO"
-    ];
-
     const token = localStorage.getItem("authenticationToken");
 
     useEffect(() => {
@@ -273,7 +198,7 @@ const EditarStorage = () => {
                 }
             } else {
                 showSuccessToast();
-                navigate("/storage");
+                navigate("/inveplus/storage");
             }
         } catch (error) {
             console.error("Error inesperado:", error);
@@ -301,7 +226,7 @@ const EditarStorage = () => {
                     <MdEdit />
                     Editar Storages
                 </h2>
-                <Link to="/storage" className={styles.botonRegresar}>
+                <Link to="/inveplus/storage" className={styles.botonRegresar}>
                     Regresar
                 </Link>
             </div>

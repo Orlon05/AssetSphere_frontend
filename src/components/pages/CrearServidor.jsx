@@ -146,7 +146,7 @@ const ServerForm = () => {
         });
       } else {
         showSuccessToast();
-        navigate("/servidoresf");
+        navigate("/inveplus/servidoresf");
       }
     } catch (error) {
       console.error("Error:", error); // Registra el error en la consola para depuración
@@ -165,7 +165,7 @@ const ServerForm = () => {
         <IoIosAdd />
         Crear Servidores
       </h2>
-        <Link to="/servidoresf" className={styles.botonRegresar}>
+        <Link to="/inveplus/servidoresf" className={styles.botonRegresar}>
                     Regresar
                 </Link>
       </div>

@@ -124,13 +124,13 @@ const ServidoresVirtuales = () => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
   const irCrear = () => {
-    navigate("/crear-servidores-v");
+    navigate("/inveplus/crear-servidores-v");
   };
   const irVer = (serverId) => {
-    navigate(`/ver/${serverId}/servidoresv`);
+    navigate(`/inveplus/ver/${serverId}/servidoresv`);
   };
   const irEditar = (serverId) => {
-    navigate(`/editar/${serverId}/servidoresv`);
+    navigate(`/inveplus/editar/${serverId}/servidoresv`);
   };
   const handleError = (error) => {
     setError(error);

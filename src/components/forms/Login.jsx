@@ -49,7 +49,7 @@ const Login = () => {
       const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
 
       localStorage.setItem("userInfo", JSON.stringify(data.data));
-      navigate("/analitica");
+      navigate("/inveplus/analitica"); // Cambiado a la nueva ruta
     } catch (error) {
       setErrorMessage(error.message);
       setModalError(true);
@@ -65,7 +65,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user.token) navigate("/analitica");
+    if (user.token) navigate("/inveplus/analitica"); // Cambiado a la nueva ruta
   }, [user.token]);
 
   return (

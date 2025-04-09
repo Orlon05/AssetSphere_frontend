@@ -215,7 +215,7 @@ const EditarServerVirtual = () => {
         }
       } else {
         showSuccessToast();
-        navigate("/servidoresv");
+        navigate("/inveplus/servidoresv");
       }
     } catch (error) {
       console.error("Error inesperado:", error);
@@ -242,7 +242,7 @@ const EditarServerVirtual = () => {
             <MdEdit />
             Editar Servidor
             </h2>
-              <Link to="/servidoresv" className={styles.botonRegresar}>
+              <Link to="/inveplus/servidoresv" className={styles.botonRegresar}>
                 Regresar
             </Link>
               </div>
