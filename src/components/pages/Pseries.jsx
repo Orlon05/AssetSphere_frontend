@@ -195,15 +195,15 @@ const Pseries = () => {
   }, [selectedCount]);
 
   const irCrear = () => {
-    navigate("/crear-pseries");
+    navigate("/inveplus/crear-pseries");
   };
 
   const irVer = (pseriesId) => {
-    navigate(`/ver/${pseriesId}/pseries`);
+    navigate(`/inveplus/ver/${pseriesId}/pseries`);
   };
 
   const irEditar = (pseriesId) => {
-    navigate(`/editar/${pseriesId}/pseries`);
+    navigate(`/inveplus/editar/${pseriesId}/pseries`);
   };
   const handleError = (error) => {
     setError(error);

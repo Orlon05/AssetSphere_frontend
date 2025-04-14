@@ -49,7 +49,7 @@ const Login = () => {
       const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
 
       localStorage.setItem("userInfo", JSON.stringify(data.data));
-      navigate("/analitica");
+      navigate("/inveplus/analitica");
     } catch (error) {
       setErrorMessage(error.message);
       setModalError(true);
@@ -65,7 +65,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user.token) navigate("/analitica");
+    if (user.token) navigate("/inveplus/analitica");
   }, [user.token]);
 
   return (
@@ -113,7 +113,7 @@ const Login = () => {
             <div className={style.socialLogin}>
               <img
                 className={style.socialLoginIcon}
-                src="/src/assets/tcs_logo.png"
+                src="./src/assets/tcs_logo.png"
                 alt="logo TATA"
               />
             </div>

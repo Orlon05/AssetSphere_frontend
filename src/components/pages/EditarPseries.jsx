@@ -207,7 +207,7 @@ const EditarPseries = () => {
         }
       } else {
         showSuccessToast();
-        navigate("/pseries");
+        navigate("/inveplus/pseries");
       }
     } catch (error) {
       console.error("Error inesperado:", error);
@@ -235,7 +235,7 @@ const EditarPseries = () => {
                 <MdEdit />
                 Editar Campos
             </h2>
-            <Link to="/pseries" className={styles.botonRegresar}>
+            <Link to="/inveplus/pseries" className={styles.botonRegresar}>
                     Regresar
                 </Link>
         </div>

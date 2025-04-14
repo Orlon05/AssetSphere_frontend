@@ -14,6 +14,7 @@ import useExport from "../../hooks/useExport";
 import ExcelImporter from "../layouts/ExcelImporter";
 import React from "react";
 import { FaSearch } from "react-icons/fa";
+import { EnrutadorApp } from "../routes/EnrutadorApp";
 
 const BaseDeDatos = () => {
     const [searchValue, setSearchValue] = useState("");
@@ -196,13 +197,13 @@ const BaseDeDatos = () => {
     }, [selectedCount]);
 
     const irCrear = () => {
-        navigate("/crear-base-de-datos");
+        navigate("/inveplus/crear-base-de-datos");
     };
     const irVer = (baseDeDatosId) => {
-        navigate(`/ver/${baseDeDatosId}/basedatos`);
+        navigate(`/inveplus/ver/${baseDeDatosId}/basedatos`);
     };
     const irEditar = (baseDeDatosId) => {
-        navigate(`/editar/${baseDeDatosId}/basedatos`);
+        navigate(`/inveplus/editar/${baseDeDatosId}/basedatos`);
     };
     const handleError = (error) => {
         setError(error);

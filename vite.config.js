@@ -21,9 +21,9 @@ export default defineConfig({
     emptyOutDir: true,
   },
   base: "/inveplus/",
-  server: {
-    hmr: {
-      port: 443,
-    },
-  },
+  // server: {
+  //   hmr: {
+  //     port: 443,
+  //   },
+  // },
 });

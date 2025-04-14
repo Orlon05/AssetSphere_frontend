@@ -225,13 +225,13 @@ const Sucursales = () => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
   const irCrear = () => {
-    navigate("/crear-sucursales");
+    navigate("/inveplus/crear-sucursales");
   };
   const irVer = (sucursalId) => {
-    navigate(`/ver/${sucursalId}/sucursales`);
+    navigate(`/inveplus/ver/${sucursalId}/sucursales`);
   };
   const irEditar = (sucursalId) => {
-    navigate(`/editar/${sucursalId}/sucursales`);
+    navigate(`/inveplus/editar/${sucursalId}/sucursales`);
   };
   const handleError = (error) => {
     setError(error);

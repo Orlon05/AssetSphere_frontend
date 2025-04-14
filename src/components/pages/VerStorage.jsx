@@ -190,7 +190,7 @@ const VerStorage = () => {
                     <MdVisibility />
                     Ver Storages
                 </h2>
-                <Link to="/storage" className={styles.botonRegresar}>
+                <Link to="/inveplus/storage" className={styles.botonRegresar}>
                     Regresar
                 </Link>
             </div>

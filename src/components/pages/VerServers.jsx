@@ -146,7 +146,7 @@ const VerServers = () => {
                     <MdVisibility  />
                     Visualizar Servidores
                 </h2>
-                <Link to="/Servidoresf" className={styles.botonRegresar}>
+                <Link to="/inveplus/Servidoresf" className={styles.botonRegresar}>
                     Regresar
                 </Link>
             </div>

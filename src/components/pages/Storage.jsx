@@ -187,13 +187,13 @@ const Storage = () => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
   const irCrear = () => {
-    navigate("/crear-storages");
+    navigate("/inveplus/crear-storages");
   };
   const irVer = (storageId) => {
-    navigate(`/ver/${storageId}/storages`);
+    navigate(`/inveplus/ver/${storageId}/storages`);
   };
   const irEditar = (storageId) => {
-    navigate(`/editar/${storageId}/storages`);
+    navigate(`/inveplus/editar/${storageId}/storages`);
   };
   const handleError = (error) => {
     setError(error);

@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }) => {
 
 
     if (!token) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/inveplus/login" replace />;
     }
 
     return children;

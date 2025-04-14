@@ -167,7 +167,7 @@ const EditarServer = () => {
       }
 
       showSuccessToast(); // Mostrar notificación de éxito
-      navigate("/servidoresf"); // Redirigir después de la actualización
+      navigate("/inveplus/servidoresf"); // Redirigir después de la actualización
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -194,7 +194,7 @@ const EditarServer = () => {
           <MdEdit />
           Editar Servidores
         </h2>
-        <Link to="/servidoresf" className={styles.botonRegresar}>
+        <Link to="/inveplus/servidoresf" className={styles.botonRegresar}>
           Regresar
         </Link>
       </div>

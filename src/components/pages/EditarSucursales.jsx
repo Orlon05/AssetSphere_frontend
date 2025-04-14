@@ -68,169 +68,6 @@ const EditarSucursal = () => {
         Toast.fire({ icon: "success", title: "Sucursal actualizado exitosamente" });
     };
 
-    // Datos de ejemplo, colocar los reales
-    const billing_type_ = [
-        "Factura Electrónica",
-        "Recibo de Caja",
-        "Nota de Crédito",
-        "Nota de Débito",
-        "Factura de Exportación",
-        "Factura de Anticipo",
-        "Factura POS",
-        "Factura de Venta",
-        "Autofactura",
-        "Recibo Provisional",
-        "Factura de Compra",
-        "Tiquete POS"
-    ];
-
-    // Datos de ejemplo, colocar los reales
-    const os_type_ = [
-        "Windows",
-        "macOS",
-        "Linux",
-        "Android",
-        "iOS",
-        "Ubuntu",
-        "Debian",
-        "Fedora",
-        "Red Hat",
-        "CentOS",
-        "Arch Linux",
-        "Chrome OS",
-        "FreeBSD",
-        "OpenBSD",
-        "Solaris"
-    ];
-
-
-    // Datos de ejemplo, colocar los reales
-    const application_code_ = [
-        "AP0240001",
-        "POWERMAX2500"
-    ];
-
-    const billable_ = [
-        "si",
-        "No"
-    ];
-
-    const os_version_ = [
-        "Microsoft® Windows Server® 2019 Standar",
-        "Microsoft® Windows Server® 2016 Standar",
-        "Microsoft® Windows Server® 2022 Standar"
-    ];
-
-    const city_ = [
-        "Medellin", "Bogota", "Itagui", "Sabaneta", "Envigado",
-        "Bucaramanga", "La Ceja", "Rionegro", "Paipa", "Piedecuesta",
-        "Villavicencio", "Manizales", "Cali", "El Bordo", "Palmira",
-        "Ibague", "Armenia", "Pereira", "Pasto", "Neiva",
-        "Barranquilla", "Sincelejo", "Cartagena", "Cucuta", "Monteria",
-        "Sahagun", "Maicao", "Lorica", "Corozal", "Sabanalarga",
-        "Mosquera", "Funza", "Guarne", "San Pedro", "Puerto Berrio",
-        "Quimbaya", "Sandona", "La Union", "Valledupar", "Sabana de Torres",
-        "Soacha", "Guasca", "Santafe de Antioquia", "La Estrella", "La Calera",
-        "Bello", "Puerto Boyaca", "Tunja", "Popayan", "Duitama",
-        "Fusagasuga", "Tenjo", "Garzon", "Puerto Gaitan", "Socorro",
-        "Aguachica", "Villanueva", "Barrancabermeja", "Malaga", "Arauca",
-        "Ocana", "San Gil", "El Santuario", "Velez", "Malambo",
-        "Zipaquira", "El Penol", "Cajica", "Sesquile", "Chia",
-        "Tocancipa", "Pacho", "Tabio", "Subachoque", "San Andres",
-        "Chiquinquira", "Ubate", "Simijaca", "Guacheta", "Sogamoso",
-        "Covenas", "Yopal", "Aguazul", "Granada", "Caldas",
-        "Tauramena", "Caucasia", "Facatativa", "Fredonia", "Madrid",
-        "Anapoima", "Villeta", "Mariquita", "La Dorada", "Chinu",
-        "Girardota", "Santa Barbara", "Jardin", "Guamo", "Espinal",
-        "Melgar", "El Retiro", "Chaparral", "Honda", "Purificacion",
-        "Saldana", "Andes", "Cajamarca", "Concordia", "Libano",
-        "Puerto Asis", "Pitalito", "Campoalegre", "Florencia", "San Vicente del Caguan",
-        "Pamplona", "Soledad", "Cienaga", "Magangue", "Garagoa",
-        "Villa De Leyva", "Yarumal", "Tolu", "Arjona", "Plato",
-        "El Dificil", "Santa Marta", "Amaga", "Puerto Carreno", "Riohacha",
-        "San Marcos", "Galapa", "Quibdo", "Entrerrios", "Villapinzon",
-        "Apartado", "Copacabana", "Barbosa", "El Carmen de Viboral", "Riosucio",
-        "Chigorodo", "Samaca", "Baranoa", "Socha", "Yumbo",
-        "Uribia", "Ciudad Bolivar", "Santa Rosa De Osos", "Aguadas", "Marinilla",
-        "Girardot", "Sonson", "Cerete", "Planeta Rica", "La Loma",
-        "El Bagre", "Chinchina", "Mani", "Anserma", "Abrego",
-        "Palermo", "Belen De Umbria", "Fonseca", "Dosquebradas", "Cartago",
-        "La Mesa", "Roldanillo", "Necocli", "Santa Rosa De Cabal", "Mompox",
-        "Montenegro", "Tulua", "Inirida", "Jamundi", "Becerral",
-        "Caicedonia", "Lebrija", "Calarca", "Sevilla", "Florida Blanca",
-        "Giron", "Floridablanca", "Puerto Lopez", "Miranda", "Cota",
-        "San Jose Del Guaviare", "Carepa", "Santander De Quilichao", "Paz de Ariporo", "Buenaventura",
-        "La Plata", "Cumaral", "Buga", "Bugalagrande", "El Cerrito",
-        "Albania", "Los Patios", "Pradera", "Florida", "Puerto Colombia",
-        "Salgar", "San Martin", "Tuquerres", "Ipiales", "Acacias",
-        "La Vega", "Sopo", "Tumaco", "Fresno", "El Rosal",
-        "Don Matias", "Mocoa", "Leticia", "Sibate", "Bosconia",
-        "Turbo", "Montelibano", "Guachene", "Urrao"
-    ];
-
-    const branch_name_ = [
-        "CARABOBO", "CENTRO COLTEJER", "LAURELES", "AVENIDA EL POBLADO", "AVENIDA JUNIN", "LOS MOLINOS", "LA PLAYA", "CALASANZ",
-        "GUAYAQUIL", "Quinta Camacho", "CALLE NUEVA", "ITAGUI", "AEROPUERTO OLAYA", "SABANETA", "ENVIGADO", "BUCARAMANGA",
-        "ALMACENTRO", "LA CEJA", "RIONEGRO", "OVIEDO", "Carrera Octava", "Centro Internacional", "Antiguo Country", "Polo Club",
-        "Barrio 7 De Agosto", "Calle Once", "PAIPA", "Centro 93", "Plaza España", "Puente Largo", "Puente Aranda", "PIEDECUESTA",
-        "Ciudad Kennedy", "Avenida Chile", "Las Ferias", "Calle 140", "Carrera Decima", "Carrera 15 Bogotá", "TRANSACCIONAL SAN MARTIN", "VILLAVICENCIO",
-        "AVENIDA SANTANDER", "CALI", "CARRERA PRIMERA", "SAN NICOLAS CALI", "VIPASA", "EL BORDO CAUCA", "PALMIRA", "IBAGUE",
-        "ARMENIA CENTRO", "MANIZALES", "PEREIRA", "PASTO", "NEIVA", "TEQUENDAMA", "EL CACIQUE", "LA QUINTA",
-        "AVENIDA KENNEDY", "LAS PEÑITAS", "MIRAMAR", "Niza", "CARTAGENA", "BOCAGRANDE", "CUCUTA", "MEGAMALL",
-        "MONTERIA", "SAHAGUN", "Altavist Usme", "MAICAO", "MALL PLAZA DEL CASTILLO", "Bosa", "Nova- Multiplaza Drive", "LORICA",
-        "Plaza De Las Americas", "COROZAL SUCRE", "CIRCUNVALAR PEREIRA", "SABANALARGA", "CP RIONEGRO", "BANCA COLOMBIA PARQUE SURA", "BANCA ESPECIALIZADA BOGOTA", "Avenida Sexta Bogota",
-        "Mosquera", "Mercantil", "EXITO IBAGUE", "Éxito Villa Mayor", "BANCA COLOMBIA RESERVA DEL CHICO", "Unicentro Cfr", "Funza - Cundinamarca", "GUARNE",
-        "SAN PEDRO", "PUERTO BERRIO", "ALAMEDAS DEL SINU", "Avenida 82", "Toberin", "Salitre", "Teleport", "Chapinero",
-        "CARIBE PLAZA", "Calle 57", "Centro Financiero", "Unicentro Bogota", "Quirigua", "LLANOGRANDE PALMIRA", "Galerias", "QUIMBAYA",
-        "El Can", "SANDONA", "Avenida 19", "La Soledad Bogota", "Calle 87", "LA UNION NARIÑO", "GUATAPURI", "Suba",
-        "Santa Barbara", "Avenida Pepe Sierra", "Marly", "VILLACOLOMBIA", "BANCA COLOMBIA CARTAGENA", "Centro Industrial", "TINTAL MILENIO", "Corabastos",
-        "Sabana de Torres", "Occidente (Montevideo)", "EXITO POBLADO", "Centro Distrital", "Soacha", "Fontibon", "CC CALIMA", "Éxito Country",
-        "PASEO VILLA DEL RIO", "EXITO ENVIGADO", "Barrio Ricaute", "Guasca", "Barrio Restrepo", "EXITO COLOMBIA", "Avenida El Dorado", "HOSPITAL PABLO TOBON URIBE",
-        "SANTAFE DE ANTIOQUIA", "Avenida De Las Americas", "LA ESTRELLA", "Trinidad Galan", "PUERTA DEL RIO", "Barrio Santander", "La Calera", "Modelia",
-        "EXITO BELLO", "PUERTO BOYACA", "PREMIUM PLAZA", "TUNJA", "SAN LUCAS PLAZA", "CAMPANARIO POPAYAN", "DUITAMA", "FUSAGASUGA",
-        "VALLE DE LILI", "VISITACION", "UNICENTRO PEREIRA", "CARRERA 70", "Siberia", "BOULEVAR ENVIGADO", "CENTRO COMERCIAL MAYORCA", "ITAGUI PARQUE"
-    ];
-
-    const region_ = [
-        "ANTIOQUIA", "BOGOTA", "CENTRO", "SUR", "CARIBE", "SABANA"
-    ];
-
-    const model_ = [
-        "DELL T430",
-        "OptiPlex 7040"
-    ];
-
-    // Datos de ejemplo, colocar los reales
-    const cost_center_ = [
-        "C103500120",
-    ];
-
-    const department_ = [
-        "Amazonas", "Antioquia", "Arauca", "Atlántico", "Bolívar",
-        "Boyacá", "Caldas", "Caquetá", "Casanare", "Cauca",
-        "Cesar", "Chocó", "Córdoba", "Cundinamarca", "Guainía",
-        "Guaviare", "Huila", "La Guajira", "Magdalena", "Meta",
-        "Nariño", "Norte de Santander", "Putumayo", "Quindío", "Risaralda",
-        "San Andrés y Providencia", "Santander", "Sucre", "Tolima", "Valle del Cauca",
-        "Vaupés", "Vichada"
-    ];
-
-    // Datos de ejemplo, colocar los reales
-    const status_ = [
-        "Aplicado",
-        "Eliminar",
-    ];
-
-    // Datos de ejemplo, colocar los reales
-    const location_ = [
-        "EDIFICIO CENTRO COMPUTO NIQUIA BANCOLOMB",
-        "EDIFICIO CENTRO COMPUTO NIQUIA BANCOLOMBIA BANISTMO"
-    ];
-
-    const environment_ = [
-        "Producción"
-    ];
-
     const token = localStorage.getItem("authenticationToken");
 
     useEffect(() => {
@@ -426,7 +263,7 @@ const EditarSucursal = () => {
                 }
             } else {
                 showSuccessToast();
-                navigate("/sucursales");
+                navigate("/inveplus/sucursales");
             }
         } catch (error) {
             console.error("Error inesperado:", error);
@@ -454,7 +291,7 @@ const EditarSucursal = () => {
                     <MdEdit />
                     Editar sucursales
                 </h2>
-                <Link to="/sucursales" className={styles.botonRegresar}>
+                <Link to="/inveplus/sucursales" className={styles.botonRegresar}>
                     Regresar
                 </Link>
             </div>
