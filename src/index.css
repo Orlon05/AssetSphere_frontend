@@ -1,12 +1,3 @@
-:root{
-  --azul-celeste: #ffff;
-  --azul-oscuro: #000202;
-  --azul-sombra: #142C34;
-  --gris-claro: #CBCBCB;
-  --azul-claro: #000000;
-  --negro: #000000;
-  --blanco: #fff;
-  --azul-oscuro-m: #232b51;
-  --azul-claro-m: #ced1f4;
-  --azul-navbar: #161b34;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
