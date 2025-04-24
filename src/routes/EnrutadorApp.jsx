@@ -39,7 +39,7 @@ const BASE_PATH = "/inveplus";
 export const EnrutadorApp = [
   {
     element: <Login />,
-    path: `${BASE_PATH}`,
+    path: `${BASE_PATH}/login`,
   },
   {
     path: `${BASE_PATH}/Dahsboard`,

@@ -7,6 +7,14 @@ import { useNavigate } from "react-router-dom";
 // import Loader from "../layouts/Loader";
 import { useAuth } from "../../routes/AuthContext";
 
+const gradientStyle = {
+  background:
+    "linear-gradient(45deg, rgb(238, 119, 82,0.2), rgb(231, 60, 126,0.2), rgb(35, 166, 213,0.2), rgb(35, 213, 171,0.2))",
+  backgroundSize: "400% 400%",
+  animation: "gradient 15s ease infinite",
+  height: "100vh",
+};
+
 const Login = () => {
   const user = useAuth();
   //estado para manejar el correo y la contraseña
@@ -69,7 +77,7 @@ const Login = () => {
 
   return (
     !user.token && (
-      <div className="bg-gradient-to-r from-red-500 via-orange-400 to-yellow-400 dark:via-none dark:from-blue-500 dark:to-teal-400">
+      <div className="" style={gradientStyle}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
             <div className="w-full">
