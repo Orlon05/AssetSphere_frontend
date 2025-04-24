@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "../views/auth/Login";
-// import Dashboard from "../pages/Dashboard";
+import Dashboard from "../views/dashboard/dashboard";
 
 // const ServidoresF = lazy(() => import("../pages/ServidoresFisicos"));
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
@@ -41,51 +41,51 @@ export const EnrutadorApp = [
     element: <Login />,
     path: `${BASE_PATH}/login`,
   },
-//   {
-//     path: `${BASE_PATH}/`,
-//     element: (
-//       <ProtectedRoute>
-//         <Dashboard />
-//       </ProtectedRoute>
-//     ),
-//     children: [
-//       // Rutas principales
-//       { path: "analitica", element: <Analitica /> },
-//       { path: "servidoresf", element: <ServidoresF /> },
-//       { path: "servidoresv", element: <ServidoresV /> },
-//       { path: "usuarios", element: <Usuarios /> },
-//       { path: "perfil", element: <Perfil /> },
-//       { path: "ver-logs", element: <Logs /> },
-//       { path: "storage", element: <Storage /> },
-//       { path: "pseries", element: <Pseries /> },
-//       { path: "Base-De-Datos", element: <BaseDatos /> },
-//       { path: "sucursales", element: <Sucursales /> },
+  {
+    path: `${BASE_PATH}/`,
+    element: (
+      <ProtectedRoute>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
+  //   children: [
+  //   //   // Rutas principales
+  //     { path: "analitica", element: <Analitica /> },
+    //   { path: "servidoresf", element: <ServidoresF /> },
+    //   { path: "servidoresv", element: <ServidoresV /> },
+    //   { path: "usuarios", element: <Usuarios /> },
+    //   { path: "perfil", element: <Perfil /> },
+    //   { path: "ver-logs", element: <Logs /> },
+    //   { path: "storage", element: <Storage /> },
+    //   { path: "pseries", element: <Pseries /> },
+    //   { path: "Base-De-Datos", element: <BaseDatos /> },
+    //   { path: "sucursales", element: <Sucursales /> },
       
-//       // Rutas de creación
-//       { path: "crear-servidores-f", element: <CrearServerF /> },
-//       { path: "crear-servidores-v", element: <VirtualForm /> },
-//       { path: "crear-usuarios", element: <CrearUsuario /> },
-//       { path: "crear-storages", element: <CrearStorage /> },
-//       { path: "crear-pseries", element: <CrearPseries /> },
-//       { path: "crear-base-de-datos", element: <CrearBaseDatos /> },
-//       { path: "crear-sucursales", element: <CrearSucursales /> },
+    //   // Rutas de creación
+    //   { path: "crear-servidores-f", element: <CrearServerF /> },
+    //   { path: "crear-servidores-v", element: <VirtualForm /> },
+    //   { path: "crear-usuarios", element: <CrearUsuario /> },
+    //   { path: "crear-storages", element: <CrearStorage /> },
+    //   { path: "crear-pseries", element: <CrearPseries /> },
+    //   { path: "crear-base-de-datos", element: <CrearBaseDatos /> },
+    //   { path: "crear-sucursales", element: <CrearSucursales /> },
       
-//       // Rutas de edición
-//       { path: "editar/:serverId/servidores", element: <EditarServer /> },
-//       { path: "editar/:serverId/servidoresv", element: <EditarServerVirtual /> },
-//       { path: "editar-usuarios", element: <EditarUsuario /> },
-//       { path: "editar/:storageId/storages", element: <EditarStorage /> },
-//       { path: "editar/:pserieId/pseries", element: <EditarPseries /> },
-//       { path: "editar/:baseDatosId/basedatos", element: <EditarBaseDatos /> },
-//       { path: "editar/:sucursalId/sucursales", element: <EditarSucursal /> },
+    //   // Rutas de edición
+    //   { path: "editar/:serverId/servidores", element: <EditarServer /> },
+    //   { path: "editar/:serverId/servidoresv", element: <EditarServerVirtual /> },
+    //   { path: "editar-usuarios", element: <EditarUsuario /> },
+    //   { path: "editar/:storageId/storages", element: <EditarStorage /> },
+    //   { path: "editar/:pserieId/pseries", element: <EditarPseries /> },
+    //   { path: "editar/:baseDatosId/basedatos", element: <EditarBaseDatos /> },
+    //   { path: "editar/:sucursalId/sucursales", element: <EditarSucursal /> },
       
-//       // Rutas de visualización
-//       { path: "ver/:serverId/servers", element: <VerServers /> },
-//       { path: "ver/:serverId/servidoresv", element: <VerServidoresVirtuales /> },
-//       { path: "ver/:storageId/storages", element: <VerStorage /> },
-//       { path: "ver/:pserieId/pseries", element: <VerPseries /> },
-//       { path: "ver/:baseDatosId/basedatos", element: <VerBaseDatos /> },
-//       { path: "ver/:sucursalId/sucursales", element: <VerSucursales /> },
-//     ],
-//   },
+    //   // Rutas de visualización
+    //   { path: "ver/:serverId/servers", element: <VerServers /> },
+    //   { path: "ver/:serverId/servidoresv", element: <VerServidoresVirtuales /> },
+    //   { path: "ver/:storageId/storages", element: <VerStorage /> },
+    //   { path: "ver/:pserieId/pseries", element: <VerPseries /> },
+    //   { path: "ver/:baseDatosId/basedatos", element: <VerBaseDatos /> },
+    //   { path: "ver/:sucursalId/sucursales", element: <VerSucursales /> },
+    //],
+   },
  ];
