@@ -50,8 +50,8 @@ const Login = () => {
       localStorage.setItem("userInfo", JSON.stringify(data.data));
       navigate("/dashboard");
     } catch (error) {
-      setErrorMessage(error.message);
-      setModalError(true);
+      // setErrorMessage(error.message);
+      // setModalError(true);
       console.error("Error de inicio de sesión:", error);
     } finally {
       setIsLoading(false);
@@ -76,7 +76,7 @@ const Login = () => {
               <div className="flex justify-center mb-6">
                 <img src="src/assets/logo.png" />
               </div>
-              <div class="text-center">
+              <div className="text-center">
                 <h1 className="text-3xl font-semibold text-gray-900">
                   Iniciar Sesión
                 </h1>
@@ -85,38 +85,33 @@ const Login = () => {
                 <form action="" onSubmit={handleLoginSubmit}>
                   <div className="relative mt-6">
                     <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
-                      autocomplete="NA"
+                      placeholder="Usuario"
+                      required
                     />
                     <label
                       className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 
                                     peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800"
-                      type="user"
-                      placeholder="Usuario"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
                     >
                       Usuario
                     </label>
                   </div>
-                  <div class="relative mt-6">
+                  <div className="relative mt-6">
                     <input
                       type="password"
-                      name="password"
-                      id="password"
-                      placeholder="Password"
-                      class="peer peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
+                      placeholder="Contraseña"
+                      required
                     />
                     <label
                       for="password"
-                      class="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 
+                      className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 
                                     ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800"
-                      type="password"
-                      placeholder="Contraseña"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)} //actualiza el estado 'PASSWORD' cuando cambia el valor
-                      required
                     >
                       Contraseña
                     </label>
@@ -124,7 +119,7 @@ const Login = () => {
                   <div className="my-6 ">
                     <button
                       type="submit"
-                      class="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none"
+                      className="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none"
                     >
                       Ingresar
                     </button>

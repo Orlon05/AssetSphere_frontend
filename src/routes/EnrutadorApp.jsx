@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "../views/auth/Login";
 import Dashboard from "../views/dashboard/dashboard";
@@ -8,7 +8,7 @@ import Dashboard from "../views/dashboard/dashboard";
 // const Analitica = lazy(() => import("../pages/Analitica"));
 // const CrearServerF = lazy(() => import("../pages/CrearServidor"));
 // const EditarServer = lazy(() => import("../pages/EditarServidor"));
-// const VerServers = lazy(() => import("../pages/VerServers"));  
+// const VerServers = lazy(() => import("../pages/VerServers"));
 // const Perfil = lazy(() => import("../perfil/Perfil"));
 // const Usuarios = lazy(() => import("../pages/Usuarios"));
 // const CrearUsuario = lazy(() => import("../forms/CrearUsuario"));
@@ -39,18 +39,18 @@ const BASE_PATH = "/inveplus";
 export const EnrutadorApp = [
   {
     element: <Login />,
-    path: `${BASE_PATH}/login`,
+    path: `${BASE_PATH}`,
   },
   {
-    path: `${BASE_PATH}/`,
+    path: `${BASE_PATH}/Dahsboard`,
     element: (
       <ProtectedRoute>
         <Dashboard />
       </ProtectedRoute>
     ),
-  //   children: [
-  //   //   // Rutas principales
-  //     { path: "analitica", element: <Analitica /> },
+    //   children: [
+    //   //   // Rutas principales
+    //     { path: "analitica", element: <Analitica /> },
     //   { path: "servidoresf", element: <ServidoresF /> },
     //   { path: "servidoresv", element: <ServidoresV /> },
     //   { path: "usuarios", element: <Usuarios /> },
@@ -60,7 +60,7 @@ export const EnrutadorApp = [
     //   { path: "pseries", element: <Pseries /> },
     //   { path: "Base-De-Datos", element: <BaseDatos /> },
     //   { path: "sucursales", element: <Sucursales /> },
-      
+
     //   // Rutas de creación
     //   { path: "crear-servidores-f", element: <CrearServerF /> },
     //   { path: "crear-servidores-v", element: <VirtualForm /> },
@@ -69,7 +69,7 @@ export const EnrutadorApp = [
     //   { path: "crear-pseries", element: <CrearPseries /> },
     //   { path: "crear-base-de-datos", element: <CrearBaseDatos /> },
     //   { path: "crear-sucursales", element: <CrearSucursales /> },
-      
+
     //   // Rutas de edición
     //   { path: "editar/:serverId/servidores", element: <EditarServer /> },
     //   { path: "editar/:serverId/servidoresv", element: <EditarServerVirtual /> },
@@ -78,7 +78,7 @@ export const EnrutadorApp = [
     //   { path: "editar/:pserieId/pseries", element: <EditarPseries /> },
     //   { path: "editar/:baseDatosId/basedatos", element: <EditarBaseDatos /> },
     //   { path: "editar/:sucursalId/sucursales", element: <EditarSucursal /> },
-      
+
     //   // Rutas de visualización
     //   { path: "ver/:serverId/servers", element: <VerServers /> },
     //   { path: "ver/:serverId/servidoresv", element: <VerServidoresVirtuales /> },
@@ -87,5 +87,5 @@ export const EnrutadorApp = [
     //   { path: "ver/:baseDatosId/basedatos", element: <VerBaseDatos /> },
     //   { path: "ver/:sucursalId/sucursales", element: <VerSucursales /> },
     //],
-   },
- ];
+  },
+];
