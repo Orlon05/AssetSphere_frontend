@@ -12,9 +12,8 @@ import {
 
 export default function Dashboard() {
   const [user, setUser] = useState({
-    name: "Carlos Rodríguez",
-    email: "carlos.rodriguez@empresa.com",
-    avatar: "/placeholder.svg?height=32&width=32",
+    name: "",
+    email: "",
   });
 
   const modules = [
@@ -82,11 +81,6 @@ export default function Dashboard() {
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700"
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              <img
-                src={user.avatar || "/placeholder.svg"}
-                alt="Avatar"
-                className="w-8 h-8 rounded-full"
-              />
               <span>{user.name}</span>
               <ChevronDown size={16} />
             </button>
