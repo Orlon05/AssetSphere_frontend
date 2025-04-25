@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "../views/auth/Login";
-import Dashboard from "../views/dashboard/dashboard";
+import Dashboard from "../views/dashboard/Dashboard";
 
 // const ServidoresF = lazy(() => import("../pages/ServidoresFisicos"));
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
@@ -38,19 +38,18 @@ const BASE_PATH = "/inveplus";
 
 export const EnrutadorApp = [
   {
-    element: <Login />,
     path: `${BASE_PATH}/login`,
+    element: <Login />,
   },
   {
-    path: `${BASE_PATH}/Dahsboard`,
+    path: `${BASE_PATH}/dashboard`,
     element: (
       <ProtectedRoute>
         <Dashboard />
       </ProtectedRoute>
     ),
-    //   children: [
-    //   //   // Rutas principales
-    //     { path: "analitica", element: <Analitica /> },
+    // children: [
+    //   { path: "analitica", element: <Analitica /> },
     //   { path: "servidoresf", element: <ServidoresF /> },
     //   { path: "servidoresv", element: <ServidoresV /> },
     //   { path: "usuarios", element: <Usuarios /> },
@@ -60,8 +59,6 @@ export const EnrutadorApp = [
     //   { path: "pseries", element: <Pseries /> },
     //   { path: "Base-De-Datos", element: <BaseDatos /> },
     //   { path: "sucursales", element: <Sucursales /> },
-
-    //   // Rutas de creación
     //   { path: "crear-servidores-f", element: <CrearServerF /> },
     //   { path: "crear-servidores-v", element: <VirtualForm /> },
     //   { path: "crear-usuarios", element: <CrearUsuario /> },
@@ -69,8 +66,6 @@ export const EnrutadorApp = [
     //   { path: "crear-pseries", element: <CrearPseries /> },
     //   { path: "crear-base-de-datos", element: <CrearBaseDatos /> },
     //   { path: "crear-sucursales", element: <CrearSucursales /> },
-
-    //   // Rutas de edición
     //   { path: "editar/:serverId/servidores", element: <EditarServer /> },
     //   { path: "editar/:serverId/servidoresv", element: <EditarServerVirtual /> },
     //   { path: "editar-usuarios", element: <EditarUsuario /> },
@@ -78,14 +73,16 @@ export const EnrutadorApp = [
     //   { path: "editar/:pserieId/pseries", element: <EditarPseries /> },
     //   { path: "editar/:baseDatosId/basedatos", element: <EditarBaseDatos /> },
     //   { path: "editar/:sucursalId/sucursales", element: <EditarSucursal /> },
-
-    //   // Rutas de visualización
     //   { path: "ver/:serverId/servers", element: <VerServers /> },
     //   { path: "ver/:serverId/servidoresv", element: <VerServidoresVirtuales /> },
     //   { path: "ver/:storageId/storages", element: <VerStorage /> },
     //   { path: "ver/:pserieId/pseries", element: <VerPseries /> },
     //   { path: "ver/:baseDatosId/basedatos", element: <VerBaseDatos /> },
     //   { path: "ver/:sucursalId/sucursales", element: <VerSucursales /> },
-    //],
+    // ],
+  },
+  {
+    path: BASE_PATH,
+    element: <Login />,
   },
 ];

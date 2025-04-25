@@ -9,9 +9,9 @@ import { useAuth } from "../../routes/AuthContext";
 
 const gradientStyle = {
   background:
-    "linear-gradient(45deg, rgb(238, 119, 82,0.2), rgb(231, 60, 126,0.2), rgb(35, 166, 213,0.2), rgb(35, 213, 171,0.2))",
+    "linear-gradient(45deg, rgb(133, 132, 132), rgb(184, 182, 182), rgb(124, 183, 231), rgb(86, 79, 179))",
   backgroundSize: "400% 400%",
-  animation: "gradient 15s ease infinite",
+  animation: "gradient 10s ease infinite",
   height: "100vh",
 };
 
@@ -77,7 +77,7 @@ const Login = () => {
 
   return (
     !user.token && (
-      <div className="" style={gradientStyle}>
+      <div style={gradientStyle}>
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
             <div className="w-full">
