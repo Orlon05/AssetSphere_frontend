@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../routes/AuthContext";
-import Swal from "sweetalert2";
+import { useState, useEffect } from "react";
 import {
   Bell,
   ChevronDown,
@@ -12,6 +9,9 @@ import {
   Building,
   Cloud,
 } from "lucide-react";
+import Swal from "sweetalert2";
+import { useAuth } from "../../routes/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { logout } = useAuth();
@@ -20,15 +20,13 @@ export default function Dashboard() {
     email: "",
   });
 
-  const navigate = useNavigate();
-
   const BASE_PATH = "/inveplus";
 
-  const modules = [
+  const [modules, setModules] = useState([
     {
       id: 1,
       title: "Servidores Físicos",
-      count: 24,
+      count: 0,
       icon: Server,
       description: "Gestión de servidores físicos y hardware",
       route: `${BASE_PATH}/servidoresf`,
@@ -39,7 +37,6 @@ export default function Dashboard() {
       count: 56,
       icon: Cloud,
       description: "Administración de máquinas virtuales",
-      // route: "/admin/usuarios",
     },
     {
       id: 3,
@@ -47,7 +44,6 @@ export default function Dashboard() {
       count: 18,
       icon: Database,
       description: "Control de bases de datos y respaldos",
-      // route: "/admin/usuarios",
     },
     {
       id: 4,
@@ -55,7 +51,6 @@ export default function Dashboard() {
       count: 12,
       icon: Server,
       description: "Gestión de servidores IBM Power Systems",
-      // route: "/admin/usuarios",
     },
     {
       id: 5,
@@ -63,7 +58,6 @@ export default function Dashboard() {
       count: 8,
       icon: HardDrive,
       description: "Administración de almacenamiento",
-      // route: "/admin/usuarios",
     },
     {
       id: 6,
@@ -71,30 +65,106 @@ export default function Dashboard() {
       count: 32,
       icon: Building,
       description: "Gestión de infraestructura por sucursal",
-      // route: "/admin/usuarios",
     },
-  ];
+  ]);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-const handleLogout = () => {
-  Swal.fire({
-    title: "¿Estás seguro de que deseas cerrar sesión?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d37171",
-    confirmButtonText: "Sí",
-    cancelButtonText: "No",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      localStorage.removeItem("autenticacionToken");
-      logout();
-      navigate(`${BASE_PATH}/login`);
+  const fetchServerCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:8000/servers/physical?page=1&limit=1000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data); // Verifica la respuesta de la API
+
+      if (data && data.status === "success" && data.data) {
+        // Aquí, asegúrate de que la propiedad que contiene el conteo total sea la correcta
+        const totalCount =
+          data.data.total_count || // Si la propiedad total_count existe, la usamos
+          data.data.total || // Si no, probamos con total
+          data.data.servers?.length || // Si no, contamos los servidores que llegaron en esta página
+          0; // Si no hay nada, el conteo es 0
+
+        console.log("Conteo total:", totalCount); // Verifica el conteo que se calcula
+
+        // Actualizamos el módulo de servidores físicos con el conteo
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 1
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        console.warn("Formato de respuesta inesperado:", data);
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 1 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error al obtener el conteo de servidores:", error);
+      setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 1 ? { ...module, loading: false } : module
+        )
+      );
     }
-  });
-};
+  };
 
+  // Llamamos a la función al cargar el componente
+  useEffect(() => {
+    fetchServerCount();
+  }, []);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "¿Estás seguro de que deseas cerrar sesión?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d37171",
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("autenticacionToken");
+        logout();
+        navigate(`${BASE_PATH}/login`);
+      }
+    });
+  };
+
+  const handleModuleClick = (moduleId) => {
+    if (moduleId === 1) {
+      navigate(`${BASE_PATH}/servidoresf`);
+    } else {
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-800 text-gray-100">
@@ -156,14 +226,19 @@ const handleLogout = () => {
             {modules.map((module) => (
               <div
                 key={module.id}
-                className="bg-gray-600 rounded-lg p-5 shadow-md hover:shadow-lg transition-all"
+                className="bg-gray-600 rounded-lg p-5 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                onClick={() => handleModuleClick(module.id)}
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="p-3 bg-gray-700 rounded-lg">
                     <module.icon size={24} className="text-blue-400" />
                   </div>
                   <span className="text-2xl font-bold text-blue-400">
-                    {module.count}
+                    {module.loading ? (
+                      <div className="inline-block w-6 h-6 animate-pulse bg-blue-400/30 rounded"></div>
+                    ) : (
+                      module.count
+                    )}
                   </span>
                 </div>
 
@@ -172,10 +247,7 @@ const handleLogout = () => {
                   {module.description}
                 </p>
 
-                <button
-                  onClick={() => navigate(module.route)} // Navegación programática
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
-                >
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
                   Gestionar
                 </button>
               </div>

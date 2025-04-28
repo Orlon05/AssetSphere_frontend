@@ -2,8 +2,9 @@ import { lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "../views/auth/Login"
 import Dashboard from "../views/dashboard/dashboard";
+import Sidebar from "../views/layout/sidebar";
 
-const ServidoresF = lazy(() => import("../views/services/servidoresF"));
+const ServidoresFisicos = lazy(() => import("../views/services/servidoresF"));
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
 // const Analitica = lazy(() => import("../pages/Analitica"));
 // const CrearServerF = lazy(() => import("../pages/CrearServidor"));
@@ -38,7 +39,7 @@ const ServidoresF = lazy(() => import("../views/services/servidoresF"));
 
 const BASE_PATH = "/inveplus";
 
-export const EnrutadorApp = [
+const EnrutadorApp = [
   {
     path: `${BASE_PATH}/login`,
     element: <Login />,
@@ -57,7 +58,7 @@ export const EnrutadorApp = [
     path: `${BASE_PATH}/servidoresf`,
     element: (
       <ProtectedRoute>
-        <ServidoresF />
+        <Sidebar />
       </ProtectedRoute>
     ),
   },
@@ -305,3 +306,5 @@ export const EnrutadorApp = [
     element: <Login />,
   },
 ];
+
+export default EnrutadorApp;
