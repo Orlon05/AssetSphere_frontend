@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Ajusta la ruta si es necesario
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-    const { token } = useAuth();
+  const { token } = useAuth();
+  
+  const BASE_PATH = "/inveplus"; 
 
+  if (!token) {
+    return <Navigate to={`${BASE_PATH}/login`} replace />;
+  }
 
-    if (!token) {
-        return <Navigate to="/login" replace />;
-    }
-
-    return children;
+  return children;
 };
 
 export default ProtectedRoute;

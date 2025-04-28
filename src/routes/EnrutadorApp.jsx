@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
-import Login from "../views/auth/Login";
+import Login from "../views/auth/Login"
 import Dashboard from "../views/dashboard/dashboard";
 
 const ServidoresF = lazy(() => import("../views/services/servidoresF"));

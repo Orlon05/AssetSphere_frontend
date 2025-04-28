@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../routes/AuthContext";
+import Swal from "sweetalert2";
 import {
   Bell,
   ChevronDown,
@@ -12,6 +14,7 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  const { logout } = useAuth();
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -74,19 +77,24 @@ export default function Dashboard() {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("authenticationToken");
+const handleLogout = () => {
+  Swal.fire({
+    title: "¿Estás seguro de que deseas cerrar sesión?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d37171",
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem("autenticacionToken");
+      logout();
+      navigate(`${BASE_PATH}/login`);
+    }
+  });
+};
 
-    navigate(`${BASE_PATH}/login`);
-  };
-
-  // useEffect(() => {
-  //   // Comprobamos si el token existe, si no redirigimos al login
-  //   const token = localStorage.getItem("authenticationToken");
-  //   if (!token) {
-  //     navigate(`${BASE_PATH}/login`, { replace: true });
-  //   }
-  // }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-800 text-gray-100">
