@@ -19,6 +19,8 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
+  const BASE_PATH = "/inveplus";
+
   const modules = [
     {
       id: 1,
@@ -26,7 +28,7 @@ export default function Dashboard() {
       count: 24,
       icon: Server,
       description: "Gestión de servidores físicos y hardware",
-      route: "inveplus/ServidoresF",
+      route: `${BASE_PATH}/servidoresf`,
     },
     {
       id: 2,
@@ -72,9 +74,19 @@ export default function Dashboard() {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  useEffect(() => {
-    if (user.token) navigate("/inveplus/dashboard");
-  }, [user.token]);
+  const handleLogout = () => {
+    localStorage.removeItem("authenticationToken");
+
+    navigate(`${BASE_PATH}/login`);
+  };
+
+  // useEffect(() => {
+  //   // Comprobamos si el token existe, si no redirigimos al login
+  //   const token = localStorage.getItem("authenticationToken");
+  //   if (!token) {
+  //     navigate(`${BASE_PATH}/login`, { replace: true });
+  //   }
+  // }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-800 text-gray-100">
@@ -104,7 +116,10 @@ export default function Dashboard() {
                   <p className="text-sm font-medium">{user.name}</p>
                   <p className="text-xs text-gray-400">{user.email}</p>
                 </div>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+                >
                   <LogOut size={16} />
                   Cerrar Sesión
                 </button>
