@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Bell,
   ChevronDown,
@@ -16,6 +17,8 @@ export default function Dashboard() {
     email: "",
   });
 
+  const navigate = useNavigate();
+
   const modules = [
     {
       id: 1,
@@ -23,6 +26,7 @@ export default function Dashboard() {
       count: 24,
       icon: Server,
       description: "Gestión de servidores físicos y hardware",
+      route: "inveplus/ServidoresF",
     },
     {
       id: 2,
@@ -30,6 +34,7 @@ export default function Dashboard() {
       count: 56,
       icon: Cloud,
       description: "Administración de máquinas virtuales",
+      // route: "/admin/usuarios",
     },
     {
       id: 3,
@@ -37,6 +42,7 @@ export default function Dashboard() {
       count: 18,
       icon: Database,
       description: "Control de bases de datos y respaldos",
+      // route: "/admin/usuarios",
     },
     {
       id: 4,
@@ -44,6 +50,7 @@ export default function Dashboard() {
       count: 12,
       icon: Server,
       description: "Gestión de servidores IBM Power Systems",
+      // route: "/admin/usuarios",
     },
     {
       id: 5,
@@ -51,6 +58,7 @@ export default function Dashboard() {
       count: 8,
       icon: HardDrive,
       description: "Administración de almacenamiento",
+      // route: "/admin/usuarios",
     },
     {
       id: 6,
@@ -58,10 +66,15 @@ export default function Dashboard() {
       count: 32,
       icon: Building,
       description: "Gestión de infraestructura por sucursal",
+      // route: "/admin/usuarios",
     },
   ];
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  useEffect(() => {
+    if (user.token) navigate("/inveplus/dashboard");
+  }, [user.token]);
 
   return (
     <div className="min-h-screen bg-gray-800 text-gray-100">
@@ -136,7 +149,10 @@ export default function Dashboard() {
                   {module.description}
                 </p>
 
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
+                <button
+                  onClick={() => navigate(module.route)} // Navegación programática
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
+                >
                   Gestionar
                 </button>
               </div>
