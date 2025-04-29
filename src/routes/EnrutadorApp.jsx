@@ -9,7 +9,9 @@ const ServidoresFisicos = lazy(() =>
 );
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
 // const Analitica = lazy(() => import("../pages/Analitica"));
-// const CrearServerF = lazy(() => import("../pages/CrearServidor"));
+const CrearServerF = lazy(() =>
+  import("../views/services/servidores Fisicos/CrearServidor")
+);
 // const EditarServer = lazy(() => import("../pages/EditarServidor"));
 const VerServers = lazy(() =>
   import("../views/services/servidores Fisicos/Verservers")
@@ -139,15 +141,15 @@ const EnrutadorApp = [
   //   ),
   // },
 
-  // // Crear
-  // {
-  //   path: `${BASE_PATH}/crear-servidores-f`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearServerF />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  // Crear
+  {
+    path: `${BASE_PATH}/crear-servidores-f`,
+    element: (
+      <ProtectedRoute>
+        <CrearServerF />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/crear-servidores-v`,
   //   element: (

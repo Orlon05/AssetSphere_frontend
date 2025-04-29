@@ -97,19 +97,14 @@ export default function Dashboard() {
       }
 
       const data = await response.json();
-      console.log(data); // Verifica la respuesta de la API
 
       if (data && data.status === "success" && data.data) {
-        // Aquí, asegúrate de que la propiedad que contiene el conteo total sea la correcta
         const totalCount =
-          data.data.total_count || // Si la propiedad total_count existe, la usamos
-          data.data.total || // Si no, probamos con total
-          data.data.servers?.length || // Si no, contamos los servidores que llegaron en esta página
+          data.data.total_count ||
+          data.data.total ||
+          data.data.servers?.length ||
           0; // Si no hay nada, el conteo es 0
 
-        console.log("Conteo total:", totalCount); // Verifica el conteo que se calcula
-
-        // Actualizamos el módulo de servidores físicos con el conteo
         setModules((prevModules) =>
           prevModules.map((module) =>
             module.id === 1
@@ -136,7 +131,6 @@ export default function Dashboard() {
     }
   };
 
-  // Llamamos a la función al cargar el componente
   useEffect(() => {
     fetchServerCount();
   }, []);
@@ -167,18 +161,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800 text-gray-100">
+    <div className="min-h-screen bg-gray-300/20 text-gray-100">
       {/* Header */}
       <header className="w-full p-4 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Panel de Control</h1>
+          <h1 className="text-4xl font-bold text-black">Inveplus</h1>
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="p-2 rounded-full hover:bg-gray-700">
-            <Bell size={20} />
-          </button>
-
           <div className="relative">
             <button
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-700"
@@ -210,30 +200,30 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="container mx-auto p-6">
         {/* Welcome Section */}
-        <div className="bg-gray-700 rounded-lg p-6 mb-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-2">¡Bienvenido, {user.name}!</h2>
-          <p className="text-gray-300">
+        <div className="bg-white rounded-lg p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl text-gray-900 font-bold mb-2">¡Bienvenido, {user.name}!</h2>
+          <p className="text-gray-800">
             Desde aquí puedes gestionar todos los módulos del sistema.
             Selecciona una opción para comenzar.
           </p>
         </div>
 
         {/* Modules Grid */}
-        <div className="bg-gray-700 rounded-lg p-6 shadow-lg">
-          <h3 className="text-xl font-semibold mb-6">Módulos Disponibles</h3>
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <h3 className="text-2xl text-gray-900 font-bold mb-6">Módulos Disponibles</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((module) => (
               <div
                 key={module.id}
-                className="bg-gray-600 rounded-lg p-5 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                className="bg-gray-300/30 rounded-lg p-5 shadow-md hover:shadow-lg transition-all cursor-pointer"
                 onClick={() => handleModuleClick(module.id)}
               >
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-gray-700 rounded-lg">
-                    <module.icon size={24} className="text-blue-400" />
+                  <div className="p-3 bg-gray-300/30 rounded-lg">
+                    <module.icon size={24} className="text-blue-500" />
                   </div>
-                  <span className="text-2xl font-bold text-blue-400">
+                  <span className="text-2xl font-bold text-blue-500">
                     {module.loading ? (
                       <div className="inline-block w-6 h-6 animate-pulse bg-blue-400/30 rounded"></div>
                     ) : (
@@ -242,8 +232,8 @@ export default function Dashboard() {
                   </span>
                 </div>
 
-                <h4 className="text-lg font-medium mb-2">{module.title}</h4>
-                <p className="text-gray-300 text-sm mb-4">
+                <h4 className="text-lg text-gray-900 font-medium mb-2">{module.title}</h4>
+                <p className="text-gray-900 font-semibold text-sm mb-4">
                   {module.description}
                 </p>
 
