@@ -1,15 +1,19 @@
 import { lazy } from "react";
 import ProtectedRoute from "./ProtectedRoute";
-import Login from "../views/auth/Login"
+import Login from "../views/auth/Login";
 import Dashboard from "../views/dashboard/dashboard";
 import Sidebar from "../views/layout/sidebar";
 
-const ServidoresFisicos = lazy(() => import("../views/services/servidoresF"));
+const ServidoresFisicos = lazy(() =>
+  import("../views/services/servidores Fisicos/servidoresF")
+);
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
 // const Analitica = lazy(() => import("../pages/Analitica"));
 // const CrearServerF = lazy(() => import("../pages/CrearServidor"));
 // const EditarServer = lazy(() => import("../pages/EditarServidor"));
-// const VerServers = lazy(() => import("../pages/VerServers"));
+const VerServers = lazy(() =>
+  import("../views/services/servidores Fisicos/Verservers")
+);
 // const Perfil = lazy(() => import("../perfil/Perfil"));
 // const Usuarios = lazy(() => import("../pages/Usuarios"));
 // const CrearUsuario = lazy(() => import("../forms/CrearUsuario"));
@@ -251,15 +255,15 @@ const EnrutadorApp = [
   //   ),
   // },
 
-  // // Ver
-  // {
-  //   path: `${BASE_PATH}/ver/:serverId/servers`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerServers />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  // Ver
+  {
+    path: `${BASE_PATH}/ver/:serverId/Verservers`,
+    element: (
+      <ProtectedRoute>
+        <VerServers />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/ver/:serverId/servidoresv`,
   //   element: (

@@ -1,64 +1,73 @@
 import { useState } from "react";
-import ServidoresFisicos from "../services/servidoresF";
-import {
-  Server,
-  Database,
-  HardDrive,
-  Building,
-  Cloud,
-} from "lucide-react";
+import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
+// import ServidoresVirtuales from "../services/servidoresV";
+// import BasesDeDatos from "../services/basesDeDatos";
+// import Pseries from "../services/pseries";
+// import Storage from "../services/storage";
+// import Sucursales from "../services/sucursales";
+import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
+  const [activeMenu, setActiveMenu] = useState(1); // Por defecto muestra ServidoresFisicos
+
   const Menus = [
-    { id: "ServidoresFisicos", icon: Server },
-    { id: "ServidoresVirtuales", icon: Cloud },
-    { id: "Bases de Datos", icon: Database },
-    { id: "Pseries ", icon: Server },
-    { id: "Storage", icon: HardDrive },
-    { id: "Sucursales", icon: Building },
+    { id: 1, title: "Servidores Fisicos", icon: Server },
+    { id: 2, title: "Servidores Virtuales", icon: Cloud },
+    { id: 3, title: "Bases de Datos", icon: Database },
+    { id: 4, title: "Pseries", icon: Server },
+    { id: 5, title: "Storage", icon: HardDrive },
+    { id: 6, title: "Sucursales", icon: Building },
   ];
 
-  
+  // // Función para renderizar el componente correcto según el ID seleccionado
+  // const renderComponent = () => {
+  //   switch (activeMenu) {
+  //     case 1:
+  //       return <ServidoresFisicos />;
+  //     // case 2:
+  //     //   return <ServidoresVirtuales />;
+  //     // case 3:
+  //     //   return <BasesDeDatos />;
+  //     // case 4:
+  //     //   return <Pseries />;
+  //     // case 5:
+  //     //   return <Storage />;
+  //     // case 6:
+  //     //   return <Sucursales />;
+  //   }
+  // };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <div
-        className={` ${
-          open ? "w-72" : "w-20 "
-        } bg-gray-800 h-screen p-5  pt-8 relative duration-300`}
+        className={`flex flex-col justify-center ${
+          open ? "w-72" : "w-20"
+        } bg-gray-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
-          src="./src/assets/control.png"
-          className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
-           border-2 rounded-full  ${!open && "rotate-180"}`}
+          src="./src/assets/chevron-left.png"
+          className={`absolute cursor-pointer -right-3 top-9 w-7 border-gray-700 bg-gray-800
+           border-2 rounded-full ${!open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
         />
         <div className="flex gap-x-4 items-center">
           <img
-            src="./src/assets/logo.png"
-            className={`cursor-pointer duration-500 ${
-              open && "rotate-[360deg]"
-            }`}
+            src="./src/assets/logowhite.png"
+            className={`cursor-pointer duration-500 ${open}`}
           />
-          <h1
-            className={`text-white origin-left font-medium text-xl duration-200 ${
-              !open && "scale-0"
-            }`}
-          >
-            Designer
-          </h1>
         </div>
         <ul className="pt-6">
-          {Menus.map((Menu, index) => (
+          {Menus.map((Menu) => (
             <li
-              key={index}
-              className={`flex  rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4
+              key={Menu.id}
+              className={`flex rounded-md p-2 cursor-pointer hover:bg-gray-700 text-gray-300 text-sm items-center gap-x-8 
               ${Menu.gap ? "mt-9" : "mt-2"} ${
-                index === 0 && "bg-light-white"
-              } `}
+                activeMenu === Menu.id && "bg-gray-700"
+              }`}
+              onClick={() => setActiveMenu(Menu.id)}
             >
-              <img src={`./src/assets/${Menu.src}.png`} />
+              <Menu.icon size={24} className="text-blue-400" />
               <span className={`${!open && "hidden"} origin-left duration-200`}>
                 {Menu.title}
               </span>
@@ -66,7 +75,9 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1 p-7">
+      <div className="flex-1 overflow-auto">
+        {/* Renderiza el componente basado en el menú activo
+        {renderComponent()} */}
         <ServidoresFisicos />
       </div>
     </div>
