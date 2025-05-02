@@ -1,12 +1,9 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Sidebar from "../../layout/sidebar";
-import irVer from "./verservers";
+import irVer from "./verservidor";
+import irEditar from "./editarservidor";
 import {
-  ArrowLeft,
   Search,
   Server,
   Eye,
@@ -364,17 +361,17 @@ export default function ServidoresFisicos() {
     });
   };
 
-  // const irCrear = () => {
-  //   router.push("/crear-servidores-f");
-  // };
-
-  const irVer = (serverId) => {
-    router.push(`/ver/${serverId}/servers`);
+  const irCrear = () => {
+    navigate(`${BASE_PATH}/crear-servidores-f`);
   };
 
-  // const irEditar = (serverId) => {
-  //   router.push(`/editar/${serverId}/servidores`);
-  // };
+  const irVer = (serverId) => {
+    router.push(`${BASE_PATH}/ver/${serverId}/servidores`);
+  };
+
+  const irEditar = (serverId) => {
+    router.push(`${BASE_PATH}/editar/${serverId}/servidores`);
+  };
 
   const getStatusBadge = (status) => {
     if (!status) return null;
@@ -383,14 +380,14 @@ export default function ServidoresFisicos() {
 
     if (statusLower === "active" || statusLower === "activo") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500 dark:text-green-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-600 text-green-200">
           <CheckCircle size={12} className="mr-1" />
           Activo
         </span>
       );
     } else if (statusLower === "inactive" || statusLower === "inactivo") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-500 dark:text-red-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500 text-red-200">
           <AlertCircle size={12} className="mr-1" />
           Inactivo
         </span>
@@ -400,7 +397,7 @@ export default function ServidoresFisicos() {
       statusLower === "mantenimiento"
     ) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-500 dark:text-yellow-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-500 text-yellow-200">
           <Clock size={12} className="mr-1" />
           Mantenimiento
         </span>
@@ -416,7 +413,7 @@ export default function ServidoresFisicos() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-800 text-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando servidores...</p>
@@ -427,8 +424,8 @@ export default function ServidoresFisicos() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-800 text-gray-100 flex items-center justify-center">
-        <div className="bg-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="min-h-screen bg-gray-200 text-gray-100 flex items-center justify-center">
+        <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
           <p>
             {error.message || "Ha ocurrido un error al cargar los servidores"}
@@ -445,15 +442,15 @@ export default function ServidoresFisicos() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-800 text-gray-100">
+    <div className="min-h-screen bg-white text-gray-100">
       {/* Header */}
-      <header className="w-full p-4 flex items-center border-b border-gray-700">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
         <div>
-          <h1 className="text-2xl font-bold flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-400" />
             Servidores Físicos
           </h1>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-900">
             Gestión y monitoreo de servidores físicos
           </p>
         </div>
@@ -461,18 +458,18 @@ export default function ServidoresFisicos() {
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-700 rounded-lg shadow-lg p-6">
+        <div className="bg-gray-300/30 border rounded-lg shadow-lg p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-400" />
+                  <Search size={18} className="text-gray-900" />
                 </div>
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="bg-gray-600 border border-gray-400 text-white rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  className="bg-white border-gray-400 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -496,27 +493,33 @@ export default function ServidoresFisicos() {
 
             <div className="flex items-center gap-2 flex-wrap">
               <button
-                // onClick={irCrear}
+                onClick={irCrear}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >
-                <Plus size={16} />
-                <span className="hidden sm:inline">Crear</span>
+                <Plus size={16} lassName="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Crear
+                </span>
               </button>
               <button
                 onClick={handleImport}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Download size={16} />
-                <span className="hidden sm:inline">Importar</span>
+                <Download size={16} lassName="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Importar
+                </span>
               </button>
               <button
                 onClick={handleExport}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
                 title="Exportar a Excel"
               >
-                <Upload size={16} />
-                <span className="hidden sm:inline">Exportar</span>
+                <Upload size={16} className="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Exportar
+                </span>
               </button>
             </div>
           </div>
@@ -524,7 +527,7 @@ export default function ServidoresFisicos() {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-gray-500 text-white">
+              <thead className="text-xs uppercase bg-gray-300/20 text-gray-900">
                 <tr>
                   <th scope="col" className="px-4 py-3 rounded-tl-lg">
                     <input
@@ -578,16 +581,16 @@ export default function ServidoresFisicos() {
                           onChange={() => toggleSelectServer(server.id)}
                         />
                       </td>
-                      <td className="px-6 py-4 font-medium text-gray-800">
+                      <td className="px-6 py-4 font-medium text-gray-900">
                         {server.name}
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(server.status)}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-gray-900">
                         {server.serial}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-gray-900">
                         {server.ip_address}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -602,7 +605,11 @@ export default function ServidoresFisicos() {
                             <Eye size={16} />
                           </button>
                           <button
-                            onClick={() => irEditar(server.id)}
+                            onClick={() =>
+                              navigate(
+                                `${BASE_PATH}/editar/${server.id}/servers`
+                              )
+                            }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"
                           >
@@ -644,7 +651,7 @@ export default function ServidoresFisicos() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-gray-600 border border-gray-500 text-white rounded-md px-2 py-1 text-sm"
+                className="bg-white border border-gray-500 text-gray-900 rounded-md px-2 py-1 text-sm"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -654,7 +661,7 @@ export default function ServidoresFisicos() {
               </select>
             </div>
 
-            <div className="text-sm text-gray-200">
+            <div className="text-sm text-gray-900">
               Mostrando {indexOfFirstServer + 1} a{" "}
               {Math.min(indexOfLastServer, filteredServers.length)} de{" "}
               {filteredServers.length} servidores
@@ -664,7 +671,7 @@ export default function ServidoresFisicos() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-md bg-gray-600 hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -676,7 +683,7 @@ export default function ServidoresFisicos() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-md bg-gray-600 hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight size={16} />
               </button>

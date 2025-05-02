@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { MdVisibility, MdArrowBack } from "react-icons/md";
-import { Link, useParams } from "react-router-dom";
+import { MdArrowBack } from "react-icons/md";
+import { useParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const VerServers = () => {
   const { serverId } = useParams();
-  console.log("Valor de serverId:", serverId);
-
   const [serverData, setServerData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -114,6 +113,32 @@ const VerServers = () => {
     comments: "Observaciones",
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800 border-green-300";
+      case "inactive":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "maintenance":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "active":
+        return "Activo";
+      case "inactive":
+        return "Inactive";
+      case "maintenance":
+        return "Mantenimiento";
+      default:
+        return status;
+    }
+  };
+
   useEffect(() => {
     const fetchServerData = async () => {
       try {
@@ -185,50 +210,75 @@ const VerServers = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-800 flex items-center">
-          <MdVisibility className="mr-3 text-blue-600 text-4xl" />
-          Visualizar Servidor Físico
-        </h1>
-        <Link
-          to="/inveplus/Servidoresf"
+    <div className="min-h-screen bg-white text-gray-800">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Visualizar Servidor Físico
+          </h1>
+          <p className="text-sm font-semibold text-gray-900">
+            Detalles completos del servidor
+          </p>
+        </div>
+        <button
+          onClick={() => window.history.back()}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
-          <MdArrowBack className="mr-2" />
+          <ArrowLeft className="mr-2" size={20} />
           Regresar
-        </Link>
-      </div>
+        </button>
+      </header>
 
-      <div className="space-y-8">
-        {formSections.map((section, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500"
-          >
-            <h2 className="text-xl font-semibold text-blue-700 mb-6 pb-2 border-b border-gray-200">
-              {section.title}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {section.fields.map((field) => (
-                <div key={field}>
-                  <label className="block text-sm font-semibold text-gray-600 mb-1">
-                    {fieldLabels[field]}
-                  </label>
-                  <div
-                    className={`p-3 bg-gray-100 rounded-md border border-gray-300 text-gray-800 shadow-inner ${
-                      field === "comments" ? "min-h-[100px]" : ""
-                    }`}
-                  >
-                    {serverData[field] ||
-                      (field === "comments" ? "Ninguna" : "N/A")}
-                  </div>
+      <main className="container mx-auto p-6">
+        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+          <div className="space-y-6">
+            {formSections.map((section, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+              >
+                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                  {section.title}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {section.fields.map((field) => (
+                    <div key={field} className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {fieldLabels[field]}
+                      </label>
+                      {field === "status" ? (
+                        <div
+                          className={`
+                        border rounded-lg block w-full p-2.5 font-medium text-center
+                        ${
+                          serverData.status?.toLowerCase() === "active"
+                            ? "bg-green-100 border-green-300 text-green-800"
+                            : serverData.status?.toLowerCase() === "maintenance"
+                            ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                            : "bg-red-100 border-red-300 text-red-800"
+                        }
+                      `}
+                        >
+                          {serverData.status?.toLowerCase() === "active"
+                            ? "Activo"
+                            : serverData.status?.toLowerCase() === "maintenance"
+                            ? "Mantenimiento"
+                            : "Inactivo"}
+                        </div>
+                      ) : (
+                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                          {serverData[field] ||
+                            (field === "comments" ? "Ninguna" : "N/A")}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

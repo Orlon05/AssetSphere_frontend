@@ -9,10 +9,14 @@ const ServidoresFisicos = lazy(() =>
 );
 // const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
 // const Analitica = lazy(() => import("../pages/Analitica"));
-// const CrearServerF = lazy(() => import("../pages/CrearServidor"));
-// const EditarServer = lazy(() => import("../pages/EditarServidor"));
+const CrearServerF = lazy(() =>
+  import("../views/services/servidores Fisicos/CrearServidor")
+);
+const EditarServer = lazy(() =>
+  import("../views/services/servidores Fisicos/editarservidor")
+);
 const VerServers = lazy(() =>
-  import("../views/services/servidores Fisicos/verservers")
+  import("../views/services/servidores Fisicos/verservidor")
 );
 // const Perfil = lazy(() => import("../perfil/Perfil"));
 // const Usuarios = lazy(() => import("../pages/Usuarios"));
@@ -139,15 +143,15 @@ const EnrutadorApp = [
   //   ),
   // },
 
-  // // Crear
-  // {
-  //   path: `${BASE_PATH}/crear-servidores-f`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearServerF />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  // Crear
+  {
+    path: `${BASE_PATH}/crear-servidores-f`,
+    element: (
+      <ProtectedRoute>
+        <CrearServerF />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/crear-servidores-v`,
   //   element: (
@@ -198,14 +202,14 @@ const EnrutadorApp = [
   // },
 
   // // Editar
-  // {
-  //   path: `${BASE_PATH}/editar/:serverId/servidores`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <EditarServer />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/editar/:serverId/servers`,
+    element: (
+      <ProtectedRoute>
+        <EditarServer />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/editar/:serverId/servidoresv`,
   //   element: (
