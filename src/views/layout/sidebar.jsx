@@ -1,11 +1,20 @@
 import { useState } from "react";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
+import { useNavigate } from "react-router-dom";
 // import ServidoresVirtuales from "../services/servidoresV";
 // import BasesDeDatos from "../services/basesDeDatos";
 // import Pseries from "../services/pseries";
 // import Storage from "../services/storage";
 // import Sucursales from "../services/sucursales";
-import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
+import {
+  Server,
+  Database,
+  HardDrive,
+  Building,
+  Cloud,
+  ArrowLeft,
+  LayoutDashboard,
+} from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
@@ -41,7 +50,7 @@ export default function Sidebar() {
   return (
     <div className="flex h-screen">
       <div
-        className={`flex flex-col justify-center ${
+        className={`flex flex-col justify-center  ${
           open ? "w-72" : "w-20"
         } bg-gray-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
@@ -51,7 +60,8 @@ export default function Sidebar() {
            border-2 rounded-full ${!open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
         />
-        <div className="flex gap-x-4 items-center">
+
+        <div className="gap-x-8 items-center mb-32">
           <img
             src="./src/assets/logowhite.png"
             className={`cursor-pointer duration-500 ${open}`}
@@ -75,6 +85,7 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
+
       <div className="flex-1 overflow-auto">
         {/* Renderiza el componente basado en el menú activo
         {renderComponent()} */}

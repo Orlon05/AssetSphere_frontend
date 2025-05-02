@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Sidebar from "../../layout/sidebar";
-import irVer from "./Verservers";
+import irVer from "./verservers";
 import {
   ArrowLeft,
   Search,
@@ -448,12 +448,6 @@ export default function ServidoresFisicos() {
     <div className="min-h-screen bg-gray-800 text-gray-100">
       {/* Header */}
       <header className="w-full p-4 flex items-center border-b border-gray-700">
-        <button
-          onClick={() => navigate(`${BASE_PATH}/dashboard`)}
-          className="mr-4 p-2 rounded-full hover:bg-gray-700 transition-colors"
-        >
-          <ArrowLeft size={20} />
-        </button>
         <div>
           <h1 className="text-2xl font-bold flex items-center">
             <Server className="mr-2 text-blue-400" />
@@ -599,7 +593,9 @@ export default function ServidoresFisicos() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
-                            onClick={() => irVer(server.id)}
+                            onClick={() =>
+                              navigate(`${BASE_PATH}/ver/${server.id}/servers`)
+                            }
                             className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             title="Ver detalles"
                           >

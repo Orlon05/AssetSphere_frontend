@@ -12,7 +12,7 @@ const ServidoresFisicos = lazy(() =>
 // const CrearServerF = lazy(() => import("../pages/CrearServidor"));
 // const EditarServer = lazy(() => import("../pages/EditarServidor"));
 const VerServers = lazy(() =>
-  import("../views/services/servidores Fisicos/Verservers")
+  import("../views/services/servidores Fisicos/verservers")
 );
 // const Perfil = lazy(() => import("../perfil/Perfil"));
 // const Usuarios = lazy(() => import("../pages/Usuarios"));
@@ -257,7 +257,7 @@ const EnrutadorApp = [
 
   // Ver
   {
-    path: `${BASE_PATH}/ver/:serverId/Verservers`,
+    path: `${BASE_PATH}/ver/:serverId/servers`,
     element: (
       <ProtectedRoute>
         <VerServers />

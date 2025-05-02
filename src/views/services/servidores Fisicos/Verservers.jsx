@@ -3,236 +3,148 @@ import { MdVisibility, MdArrowBack } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 
 const VerServers = () => {
-  const [serverData, setServerData] = useState({
-    name: "",
-    brand: "",
-    model: "",
-    processor: "",
-    cpu_cores: "",
-    ram: "",
-    total_disk_size: "",
-    os_type: "",
-    os_version: "",
-    status: "",
-    role: "",
-    environment: "",
-    serial: "",
-    rack_id: "",
-    unit: "",
-    ip_address: "",
-    city: "",
-    location: "",
-    asset_id: "",
-    service_owner: "",
-    warranty_start_date: "",
-    warranty_end_date: "",
-    application_code: "",
-    responsible_evc: "",
-    domain: "",
-    subsidiary: "",
-    responsible_organization: "",
-    billable: "",
-    oc_provisioning: "",
-    oc_deletion: "",
-    oc_modification: "",
-    maintenance_period: "",
-    maintenance_organization: "",
-    cost_center: "",
-    billing_type: "",
-    comments: "",
-  });
+  const { serverId } = useParams();
+  console.log("Valor de serverId:", serverId);
 
+  const [serverData, setServerData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { serverId } = useParams();
 
-  // Estructura modular de los campos del formulario
   const formSections = [
     {
       title: "Información del Hardware",
       fields: [
-        { id: "name", label: "Nombre del servidor", type: "text" },
-        { id: "brand", label: "Marca", type: "text" },
-        { id: "model", label: "Modelo", type: "text" },
-        { id: "processor", label: "Procesador", type: "text" },
-        { id: "cpu_cores", label: "CPU Cores", type: "text" },
-        { id: "ram", label: "RAM", type: "text" },
-        { id: "total_disk_size", label: "Tamaño del disco", type: "text" },
+        "name",
+        "brand",
+        "model",
+        "processor",
+        "cpu_cores",
+        "ram",
+        "total_disk_size",
       ],
     },
     {
       title: "Sistema Operativo",
-      fields: [
-        { id: "os_type", label: "Sistema Operativo", type: "text" },
-        { id: "os_version", label: "Versión del SO", type: "text" },
-      ],
+      fields: ["os_type", "os_version"],
     },
     {
       title: "Configuración",
-      fields: [
-        { id: "status", label: "Estado", type: "text" },
-        { id: "role", label: "Rol", type: "text" },
-        { id: "environment", label: "Ambiente", type: "text" },
-        { id: "serial", label: "Serial", type: "text" },
-      ],
+      fields: ["status", "role", "environment", "serial"],
     },
     {
       title: "Ubicación Física",
-      fields: [
-        { id: "rack_id", label: "ID del Rack", type: "text" },
-        { id: "unit", label: "Unidad", type: "text" },
-        { id: "city", label: "Ciudad", type: "text" },
-        { id: "location", label: "Ubicación", type: "text" },
-      ],
+      fields: ["rack_id", "unit", "city", "location"],
     },
     {
       title: "Red",
-      fields: [
-        { id: "ip_address", label: "Dirección IP", type: "text" },
-        { id: "domain", label: "Dominio", type: "text" },
-      ],
+      fields: ["ip_address", "domain"],
     },
     {
       title: "Gestión de Activos",
       fields: [
-        { id: "asset_id", label: "ID del Activo", type: "text" },
-        { id: "service_owner", label: "Propietario", type: "text" },
-        { id: "warranty_start_date", label: "Inicio Garantía", type: "date" },
-        { id: "warranty_end_date", label: "Fin Garantía", type: "date" },
+        "asset_id",
+        "service_owner",
+        "warranty_start_date",
+        "warranty_end_date",
       ],
     },
     {
       title: "Información Organizacional",
       fields: [
-        { id: "application_code", label: "Código de Aplicación", type: "text" },
-        { id: "responsible_evc", label: "EVC Responsable", type: "text" },
-        { id: "subsidiary", label: "Filial", type: "text" },
-        {
-          id: "responsible_organization",
-          label: "Org. Responsable",
-          type: "text",
-        },
+        "application_code",
+        "responsible_evc",
+        "subsidiary",
+        "responsible_organization",
       ],
     },
     {
       title: "Facturación y Costos",
-      fields: [
-        { id: "billable", label: "Facturable", type: "text" },
-        { id: "cost_center", label: "Centro de Costos", type: "text" },
-        { id: "billing_type", label: "Tipo de Cobro", type: "text" },
-      ],
+      fields: ["billable", "cost_center", "billing_type"],
     },
     {
       title: "Órdenes de Compra",
-      fields: [
-        { id: "oc_provisioning", label: "OC Aprovisionamiento", type: "text" },
-        { id: "oc_deletion", label: "OC Eliminación", type: "text" },
-        { id: "oc_modification", label: "OC Modificación", type: "text" },
-      ],
+      fields: ["oc_provisioning", "oc_deletion", "oc_modification"],
     },
     {
       title: "Mantenimiento",
-      fields: [
-        {
-          id: "maintenance_period",
-          label: "Periodo Mantenimiento",
-          type: "text",
-        },
-        {
-          id: "maintenance_organization",
-          label: "Org. Mantenimiento",
-          type: "text",
-        },
-      ],
+      fields: ["maintenance_period", "maintenance_organization"],
     },
     {
       title: "Observaciones",
-      fields: [{ id: "comments", label: "", type: "textarea" }],
+      fields: ["comments"],
     },
   ];
 
+  const fieldLabels = {
+    name: "Nombre del servidor",
+    brand: "Marca",
+    model: "Modelo",
+    processor: "Procesador",
+    cpu_cores: "CPU Cores",
+    ram: "RAM",
+    total_disk_size: "Tamaño del disco",
+    os_type: "Sistema Operativo",
+    os_version: "Versión del SO",
+    status: "Estado",
+    role: "Rol",
+    environment: "Ambiente",
+    serial: "Serial",
+    rack_id: "ID del Rack",
+    unit: "Unidad",
+    city: "Ciudad",
+    location: "Ubicación",
+    ip_address: "Dirección IP",
+    domain: "Dominio",
+    asset_id: "ID del Activo",
+    service_owner: "Propietario",
+    warranty_start_date: "Inicio Garantía",
+    warranty_end_date: "Fin Garantía",
+    application_code: "Código de Aplicación",
+    responsible_evc: "EVC Responsable",
+    subsidiary: "Filial",
+    responsible_organization: "Org. Responsable",
+    billable: "Facturable",
+    cost_center: "Centro de Costos",
+    billing_type: "Tipo de Cobro",
+    oc_provisioning: "OC Aprovisionamiento",
+    oc_deletion: "OC Eliminación",
+    oc_modification: "OC Modificación",
+    maintenance_period: "Periodo Mantenimiento",
+    maintenance_organization: "Org. Mantenimiento",
+    comments: "Observaciones",
+  };
+
   useEffect(() => {
     const fetchServerData = async () => {
-      setLoading(true);
-      setError(null);
       try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
           `http://localhost:8000/servers/physical/${serverId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem(
-                "authenticationToken"
-              )}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("Error al obtener datos del servidor:", errorData);
-          if (response.status === 404) {
-            throw new Error("Servidor no encontrado");
-          } else if (response.status === 401) {
-            throw new Error("No autorizado");
-          } else {
-            throw new Error(
-              `Error HTTP ${response.status}: ${
-                errorData.message || errorData.detail
-              }`
-            );
-          }
+          throw new Error(errorData.message || `Error HTTP ${response.status}`);
         }
 
         const data = await response.json();
-        if (data && data.status === "success" && data.data) {
-          setServerData({
-            name: data.data.server_info.name || "",
-            brand: data.data.server_info.brand || "",
-            model: data.data.server_info.model || "",
-            processor: data.data.server_info.processor || "",
-            cpu_cores: parseInt(data.data.server_info.cpu_cores, 10) || 0,
-            ram: data.data.server_info.ram || 0,
-            total_disk_size: data.data.server_info.total_disk_size || "",
-            os_type: data.data.server_info.os_type || "",
-            os_version: data.data.server_info.os_version || "",
-            status: data.data.server_info.status || "",
-            role: data.data.server_info.role || "",
-            environment: data.data.server_info.environment || "",
-            serial: data.data.server_info.serial || "",
-            rack_id: data.data.server_info.rack_id || "",
-            unit: data.data.server_info.unit || "",
-            ip_address: data.data.server_info.ip_address || "",
-            city: data.data.server_info.city || "",
-            location: data.data.server_info.location || "",
-            asset_id: data.data.server_info.asset_id || "",
-            service_owner: data.data.server_info.service_owner || "",
-            warranty_start_date:
-              data.data.server_info.warranty_start_date || "",
-            warranty_end_date: data.data.server_info.warranty_end_date || "",
-            application_code: data.data.server_info.application_code || "",
-            responsible_evc: data.data.server_info.responsible_evc || "",
-            domain: data.data.server_info.domain || "",
-            subsidiary: data.data.server_info.subsidiary || "",
-            responsible_organization:
-              data.data.server_info.responsible_organization || "",
-            billable: data.data.server_info.billable || "",
-            oc_provisioning: data.data.server_info.oc_provisioning || "",
-            oc_deletion: data.data.server_info.oc_deletion || "",
-            oc_modification: data.data.server_info.oc_modification || "",
-            maintenance_period: data.data.server_info.maintenance_period || "",
-            maintenance_organization:
-              data.data.server_info.maintenance_organization || "",
-            cost_center: data.data.server_info.cost_center || "",
-            billing_type: data.data.server_info.billing_type || "",
-            comments: data.data.server_info.comments || "",
-          });
+        if (data?.status === "success" && data.data?.server_info) {
+          setServerData(data.data.server_info);
         } else {
-          console.error("Estructura de datos inesperada:", data);
-          setError("Estructura de datos inesperada del servidor");
+          throw new Error(
+            "Datos del servidor no encontrados o con formato inesperado"
+          );
         }
-      } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
-        setError(error.message || "Hubo un error al cargar los datos.");
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -273,102 +185,44 @@ const VerServers = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <MdVisibility className="mr-2 text-blue-600" />
+    <div className="container mx-auto px-4 py-10">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+          <MdVisibility className="mr-3 text-blue-600 text-4xl" />
           Visualizar Servidor Físico
         </h1>
         <Link
           to="/inveplus/Servidoresf"
-          className="flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 transition-colors"
+          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <MdArrowBack className="mr-2" />
           Regresar
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-200">
-          Información General
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Nombre del Servidor
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.name || "N/A"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Estado
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.status || "N/A"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Rol
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.role || "N/A"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Ambiente
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.environment || "N/A"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Dirección IP
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.ip_address || "N/A"}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Ubicación
-            </label>
-            <div className="p-2 bg-gray-50 rounded border border-gray-200">
-              {serverData.location
-                ? `${serverData.city} - ${serverData.location}`
-                : "N/A"}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
+      <div className="space-y-8">
         {formSections.map((section, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-200">
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500"
+          >
+            <h2 className="text-xl font-semibold text-blue-700 mb-6 pb-2 border-b border-gray-200">
               {section.title}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {section.fields.map((field) => (
-                <div key={field.id}>
-                  {field.label && (
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      {field.label}
-                    </label>
-                  )}
-                  {field.type === "textarea" ? (
-                    <div className="p-3 bg-gray-50 rounded border border-gray-200 min-h-[100px]">
-                      {serverData[field.id] || "Ninguna"}
-                    </div>
-                  ) : (
-                    <div className="p-2 bg-gray-50 rounded border border-gray-200">
-                      {serverData[field.id] || "N/A"}
-                    </div>
-                  )}
+                <div key={field}>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">
+                    {fieldLabels[field]}
+                  </label>
+                  <div
+                    className={`p-3 bg-gray-100 rounded-md border border-gray-300 text-gray-800 shadow-inner ${
+                      field === "comments" ? "min-h-[100px]" : ""
+                    }`}
+                  >
+                    {serverData[field] ||
+                      (field === "comments" ? "Ninguna" : "N/A")}
+                  </div>
                 </div>
               ))}
             </div>
