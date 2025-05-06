@@ -17,6 +17,8 @@ import {
   Plus,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
+import { createRoot } from "react-dom/client";
+
 
 export default function ServidoresFisicos() {
   const navigate = useNavigate();
@@ -46,14 +48,6 @@ export default function ServidoresFisicos() {
       cancelButtonText: "Cancelar",
       width: "80%",
       height: "80%",
-      /*
-          customClass: {
-             container: 'swal-custom-container',
-             popup: 'swal-custom-popup',
-             content: 'swal-custom-content'
-          },
-          grow:false,
-        */
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
         const tableMetadata = [
@@ -125,6 +119,100 @@ export default function ServidoresFisicos() {
     });
   };
 
+    const handleImportComplete = async (importedData) => {
+      console.log("Datos importados:", importedData);
+
+      Swal.fire({
+        title: "Procesando datos...",
+        text: "Estamos guardando los servidores importados",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      try {
+        const token = localStorage.getItem("authenticationToken");
+        if (!token) {
+          throw new Error("Token de autorización no encontrado.");
+        }
+
+        const formattedData = importedData.map((row) => ({
+          name: row.name || "",
+          brand: row.brand || "",
+          model: row.model || "",
+          processor: row.processor || "",
+          cpu_cores: row.cpu_cores || "",
+          ram: row.ram || "",
+          total_disk_size: row.total_disk_size || "",
+          os_type: row.os_type || "",
+          os_version: row.os_version || "",
+          status: row.status || "", 
+          role: row.role || "",
+          environment: row.environment || "",
+          serial: row.serial || "",
+          rack_id: row.rack_id || "",
+          unit: row.unit || "",
+          ip_address: row.ip_address || "",
+          city: row.city || "",
+          location: row.location || "",
+          asset_id: row.asset_id || "",
+          service_owner: row.service_owner || "",
+          warranty_start_date: row.warranty_start_date || "",
+          warranty_end_date: row.warranty_end_date || "",
+          application_code: row.application_code || "",
+          responsible_evc: row.responsible_evc || "",
+          domain: row.domain || "",
+          subsidiary: row.subsidiary || "",
+          responsible_organization: row.responsible_organization || "",
+          billable: row.billable || "",
+          oc_provisioning: row.oc_provisioning || "",
+          oc_deletion: row.oc_deletion || "",
+          oc_modification: row.oc_modification || "",
+          maintenance_period: row.maintenance_period || "",
+          maintenance_organization: row.maintenance_organization || "",
+          cost_center: row.cost_center || "",
+          billing_type: row.billing_type || "",
+          comments: row.comments || "",
+        }));
+
+      const response = await fetch(
+        "http://localhost:8000/servers/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`)
+      }
+
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        Swal.fire({
+          icon: "success",
+          title: "Importación exitosa",
+          text: `Se han importado ${importedData.length} servidores correctamente.`,
+        });
+
+        fetchServers(currentPage, rowsPerPage);
+      } catch (error) {
+        console.error("Error al procesar los datos importados:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error en la importación",
+          text:
+            error.message ||
+            "Ha ocurrido un error al procesar los datos importados.",
+        });
+      }
+    };
+
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
@@ -157,34 +245,34 @@ export default function ServidoresFisicos() {
 
   const serverDataMapper = (server) => {
     return {
-      "Nombre": server.name || "",
-      "Marca": server.brand || "",
-      "Modelo": server.model || "",
-      "Procesador": server.processor || "",
+      Nombre: server.name || "",
+      Marca: server.brand || "",
+      Modelo: server.model || "",
+      Procesador: server.processor || "",
       "Núcleos CPU": server.cpu_cores || "",
-      "RAM": server.ram || "",
+      RAM: server.ram || "",
       "Tamaño Disco Total": server.total_disk_size || "",
       "Tipo de OS": server.os_type || "",
       "Versión de OS": server.os_version || "",
-      "Estado": server.status || "",
-      "Rol": server.role || "",
-      "Entorno": server.environment || "",
-      "Serial": server.serial || "",
+      Estado: server.status || "",
+      Rol: server.role || "",
+      Entorno: server.environment || "",
+      Serial: server.serial || "",
       "Rack ID": server.rack_id || "",
-      "Unidad": server.unit || "",
+      Unidad: server.unit || "",
       "Dirección IP": server.ip_address || "",
-      "Ciudad": server.city || "",
-      "Ubicación": server.location || "",
+      Ciudad: server.city || "",
+      Ubicación: server.location || "",
       "ID de Activo": server.asset_id || "",
       "Propietario del Servicio": server.service_owner || "",
       "Fecha Inicio Garantía": server.warranty_start_date || "",
       "Fecha Fin Garantía": server.warranty_end_date || "",
       "Código de Aplicación": server.application_code || "",
       "Responsable EVC": server.responsible_evc || "",
-      "Dominio": server.domain || "",
-      "Sucursal": server.subsidiary || "",
+      Dominio: server.domain || "",
+      Sucursal: server.subsidiary || "",
       "Organización Responsable": server.responsible_organization || "",
-      "Facturable": server.billable || "",
+      Facturable: server.billable || "",
       "Provisionamiento OC": server.oc_provisioning || "",
       "Eliminación OC": server.oc_deletion || "",
       "Modificación OC": server.oc_modification || "",
@@ -192,7 +280,7 @@ export default function ServidoresFisicos() {
       "Organización de Mantenimiento": server.maintenance_organization || "",
       "Centro de Costos": server.cost_center || "",
       "Tipo de Facturación": server.billing_type || "",
-      "Comentarios": server.comments || "",
+      Comentarios: server.comments || "",
     };
   };
 
@@ -299,10 +387,6 @@ export default function ServidoresFisicos() {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
-  const handleImportComplete = (importedData) => {
-    console.log("datos importados:", importedData);
-    Swal.close();
-  };
 
   const handleExport = () => {
     exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
@@ -539,7 +623,7 @@ export default function ServidoresFisicos() {
                 onClick={irCrear}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >
-                <Plus size={16} lassName="text-white" />
+                <Plus size={16} className="text-white" />
                 <span className="hidden text-white fond-medium sm:inline">
                   Crear
                 </span>
@@ -549,7 +633,7 @@ export default function ServidoresFisicos() {
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Download size={16} lassName="text-white" />
+                <Download size={16} className="text-white" />
                 <span className="hidden text-white fond-medium sm:inline">
                   Importar
                 </span>

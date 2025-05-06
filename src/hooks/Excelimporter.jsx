@@ -1,197 +1,203 @@
-import { useState, useCallback, useRef } from "react"
-import * as XLSX from "xlsx"
-import Swal from "sweetalert2"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import PropTypes from "prop-types"
+import { useState, useCallback, useRef } from "react";
+import * as XLSX from "xlsx";
+import Swal from "sweetalert2";
+import PropTypes from "prop-types";
 
 const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
-  const [excelData, setExcelData] = useState([])
-  const [columns, setColumns] = useState([])
-  const [fileError, setFileError] = useState("")
-  const [showTable, setShowTable] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [sheetNames, setSheetNames] = useState([])
-  const [selectedSheet, setSelectedSheet] = useState("")
-  const [workbookData, setWorkbookData] = useState(null)
-  const [columnWidths, setColumnWidths] = useState({})
-  const [resizingColumn, setResizingColumn] = useState(null)
-  const startX = useRef(0)
+  const [excelData, setExcelData] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [fileError, setFileError] = useState("");
+  const [showTable, setShowTable] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [sheetNames, setSheetNames] = useState([]);
+  const [selectedSheet, setSelectedSheet] = useState("");
+  const [workbookData, setWorkbookData] = useState({});
+  const [columnWidths, setColumnWidths] = useState({});
+  const [resizingColumn, setResizingColumn] = useState(null);
+  const startX = useRef(0);
 
   // Paginación
-  const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleFileChange = (e) => {
-    setFileError("")
-    setSheetNames([])
-    setSelectedSheet("")
-    setExcelData([])
-    setShowTable(false)
-
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const fileType = file.type
-    const fileName = file.name.toLowerCase()
+    setFileError("");
+    setSheetNames([]);
+    setSelectedSheet("");
+    setExcelData([]);
+    setShowTable(false);
+    const file = e.target.files[0];
+    if (!file) return;
+    const fileType = file.type;
 
     if (
-      fileType !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
-      !fileName.endsWith(".xlsx") &&
-      !fileName.endsWith(".xls")
+      fileType !==
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
-      setFileError("Por favor, seleccione un archivo Excel válido (.xlsx)")
-      return
+      setFileError("Por favor, seleccione un archivo Excel válido (.xlsx)");
+      setExcelData([]);
+      setShowTable(false);
+      setSheetNames([]);
+      return;
     }
 
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const data = new Uint8Array(e.target?.result)
-        const workbook = XLSX.read(data, { type: "array" })
-        setSheetNames(workbook.SheetNames)
-        setWorkbookData(workbook)
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        setSheetNames(workbook.SheetNames);
+        setWorkbookData(workbook);
+        console.log("Workbook Data:", workbook.SheetNames);
       } catch (error) {
-        console.error("Error al leer archivo:", error)
-        setFileError("Error al leer archivo. Por favor, inténtalo de nuevo.")
+        console.error("Error al leer archivo:", error);
+        setFileError("Error al leer archivo. Por favor, inténtalo de nuevo.");
+        setExcelData([]);
+        setShowTable(false);
+        setSheetNames([]);
       }
-    }
-    reader.readAsArrayBuffer(file)
-  }
+    };
+    reader.readAsArrayBuffer(file);
+  };
 
   const handleSheetChange = (e) => {
-    const selectedSheet = e.target.value
-    setSelectedSheet(selectedSheet)
-
-    if (!workbookData) return
-
+    const selectedSheet = e.target.value;
+    setSelectedSheet(selectedSheet);
     try {
-      const worksheet = workbookData.Sheets[selectedSheet]
+      const worksheet = workbookData.Sheets[selectedSheet];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         header: 1,
         defval: null,
-      })
+      });
 
       if (jsonData && jsonData.length > 0) {
-        const headers = jsonData[0].map((header) => header || `Column ${columns.length + 1}`)
-        const dataRows = jsonData.slice(1)
+        const headers = jsonData[0].map(
+          (header) => header || `Column ${columns.length + 1}`
+        );
+        const dataRows = jsonData.slice(1);
+        console.log("Sheet Data:", dataRows);
 
-        setColumns(headers)
-        setExcelData(dataRows)
-        setShowTable(true)
+        setColumns(headers);
+        setExcelData(dataRows);
+        setShowTable(true);
       } else {
-        setFileError("El archivo Excel está vacío.")
-        setExcelData([])
-        setShowTable(false)
+        setFileError("El archivo Excel está vacío.");
+        setExcelData([]);
+        setShowTable(false);
       }
     } catch (error) {
-      console.error("Error al leer la hoja:", error)
-      setFileError("Error al leer la hoja. Por favor, inténtalo de nuevo.")
-      setExcelData([])
-      setShowTable(false)
+      console.error("Error al leer la hoja:", error);
+      setFileError("Error al leer la hoja. Por favor, inténtalo de nuevo.");
+      setExcelData([]);
+      setShowTable(false);
     }
-  }
+  };
 
   const handleCellValueChange = useCallback((rowIndex, colIndex, value) => {
     setExcelData((prevData) => {
-      const newData = [...prevData]
+      const newData = [...prevData];
       if (!newData[rowIndex]) {
-        newData[rowIndex] = [] // Ensure the row exists
+        newData[rowIndex] = []; // Ensure the row exists
       }
-      newData[rowIndex][colIndex] = value
-      return newData
-    })
-  }, [])
+      newData[rowIndex][colIndex] = value;
+      return newData;
+    });
+  }, []);
 
   const mapExcelData = (excelData, tableMetadata) => {
-    const flatMetadata = tableMetadata.flat()
     return excelData.map((row) => {
-      const mappedRow = {}
+      const mappedRow = {};
       row.forEach((cell, index) => {
-        const columnMetadata = flatMetadata[index]
+        const columnMetadata = tableMetadata?.[index];
         if (columnMetadata) {
-          mappedRow[columnMetadata.name] = cell
+          mappedRow[columnMetadata.name] = cell;
         }
-      })
-      return mappedRow
-    })
-  }
+      });
+      return mappedRow;
+    });
+  };
 
   // Paginación: Cambiar página
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage)
-  }
+    setCurrentPage(newPage);
+  };
 
   const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(Number.parseInt(event.target.value, 10))
-    setCurrentPage(1) // Resetear a la primera página cuando cambie el número de filas por página
-  }
+    setRowsPerPage(Number.parseInt(event.target.value, 10));
+    setCurrentPage(1); // Resetear a la primera página cuando cambie el número de filas por página
+  };
 
   // Calcular las filas que se mostrarán según la página actual y la cantidad de filas por página
-  const indexOfLastRow = currentPage * rowsPerPage
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage
-  const currentRows = excelData.slice(indexOfFirstRow, indexOfLastRow)
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = excelData.slice(indexOfFirstRow, indexOfLastRow);
 
   const handleSaveData = useCallback(async () => {
-    const validationErrors = validateData(tableMetadata.flat())
+    const validationErrors = validateData(tableMetadata);
     if (validationErrors.length > 0) {
       Swal.fire({
         icon: "error",
         title: "Validación Fallida",
-        html: "Se encontraron los siguientes errores:<br>" + validationErrors.join("<br>"),
-      })
-      return
+        html:
+          "Se encontraron los siguientes errores:<br>" +
+          validationErrors.join("<br>"),
+      });
+      return;
     }
-
-    setIsSaving(true)
+    setIsSaving(true);
     Swal.fire({
       title: "Guardando Datos...",
       html: "Por favor, espera mientras guardamos los datos.",
       allowOutsideClick: false,
       showConfirmButton: false,
       didOpen: () => {
-        Swal.showLoading()
+        Swal.showLoading();
       },
-    })
-
+    });
     try {
       // Simulación de guardado
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simula una llamada async a la base de datos
-
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula una llamada async a la base de datos
       Swal.fire({
         icon: "success",
         title: "Datos Guardados",
         text: "Los datos se han guardado correctamente.",
-      })
-
+      });
       if (typeof onImportComplete === "function") {
-        const mappedData = mapExcelData(excelData, tableMetadata)
-        onImportComplete(mappedData)
+        const mappedData = mapExcelData(excelData, tableMetadata);
+        onImportComplete(mappedData);
       }
-
-      setExcelData([])
-      setColumns([])
-      setShowTable(false)
-      setSheetNames([])
-      setSelectedSheet("")
+      setExcelData([]);
+      setColumns([]);
+      setShowTable(false);
+      setSheetNames([]);
+      setSelectedSheet("");
     } catch (error) {
-      console.error("Error al guardar:", error)
+      console.error("Error al guardar:", error);
       Swal.fire({
         icon: "error",
         title: "Error al Guardar",
-        text: error.message || "Ocurrió un error al intentar guardar los datos.",
-      })
+        text:
+          error.message || "Ocurrió un error al intentar guardar los datos.",
+      });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }, [excelData, onImportComplete, tableMetadata])
+  }, [excelData, onImportComplete, tableMetadata]);
 
   const validateData = (tableMetadata) => {
-    const errors = []
+    const errors = [];
     excelData.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
-        const columnMetadata = tableMetadata?.[colIndex]
-        if (columnMetadata?.required && (cell === null || cell === undefined || cell === "")) {
-          errors.push(`Fila ${rowIndex + 1}, columna ${colIndex + 1}: el campo no puede estar vacío.`)
+        const columnMetadata = tableMetadata?.[colIndex];
+        if (
+          columnMetadata?.required &&
+          (cell === null || cell === undefined || cell === "")
+        ) {
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo no puede estar vacío.`
+          );
         }
         if (
           columnMetadata?.type === "number" &&
@@ -200,7 +206,11 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           cell !== "" &&
           isNaN(Number(cell))
         ) {
-          errors.push(`Fila ${rowIndex + 1}, columna ${colIndex + 1}: el campo debe ser un número.`)
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo debe ser un número.`
+          );
         }
         if (
           columnMetadata?.type === "integer" &&
@@ -209,12 +219,16 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           cell !== "" &&
           !Number.isInteger(Number(cell))
         ) {
-          errors.push(`Fila ${rowIndex + 1}, columna ${colIndex + 1}: el campo debe ser un entero.`)
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo debe ser un entero.`
+          );
         }
-      })
-    })
-    return errors
-  }
+      });
+    });
+    return errors;
+  };
 
   return (
     <div className="w-full max-w-full">
@@ -239,11 +253,18 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
               ></path>
             </svg>
             <p className="mb-1 text-sm font-medium text-gray-500">
-              Haz clic para seleccionar un archivo Excel o arrastra y suelta aquí
+              Haz clic para seleccionar un archivo Excel o arrastra y suelta
+              aquí
             </p>
-            <p className="text-xs text-gray-500">.xlsx, .xls</p>
+            <p className="text-xs text-gray-500">.xlsx</p>
           </div>
-          <input id="excel-file" type="file" accept=".xlsx,.xls" onChange={handleFileChange} className="hidden" />
+          <input
+            id="excel-file"
+            type="file"
+            accept=".xlsx"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </label>
       </div>
 
@@ -271,7 +292,10 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
 
       {sheetNames.length > 0 && (
         <div className="mb-4">
-          <label htmlFor="sheet-select" className="mb-1 block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="sheet-select"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
             Seleccionar Hoja
           </label>
           <select
@@ -325,14 +349,22 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                         key={colIndex}
                         style={{ width: columnWidths[colIndex] }}
                         className={`px-6 py-2 ${
-                          cell === null || cell === undefined || cell === "" ? "bg-yellow-50" : ""
+                          cell === null || cell === undefined || cell === ""
+                            ? "bg-yellow-50"
+                            : ""
                         }`}
                       >
                         <input
                           type="text"
                           value={cell === null ? "" : cell}
                           placeholder={cell === null ? "Rellenar aquí" : ""}
-                          onChange={(e) => handleCellValueChange(rowIndex + indexOfFirstRow, colIndex, e.target.value)}
+                          onChange={(e) =>
+                            handleCellValueChange(
+                              rowIndex + indexOfFirstRow,
+                              colIndex,
+                              e.target.value
+                            )
+                          }
                           className="w-full border-0 bg-transparent p-0 focus:outline-none focus:ring-0"
                         />
                       </td>
@@ -359,8 +391,9 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
 
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-700">
-                Mostrando {indexOfFirstRow + 1} a {Math.min(indexOfLastRow, excelData.length)} de {excelData.length}{" "}
-                filas
+                Mostrando {indexOfFirstRow + 1} a{" "}
+                {Math.min(indexOfLastRow, excelData.length)} de{" "}
+                {excelData.length} filas
               </span>
               <div className="flex items-center space-x-1">
                 <button
@@ -368,7 +401,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                   disabled={currentPage === 1}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
                 </button>
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-sm font-medium text-white">
                   {currentPage}
@@ -378,7 +411,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                   disabled={indexOfLastRow >= excelData.length}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  Siguiente
                 </button>
               </div>
             </div>
@@ -422,12 +455,12 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 ExcelImporter.propTypes = {
   onImportComplete: PropTypes.func,
   tableMetadata: PropTypes.array.isRequired,
-}
+};
 
-export default ExcelImporter
+export default ExcelImporter;
