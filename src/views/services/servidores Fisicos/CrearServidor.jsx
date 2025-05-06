@@ -121,13 +121,7 @@ const CrearServidorFisico = () => {
   return (
     <div className="min-h-screen bg-white text-gray-800">
       {/* Header */}
-      <header className="w-full p-4 flex items-center border-b border-gray-200 bg-gray-100 shadow-sm">
-        <button
-          onClick={() => navigate(`${BASE_PATH}/servidoresf`)}
-          className="mr-4 p-2 rounded-full hover:bg-gray-300 transition-colors"
-        >
-          <ArrowLeft size={20} className="text-gray-900" />
-        </button>
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Crear Servidor Físico
@@ -136,6 +130,13 @@ const CrearServidorFisico = () => {
             Ingresa la información del nuevo servidor
           </p>
         </div>
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Regresar
+        </button>
       </header>
 
       {/* Main Content */}
