@@ -19,7 +19,6 @@ import {
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
-
 export default function ServidoresFisicos() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -119,62 +118,63 @@ export default function ServidoresFisicos() {
     });
   };
 
-    const handleImportComplete = async (importedData) => {
-      console.log("Datos importados:", importedData);
+  const handleImportComplete = async (importedData) => {
+    console.log("Datos importados:", importedData);
 
-      Swal.fire({
-        title: "Procesando datos...",
-        text: "Estamos guardando los servidores importados",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+    Swal.fire({
+      title: "Procesando datos...",
+      text: "Estamos guardando los servidores importados",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
-      try {
-        const token = localStorage.getItem("authenticationToken");
-        if (!token) {
-          throw new Error("Token de autorización no encontrado.");
-        }
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
 
-        const formattedData = importedData.map((row) => ({
-          name: row.name || "",
-          brand: row.brand || "",
-          model: row.model || "",
-          processor: row.processor || "",
-          cpu_cores: row.cpu_cores || "",
-          ram: row.ram || "",
-          total_disk_size: row.total_disk_size || "",
-          os_type: row.os_type || "",
-          os_version: row.os_version || "",
-          status: row.status || "", 
-          role: row.role || "",
-          environment: row.environment || "",
-          serial: row.serial || "",
-          rack_id: row.rack_id || "",
-          unit: row.unit || "",
-          ip_address: row.ip_address || "",
-          city: row.city || "",
-          location: row.location || "",
-          asset_id: row.asset_id || "",
-          service_owner: row.service_owner || "",
-          warranty_start_date: row.warranty_start_date || "",
-          warranty_end_date: row.warranty_end_date || "",
-          application_code: row.application_code || "",
-          responsible_evc: row.responsible_evc || "",
-          domain: row.domain || "",
-          subsidiary: row.subsidiary || "",
-          responsible_organization: row.responsible_organization || "",
-          billable: row.billable || "",
-          oc_provisioning: row.oc_provisioning || "",
-          oc_deletion: row.oc_deletion || "",
-          oc_modification: row.oc_modification || "",
-          maintenance_period: row.maintenance_period || "",
-          maintenance_organization: row.maintenance_organization || "",
-          cost_center: row.cost_center || "",
-          billing_type: row.billing_type || "",
-          comments: row.comments || "",
-        }));
+      const formattedData = importedData.map((row) => ({
+        name: row.name || "",
+        brand: row.brand || "",
+        model: row.model || "",
+        processor: row.processor || "",
+        cpu_cores: row.cpu_cores || "",
+        ram: row.ram || "",
+        total_disk_size: row.total_disk_size || "",
+        os_type: row.os_type || "",
+        os_version: row.os_version || "",
+        status: row.status || "",
+        role: row.role || "",
+        environment: row.environment || "",
+        serial: row.serial || "",
+        rack_id: row.rack_id || "",
+        unit: row.unit || "",
+        ip_address: row.ip_address || "",
+        city: row.city || "",
+        location: row.location || "",
+        asset_id: row.asset_id || "",
+        service_owner: row.service_owner || "",
+        warranty_start_date: row.warranty_start_date || "",
+        warranty_end_date: row.warranty_end_date || "",
+        application_code: row.application_code || "",
+        responsible_evc: row.responsible_evc || "",
+        domain: row.domain || "",
+        subsidiary: row.subsidiary || "",
+        responsible_organization: row.responsible_organization || "",
+        billable: row.billable || "",
+        oc_provisioning: row.oc_provisioning || "",
+        oc_deletion: row.oc_deletion || "",
+        oc_modification: row.oc_modification || "",
+        maintenance_period: row.maintenance_period || "",
+        maintenance_organization: row.maintenance_organization || "",
+        cost_center: row.cost_center || "",
+        billing_type: row.billing_type || "",
+        comments: row.comments || "",
+      }));
+
 
       const response = await fetch(
         "http://localhost:8000/servers/add_from_excel",
@@ -189,29 +189,29 @@ export default function ServidoresFisicos() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`)
+        throw new Error(`Error HTTP ${response.status}`);
       }
 
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        Swal.fire({
-          icon: "success",
-          title: "Importación exitosa",
-          text: `Se han importado ${importedData.length} servidores correctamente.`,
-        });
+      Swal.fire({
+        icon: "success",
+        title: "Importación exitosa",
+        text: `Se han importado ${importedData.length} servidores correctamente.`,
+      });
 
-        fetchServers(currentPage, rowsPerPage);
-      } catch (error) {
-        console.error("Error al procesar los datos importados:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error en la importación",
-          text:
-            error.message ||
-            "Ha ocurrido un error al procesar los datos importados.",
-        });
-      }
-    };
+      fetchServers(currentPage, rowsPerPage);
+    } catch (error) {
+      console.error("Error al procesar los datos importados:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error en la importación",
+        text:
+          error.message ||
+          "Ha ocurrido un error al procesar los datos importados.",
+      });
+    }
+  };
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
@@ -243,45 +243,37 @@ export default function ServidoresFisicos() {
     console.error("Error al obtener servidores:", error);
   };
 
-  const serverDataMapper = (server) => {
-    return {
-      Nombre: server.name || "",
-      Marca: server.brand || "",
-      Modelo: server.model || "",
-      Procesador: server.processor || "",
-      "Núcleos CPU": server.cpu_cores || "",
-      RAM: server.ram || "",
-      "Tamaño Disco Total": server.total_disk_size || "",
-      "Tipo de OS": server.os_type || "",
-      "Versión de OS": server.os_version || "",
-      Estado: server.status || "",
-      Rol: server.role || "",
-      Entorno: server.environment || "",
-      Serial: server.serial || "",
-      "Rack ID": server.rack_id || "",
-      Unidad: server.unit || "",
-      "Dirección IP": server.ip_address || "",
-      Ciudad: server.city || "",
-      Ubicación: server.location || "",
-      "ID de Activo": server.asset_id || "",
-      "Propietario del Servicio": server.service_owner || "",
-      "Fecha Inicio Garantía": server.warranty_start_date || "",
-      "Fecha Fin Garantía": server.warranty_end_date || "",
-      "Código de Aplicación": server.application_code || "",
-      "Responsable EVC": server.responsible_evc || "",
-      Dominio: server.domain || "",
-      Sucursal: server.subsidiary || "",
-      "Organización Responsable": server.responsible_organization || "",
-      Facturable: server.billable || "",
-      "Provisionamiento OC": server.oc_provisioning || "",
-      "Eliminación OC": server.oc_deletion || "",
-      "Modificación OC": server.oc_modification || "",
-      "Periodo de Mantenimiento": server.maintenance_period || "",
-      "Organización de Mantenimiento": server.maintenance_organization || "",
-      "Centro de Costos": server.cost_center || "",
-      "Tipo de Facturación": server.billing_type || "",
-      Comentarios: server.comments || "",
-    };
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch("http://localhost:8000/servers/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "servers.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const token = localStorage.getItem("authenticationToken");
@@ -386,11 +378,6 @@ export default function ServidoresFisicos() {
       setIsSearchButtonClicked(false);
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
-
-
-  const handleExport = () => {
-    exportToExcel(servers, "servidores_fisicos", serverDataMapper); //AQUI USAMO EL HOOK QUE EXPORTA A EXCEL
-  };
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
