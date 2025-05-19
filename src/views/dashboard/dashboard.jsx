@@ -51,6 +51,7 @@ export default function Dashboard() {
       count: 12,
       icon: Server,
       description: "Gestión de servidores IBM Power Systems",
+      route: `${BASE_PATH}/pseries`,
     },
     {
       id: 5,
@@ -154,9 +155,22 @@ export default function Dashboard() {
   };
 
   const handleModuleClick = (moduleId) => {
-    if (moduleId === 1) {
-      navigate(`${BASE_PATH}/servidoresf`);
-    } else {
+    switch (moduleId) {
+      case 1:
+        navigate(`${BASE_PATH}/servidoresf`);
+        break;
+      case 2:
+        navigate(`${BASE_PATH}/basesdedatos`);
+        break;
+      case 3:
+        navigate(`${BASE_PATH}/frontend`);
+        break;
+      case 4:
+        navigate(`${BASE_PATH}/pseries`);
+        break;
+      default:
+        console.warn("Módulo no reconocido:", moduleId);
+        break;
     }
   };
 
@@ -201,7 +215,9 @@ export default function Dashboard() {
       <main className="container mx-auto p-6">
         {/* Welcome Section */}
         <div className="bg-white rounded-lg p-6 mb-8 shadow-lg">
-          <h2 className="text-2xl text-gray-900 font-bold mb-2">¡Bienvenido, {user.name}!</h2>
+          <h2 className="text-2xl text-gray-900 font-bold mb-2">
+            ¡Bienvenido, {user.name}!
+          </h2>
           <p className="text-gray-800">
             Desde aquí puedes gestionar todos los módulos del sistema.
             Selecciona una opción para comenzar.
@@ -210,7 +226,9 @@ export default function Dashboard() {
 
         {/* Modules Grid */}
         <div className="bg-white rounded-lg p-6 shadow-lg">
-          <h3 className="text-2xl text-gray-900 font-bold mb-6">Módulos Disponibles</h3>
+          <h3 className="text-2xl text-gray-900 font-bold mb-6">
+            Módulos Disponibles
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((module) => (
@@ -232,7 +250,9 @@ export default function Dashboard() {
                   </span>
                 </div>
 
-                <h4 className="text-lg text-gray-900 font-medium mb-2">{module.title}</h4>
+                <h4 className="text-lg text-gray-900 font-medium mb-2">
+                  {module.title}
+                </h4>
                 <p className="text-gray-900 font-semibold text-sm mb-4">
                   {module.description}
                 </p>

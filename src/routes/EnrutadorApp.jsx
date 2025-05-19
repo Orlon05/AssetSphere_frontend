@@ -24,7 +24,7 @@ const VerServers = lazy(() =>
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
 // const Storage = lazy(() => import("../pages/Storage"));
-// const Pseries = lazy(() => import("../pages/Pseries"));
+const Pseries = lazy(() => import("../views/services/Pseries/Pseries"));
 // const CrearPseries = lazy(() => import("../pages/CrearPseries"));
 // const EditarPseries = lazy(() => import("../pages/EditarPseries"));
 // const VerPseries = lazy(() => import("../pages/VerPseries"));
@@ -118,14 +118,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/pseries`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Pseries />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/pseries`,
+    element: (
+      <ProtectedRoute>
+        <Pseries />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/base-de-datos`,
   //   element: (
