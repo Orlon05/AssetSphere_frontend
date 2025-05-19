@@ -48,7 +48,7 @@ export default function Dashboard() {
     {
       id: 4,
       title: "PSeries",
-      count: 12,
+      count: 0,
       icon: Server,
       description: "Gestión de servidores IBM Power Systems",
       route: `${BASE_PATH}/pseries`,
@@ -132,8 +132,81 @@ export default function Dashboard() {
     }
   };
 
+  const fetchPseriesCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+      const response = await fetch(
+        "http://localhost:8000/pseries/pseries?page=1&limit=1000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log("Respuesta completa de la API PSeries:", data);
+
+      if (data && data.status === "success" && data.data) {
+        let totalCount = 0;
+
+        if (data.data.total_count !== undefined) {
+          totalCount = data.data.total_count;
+          console.log("Usando total_count:", totalCount);
+        } else if (data.data.total !== undefined) {
+          totalCount = data.data.total;
+          console.log("Usando total:", totalCount);
+        } else if (data.data.pseries && Array.isArray(data.data.pseries)) {
+          totalCount = data.data.pseries.length;
+          console.log("Usando pseries.length:", totalCount);
+        } else if (
+          data.data.total_pages !== undefined &&
+          data.data.per_page !== undefined
+        ) {
+          totalCount = data.data.total_pages * data.data.per_page;
+          console.log("Usando total_pages * per_page:", totalCount);
+        }
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 4
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        console.warn("Formato de respuesta inesperado:", data);
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 4 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error al obtener el conteo de servidores PSeries:", error);
+      setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 4 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     fetchServerCount();
+    fetchPseriesCount();
   }, []);
 
   const handleLogout = () => {

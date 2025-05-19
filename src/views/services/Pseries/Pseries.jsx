@@ -17,10 +17,11 @@ import {
   Upload,
   Plus,
 } from "lucide-react";
+import { createRoot } from "react-dom/client";
+import ExcelImporter from "../../../hooks/Excelimporter";
 
 const Pseries = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,8 @@ const Pseries = () => {
   const searchInputRef = useRef(null);
 
   const selectedCount = selectedPseries.size;
+
+  const BASE_PATH = "/inveplus";
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
@@ -169,33 +172,6 @@ const Pseries = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
 
-  const pseriesDataMapper = (pseries) => {
-    return {
-      "Nombre Lpar en la HMC": pseries.name || "",
-      "Aplicación": pseries.application || "",
-      "Hostname": pseries.hostname || "",
-      "IP": pseries.ip_address || "",
-      "Ambientes": pseries.environment || "",
-      "Cajón": pseries.slot || "",
-      "ID Lpar": pseries.lpar_id || "",
-      "Estado": pseries.status || "",
-      "S.O": pseries.os || "",
-      "Versión": pseries.version || "",
-      "Filial": pseries.subsidiary || "",
-      "CPU MIN": pseries.min_cpu || "",
-      "CPU ACT": pseries.act_cpu || "",
-      "CPU MAX": pseries.max_cpu || "",
-      "CPU V MIN": pseries.min_v_cpu || "",
-      "CPU V ACT": pseries.act_v_cpu || "",
-      "CPU V MAX": pseries.max_v_cpu || "",
-      "Memoria MIN": pseries.min_memory || "",
-      "Memoria ACT": pseries.act_memory || "",
-      "Memoria MAX": pseries.max_memory || "",
-      "Factor de expansión": pseries.expansion_factor || "",
-      "Memoria por factor": pseries.memory_per_factor || "",
-      "Proc Compat": pseries.processor_compatibility || "",
-    };
-  };
 
   // Función modificada para manejar la importación sin createRoot
   const handleImport = () => {
@@ -222,7 +198,7 @@ const Pseries = () => {
           { name: "version", required: false, type: "string" },
           { name: "subsidiary", required: false, type: "string" },
           { name: "min_cpu", required: true, type: "string" },
-          { name: "act_cpu", required: true, type: "string" },
+          { name: "act_cpu", required: false, type: "string" },
           { name: "max_cpu", required: true, type: "string" },
           { name: "min_v_cpu", required: true, type: "string" },
           { name: "act_v_cpu", required: true, type: "string" },
@@ -234,49 +210,30 @@ const Pseries = () => {
           { name: "memory_per_factor", required: false, type: "string" },
           { name: "processor_compatibility", required: false, type: "string" },
         ];
-
-        // Renderizamos el componente directamente usando React.createElement
-        // en lugar de JSX y createRoot
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleImportComplete}
+            tableMetadata={tableMetadata}
+          />
+        );
         if (container) {
-          try {
-            // Importamos React y ReactDOM
-            const React = require("react");
-            const ReactDOM = require("react-dom");
-            const ExcelImporter = require("./components/ExcelImporter").default;
-
-            // Renderizamos el componente ExcelImporter directamente en el contenedor
-            ReactDOM.render(
-              React.createElement(ExcelImporter, {
-                onImportComplete: handleImportComplete,
-                tableMetadata: tableMetadata,
-              }),
-              container
-            );
-          } catch (error) {
-            console.error("Error al renderizar el importador:", error);
-            container.innerHTML =
-              "Error al cargar el componente de importación";
-          }
+          const root = createRoot(container);
+          root.render(importer);
         }
       },
       willClose: () => {
         const container = document.getElementById("excel-importer-container");
         if (container) {
-          try {
-            // Desmontamos el componente al cerrar
-            const ReactDOM = require("react-dom");
-            ReactDOM.unmountComponentAtNode(container);
-          } catch (error) {
-            console.error("Error al desmontar el componente:", error);
-          }
+          const root = createRoot(container);
+          root.unmount();
         }
       },
     });
   };
-
   // Función para manejar los datos importados
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados:", importedData);
+    console.log("Datos importados (cantidad):", importedData.length);
+    console.log("Datos importados (muestra):", importedData.slice(0, 3));
 
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
@@ -290,7 +247,7 @@ const Pseries = () => {
     // Mostrar un mensaje de carga
     Swal.fire({
       title: "Procesando datos...",
-      text: "Estamos guardando los servidores importados",
+      text: `Estamos guardando ${importedData.length} servidores importados`,
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
@@ -304,31 +261,39 @@ const Pseries = () => {
       }
 
       // Formateamos los datos para enviarlos al servidor
-      const formattedData = importedData.map((row) => ({
-        name: String(row.name || ""),
-        application: String(row.application || ""),
-        hostname: String(row.hostname || ""),
-        ip_address: String(row.ip_address || ""),
-        environment: String(row.environment || ""),
-        slot: String(row.slot || ""),
-        lpar_id: String(row.lpar_id || ""),
-        status: String(row.status || ""),
-        os: String(row.os || ""),
-        version: String(row.version || ""),
-        subsidiary: String(row.subsidiary || ""),
-        min_cpu: String(row.min_cpu || ""),
-        act_cpu: String(row.act_cpu || ""),
-        max_cpu: String(row.max_cpu || ""),
-        min_v_cpu: String(row.min_v_cpu || ""),
-        act_v_cpu: String(row.act_v_cpu || ""),
-        max_v_cpu: String(row.max_v_cpu || ""),
-        min_memory: String(row.min_memory || ""),
-        act_memory: String(row.act_memory || ""),
-        max_memory: String(row.max_memory || ""),
-        expansion_factor: String(row.expansion_factor || ""),
-        memory_per_factor: String(row.memory_per_factor || ""),
-        processor_compatibility: String(row.processor_compatibility || ""),
-      }));
+      const formattedData = importedData.map((row) => {
+        // Crear una copia para no modificar el original
+        const formattedRow = {};
+
+        // Asegurarse de que todos los campos existan y sean strings
+        formattedRow.name = String(row.name || "");
+        formattedRow.application = String(row.application || "");
+        formattedRow.hostname = String(row.hostname || "");
+        formattedRow.ip_address = String(row.ip_address || "");
+        formattedRow.environment = String(row.environment || "");
+        formattedRow.slot = String(row.slot || "");
+        formattedRow.lpar_id = String(row.lpar_id || "");
+        formattedRow.status = String(row.status || "");
+        formattedRow.os = String(row.os || "");
+        formattedRow.version = String(row.version || "");
+        formattedRow.subsidiary = String(row.subsidiary || "");
+        formattedRow.min_cpu = String(row.min_cpu || "");
+        formattedRow.act_cpu = String(row.act_cpu || "");
+        formattedRow.max_cpu = String(row.max_cpu || "");
+        formattedRow.min_v_cpu = String(row.min_v_cpu || "");
+        formattedRow.act_v_cpu = String(row.act_v_cpu || "");
+        formattedRow.max_v_cpu = String(row.max_v_cpu || "");
+        formattedRow.min_memory = String(row.min_memory || "");
+        formattedRow.act_memory = String(row.act_memory || "");
+        formattedRow.max_memory = String(row.max_memory || "");
+        formattedRow.expansion_factor = String(row.expansion_factor || "");
+        formattedRow.memory_per_factor = String(row.memory_per_factor || "");
+        formattedRow.processor_compatibility = String(
+          row.processor_compatibility || ""
+        );
+
+        return formattedRow;
+      });
 
       // Enviar los datos al servidor
       const response = await fetch(
@@ -369,11 +334,36 @@ const Pseries = () => {
     }
   };
 
-  const handleExport = () => {
-    // Simulamos la exportación ya que no tenemos acceso al hook useExport
-    alert("Exportando datos a Excel...");
-    // En una implementación real, llamaríamos a:
-    // exportToExcel(pseries, "pseries", pseriesDataMapper)
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch("http://localhost:8000/pseries/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pseries.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -479,18 +469,6 @@ const Pseries = () => {
       }
     });
   };
-
-//   const irCrear = () => {
-//     router.push("/crear-pseries");
-//   };
-
-//   const irVer = (pseriesId) => {
-//     router.push(`/ver/${pseriesId}/pseries`);
-//   };
-
-//   const irEditar = (pseriesId) => {
-//     router.push(`/editar/${pseriesId}/pseries`);
-//   };
 
   const getStatusBadge = (status) => {
     if (!status) return null;
@@ -624,11 +602,11 @@ const Pseries = () => {
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
-                // onClick={handleImport}
+                onClick={handleImport}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Upload size={16} />
+                <Download size={16} />
                 <span className="hidden sm:inline">Importar</span>
               </button>
               <button
@@ -636,7 +614,7 @@ const Pseries = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                 title="Exportar a Excel"
               >
-                <Download size={16} />
+                <Upload size={16} />
                 <span className="hidden sm:inline">Exportar</span>
               </button>
             </div>
@@ -712,7 +690,9 @@ const Pseries = () => {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
-                            onClick={() => irVer(server.id)}
+                            onClick={() =>
+                              navigate(`${BASE_PATH}/ver/:pseriesId/pseries`)
+                            }
                             className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             title="Ver detalles"
                           >

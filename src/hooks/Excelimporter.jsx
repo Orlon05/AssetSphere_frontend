@@ -68,14 +68,30 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
         header: 1,
         defval: null,
+        raw: false, // Convertir todos los valores a strings
       });
 
       if (jsonData && jsonData.length > 0) {
-        const headers = jsonData[0].map(
-          (header) => header || `Column ${columns.length + 1}`
+        // Filtrar filas vacías
+        const filteredData = jsonData.filter((row) =>
+          row.some((cell) => cell !== null && cell !== undefined && cell !== "")
         );
-        const dataRows = jsonData.slice(1);
-        console.log("Sheet Data:", dataRows);
+
+        if (filteredData.length === 0) {
+          setFileError("El archivo Excel no contiene datos válidos.");
+          setExcelData([]);
+          setShowTable(false);
+          return;
+        }
+
+        const headers = filteredData[0].map(
+          (header, idx) => header || `Column ${idx + 1}`
+        );
+        const dataRows = filteredData.slice(1);
+
+        console.log("Headers detectados:", headers);
+        console.log("Filas de datos:", dataRows);
+        console.log("Total de filas:", dataRows.length);
 
         setColumns(headers);
         setExcelData(dataRows);
@@ -105,14 +121,49 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
   }, []);
 
   const mapExcelData = (excelData, tableMetadata) => {
+    // Verificar que tableMetadata sea un array
+    if (!Array.isArray(tableMetadata)) {
+      console.error("tableMetadata no es un array:", tableMetadata);
+      return [];
+    }
+
     return excelData.map((row) => {
       const mappedRow = {};
-      row.forEach((cell, index) => {
-        const columnMetadata = tableMetadata?.[index];
-        if (columnMetadata) {
-          mappedRow[columnMetadata.name] = cell;
-        }
-      });
+
+      // Verificar si estamos usando el formato correcto de tableMetadata
+      if (
+        tableMetadata.length > 0 &&
+        typeof tableMetadata[0] === "object" &&
+        "name" in tableMetadata[0]
+      ) {
+        // Formato: [{name: "nombre", ...}, {name: "otro", ...}]
+        row.forEach((cell, index) => {
+          if (index < tableMetadata.length) {
+            const columnMetadata = tableMetadata[index];
+            if (columnMetadata && columnMetadata.name) {
+              mappedRow[columnMetadata.name] = cell;
+            }
+          }
+        });
+      } else {
+        // Si tableMetadata es un array anidado, usar el primer elemento
+        const metadataArray = Array.isArray(tableMetadata[0])
+          ? tableMetadata[0]
+          : tableMetadata;
+
+        row.forEach((cell, index) => {
+          if (index < metadataArray.length) {
+            const columnMetadata = metadataArray[index];
+            if (columnMetadata && columnMetadata.name) {
+              mappedRow[columnMetadata.name] = cell;
+            }
+          }
+        });
+      }
+
+      // Registrar para depuración
+      console.log("Fila mapeada:", mappedRow);
+
       return mappedRow;
     });
   };
@@ -144,6 +195,17 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       });
       return;
     }
+
+    // Verificar que haya datos para guardar
+    if (excelData.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Sin datos",
+        text: "No hay datos para importar.",
+      });
+      return;
+    }
+
     setIsSaving(true);
     Swal.fire({
       title: "Guardando Datos...",
@@ -154,18 +216,32 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         Swal.showLoading();
       },
     });
+
     try {
+      // Mapear los datos
+      const mappedData = mapExcelData(excelData, tableMetadata);
+
+      // Verificar que se hayan mapeado correctamente
+      if (mappedData.length === 0) {
+        throw new Error("No se pudieron mapear los datos correctamente");
+      }
+
+      console.log("Datos mapeados para guardar:", mappedData);
+      console.log("Cantidad de registros a guardar:", mappedData.length);
+
       // Simulación de guardado
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula una llamada async a la base de datos
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       Swal.fire({
         icon: "success",
         title: "Datos Guardados",
-        text: "Los datos se han guardado correctamente.",
+        text: `Se han procesado ${mappedData.length} registros correctamente.`,
       });
+
       if (typeof onImportComplete === "function") {
-        const mappedData = mapExcelData(excelData, tableMetadata);
         onImportComplete(mappedData);
       }
+
       setExcelData([]);
       setColumns([]);
       setShowTable(false);
@@ -317,7 +393,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       {showTable && (
         <div className="space-y-4">
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 table-fixed">
               <thead className="bg-gray-50">
                 <tr>
                   {columns.map((header, index) => (
@@ -326,8 +402,8 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                       style={{ width: columnWidths[index] }}
                       className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                     >
-                      <div className="flex items-center justify-between">
-                        <span>{header}</span>
+                      <div className="flex items-center justify-between whitespace-nowrap">
+                        <span className="inline-block">{header}</span>
                         <span
                           className="ml-2 cursor-col-resize select-none border-l border-gray-300 pl-1"
                           onMouseDown={(e) => {
@@ -352,7 +428,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                           cell === null || cell === undefined || cell === ""
                             ? "bg-yellow-50"
                             : ""
-                        }`}
+                        } whitespace-nowrap overflow-hidden text-ellipsis`}
                       >
                         <input
                           type="text"
