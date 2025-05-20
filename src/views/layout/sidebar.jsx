@@ -1,24 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
-import { useNavigate } from "react-router-dom";
+import BasesDeDatos from "../services/Base de datos/baseDeDatos";
+import { useLocation, useNavigate } from "react-router-dom";
 // import ServidoresVirtuales from "../services/servidoresV";
-// import BasesDeDatos from "../services/basesDeDatos";
+
 // import Pseries from "../services/pseries";
 // import Storage from "../services/storage";
 // import Sucursales from "../services/sucursales";
-import {
-  Server,
-  Database,
-  HardDrive,
-  Building,
-  Cloud,
-  ArrowLeft,
-  LayoutDashboard,
-} from "lucide-react";
+import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
-  const [activeMenu, setActiveMenu] = useState(1); // Por defecto muestra ServidoresFisicos
+  const [activeMenu, setActiveMenu] = useState();
 
   const Menus = [
     { id: 1, title: "Servidores Fisicos", icon: Server },
@@ -29,23 +22,30 @@ export default function Sidebar() {
     { id: 6, title: "Sucursales", icon: Building },
   ];
 
-  // // Función para renderizar el componente correcto según el ID seleccionado
-  // const renderComponent = () => {
-  //   switch (activeMenu) {
-  //     case 1:
-  //       return <ServidoresFisicos />;
-  //     // case 2:
-  //     //   return <ServidoresVirtuales />;
-  //     // case 3:
-  //     //   return <BasesDeDatos />;
-  //     // case 4:
-  //     //   return <Pseries />;
-  //     // case 5:
-  //     //   return <Storage />;
-  //     // case 6:
-  //     //   return <Sucursales />;
-  //   }
-  // };
+  const renderComponent = () => {
+    // Obtenemos el parámetro directamente aquí para asegurarnos
+    const params = new URLSearchParams(location.search);
+    const currentModule = params.get("activeModule");
+
+    console.log("Renderizando módulo:", currentModule);
+
+    // Verifica explícitamente el valor exacto que viene en la URL
+    if (currentModule === "base-de-datos") {
+      return <BasesDeDatos />;
+    } else {
+      return <ServidoresFisicos />;
+      // } else if (currentModule === "servidores-fisicos") {
+      //   return <ServidoresFisicosComponent />;
+      // } else if (currentModule === "servidores-virtuales") {
+      //   return <ServidoresVirtualesComponent />;
+      // } else if (currentModule === "pseries") {
+      //   return <PseriesComponent />;
+      // } else if (currentModule === "storage") {
+      //   return <StorageComponent />;
+      // } else if (currentModule === "sucursales") {
+      //   return <SucursalesComponent />;
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -87,9 +87,8 @@ export default function Sidebar() {
       </div>
 
       <div className="flex-1 overflow-auto">
-        {/* Renderiza el componente basado en el menú activo
-        {renderComponent()} */}
-        <ServidoresFisicos />
+        {/* Renderiza el componente basado en el menú activo */}
+        {renderComponent()}
       </div>
     </div>
   );

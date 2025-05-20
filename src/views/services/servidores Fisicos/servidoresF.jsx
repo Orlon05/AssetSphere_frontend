@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import irVer from "./verservidor";
-import irEditar from "./editarservidor";
 import {
   Search,
   Server,
@@ -17,7 +15,6 @@ import {
   Download,
   Upload,
   Plus,
-  Donut,
 } from "lucide-react";
 
 export default function ServidoresFisicos() {
@@ -444,7 +441,7 @@ export default function ServidoresFisicos() {
   return (
     <div className="min-h-screen bg-white text-gray-100">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-8 flex justify-between items-center border-b border-gray-200">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-400" />

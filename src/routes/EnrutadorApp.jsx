@@ -31,9 +31,15 @@ const VerServers = lazy(() =>
 // const CrearStorage = lazy(() => import("../pages/CrearStorage"));
 // const EditarStorage = lazy(() => import("../pages/EditarStorage"));
 // const VerStorage = lazy(() => import("../pages/VerStorage"));
-// const BaseDatos = lazy(() => import("../pages/BaseDatos"));
-// const CrearBaseDatos = lazy(() => import("../pages/CrearBaseDatos"));
-// const VerBaseDatos = lazy(() => import("../pages/VerBaseDatos"));
+const BaseDatos = lazy(() =>
+  import("../views/services/Base de datos/baseDeDatos")
+);
+const CrearBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/CrearBasedeDatos")
+);
+const VerBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/verbasededatos")
+);
 // const EditarBaseDatos = lazy(() => import("../pages/EditarBaseDatos"));
 // const Sucursales = lazy(() => import("../pages/Sucursales"));
 // const CrearSucursales = lazy(() => import("../pages/CrearSucursales"));
@@ -126,14 +132,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/base-de-datos`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <BaseDatos />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/base-de-datos`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/sucursales`,
   //   element: (
@@ -184,14 +190,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/crear-base-de-datos`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearBaseDatos />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-base-de-datos`,
+    element: (
+      <ProtectedRoute>
+        <CrearBaseDatos />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/crear-sucursales`,
   //   element: (
@@ -292,14 +298,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/ver/:baseDatosId/basedatos`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerBaseDatos />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/ver/:baseDeDatosId/base-de-datos`,
+    element: (
+      <ProtectedRoute>
+        <VerBaseDatos />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/ver/:sucursalId/sucursales`,
   //   element: (
