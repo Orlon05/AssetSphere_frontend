@@ -3,122 +3,134 @@ import { useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 const VerPseries = () => {
-  const { pseriesId } = useParams();
-  const [pseriesData, setPseriesData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [name, setName] = useState("");
+  const [application, setApplication] = useState("");
+  const [hostname, setHostName] = useState("");
+  const [ip_address, setIpAddress] = useState("");
+  const [environment, setEnvironment] = useState(0);
+  const [slot, setSlot] = useState(0);
+  const [lpar_id, setLparId] = useState("");
+  const [status, setStatus] = useState("");
+  const [os, setOs] = useState("");
+  const [version, setVersion] = useState("");
+  const [subsidiary, setSubsidiary] = useState("");
+  const [min_cpu, setMinCpu] = useState("");
+  const [act_cpu, setActCpu] = useState("");
+  const [max_cpu, setMaxCpu] = useState("");
+  const [min_v_cpu, setMinVCpu] = useState("");
+  const [act_v_cpu, setActVCpu] = useState("");
+  const [max_v_cpu, setMaxVCpu] = useState("");
+  const [min_memory, setMinMemory] = useState("");
+  const [act_memory, setActMemory] = useState("");
+  const [max_memory, setMaxMemory] = useState("");
+  const [expansion_factor, setExpansionFactor] = useState("");
+  const [memory_per_factor, setMemoryPerFactor] = useState("");
+  const [processor_compatibility, setProcessorCompatibility] = useState("");
+  const [loading, setLoading] = useState(true); // Estado para indicar carga
+  const [error, setError] = useState(null); // Estado para manejar errores
 
-  const formSections = [
-    {
-      title: "Información General",
-      fields: [
-        "name",
-        "application",
-        "hostname",
-        "ip_address",
-        "status",
-        "subsidiary",
-      ],
-    },
-    {
-      title: "Ubicación",
-      fields: ["environment", "slot", "lpar_id"],
-    },
-    {
-      title: "Sistema Operativo",
-      fields: ["os", "version"],
-    },
-    {
-      title: "CPU",
-      fields: [
-        "min_cpu",
-        "act_cpu",
-        "max_cpu",
-        "min_v_cpu",
-        "act_v_cpu",
-        "max_v_cpu",
-      ],
-    },
-    {
-      title: "Memoria",
-      fields: ["min_memory", "act_memory", "max_memory"],
-    },
-    {
-      title: "Información Adicional",
-      fields: [
-        "expansion_factor",
-        "memory_per_factor",
-        "processor_compatibility",
-      ],
-    },
+  const { pserieId } = useParams();
+
+  const environment_ = [
+    "Certificación",
+    "Desarrollo",
+    "Producción",
+    "Pruebas",
+    "VIOS-Producción",
   ];
 
-  const fieldLabels = {
-    name: "Nombre Lpar en la HMC",
-    application: "Aplicación",
-    hostname: "Hostname",
-    ip_address: "Dirección IP",
-    status: "Estado",
-    subsidiary: "Filial",
-    environment: "Ambiente",
-    slot: "Cajón",
-    lpar_id: "ID Lpar",
-    os: "Sistema Operativo",
-    version: "Versión",
-    min_cpu: "CPU MIN",
-    act_cpu: "CPU ACT",
-    max_cpu: "CPU MAX",
-    min_v_cpu: "CPU V MIN",
-    act_v_cpu: "CPU V ACT",
-    max_v_cpu: "CPU V MAX",
-    min_memory: "Memoria MIN",
-    act_memory: "Memoria ACT",
-    max_memory: "Memoria MAX",
-    expansion_factor: "Factor de expansión",
-    memory_per_factor: "Memoria por factor",
-    processor_compatibility: "Proc Compat",
-  };
+  const status_ = ["Not Activated", "Running"];
+
+  const os_ = ["Aixlinux", "Vioserver"];
+
+  const subsidiary_ = ["Bancolombia", "Banistmo", "Filiales OffShore", "Nequi"];
+
+  const processor_compatibility_ = [
+    "Defalut",
+    "POWER7",
+    "POWER8",
+    "POWER9",
+    "POWER9_base",
+    "#N/D",
+  ];
+
+  const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
     const fetchPseriesData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        setError(null);
-        const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `http://localhost:8000/pseries/get_by_id/${pseriesId}`,
+          `http://localhost:8000/pseries/pseries/${pserieId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem(
+                "authenticationToken"
+              )}`,
             },
           }
         );
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || `Error HTTP ${response.status}`);
+          console.error("Error al obtener datos del servidor:", errorData);
+          if (response.status === 404) {
+            throw new Error("Servidor no encontrado");
+          } else if (response.status === 401) {
+            throw new Error("No autorizado");
+          } else {
+            throw new Error(
+              `Error HTTP ${response.status}: ${
+                errorData.message || errorData.detail
+              }`
+            );
+          }
         }
 
         const data = await response.json();
-        if (data?.status === "success" && data.data?.pseries) {
-          setPseriesData(data.data.pseries);
+        if (data && data.status === "success" && data.data) {
+          setName(data.data.name || "");
+          setApplication(data.data.application || "");
+          setHostName(data.data.hostname || "");
+          setIpAddress(data.data.ip_address || "");
+          setEnvironment(data.data.environment || "");
+          setSlot(data.data.slot || "");
+          setLparId(data.data.lpar_id || "");
+          setStatus(data.data.status || "");
+          setOs(data.data.os || "");
+          setVersion(data.data.version || "");
+          setSubsidiary(data.data.subsidiary || "");
+          setMinCpu(data.data.min_cpu || "");
+          setActCpu(data.data.act_cpu || "");
+          setMaxCpu(data.data.max_cpu || "");
+          setMinVCpu(data.data.min_v_cpu || "");
+          setActVCpu(data.data.act_v_cpu || "");
+          setMaxVCpu(data.data.max_cpu || "");
+          setMinMemory(data.data.min_memory || "");
+          setActMemory(data.data.act_memory || "");
+          setMaxMemory(data.data.max_memory || "");
+          setExpansionFactor(data.data.expansion_factor || "");
+          setMemoryPerFactor(data.data.memory_per_factor || "");
+          setProcessorCompatibility(data.data.processor_compatibility || "");
         } else {
-          throw new Error(
-            "Datos del servidor no encontrados o con formato inesperado"
-          );
+          console.error("Estructura de datos inesperada:", data);
+          setError("Estructura de datos inesperada del storage");
         }
-      } catch (err) {
-        console.error("Error al obtener datos:", err);
-        setError(err.message);
+      } catch (error) {
+        console.error("Error al obtener datos del storage:", error);
+        setError(error.message || "Hubo un error al cargar los datos.");
       } finally {
         setLoading(false);
       }
     };
 
-    if (pseriesId) {
+    if (pserieId) {
       fetchPseriesData();
     }
-  }, [pseriesId]);
+  }, [pserieId]);
+
+  useEffect(() => {}, [name, application]);
 
   if (loading) {
     return (
