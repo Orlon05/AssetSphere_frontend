@@ -24,10 +24,10 @@ const VerServers = lazy(() =>
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
 // const Storage = lazy(() => import("../pages/Storage"));
-// const Pseries = lazy(() => import("../pages/Pseries"));
+const Pseries = lazy(() => import("../views/services/Pseries/Pseries"));
 // const CrearPseries = lazy(() => import("../pages/CrearPseries"));
 // const EditarPseries = lazy(() => import("../pages/EditarPseries"));
-// const VerPseries = lazy(() => import("../pages/VerPseries"));
+const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
 // const CrearStorage = lazy(() => import("../pages/CrearStorage"));
 // const EditarStorage = lazy(() => import("../pages/EditarStorage"));
 // const VerStorage = lazy(() => import("../pages/VerStorage"));
@@ -40,7 +40,9 @@ const CrearBaseDatos = lazy(() =>
 const VerBaseDatos = lazy(() =>
   import("../views/services/Base de datos/verbasededatos")
 );
-// const EditarBaseDatos = lazy(() => import("../pages/EditarBaseDatos"));
+const EditarBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/editarbasededatos")
+);
 // const Sucursales = lazy(() => import("../pages/Sucursales"));
 // const CrearSucursales = lazy(() => import("../pages/CrearSucursales"));
 // const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
@@ -124,14 +126,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/pseries`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Pseries />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/pseries`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/base-de-datos`,
     element: (
@@ -248,14 +250,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/editar/:baseDatosId/basedatos`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <EditarBaseDatos />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/editar/:baseDatosId/basedatos`,
+    element: (
+      <ProtectedRoute>
+        <EditarBaseDatos />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/editar/:sucursalId/sucursales`,
   //   element: (

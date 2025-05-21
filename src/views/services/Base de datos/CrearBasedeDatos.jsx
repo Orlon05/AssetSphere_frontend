@@ -562,7 +562,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="supported"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Apoyado
+                    Apoyado Por
                   </label>
                   <input
                     type="text"

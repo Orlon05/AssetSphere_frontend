@@ -50,7 +50,7 @@ export default function Dashboard() {
     {
       id: 4,
       title: "PSeries",
-      count: 12,
+      count: 0,
       icon: Server,
       description: "Gestión de servidores IBM Power Systems",
       route: `${BASE_PATH}/pseries`,
@@ -122,6 +122,7 @@ export default function Dashboard() {
   // Llama a la función de conteo al cargar el componente
   useEffect(() => {
     fetchServerCount();
+    // fetchPseriesCount();
   }, []);
 
   // Función para cerrar sesión
@@ -154,7 +155,8 @@ export default function Dashboard() {
     // else if (moduleId === 2) navigate(`${BASE_PATH}/servidoresv?activeModule=${moduleKey}`);
     else if (moduleId === 3)
       navigate(`${BASE_PATH}/base-de-datos?activeModule=${moduleKey}`);
-    // else if (moduleId === 4) navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
+    else if (moduleId === 4)
+      navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
     // else if (moduleId === 5) navigate(`${BASE_PATH}/storage?activeModule=${moduleKey}`);
     // else if (moduleId === 6) navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
   };

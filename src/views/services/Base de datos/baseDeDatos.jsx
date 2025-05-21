@@ -654,7 +654,11 @@ const BaseDeDatos = () => {
                             <Eye size={16} />
                           </button>
                           <button
-                            onClick={() => irEditar(baseDeDatos.id)}
+                            onClick={() =>
+                              navigate(
+                                `${BASE_PATH}/editar/${baseDeDatos.id}/base-de-datos`
+                              )
+                            }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"
                           >

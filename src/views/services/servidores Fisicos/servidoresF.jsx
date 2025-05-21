@@ -16,6 +16,8 @@ import {
   Upload,
   Plus,
 } from "lucide-react";
+import ExcelImporter from "../../../hooks/Excelimporter";
+import { createRoot } from "react-dom/client";
 
 export default function ServidoresFisicos() {
   const navigate = useNavigate();
@@ -35,6 +37,180 @@ export default function ServidoresFisicos() {
   const searchInputRef = useRef(null);
 
   const selectedCount = selectedServers.size;
+
+  const handleImport = () => {
+    Swal.fire({
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      didOpen: () => {
+        const container = document.getElementById("excel-importer-container");
+        const tableMetadata = [
+          [
+            { name: "name", required: false, type: "string" },
+            { name: "brand", required: false, type: "string" },
+            { name: "model", required: false, type: "string" },
+            { name: "processor", required: false, type: "string" },
+            { name: "cpu_cores", required: false, type: "string" },
+            { name: "ram", required: false, type: "string" },
+            { name: "total_disk_size", required: false, type: "string" },
+            { name: "os_type", required: false, type: "string" },
+            { name: "os_version", required: false, type: "string" },
+            { name: "status", required: false, type: "string" },
+            { name: "role", required: false, type: "string" },
+            { name: "environment", required: false, type: "string" },
+            { name: "serial", required: false, type: "string" },
+            { name: "rack_id", required: false, type: "string" },
+            { name: "unit", required: false, type: "string" },
+            { name: "ip_address", required: false, type: "string" },
+            { name: "city", required: false, type: "string" },
+            { name: "location", required: false, type: "string" },
+            { name: "asset_id", required: false, type: "string" },
+            { name: "service_owner", required: false, type: "string" },
+            { name: "warranty_start_date", required: false, type: "date" },
+            { name: "warranty_end_date", required: false, type: "date" },
+            { name: "application_code", required: false, type: "string" },
+            { name: "responsible_evc", required: false, type: "string" },
+            { name: "domain", required: false, type: "string" },
+            { name: "subsidiary", required: false, type: "string" },
+            {
+              name: "responsible_organization",
+              required: false,
+              type: "string",
+            },
+            { name: "billable", required: false, type: "string" },
+            { name: "oc_provisioning", required: false, type: "string" },
+            { name: "oc_deletion", required: false, type: "string" },
+            { name: "oc_modification", required: false, type: "string" },
+            { name: "maintenance_period", required: false, type: "string" },
+            {
+              name: "maintenance_organization",
+              required: false,
+              type: "string",
+            },
+            { name: "cost_center", required: false, type: "string" },
+            { name: "billing_type", required: false, type: "string" },
+            { name: "comments", required: false, type: "string" },
+          ],
+        ];
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleImportComplete}
+            tableMetadata={tableMetadata}
+          />
+        );
+        if (container) {
+          const root = createRoot(container);
+          root.render(importer);
+        }
+      },
+      willClose: () => {
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
+    });
+  };
+
+  const handleImportComplete = async (importedData) => {
+    console.log("Datos importados:", importedData);
+
+    Swal.fire({
+      title: "Procesando datos...",
+      text: "Estamos guardando los servidores importados",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const formattedData = importedData.map((row) => ({
+        name: row.name || "",
+        brand: row.brand || "",
+        model: row.model || "",
+        processor: row.processor || "",
+        cpu_cores: row.cpu_cores || "",
+        ram: row.ram || "",
+        total_disk_size: row.total_disk_size || "",
+        os_type: row.os_type || "",
+        os_version: row.os_version || "",
+        status: row.status || "",
+        role: row.role || "",
+        environment: row.environment || "",
+        serial: row.serial || "",
+        rack_id: row.rack_id || "",
+        unit: row.unit || "",
+        ip_address: row.ip_address || "",
+        city: row.city || "",
+        location: row.location || "",
+        asset_id: row.asset_id || "",
+        service_owner: row.service_owner || "",
+        warranty_start_date: row.warranty_start_date || "",
+        warranty_end_date: row.warranty_end_date || "",
+        application_code: row.application_code || "",
+        responsible_evc: row.responsible_evc || "",
+        domain: row.domain || "",
+        subsidiary: row.subsidiary || "",
+        responsible_organization: row.responsible_organization || "",
+        billable: row.billable || "",
+        oc_provisioning: row.oc_provisioning || "",
+        oc_deletion: row.oc_deletion || "",
+        oc_modification: row.oc_modification || "",
+        maintenance_period: row.maintenance_period || "",
+        maintenance_organization: row.maintenance_organization || "",
+        cost_center: row.cost_center || "",
+        billing_type: row.billing_type || "",
+        comments: row.comments || "",
+      }));
+
+      const response = await fetch(
+        "http://localhost:8000/servers/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      Swal.fire({
+        icon: "success",
+        title: "Importación exitosa",
+        text: `Se han importado ${importedData.length} servidores correctamente.`,
+      });
+
+      fetchServers(currentPage, rowsPerPage);
+    } catch (error) {
+      console.error("Error al procesar los datos importados:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error en la importación",
+        text:
+          error.message ||
+          "Ha ocurrido un error al procesar los datos importados.",
+      });
+    }
+  };
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
@@ -64,6 +240,38 @@ export default function ServidoresFisicos() {
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener servidores:", error);
+  };
+
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch("http://localhost:8000/servers/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "servers.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const token = localStorage.getItem("authenticationToken");
@@ -168,91 +376,6 @@ export default function ServidoresFisicos() {
       setIsSearchButtonClicked(false);
     }
   }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
-
-  const handleImport = () => {
-    Swal.fire({
-      title: "Importar desde Excel",
-      html: '<div id="excel-importer-container"></div>',
-      showConfirmButton: false,
-      showCancelButton: true,
-      cancelButtonText: "Cancelar",
-      width: "80%",
-      height: "80%",
-      didOpen: () => {
-        const container = document.getElementById("excel-importer-container");
-        const tableMetadata = [
-          [
-            { name: "name", required: false, type: "string" },
-            { name: "brand", required: false, type: "string" },
-            { name: "model", required: false, type: "string" },
-            { name: "processor", required: false, type: "string" },
-            { name: "cpu_cores", required: false, type: "string" },
-            { name: "ram", required: false, type: "string" },
-            { name: "total_disk_size", required: false, type: "string" },
-            { name: "os_type", required: false, type: "string" },
-            { name: "os_version", required: false, type: "string" },
-            { name: "status", required: false, type: "string" },
-            { name: "role", required: false, type: "string" },
-            { name: "environment", required: false, type: "string" },
-            { name: "serial", required: false, type: "string" },
-            { name: "rack_id", required: false, type: "string" },
-            { name: "unit", required: false, type: "string" },
-            { name: "ip_address", required: false, type: "string" },
-            { name: "city", required: false, type: "string" },
-            { name: "location", required: false, type: "string" },
-            { name: "asset_id", required: false, type: "string" },
-            { name: "service_owner", required: false, type: "string" },
-            { name: "warranty_start_date", required: false, type: "date" },
-            { name: "warranty_end_date", required: false, type: "date" },
-            { name: "application_code", required: false, type: "string" },
-            { name: "responsible_evc", required: false, type: "string" },
-            { name: "domain", required: false, type: "string" },
-            { name: "subsidiary", required: false, type: "string" },
-            {
-              name: "responsible_organization",
-              required: false,
-              type: "string",
-            },
-            { name: "billable", required: false, type: "string" },
-            { name: "oc_provisioning", required: false, type: "string" },
-            { name: "oc_deletion", required: false, type: "string" },
-            { name: "oc_modification", required: false, type: "string" },
-            { name: "maintenance_period", required: false, type: "string" },
-            {
-              name: "maintenance_organization",
-              required: false,
-              type: "string",
-            },
-            { name: "cost_center", required: false, type: "string" },
-            { name: "billing_type", required: false, type: "string" },
-            { name: "comments", required: false, type: "string" },
-          ],
-        ];
-
-        if (container) {
-          container.innerHTML = "Componente de importación de Excel";
-        }
-      },
-      willClose: () => {
-        const container = document.getElementById("excel-importer-container");
-        if (container) {
-          container.innerHTML = "";
-        }
-      },
-    });
-  };
-
-  const handleImportComplete = (importedData) => {
-    console.log("datos importados:", importedData);
-    Swal.close();
-  };
-
-  const handleExport = () => {
-    // Simulamos la exportación ya que no tenemos acceso al hook useExport
-    alert("Exportando datos a Excel...");
-    // En una implementación real, llamaríamos a:
-    // exportToExcel(servers, "servidores_fisicos", serverDataMapper)
-  };
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -360,14 +483,6 @@ export default function ServidoresFisicos() {
 
   const irCrear = () => {
     navigate(`${BASE_PATH}/crear-servidores-f`);
-  };
-
-  const irVer = (serverId) => {
-    router.push(`${BASE_PATH}/ver/${serverId}/servidores`);
-  };
-
-  const irEditar = (serverId) => {
-    router.push(`${BASE_PATH}/editar/${serverId}/servidores`);
   };
 
   const getStatusBadge = (status) => {
@@ -493,7 +608,7 @@ export default function ServidoresFisicos() {
                 onClick={irCrear}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >
-                <Plus size={16} lassName="text-white" />
+                <Plus size={16} className="text-white" />
                 <span className="hidden text-white fond-medium sm:inline">
                   Crear
                 </span>
@@ -503,7 +618,7 @@ export default function ServidoresFisicos() {
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Download size={16} lassName="text-white" />
+                <Download size={16} className="text-white" />
                 <span className="hidden text-white fond-medium sm:inline">
                   Importar
                 </span>
