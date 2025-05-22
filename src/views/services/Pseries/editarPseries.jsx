@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { ArrowLeft, Save, X } from "lucide-react";
+import { ArrowLeft, Save, X, Server } from "lucide-react";
 
-const EditarPseries = ({ id }) => {
+const EditarPseries = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_PATH = "/inveplus";
+  const { pseriesId } = useParams();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,6 +38,30 @@ const EditarPseries = ({ id }) => {
     processor_compatibility: "",
   });
 
+  // Opciones para los campos de selección
+  const environmentOptions = [
+    "Certificación",
+    "Desarrollo",
+    "Producción",
+    "Pruebas",
+    "VIOS-Producción",
+  ];
+  const statusOptions = ["Running", "Not Activated"];
+  const osOptions = ["Aixlinux", "Vioserver"];
+  const subsidiaryOptions = [
+    "Bancolombia",
+    "Banistmo",
+    "Filiales OffShore",
+    "Nequi",
+  ];
+  const processorCompatibilityOptions = [
+    "Default",
+    "POWER7",
+    "POWER8",
+    "POWER9",
+    "POWER9_base",
+  ];
+
   useEffect(() => {
     const fetchPseriesDetails = async () => {
       setLoading(true);
@@ -46,7 +72,7 @@ const EditarPseries = ({ id }) => {
         }
 
         const response = await fetch(
-          `http://localhost:8000/pseries/pseries/${id}`,
+          `http://localhost:8000/pseries/get_by_id/${pseriesId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -63,7 +89,6 @@ const EditarPseries = ({ id }) => {
         console.log("Datos recibidos:", data); // Para depuración
 
         if (data && data.status === "success" && data.data) {
-          // Actualizar el estado del formulario con los datos del servidor
           setFormData({
             name: data.data.pseries.name || "",
             application: data.data.pseries.application || "",
@@ -111,10 +136,10 @@ const EditarPseries = ({ id }) => {
       }
     };
 
-    if (id) {
+    if (pseriesId) {
       fetchPseriesDetails();
     }
-  }, [id]);
+  }, [pseriesId]);
 
   // Manejar cambios en los inputs
   const handleChange = (e) => {
@@ -125,7 +150,42 @@ const EditarPseries = ({ id }) => {
     }));
   };
 
-  // Manejar envío del formulario
+  // Renderizar campo según su tipo
+  const renderField = (field) => {
+    switch (field.type) {
+      case "select":
+        return (
+          <select
+            id={field.name}
+            name={field.name}
+            value={formData[field.name]}
+            onChange={handleChange}
+            required={field.required}
+            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Seleccionar...</option>
+            {field.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+      default:
+        return (
+          <input
+            type={field.type}
+            id={field.name}
+            name={field.name}
+            value={formData[field.name]}
+            onChange={handleChange}
+            required={field.required}
+            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+          />
+        );
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -134,7 +194,7 @@ const EditarPseries = ({ id }) => {
       const token = localStorage.getItem("authenticationToken");
 
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries/${id}`,
+        `http://localhost:8000/pseries/pseries/${pseriesId}`,
         {
           method: "PUT",
           headers: {
@@ -156,7 +216,7 @@ const EditarPseries = ({ id }) => {
         text: "Servidor actualizado correctamente",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        router.push("/pseries");
+        navigate(`${BASE_PATH}/pseries`);
       });
     } catch (error) {
       console.error("Error al actualizar servidor:", error);
@@ -189,16 +249,16 @@ const EditarPseries = ({ id }) => {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando detalles del servidor...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+  //       <div className="text-center">
+  //         <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+  //         <p>Cargando detalles del servidor...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -207,7 +267,7 @@ const EditarPseries = ({ id }) => {
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p>{error}</p>
           <button
-            onClick={() => router.push("/pseries")}
+            onClick={() => navigate(`${BASE_PATH}/pseries`)}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             Volver a la lista
@@ -220,21 +280,24 @@ const EditarPseries = ({ id }) => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
-      <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
-        <button
-          onClick={() => router.push("/pseries")}
-          className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <ArrowLeft size={20} className="text-gray-600" />
-        </button>
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Editar Servidor PSeries
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Server className="mr-2 text-blue-600" size={24} />
+            Editar Pserie
           </h1>
-          <p className="text-sm text-gray-500">
-            Actualiza la información del servidor {formData.name}
+          <p className="text-sm font-semibold text-gray-900">
+            Modifica la información del pserie{" "}
+            <span className="font-bold">{formData.name}</span>
           </p>
         </div>
+        <button
+          onClick={() => navigate(`${BASE_PATH}/pseries`)}
+          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Regresar
+        </button>
       </header>
 
       {/* Main Content */}
@@ -335,9 +398,11 @@ const EditarPseries = ({ id }) => {
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                    <option value="maintenance">Mantenimiento</option>
+                    {statusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -348,14 +413,20 @@ const EditarPseries = ({ id }) => {
                   >
                     Filial
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="subsidiary"
                     name="subsidiary"
                     value={formData.subsidiary}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar filial</option>
+                    {subsidiaryOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -373,14 +444,20 @@ const EditarPseries = ({ id }) => {
                   >
                     Ambiente
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="environment"
                     name="environment"
                     value={formData.environment}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar ambiente</option>
+                    {environmentOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
@@ -432,15 +509,21 @@ const EditarPseries = ({ id }) => {
                   >
                     S.O <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="os"
                     name="os"
                     required
                     value={formData.os}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar S.O</option>
+                    {osOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
@@ -683,14 +766,20 @@ const EditarPseries = ({ id }) => {
                   >
                     Proc Compat
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="processor_compatibility"
                     name="processor_compatibility"
                     value={formData.processor_compatibility}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  >
+                    <option value="">Seleccionar compatibilidad</option>
+                    {processorCompatibilityOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>

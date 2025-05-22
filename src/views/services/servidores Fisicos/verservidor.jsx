@@ -267,8 +267,7 @@ const VerServers = () => {
                         </div>
                       ) : (
                         <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
-                          {serverData[field] ||
-                            (field === "comments" ? "Ninguna" : "N/A")}
+                          {serverData[field]}
                         </div>
                       )}
                     </div>

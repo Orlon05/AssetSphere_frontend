@@ -3,7 +3,7 @@ import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import { useNavigate } from "react-router-dom";
 // import ServidoresVirtuales from "../services/servidoresV";
 // import BasesDeDatos from "../services/basesDeDatos";
-// import Pseries from "../services/pseries";
+import Pseries from "../services/Pseries/Pseries";
 // import Storage from "../services/storage";
 // import Sucursales from "../services/sucursales";
 import {
@@ -29,23 +29,23 @@ export default function Sidebar() {
     { id: 6, title: "Sucursales", icon: Building },
   ];
 
-  // // Función para renderizar el componente correcto según el ID seleccionado
-  // const renderComponent = () => {
-  //   switch (activeMenu) {
-  //     case 1:
-  //       return <ServidoresFisicos />;
-  //     // case 2:
-  //     //   return <ServidoresVirtuales />;
-  //     // case 3:
-  //     //   return <BasesDeDatos />;
-  //     // case 4:
-  //     //   return <Pseries />;
-  //     // case 5:
-  //     //   return <Storage />;
-  //     // case 6:
-  //     //   return <Sucursales />;
-  //   }
-  // };
+  // Función para renderizar el componente correcto según el ID seleccionado
+  const renderComponent = () => {
+    switch (activeMenu) {
+      case 1:
+        return <ServidoresFisicos />;
+      // case 2:
+      //   return <ServidoresVirtuales />;
+      // case 3:
+      // return <BasesDeDatos />;
+      case 4:
+        return <Pseries />;
+      // case 5:
+      // //   return <Storage />;
+      // case 6:
+      //   return <Sucursales />;
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -85,12 +85,7 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
-
-      <div className="flex-1 overflow-auto">
-        {/* Renderiza el componente basado en el menú activo
-        {renderComponent()} */}
-        <ServidoresFisicos />
-      </div>
+      <div className="flex-1 overflow-auto">{renderComponent()}</div>
     </div>
   );
 }
