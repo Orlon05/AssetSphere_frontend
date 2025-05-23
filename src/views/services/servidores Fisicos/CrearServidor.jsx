@@ -9,44 +9,56 @@ const CrearServidorFisico = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estado inicial del formulario con todos los campos de la nueva tabla
   const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    model: "",
-    processor: "",
-    cpu_cores: "",
-    ram: "",
-    total_disk_size: "",
-    os_type: "",
-    os_version: "",
-    status: "active",
-    role: "",
-    environment: "",
-    serial: "",
-    rack_id: "",
-    unit: "",
-    ip_address: "",
-    city: "",
-    location: "",
-    asset_id: "",
-    service_owner: "",
+    serial_number: "",
+    hostname: "",
+    ip_server: "",
+    ip_ilo: "",
+    service_status: "active", // Valor por defecto
+    server_type: "",
+    total_disk_capacity: "",
+    action: "",
+    server_model: "",
+    service_type: "",
+    core_count: "",
+    manufacturer: "",
+    installed_memory: "",
     warranty_start_date: "",
     warranty_end_date: "",
-    application_code: "",
-    responsible_evc: "",
-    domain: "",
-    subsidiary: "",
-    responsible_organization: "",
-    billable: "",
-    oc_provisioning: "",
-    oc_deletion: "",
-    oc_modification: "",
-    maintenance_period: "",
-    maintenance_organization: "",
-    cost_center: "",
-    billing_type: "",
+    eos: "",
+    enclosure: "",
+    application: "",
+    owner: "",
+    location: "",
+    unit: "",
+    ubication: "",
     comments: "",
+    po_number: "",
   });
+
+  // Opciones para campos de selección
+  const serviceStatusOptions = [
+    "active",
+    "inactive",
+    "maintenance",
+    "decommissioned",
+  ];
+  const serverTypeOptions = ["Physical", "Virtual", "Blade", "Rack"];
+  const serviceTypeOptions = [
+    "Production",
+    "Development",
+    "Testing",
+    "Staging",
+  ];
+  const manufacturerOptions = [
+    "Dell",
+    "HP",
+    "IBM",
+    "Cisco",
+    "Lenovo",
+    "Supermicro",
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -151,17 +163,17 @@ const CrearServidorFisico = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
-                    htmlFor="name"
+                    htmlFor="hostname"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Nombre <span className="text-red-500">*</span>
+                    Hostname <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
+                    id="hostname"
+                    name="hostname"
                     required
-                    value={formData.name}
+                    value={formData.hostname}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -169,16 +181,17 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="brand"
+                    htmlFor="serial_number"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Marca
+                    Número de Serie <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="brand"
-                    name="brand"
-                    value={formData.brand}
+                    id="serial_number"
+                    name="serial_number"
+                    required
+                    value={formData.serial_number}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -186,71 +199,127 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="model"
+                    htmlFor="manufacturer"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Modelo
-                  </label>
-                  <input
-                    type="text"
-                    id="model"
-                    name="model"
-                    value={formData.model}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="serial"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Serial
-                  </label>
-                  <input
-                    type="text"
-                    id="serial"
-                    name="serial"
-                    value={formData.serial}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="status"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Estado <span className="text-red-500">*</span>
+                    Fabricante
                   </label>
                   <select
-                    id="status"
-                    name="status"
-                    required
-                    value={formData.status}
+                    id="manufacturer"
+                    name="manufacturer"
+                    value={formData.manufacturer}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                    <option value="maintenance">Mantenimiento</option>
+                    <option value="">Seleccionar fabricante</option>
+                    {manufacturerOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="ip_address"
+                    htmlFor="server_model"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Dirección IP
+                    Modelo del Servidor
                   </label>
                   <input
                     type="text"
-                    id="ip_address"
-                    name="ip_address"
-                    value={formData.ip_address}
+                    id="server_model"
+                    name="server_model"
+                    value={formData.server_model}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="server_type"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Tipo de Servidor
+                  </label>
+                  <select
+                    id="server_type"
+                    name="server_type"
+                    value={formData.server_type}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar tipo</option>
+                    {serverTypeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="service_status"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Estado del Servicio <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="service_status"
+                    name="service_status"
+                    required
+                    value={formData.service_status}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {serviceStatusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Sección: Configuración de Red */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Configuración de Red
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="ip_server"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    IP del Servidor
+                  </label>
+                  <input
+                    type="text"
+                    id="ip_server"
+                    name="ip_server"
+                    value={formData.ip_server}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="ip_ilo"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    IP iLO/IPMI
+                  </label>
+                  <input
+                    type="text"
+                    id="ip_ilo"
+                    name="ip_ilo"
+                    value={formData.ip_ilo}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -266,16 +335,16 @@ const CrearServidorFisico = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
-                    htmlFor="processor"
+                    htmlFor="core_count"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Procesador
+                    Número de Núcleos
                   </label>
                   <input
-                    type="text"
-                    id="processor"
-                    name="processor"
-                    value={formData.processor}
+                    type="number"
+                    id="core_count"
+                    name="core_count"
+                    value={formData.core_count}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -283,85 +352,36 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="cpu_cores"
+                    htmlFor="installed_memory"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Núcleos CPU
+                    Memoria Instalada
                   </label>
                   <input
                     type="text"
-                    id="cpu_cores"
-                    name="cpu_cores"
-                    value={formData.cpu_cores}
+                    id="installed_memory"
+                    name="installed_memory"
+                    value={formData.installed_memory}
                     onChange={handleChange}
+                    placeholder="ej: 32GB"
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="ram"
+                    htmlFor="total_disk_capacity"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    RAM
+                    Capacidad Total de Disco
                   </label>
                   <input
                     type="text"
-                    id="ram"
-                    name="ram"
-                    value={formData.ram}
+                    id="total_disk_capacity"
+                    name="total_disk_capacity"
+                    value={formData.total_disk_capacity}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="total_disk_size"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tamaño Disco Total
-                  </label>
-                  <input
-                    type="text"
-                    id="total_disk_size"
-                    name="total_disk_size"
-                    value={formData.total_disk_size}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="os_type"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tipo de OS
-                  </label>
-                  <input
-                    type="text"
-                    id="os_type"
-                    name="os_type"
-                    value={formData.os_type}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="os_version"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Versión de OS
-                  </label>
-                  <input
-                    type="text"
-                    id="os_version"
-                    name="os_version"
-                    value={formData.os_version}
-                    onChange={handleChange}
+                    placeholder="ej: 1TB"
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -374,57 +394,6 @@ const CrearServidorFisico = () => {
                 Ubicación y Organización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="rack_id"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Rack ID
-                  </label>
-                  <input
-                    type="text"
-                    id="rack_id"
-                    name="rack_id"
-                    value={formData.rack_id}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="unit"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Unidad
-                  </label>
-                  <input
-                    type="text"
-                    id="unit"
-                    name="unit"
-                    value={formData.unit}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Ciudad
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <label
                     htmlFor="location"
@@ -444,16 +413,16 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="subsidiary"
+                    htmlFor="ubication"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Sucursal
+                    Ubicación Específica
                   </label>
                   <input
                     type="text"
-                    id="subsidiary"
-                    name="subsidiary"
-                    value={formData.subsidiary}
+                    id="ubication"
+                    name="ubication"
+                    value={formData.ubication}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -461,16 +430,33 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="domain"
+                    htmlFor="unit"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Dominio
+                    Unidad/Rack
                   </label>
                   <input
                     type="text"
-                    id="domain"
-                    name="domain"
-                    value={formData.domain}
+                    id="unit"
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="enclosure"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Gabinete/Enclosure
+                  </label>
+                  <input
+                    type="text"
+                    id="enclosure"
+                    name="enclosure"
+                    value={formData.enclosure}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -478,24 +464,47 @@ const CrearServidorFisico = () => {
               </div>
             </div>
 
-            {/* Sección: Información Administrativa */}
+            {/* Sección: Información de Servicio */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Información Administrativa
+                Información de Servicio
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
-                    htmlFor="role"
+                    htmlFor="service_type"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Rol
+                    Tipo de Servicio
+                  </label>
+                  <select
+                    id="service_type"
+                    name="service_type"
+                    value={formData.service_type}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar tipo de servicio</option>
+                    {serviceTypeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="application"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Aplicación
                   </label>
                   <input
                     type="text"
-                    id="role"
-                    name="role"
-                    value={formData.role}
+                    id="application"
+                    name="application"
+                    value={formData.application}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -503,16 +512,16 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="environment"
+                    htmlFor="owner"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Entorno
+                    Propietario/Responsable
                   </label>
                   <input
                     type="text"
-                    id="environment"
-                    name="environment"
-                    value={formData.environment}
+                    id="owner"
+                    name="owner"
+                    value={formData.owner}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -520,67 +529,16 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="asset_id"
+                    htmlFor="action"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    ID de Activo
+                    Acción
                   </label>
                   <input
                     type="text"
-                    id="asset_id"
-                    name="asset_id"
-                    value={formData.asset_id}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="service_owner"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Propietario del Servicio
-                  </label>
-                  <input
-                    type="text"
-                    id="service_owner"
-                    name="service_owner"
-                    value={formData.service_owner}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="responsible_evc"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Responsable EVC
-                  </label>
-                  <input
-                    type="text"
-                    id="responsible_evc"
-                    name="responsible_evc"
-                    value={formData.responsible_evc}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="responsible_organization"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Organización Responsable
-                  </label>
-                  <input
-                    type="text"
-                    id="responsible_organization"
-                    name="responsible_organization"
-                    value={formData.responsible_organization}
+                    id="action"
+                    name="action"
+                    value={formData.action}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -588,10 +546,10 @@ const CrearServidorFisico = () => {
               </div>
             </div>
 
-            {/* Sección: Garantía y Facturación */}
+            {/* Sección: Garantía y Soporte */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Garantía y Facturación
+                Garantía y Soporte
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -630,16 +588,16 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="billable"
+                    htmlFor="eos"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Facturable
+                    End of Support (EOS)
                   </label>
                   <input
                     type="text"
-                    id="billable"
-                    name="billable"
-                    value={formData.billable}
+                    id="eos"
+                    name="eos"
+                    value={formData.eos}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -647,33 +605,16 @@ const CrearServidorFisico = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="cost_center"
+                    htmlFor="po_number"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Centro de Costos
+                    Número de Orden de Compra
                   </label>
                   <input
                     type="text"
-                    id="cost_center"
-                    name="cost_center"
-                    value={formData.cost_center}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="billing_type"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tipo de Facturación
-                  </label>
-                  <input
-                    type="text"
-                    id="billing_type"
-                    name="billing_type"
-                    value={formData.billing_type}
+                    id="po_number"
+                    name="po_number"
+                    value={formData.po_number}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -681,122 +622,12 @@ const CrearServidorFisico = () => {
               </div>
             </div>
 
-            {/* Sección: Órdenes y Mantenimiento */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Órdenes y Mantenimiento
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="oc_provisioning"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Provisionamiento OC
-                  </label>
-                  <input
-                    type="text"
-                    id="oc_provisioning"
-                    name="oc_provisioning"
-                    value={formData.oc_provisioning}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="oc_deletion"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Eliminación OC
-                  </label>
-                  <input
-                    type="text"
-                    id="oc_deletion"
-                    name="oc_deletion"
-                    value={formData.oc_deletion}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="oc_modification"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Modificación OC
-                  </label>
-                  <input
-                    type="text"
-                    id="oc_modification"
-                    name="oc_modification"
-                    value={formData.oc_modification}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="maintenance_period"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Periodo de Mantenimiento
-                  </label>
-                  <input
-                    type="text"
-                    id="maintenance_period"
-                    name="maintenance_period"
-                    value={formData.maintenance_period}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="maintenance_organization"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Organización de Mantenimiento
-                  </label>
-                  <input
-                    type="text"
-                    id="maintenance_organization"
-                    name="maintenance_organization"
-                    value={formData.maintenance_organization}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Sección: Información Adicional */}
+            {/* Sección: Comentarios */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
                 Información Adicional
               </h2>
               <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="application_code"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Código de Aplicación
-                  </label>
-                  <input
-                    type="text"
-                    id="application_code"
-                    name="application_code"
-                    value={formData.application_code}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <label
                     htmlFor="comments"

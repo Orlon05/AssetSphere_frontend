@@ -477,18 +477,18 @@ const Pseries = () => {
 
     const statusLower = status.toLowerCase();
 
-    if (statusLower === "active" || statusLower === "activo") {
+    if (statusLower === "active" || statusLower === "running") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Activo
+          Corriendo
         </span>
       );
-    } else if (statusLower === "inactive" || statusLower === "inactivo") {
+    } else if (statusLower === "inactive" || statusLower === "not activated") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          Inactivo
+          No activo
         </span>
       );
     } else if (
@@ -589,7 +589,7 @@ const Pseries = () => {
                   {selectedCount}
                 </span>
                 <span className="text-gray-700">
-                  Servidor{selectedCount !== 1 ? "es" : ""} seleccionado
+                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
               </div>

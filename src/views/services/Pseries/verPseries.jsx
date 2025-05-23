@@ -1,170 +1,254 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Server,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+} from "lucide-react";
 
 const VerPseries = () => {
-  const [pserieData, setPserieData] = useState({});
-  const { pseriesId } = useParams();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { pserieId } = useParams();
+  const BASE_PATH = "/inveplus";
 
+  // Estados para todos los campos
+  const [name, setName] = useState("");
+  const [application, setApplication] = useState("");
+  const [hostname, setHostName] = useState("");
+  const [ip_address, setIpAddress] = useState("");
+  const [environment, setEnvironment] = useState("");
+  const [slot, setSlot] = useState("");
+  const [lpar_id, setLparId] = useState("");
+  const [status, setStatus] = useState("");
+  const [os, setOs] = useState("");
+  const [version, setVersion] = useState("");
+  const [subsidiary, setSubsidiary] = useState("");
+  const [min_cpu, setMinCpu] = useState("");
+  const [act_cpu, setActCpu] = useState("");
+  const [max_cpu, setMaxCpu] = useState("");
+  const [min_v_cpu, setMinVCpu] = useState("");
+  const [act_v_cpu, setActVCpu] = useState("");
+  const [max_v_cpu, setMaxVCpu] = useState("");
+  const [min_memory, setMinMemory] = useState("");
+  const [act_memory, setActMemory] = useState("");
+  const [max_memory, setMaxMemory] = useState("");
+  const [expansion_factor, setExpansionFactor] = useState("");
+  const [memory_per_factor, setMemoryPerFactor] = useState("");
+  const [processor_compatibility, setProcessorCompatibility] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Definición de secciones y campos para PSeries
   const formSections = [
     {
       title: "Información Básica",
       fields: [
-        "name",
-        "application",
-        "hostname",
-        "ip_address",
-        "environment",
-        "subsidiary",
+        { key: "name", label: "Nombre LPAR en la HMC", value: name },
+        { key: "application", label: "Aplicación", value: application },
+        { key: "hostname", label: "Hostname", value: hostname },
+        { key: "ip_address", label: "Dirección IP", value: ip_address },
+        { key: "environment", label: "Ambiente", value: environment },
+        { key: "subsidiary", label: "Filial", value: subsidiary },
       ],
     },
     {
       title: "Ubicación y Hardware",
-      fields: ["slot", "lpar_id"],
+      fields: [
+        { key: "slot", label: "Cajón", value: slot },
+        { key: "lpar_id", label: "ID LPAR", value: lpar_id },
+      ],
     },
     {
       title: "Sistema Operativo",
-      fields: ["os", "version", "status"],
+      fields: [
+        { key: "os", label: "Sistema Operativo", value: os },
+        { key: "version", label: "Versión", value: version },
+        { key: "status", label: "Estado", value: status },
+      ],
     },
     {
       title: "Recursos CPU",
       fields: [
-        "min_cpu",
-        "act_cpu",
-        "max_cpu",
-        "min_v_cpu",
-        "act_v_cpu",
-        "max_v_cpu",
+        { key: "min_cpu", label: "CPU MIN", value: min_cpu },
+        { key: "act_cpu", label: "CPU ACT", value: act_cpu },
+        { key: "max_cpu", label: "CPU MAX", value: max_cpu },
+        { key: "min_v_cpu", label: "CPU V MIN", value: min_v_cpu },
+        { key: "act_v_cpu", label: "CPU V ACT", value: act_v_cpu },
+        { key: "max_v_cpu", label: "CPU V MAX", value: max_v_cpu },
       ],
     },
     {
       title: "Recursos Memoria",
-      fields: ["min_memory", "act_memory", "max_memory"],
+      fields: [
+        { key: "min_memory", label: "Memoria MIN", value: min_memory },
+        { key: "act_memory", label: "Memoria ACT", value: act_memory },
+        { key: "max_memory", label: "Memoria MAX", value: max_memory },
+      ],
     },
     {
       title: "Configuración Avanzada",
       fields: [
-        "expansion_factor",
-        "memory_per_factor",
-        "processor_compatibility",
+        {
+          key: "expansion_factor",
+          label: "Factor de expansión",
+          value: expansion_factor,
+        },
+        {
+          key: "memory_per_factor",
+          label: "Memoria por factor",
+          value: memory_per_factor,
+        },
+        {
+          key: "processor_compatibility",
+          label: "Compatibilidad de procesador",
+          value: processor_compatibility,
+        },
       ],
     },
   ];
 
-  // Etiquetas para los campos de PSeries
-  const fieldLabels = {
-    name: "Nombre LPAR en la HMC",
-    application: "Aplicación",
-    hostname: "Hostname",
-    ip_address: "Dirección IP",
-    environment: "Ambiente",
-    slot: "Cajón",
-    lpar_id: "ID LPAR",
-    status: "Estado",
-    os: "Sistema Operativo",
-    version: "Versión",
-    subsidiary: "Filial",
-    min_cpu: "CPU MIN",
-    act_cpu: "CPU ACT",
-    max_cpu: "CPU MAX",
-    min_v_cpu: "CPU V MIN",
-    act_v_cpu: "CPU V ACT",
-    max_v_cpu: "CPU V MAX",
-    min_memory: "Memoria MIN",
-    act_memory: "Memoria ACT",
-    max_memory: "Memoria MAX",
-    expansion_factor: "Factor de expansión",
-    memory_per_factor: "Memoria por factor",
-    processor_compatibility: "Compatibilidad de procesador",
-  };
+  const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
-    const fetchServerData = async () => {
+    const fetchPseriesData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        setError(null);
-
-        // Aseguramos que pseriesId sea un valor y no undefined
-        if (!pseriesId) {
-          throw new Error("ID del PSeries no encontrado");
-        }
-
-        console.log("ID del PSeries a consultar:", pseriesId);
-
-        // Obtenemos el token y verificamos que exista
-        const token = localStorage.getItem("authenticationToken");
-        if (!token) {
-          throw new Error("Token de autenticación no encontrado");
-        }
-
-        // Usamos backticks (`) para la interpolación correcta de variables
-        const url = `http://localhost:8000/pseries/get_by_id/${pseriesId}`;
-        console.log("URL de la petición:", url);
-
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8000/pseries/get_by_id/${pserieId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem(
+                "authenticationToken"
+              )}`,
+            },
+          }
+        );
 
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error en la respuesta:", errorText);
-
-          try {
-            const errorData = JSON.parse(errorText);
-            if (errorData.detail) {
-              if (Array.isArray(errorData.detail)) {
-                throw new Error(
-                  errorData.detail.map((err) => err.msg).join(", ")
-                );
-              } else {
-                throw new Error(errorData.detail);
-              }
-            } else {
-              throw new Error(`Error HTTP ${response.status}`);
-            }
-          } catch (e) {
-            if (e instanceof SyntaxError) {
-              throw new Error(`Error HTTP ${response.status}: ${errorText}`);
-            } else {
-              throw e;
-            }
+          const errorData = await response.json(); // Intenta leer la respuesta en caso de error
+          console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
+          if (response.status === 404) {
+            throw new Error("Servidor no encontrado");
+          } else if (response.status === 401) {
+            throw new Error("No autorizado");
+          } else {
+            throw new Error(
+              `Error HTTP ${response.status}: ${
+                errorData.message || errorData.detail
+              }`
+            );
           }
         }
-
         const data = await response.json();
-        console.log("Respuesta completa:", data);
-
-        if (data?.status === "success" && data.data) {
-          console.log("Datos del PSeries:", data.data);
-          setPserieData(data.data);
+        // console.log("Datos recibidos:", data);
+        // Actualiza los estados con los datos recibidos
+        if (data.status === "success" && data.data) {
+          setName(data.data.name || "");
+          setApplication(data.data.application || "");
+          setHostName(data.data.hostname || "");
+          setIpAddress(data.data.ip_address || "");
+          setEnvironment(data.data.environment || "");
+          setSlot(data.data.slot || "");
+          setLparId(data.data.lpar_id || "");
+          setStatus(data.data.status || "");
+          setOs(data.data.os || "");
+          setVersion(data.data.version || "");
+          setSubsidiary(data.data.subsidiary || "");
+          setMinCpu(data.data.min_cpu || "");
+          setActCpu(data.data.act_cpu || "");
+          setMaxCpu(data.data.max_cpu || "");
+          setMinVCpu(data.data.min_v_cpu || "");
+          setActVCpu(data.data.act_v_cpu || "");
+          setMaxVCpu(data.data.max_cpu || "");
+          setMinMemory(data.data.min_memory || "");
+          setActMemory(data.data.act_memory || "");
+          setMaxMemory(data.data.max_memory || "");
+          setExpansionFactor(data.data.expansion_factor || "");
+          setMemoryPerFactor(data.data.memory_per_factor || "");
+          setProcessorCompatibility(data.data.processor_compatibility || "");
         } else {
-          throw new Error("Estructura de respuesta inesperada");
+          console.error("Estructura de datos inesperada:", data);
+          setError("Estructura de datos inesperada del servidor");
         }
-      } catch (err) {
-        console.error("Error al obtener datos:", err);
-        setError(err.message);
+        console.error("Error en fetchPseriesData:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (pseriesId) {
-      fetchServerData();
+    if (pserieId) {
+      fetchPseriesData();
     }
-  }, [pseriesId]);
+  }, [pserieId]);
+
+  const getStatusBadge = (status) => {
+    if (!status) return null;
+
+    const statusLower = status.toLowerCase();
+
+    if (
+      statusLower === "active" ||
+      statusLower === "activo" ||
+      statusLower === "running"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <CheckCircle size={12} className="mr-1" />
+          Activo
+        </span>
+      );
+    } else if (
+      statusLower === "inactive" ||
+      statusLower === "inactivo" ||
+      statusLower === "not activated"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <AlertCircle size={12} className="mr-1" />
+          Inactivo
+        </span>
+      );
+    } else if (
+      statusLower === "maintenance" ||
+      statusLower === "mantenimiento"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <Clock size={12} className="mr-1" />
+          Mantenimiento
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          {status}
+        </span>
+      );
+    }
+  };
+
+  // Función para formatear valores según el tipo de campo
+  const formatFieldValue = (field, value) => {
+    if (!value) return "-";
+
+    // Campos que podrían necesitar formateo especial
+    if (field.includes("memory")) {
+      return `${value} GB`;
+    }
+
+    return value;
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-lg text-gray-700">
-            Cargando datos del Pserie...
+            Cargando datos del servidor...
           </p>
         </div>
       </div>
@@ -173,11 +257,11 @@ const VerPseries = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
           <strong>Error:</strong> {error}
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate(`${BASE_PATH}/pseries`)}
             className="mt-3 block text-blue-600 hover:text-blue-800"
           >
             <ArrowLeft className="inline mr-1" size={16} /> Volver a la lista
@@ -188,18 +272,20 @@ const VerPseries = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Server className="mr-2 text-blue-600" size={24} />
             Visualizar PSeries
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Detalles completos del Pserie
+            Detalles completos del servidor{" "}
+            <span className="font-bold">{name}</span>
           </p>
         </div>
         <button
-          onClick={() => window.history.back()}
+          onClick={() => navigate(`${BASE_PATH}/pseries`)}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
@@ -208,53 +294,33 @@ const VerPseries = () => {
       </header>
 
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
-          <div className="space-y-6">
-            {formSections.map((section, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
-              >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                  {section.title}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {section.fields.map((field) => (
-                    <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        {fieldLabels[field]}
-                      </label>
-                      {field === "status" ? (
-                        <div
-                          className={`
-                            border rounded-lg block w-full p-2.5 font-medium text-center
-                            ${
-                              pserieData.status?.toLowerCase() === "active"
-                                ? "bg-green-100 border-green-300 text-green-800"
-                                : pserieData.status?.toLowerCase() ===
-                                  "maintenance"
-                                ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                                : "bg-red-100 border-red-300 text-red-800"
-                            }
-                          `}
-                        >
-                          {pserieData.status?.toLowerCase() === "active"
-                            ? "Activo"
-                            : pserieData.status?.toLowerCase() === "maintenance"
-                            ? "Mantenimiento"
-                            : "Inactivo"}
-                        </div>
-                      ) : (
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
-                          {pserieData[field] || "N/A"}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+        <div className="space-y-6">
+          {formSections.map((section, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
+            >
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">
+                {section.title}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {section.fields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {field.label}
+                    </label>
+                    {field.key === "status" ? (
+                      <div className="py-2">{getStatusBadge(field.value)}</div>
+                    ) : (
+                      <div className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg p-2.5 min-h-[38px] flex items-center">
+                        {formatFieldValue(field.key, field.value)}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>

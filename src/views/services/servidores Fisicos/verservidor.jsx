@@ -1,72 +1,46 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdArrowBack } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 const VerServers = () => {
   const { serverId } = useParams();
+  const navigate = useNavigate();
   const [serverData, setServerData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const formSections = [
     {
-      title: "Información del Hardware",
+      title: "Información Básica",
       fields: [
-        "name",
-        "brand",
-        "model",
-        "processor",
-        "cpu_cores",
-        "ram",
-        "total_disk_size",
+        "hostname",
+        "serial_number",
+        "manufacturer",
+        "server_model",
+        "server_type",
+        "service_status",
       ],
     },
     {
-      title: "Sistema Operativo",
-      fields: ["os_type", "os_version"],
+      title: "Configuración de Red",
+      fields: ["ip_server", "ip_ilo"],
     },
     {
-      title: "Configuración",
-      fields: ["status", "role", "environment", "serial"],
+      title: "Especificaciones Técnicas",
+      fields: ["core_count", "installed_memory", "total_disk_capacity"],
     },
     {
       title: "Ubicación Física",
-      fields: ["rack_id", "unit", "city", "location"],
+      fields: ["location", "ubication", "unit", "enclosure"],
     },
     {
-      title: "Red",
-      fields: ["ip_address", "domain"],
+      title: "Información de Servicio",
+      fields: ["service_type", "application", "owner", "action"],
     },
     {
-      title: "Gestión de Activos",
-      fields: [
-        "asset_id",
-        "service_owner",
-        "warranty_start_date",
-        "warranty_end_date",
-      ],
-    },
-    {
-      title: "Información Organizacional",
-      fields: [
-        "application_code",
-        "responsible_evc",
-        "subsidiary",
-        "responsible_organization",
-      ],
-    },
-    {
-      title: "Facturación y Costos",
-      fields: ["billable", "cost_center", "billing_type"],
-    },
-    {
-      title: "Órdenes de Compra",
-      fields: ["oc_provisioning", "oc_deletion", "oc_modification"],
-    },
-    {
-      title: "Mantenimiento",
-      fields: ["maintenance_period", "maintenance_organization"],
+      title: "Garantía y Soporte",
+      fields: ["warranty_start_date", "warranty_end_date", "eos", "po_number"],
     },
     {
       title: "Observaciones",
@@ -75,41 +49,29 @@ const VerServers = () => {
   ];
 
   const fieldLabels = {
-    name: "Nombre del servidor",
-    brand: "Marca",
-    model: "Modelo",
-    processor: "Procesador",
-    cpu_cores: "CPU Cores",
-    ram: "RAM",
-    total_disk_size: "Tamaño del disco",
-    os_type: "Sistema Operativo",
-    os_version: "Versión del SO",
-    status: "Estado",
-    role: "Rol",
-    environment: "Ambiente",
-    serial: "Serial",
-    rack_id: "ID del Rack",
-    unit: "Unidad",
-    city: "Ciudad",
+    hostname: "Hostname",
+    serial_number: "Número de Serie",
+    manufacturer: "Fabricante",
+    server_model: "Modelo del Servidor",
+    server_type: "Tipo de Servidor",
+    service_status: "Estado del Servicio",
+    ip_server: "IP del Servidor",
+    ip_ilo: "IP iLO/IPMI",
+    core_count: "Número de Núcleos",
+    installed_memory: "Memoria Instalada",
+    total_disk_capacity: "Capacidad Total de Disco",
     location: "Ubicación",
-    ip_address: "Dirección IP",
-    domain: "Dominio",
-    asset_id: "ID del Activo",
-    service_owner: "Propietario",
+    ubication: "Ubicación Específica",
+    unit: "Unidad/Rack",
+    enclosure: "Gabinete/Enclosure",
+    service_type: "Tipo de Servicio",
+    application: "Aplicación",
+    owner: "Propietario/Responsable",
+    action: "Acción",
     warranty_start_date: "Inicio Garantía",
     warranty_end_date: "Fin Garantía",
-    application_code: "Código de Aplicación",
-    responsible_evc: "EVC Responsable",
-    subsidiary: "Filial",
-    responsible_organization: "Org. Responsable",
-    billable: "Facturable",
-    cost_center: "Centro de Costos",
-    billing_type: "Tipo de Cobro",
-    oc_provisioning: "OC Aprovisionamiento",
-    oc_deletion: "OC Eliminación",
-    oc_modification: "OC Modificación",
-    maintenance_period: "Periodo Mantenimiento",
-    maintenance_organization: "Org. Mantenimiento",
+    eos: "End of Support (EOS)",
+    po_number: "Número de Orden de Compra",
     comments: "Observaciones",
   };
 
@@ -121,6 +83,8 @@ const VerServers = () => {
         return "bg-red-100 text-red-800 border-red-300";
       case "maintenance":
         return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "decommissioned":
+        return "bg-gray-100 text-gray-800 border-gray-300";
       default:
         return "bg-gray-100 text-gray-800 border-gray-300";
     }
@@ -131,9 +95,11 @@ const VerServers = () => {
       case "active":
         return "Activo";
       case "inactive":
-        return "Inactive";
+        return "Inactivo";
       case "maintenance":
         return "Mantenimiento";
+      case "decommissioned":
+        return "Descomisionado";
       default:
         return status;
     }
@@ -198,12 +164,12 @@ const VerServers = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
           <strong>Error:</strong> {error}
-          <Link
-            to="/inveplus/Servidoresf"
+          <button
+            onClick={() => navigate("/inveplus/servidoresf")}
             className="mt-3 block text-blue-600 hover:text-blue-800"
           >
             <MdArrowBack className="inline mr-1" /> Volver a la lista
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -246,24 +212,24 @@ const VerServers = () => {
                       <label className="block text-sm font-medium text-gray-700">
                         {fieldLabels[field]}
                       </label>
-                      {field === "status" ? (
+                      {field === "service_status" ? (
                         <div
                           className={`
                         border rounded-lg block w-full p-2.5 font-medium text-center
                         ${
-                          serverData.status?.toLowerCase() === "active"
+                          serverData.service_status?.toLowerCase() === "active"
                             ? "bg-green-100 border-green-300 text-green-800"
-                            : serverData.status?.toLowerCase() === "maintenance"
+                            : serverData.service_status?.toLowerCase() ===
+                              "maintenance"
                             ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                            : serverData.service_status?.toLowerCase() ===
+                              "decommissioned"
+                            ? "bg-gray-100 border-gray-300 text-gray-800"
                             : "bg-red-100 border-red-300 text-red-800"
                         }
                       `}
                         >
-                          {serverData.status?.toLowerCase() === "active"
-                            ? "Activo"
-                            : serverData.status?.toLowerCase() === "maintenance"
-                            ? "Mantenimiento"
-                            : "Inactivo"}
+                          {getStatusText(serverData.service_status)}
                         </div>
                       ) : (
                         <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">

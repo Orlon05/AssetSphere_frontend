@@ -49,52 +49,153 @@ export default function ServidoresFisicos() {
       height: "80%",
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
+        // Mapeo correcto de columnas Excel a campos del backend
         const tableMetadata = [
           [
-            { name: "name", required: false, type: "string" },
-            { name: "brand", required: false, type: "string" },
-            { name: "model", required: false, type: "string" },
-            { name: "processor", required: false, type: "string" },
-            { name: "cpu_cores", required: false, type: "string" },
-            { name: "ram", required: false, type: "string" },
-            { name: "total_disk_size", required: false, type: "string" },
-            { name: "os_type", required: false, type: "string" },
-            { name: "os_version", required: false, type: "string" },
-            { name: "status", required: false, type: "string" },
-            { name: "role", required: false, type: "string" },
-            { name: "environment", required: false, type: "string" },
-            { name: "serial", required: false, type: "string" },
-            { name: "rack_id", required: false, type: "string" },
-            { name: "unit", required: false, type: "string" },
-            { name: "ip_address", required: false, type: "string" },
-            { name: "city", required: false, type: "string" },
-            { name: "location", required: false, type: "string" },
-            { name: "asset_id", required: false, type: "string" },
-            { name: "service_owner", required: false, type: "string" },
-            { name: "warranty_start_date", required: false, type: "date" },
-            { name: "warranty_end_date", required: false, type: "date" },
-            { name: "application_code", required: false, type: "string" },
-            { name: "responsible_evc", required: false, type: "string" },
-            { name: "domain", required: false, type: "string" },
-            { name: "subsidiary", required: false, type: "string" },
             {
-              name: "responsible_organization",
+              name: "serial_number",
               required: false,
               type: "string",
+              excelColumn: "Serial",
             },
-            { name: "billable", required: false, type: "string" },
-            { name: "oc_provisioning", required: false, type: "string" },
-            { name: "oc_deletion", required: false, type: "string" },
-            { name: "oc_modification", required: false, type: "string" },
-            { name: "maintenance_period", required: false, type: "string" },
             {
-              name: "maintenance_organization",
+              name: "hostname",
               required: false,
               type: "string",
+              excelColumn: "NombredeHost",
             },
-            { name: "cost_center", required: false, type: "string" },
-            { name: "billing_type", required: false, type: "string" },
-            { name: "comments", required: false, type: "string" },
+            {
+              name: "ip_server",
+              required: false,
+              type: "string",
+              excelColumn: "IP SERVER",
+            },
+            {
+              name: "ip_ilo",
+              required: false,
+              type: "string",
+              excelColumn: "IP ILO",
+            },
+            {
+              name: "service_status",
+              required: false,
+              type: "string",
+              excelColumn: "EstadodelServicio",
+            },
+            {
+              name: "server_type",
+              required: false,
+              type: "string",
+              excelColumn: "TipodeServidor",
+            },
+            {
+              name: "total_disk_capacity",
+              required: false,
+              type: "string",
+              excelColumn: "Capacidadtotaldedisco",
+            },
+            {
+              name: "action",
+              required: false,
+              type: "string",
+              excelColumn: "Accion",
+            },
+            {
+              name: "server_model",
+              required: false,
+              type: "string",
+              excelColumn: "ModelodelServidor",
+            },
+            {
+              name: "service_type",
+              required: false,
+              type: "string",
+              excelColumn: "Service Type",
+            },
+            {
+              name: "core_count",
+              required: false,
+              type: "integer",
+              excelColumn: "NúmerodeCore",
+            },
+            {
+              name: "manufacturer",
+              required: false,
+              type: "string",
+              excelColumn: "Fabricante",
+            },
+            {
+              name: "installed_memory",
+              required: false,
+              type: "string",
+              excelColumn: "Memoriainstalada",
+            },
+            {
+              name: "warranty_start_date",
+              required: false,
+              type: "date",
+              excelColumn: "FechaInicioGarantía",
+            },
+            {
+              name: "warranty_end_date",
+              required: false,
+              type: "date",
+              excelColumn: "FechaFinGarantía",
+            },
+            {
+              name: "eos",
+              required: false,
+              type: "string",
+              excelColumn: "EOS",
+            },
+            {
+              name: "enclosure",
+              required: false,
+              type: "string",
+              excelColumn: "Enclosure",
+            },
+            {
+              name: "application",
+              required: false,
+              type: "string",
+              excelColumn: "Aplicacion",
+            },
+            {
+              name: "owner",
+              required: false,
+              type: "string",
+              excelColumn: "Propietario",
+            },
+            {
+              name: "location",
+              required: false,
+              type: "string",
+              excelColumn: "Ubicación",
+            },
+            {
+              name: "unit",
+              required: false,
+              type: "string",
+              excelColumn: "Unidad",
+            },
+            {
+              name: "ubication",
+              required: false,
+              type: "string",
+              excelColumn: "Ubicación",
+            },
+            {
+              name: "comments",
+              required: false,
+              type: "string",
+              excelColumn: "Observaciones",
+            },
+            {
+              name: "po_number",
+              required: false,
+              type: "string",
+              excelColumn: "PO",
+            },
           ],
         ];
         const importer = (
@@ -136,45 +237,84 @@ export default function ServidoresFisicos() {
         throw new Error("Token de autorización no encontrado.");
       }
 
+      // Función para limpiar y formatear fechas
+      const formatDate = (dateStr) => {
+        if (!dateStr || dateStr === "N/A" || dateStr.trim() === "") return null;
+
+        const formats = [
+          /(\d{1,2})-(\w{3})-(\d{2,4})/, // dd-mmm-yy o dd-mmm-yyyy
+          /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/, // dd/mm/yy o mm/dd/yy
+          /(\d{4})-(\d{1,2})-(\d{1,2})/, // yyyy-mm-dd
+        ];
+
+        const monthMap = {
+          ene: "01",
+          feb: "02",
+          mar: "03",
+          abr: "04",
+          may: "05",
+          jun: "06",
+          jul: "07",
+          ago: "08",
+          sep: "09",
+          oct: "10",
+          nov: "11",
+          dic: "12",
+        };
+
+        const match1 = dateStr.match(formats[0]);
+        if (match1) {
+          const [, day, month, year] = match1;
+          const monthNum = monthMap[month.toLowerCase()];
+          const fullYear = year.length === 2 ? `20${year}` : year;
+          return `${fullYear}-${monthNum}-${day.padStart(2, "0")}`;
+        }
+
+        return null;
+      };
+
+      const cleanNumber = (numStr) => {
+        if (!numStr || numStr === "N/A" || numStr.trim() === "") return null;
+        const cleaned = numStr.toString().replace(/[^\d]/g, "");
+        return cleaned ? Number.parseInt(cleaned) : null;
+      };
+
+      const normalizeStatus = (status) => {
+        if (!status) return "inactive";
+        const statusLower = status.toLowerCase().trim();
+        if (statusLower === "activo") return "active";
+        if (statusLower === "inactivo") return "inactive";
+        return statusLower;
+      };
+
       const formattedData = importedData.map((row) => ({
-        name: row.name || "",
-        brand: row.brand || "",
-        model: row.model || "",
-        processor: row.processor || "",
-        cpu_cores: row.cpu_cores || "",
-        ram: row.ram || "",
-        total_disk_size: row.total_disk_size || "",
-        os_type: row.os_type || "",
-        os_version: row.os_version || "",
-        status: row.status || "",
-        role: row.role || "",
-        environment: row.environment || "",
-        serial: row.serial || "",
-        rack_id: row.rack_id || "",
-        unit: row.unit || "",
-        ip_address: row.ip_address || "",
-        city: row.city || "",
+        serial_number: row.serial_number || "",
+        hostname: row.hostname || "",
+        ip_server: row.ip_server || "",
+        ip_ilo: row.ip_ilo || "",
+        service_status: normalizeStatus(row.service_status),
+        server_type: row.server_type || "",
+        total_disk_capacity: row.total_disk_capacity || "",
+        action: row.action || "",
+        server_model: row.server_model || "",
+        service_type: row.service_type || "",
+        core_count: cleanNumber(row.core_count),
+        manufacturer: row.manufacturer || "",
+        installed_memory: row.installed_memory || "",
+        warranty_start_date: formatDate(row.warranty_start_date),
+        warranty_end_date: formatDate(row.warranty_end_date),
+        eos: row.eos || "",
+        enclosure: row.enclosure || "",
+        application: row.application || "",
+        owner: row.owner || "",
         location: row.location || "",
-        asset_id: row.asset_id || "",
-        service_owner: row.service_owner || "",
-        warranty_start_date: row.warranty_start_date || "",
-        warranty_end_date: row.warranty_end_date || "",
-        application_code: row.application_code || "",
-        responsible_evc: row.responsible_evc || "",
-        domain: row.domain || "",
-        subsidiary: row.subsidiary || "",
-        responsible_organization: row.responsible_organization || "",
-        billable: row.billable || "",
-        oc_provisioning: row.oc_provisioning || "",
-        oc_deletion: row.oc_deletion || "",
-        oc_modification: row.oc_modification || "",
-        maintenance_period: row.maintenance_period || "",
-        maintenance_organization: row.maintenance_organization || "",
-        cost_center: row.cost_center || "",
-        billing_type: row.billing_type || "",
+        unit: row.unit || "",
+        ubication: row.ubication || "",
         comments: row.comments || "",
+        po_number: row.po_number || "",
       }));
 
+      console.log("Datos formateados:", formattedData.slice(0, 3));
 
       const response = await fetch(
         "http://localhost:8000/servers/add_from_excel",
@@ -189,7 +329,9 @@ export default function ServidoresFisicos() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
+        const errorDetail = await response.text();
+        console.error("Error del servidor:", errorDetail);
+        throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -262,7 +404,6 @@ export default function ServidoresFisicos() {
         throw new Error(`Error al exportar la lista: ${errorDetail}`);
       }
 
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -284,7 +425,7 @@ export default function ServidoresFisicos() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&name=${search}`,
+        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&hostname=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -298,7 +439,10 @@ export default function ServidoresFisicos() {
       }
 
       const data = await response.json();
+      console.log("Respuesta completa del servidor:", data); // Debug log
+
       if (data && data.status === "success" && data.data) {
+        console.log("Servidores recibidos:", data.data.servers); // Debug log
         setUnfilteredServers(data.data.servers);
         setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
@@ -325,7 +469,7 @@ export default function ServidoresFisicos() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/servers/physical/search?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -410,7 +554,7 @@ export default function ServidoresFisicos() {
   };
 
   const filteredServers = servers.filter((server) =>
-    server.name?.toLowerCase().includes(searchValue.toLowerCase())
+    server.hostname?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   const indexOfLastServer = currentPage * rowsPerPage;
@@ -488,20 +632,29 @@ export default function ServidoresFisicos() {
   };
 
   const getStatusBadge = (status) => {
-    if (!status) return null;
+    console.log("Estado recibido en getStatusBadge:", status); // Debug log
+
+    if (!status) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <AlertCircle size={12} className="mr-1" />
+          Sin estado
+        </span>
+      );
+    }
 
     const statusLower = status.toLowerCase();
 
     if (statusLower === "active" || statusLower === "activo") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-600 text-green-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
           Activo
         </span>
       );
     } else if (statusLower === "inactive" || statusLower === "inactivo") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500 text-red-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
           Inactivo
         </span>
@@ -511,14 +664,25 @@ export default function ServidoresFisicos() {
       statusLower === "mantenimiento"
     ) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-500 text-yellow-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
           <Clock size={12} className="mr-1" />
           Mantenimiento
         </span>
       );
+    } else if (
+      statusLower === "decommissioned" ||
+      statusLower === "retirado" ||
+      statusLower === "retired"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <AlertCircle size={12} className="mr-1" />
+          Retirado
+        </span>
+      );
     } else {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
           {status}
         </span>
       );
@@ -582,7 +746,7 @@ export default function ServidoresFisicos() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Buscar por nombre..."
+                  placeholder="Buscar por hostname..."
                   className="bg-white border-gray-400 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
@@ -655,7 +819,7 @@ export default function ServidoresFisicos() {
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Nombre
+                    Hostname
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Estado
@@ -676,75 +840,80 @@ export default function ServidoresFisicos() {
               </thead>
               <tbody>
                 {filteredServers.length > 0 ? (
-                  filteredServers.map((server, index) => (
-                    <tr
-                      key={server.id}
-                      className={`border-b border-gray-200 ${
-                        selectedServers.has(server.id)
-                          ? "bg-blue-50"
-                          : index % 2 === 0
-                          ? "bg-white"
-                          : "bg-gray-50"
-                      } hover:bg-gray-100`}
-                    >
-                      <td className="px-4 py-4">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
-                          checked={selectedServers.has(server.id)}
-                          onChange={() => toggleSelectServer(server.id)}
-                        />
-                      </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        {server.name}
-                      </td>
-                      <td className="px-6 py-4">
-                        {getStatusBadge(server.status)}
-                      </td>
-                      <td className="px-6 py-4 text-gray-900">
-                        {server.serial}
-                      </td>
-                      <td className="px-6 py-4 text-gray-900">
-                        {server.ip_address}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end space-x-2">
-                          <button
-                            onClick={() =>
-                              navigate(`${BASE_PATH}/ver/${server.id}/servers`)
-                            }
-                            className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                            title="Ver detalles"
-                          >
-                            <Eye size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/editar/${server.id}/servers`
-                              )
-                            }
-                            className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
-                            title="Editar"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteServer(server.id)}
-                            className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                            title="Eliminar"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                  filteredServers.map((server, index) => {
+                    console.log("Servidor en tabla:", server); // Debug log
+                    return (
+                      <tr
+                        key={server.id}
+                        className={`border-b border-gray-200 ${
+                          selectedServers.has(server.id)
+                            ? "bg-blue-50"
+                            : index % 2 === 0
+                            ? "bg-white"
+                            : "bg-gray-50"
+                        } hover:bg-gray-100`}
+                      >
+                        <td className="px-4 py-4">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
+                            checked={selectedServers.has(server.id)}
+                            onChange={() => toggleSelectServer(server.id)}
+                          />
+                        </td>
+                        <td className="px-6 py-4 font-medium text-gray-900">
+                          {server.hostname}
+                        </td>
+                        <td className="px-6 py-4">
+                          {getStatusBadge(server.service_status)}
+                        </td>
+                        <td className="px-6 py-4 text-gray-900">
+                          {server.serial_number}
+                        </td>
+                        <td className="px-6 py-4 text-gray-900">
+                          {server.ip_server}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `${BASE_PATH}/ver/${server.id}/servers`
+                                )
+                              }
+                              className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                              title="Ver detalles"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `${BASE_PATH}/editar/${server.id}/servers`
+                                )
+                              }
+                              className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
+                              title="Editar"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteServer(server.id)}
+                              className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                              title="Eliminar"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-4 text-center text-gray-200"
+                      className="px-6 py-4 text-center text-gray-500"
                     >
                       No se encontraron servidores que coincidan con la búsqueda
                     </td>
@@ -757,7 +926,7 @@ export default function ServidoresFisicos() {
           {/* Pagination */}
           <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
             <div className="flex items-center">
-              <span className="text-sm text-gray-200 mr-2">
+              <span className="text-sm text-gray-500 mr-2">
                 Filas por página:
               </span>
               <select

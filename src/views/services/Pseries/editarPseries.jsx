@@ -5,38 +5,50 @@ import { ArrowLeft, Save, X, Server } from "lucide-react";
 
 const EditarPseries = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); 
+  const { pserieId } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_PATH = "/inveplus";
-  const { pseriesId } = useParams();
+  const [name, setName] = useState("");
+  const [application, setApplication] = useState("");
+  const [hostname, setHostName] = useState("");
+  const [ip_address, setIpAddress] = useState("");
+  const [environment, setEnvironment] = useState(0);
+  const [slot, setSlot] = useState(0);
+  const [lpar_id, setLparId] = useState("");
+  const [status, setStatus] = useState("");
+  const [os, setOs] = useState("");
+  const [version, setVersion] = useState("");
+  const [subsidiary, setSubsidiary] = useState("");
+  const [min_cpu, setMinCpu] = useState("");
+  const [act_cpu, setActCpu] = useState("");
+  const [max_cpu, setMaxCpu] = useState("");
+  const [min_v_cpu, setMinVCpu] = useState("");
+  const [act_v_cpu, setActVCpu] = useState("");
+  const [max_v_cpu, setMaxVCpu] = useState("");
+  const [min_memory, setMinMemory] = useState("");
+  const [act_memory, setActMemory] = useState("");
+  const [max_memory, setMaxMemory] = useState("");
+  const [expansion_factor, setExpansionFactor] = useState("");
+  const [memory_per_factor, setMemoryPerFactor] = useState("");
+  const [processor_compatibility, setProcessorCompatibility] = useState("");
 
-  const [formData, setFormData] = useState({
-    name: "",
-    application: "",
-    hostname: "",
-    ip_address: "",
-    environment: "",
-    slot: "",
-    lpar_id: "",
-    status: "",
-    os: "",
-    version: "",
-    subsidiary: "",
-    min_cpu: "",
-    act_cpu: "",
-    max_cpu: "",
-    min_v_cpu: "",
-    act_v_cpu: "",
-    max_v_cpu: "",
-    min_memory: "",
-    act_memory: "",
-    max_memory: "",
-    expansion_factor: "",
-    memory_per_factor: "",
-    processor_compatibility: "",
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
   });
+
+  const showSuccessToast = () => {
+    Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
+  };
 
   // Opciones para los campos de selección
   const environmentOptions = [
@@ -62,176 +74,173 @@ const EditarPseries = () => {
     "POWER9_base",
   ];
 
-  useEffect(() => {
-    const fetchPseriesDetails = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("authenticationToken");
-        if (!token) {
-          throw new Error("No se encontró token de autenticación");
-        }
+  const token = localStorage.getItem("authenticationToken");
 
+  useEffect(() => {
+    const fetchPseriesData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
         const response = await fetch(
-          `http://localhost:8000/pseries/get_by_id/${pseriesId}`,
+          `http://localhost:8000/pseries/get_by_id/${pserieId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem(
+                "authenticationToken"
+              )}`,
             },
           }
         );
 
         if (!response.ok) {
-          throw new Error(`Error HTTP ${response.status}`);
+          const errorData = await response.json(); // Intenta leer la respuesta en caso de error
+          console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
+          if (response.status === 404) {
+            throw new Error("Servidor no encontrado");
+          } else if (response.status === 401) {
+            throw new Error("No autorizado");
+          } else {
+            throw new Error(
+              `Error HTTP ${response.status}: ${
+                errorData.message || errorData.detail
+              }`
+            );
+          }
         }
-
         const data = await response.json();
-        console.log("Datos recibidos:", data); // Para depuración
-
-        if (data && data.status === "success" && data.data) {
-          setFormData({
-            name: data.data.pseries.name || "",
-            application: data.data.pseries.application || "",
-            hostname: data.data.pseries.hostname || "",
-            ip_address: data.data.pseries.ip_address || "",
-            environment: data.data.pseries.environment || "",
-            slot: data.data.pseries.slot || "",
-            lpar_id: data.data.pseries.lpar_id || "",
-            status: data.data.pseries.status || "",
-            os: data.data.pseries.os || "",
-            version: data.data.pseries.version || "",
-            subsidiary: data.data.pseries.subsidiary || "",
-            min_cpu: data.data.pseries.min_cpu || "",
-            act_cpu: data.data.pseries.act_cpu || "",
-            max_cpu: data.data.pseries.max_cpu || "",
-            min_v_cpu: data.data.pseries.min_v_cpu || "",
-            act_v_cpu: data.data.pseries.act_v_cpu || "",
-            max_v_cpu: data.data.pseries.max_v_cpu || "",
-            min_memory: data.data.pseries.min_memory || "",
-            act_memory: data.data.pseries.act_memory || "",
-            max_memory: data.data.pseries.max_memory || "",
-            expansion_factor: data.data.pseries.expansion_factor || "",
-            memory_per_factor: data.data.pseries.memory_per_factor || "",
-            processor_compatibility:
-              data.data.pseries.processor_compatibility || "",
-          });
+        // console.log("Datos recibidos:", data);
+        // Actualiza los estados con los datos recibidos
+        if (data.status === "success" && data.data) {
+          setName(data.data.name || "");
+          setApplication(data.data.application || "");
+          setHostName(data.data.hostname || "");
+          setIpAddress(data.data.ip_address || "");
+          setEnvironment(data.data.environment || "");
+          setSlot(data.data.slot || "");
+          setLparId(data.data.lpar_id || "");
+          setStatus(data.data.status || "");
+          setOs(data.data.os || "");
+          setVersion(data.data.version || "");
+          setSubsidiary(data.data.subsidiary || "");
+          setMinCpu(data.data.min_cpu || "");
+          setActCpu(data.data.act_cpu || "");
+          setMaxCpu(data.data.max_cpu || "");
+          setMinVCpu(data.data.min_v_cpu || "");
+          setActVCpu(data.data.act_v_cpu || "");
+          setMaxVCpu(data.data.max_cpu || "");
+          setMinMemory(data.data.min_memory || "");
+          setActMemory(data.data.act_memory || "");
+          setMaxMemory(data.data.max_memory || "");
+          setExpansionFactor(data.data.expansion_factor || "");
+          setMemoryPerFactor(data.data.memory_per_factor || "");
+          setProcessorCompatibility(data.data.processor_compatibility || "");
         } else {
-          throw new Error("Respuesta inesperada de la API");
+          console.error("Estructura de datos inesperada:", data);
+          setError("Estructura de datos inesperada del servidor");
         }
-      } catch (error) {
-        console.error("Error al obtener detalles del servidor:", error);
-        setError(
-          error.message ||
-            "Ha ocurrido un error al cargar los detalles del servidor"
-        );
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text:
-            error.message ||
-            "Ha ocurrido un error al cargar los detalles del servidor",
-        });
+        console.error("Error en fetchPseriesData:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (pseriesId) {
-      fetchPseriesDetails();
+    if (pserieId) {
+      fetchPseriesData();
     }
-  }, [pseriesId]);
+  }, [pserieId]);
 
-  // Manejar cambios en los inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {}, [name, application]);
 
-  // Renderizar campo según su tipo
-  const renderField = (field) => {
-    switch (field.type) {
-      case "select":
-        return (
-          <select
-            id={field.name}
-            name={field.name}
-            value={formData[field.name]}
-            onChange={handleChange}
-            required={field.required}
-            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Seleccionar...</option>
-            {field.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        );
-      default:
-        return (
-          <input
-            type={field.type}
-            id={field.name}
-            name={field.name}
-            value={formData[field.name]}
-            onChange={handleChange}
-            required={field.required}
-            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-          />
-        );
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    navigate(`${BASE_PATH}/pseries`);
+
+    if (!application || !name || !ip_address || !hostname) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obligatorios",
+        text: "Por favor, completa todos los campos obligatorios.",
+      });
+      return;
     }
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    const pserieData = {
+      name: name,
+      application: application,
+      hostname: hostname,
+      ip_address: ip_address,
+      environment: environment,
+      slot: slot,
+      lpar_id: lpar_id,
+      status: status,
+      os: os,
+      version: version,
+      subsidiary: subsidiary,
+      min_cpu: min_cpu,
+      act_cpu: act_cpu,
+      max_cpu: max_cpu,
+      min_v_cpu: min_v_cpu,
+      act_v_cpu: act_v_cpu,
+      max_v_cpu: max_v_cpu,
+      min_memory: min_memory,
+      act_memory: act_memory,
+      max_memory: max_memory,
+      expansion_factor: expansion_factor,
+      memory_per_factor: memory_per_factor,
+      processor_compatibility: processor_compatibility,
+    };
+
+    console.log(
+      "Token de autenticación:",
+      localStorage.getItem("authenticationToken")
+    );
+    console.log("Datos a enviar:", pserieData);
 
     try {
-      const token = localStorage.getItem("authenticationToken");
-
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries/${pseriesId}`,
+        `http://localhost:8000/pseries/edit/${pserieId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(pserieData),
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error HTTP ${response.status}`);
-      }
+      console.log("Respuesta del servidor:", response);
 
-      Swal.fire({
-        icon: "success",
-        title: "¡Éxito!",
-        text: "Servidor actualizado correctamente",
-        confirmButtonColor: "#3085d6",
-      }).then(() => {
-        navigate(`${BASE_PATH}/pseries`);
-      });
+      if (!response.ok) {
+        let errorMessage = `Error HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error("Detalles del error (JSON):", errorData);
+          if (errorData && Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+          } else if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData) {
+            errorMessage = JSON.stringify(errorData);
+          }
+          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
+        } catch (jsonError) {
+          console.error("Error al parsear JSON:", jsonError);
+          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
+        }
+      } else {
+        showSuccessToast();
+      }
     } catch (error) {
-      console.error("Error al actualizar servidor:", error);
+      console.error("Error inesperado:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error.message || "Ha ocurrido un error al actualizar el servidor",
-        confirmButtonColor: "#3085d6",
+        text: "Ocurrió un error inesperado.",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  // Cancelar y volver a la lista
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -249,16 +258,16 @@ const EditarPseries = () => {
     });
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-  //         <p>Cargando detalles del servidor...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p>Cargando detalles del servidor...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -288,7 +297,7 @@ const EditarPseries = () => {
           </h1>
           <p className="text-sm font-semibold text-gray-900">
             Modifica la información del pserie{" "}
-            <span className="font-bold">{formData.name}</span>
+            <span className="font-bold">{name}</span>
           </p>
         </div>
         <button
@@ -323,8 +332,8 @@ const EditarPseries = () => {
                     id="name"
                     name="name"
                     required
-                    value={formData.name}
-                    onChange={handleChange}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -341,8 +350,8 @@ const EditarPseries = () => {
                     id="application"
                     name="application"
                     required
-                    value={formData.application}
-                    onChange={handleChange}
+                    value={application}
+                    onChange={(e) => setApplication(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -359,8 +368,8 @@ const EditarPseries = () => {
                     id="hostname"
                     name="hostname"
                     required
-                    value={formData.hostname}
-                    onChange={handleChange}
+                    value={hostname}
+                    onChange={(e) => setHostName(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -376,8 +385,8 @@ const EditarPseries = () => {
                     type="text"
                     id="ip_address"
                     name="ip_address"
-                    value={formData.ip_address}
-                    onChange={handleChange}
+                    value={ip_address}
+                    onChange={(e) => setIpAddress(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -393,8 +402,8 @@ const EditarPseries = () => {
                     id="status"
                     name="status"
                     required
-                    value={formData.status}
-                    onChange={handleChange}
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
@@ -416,8 +425,8 @@ const EditarPseries = () => {
                   <select
                     id="subsidiary"
                     name="subsidiary"
-                    value={formData.subsidiary}
-                    onChange={handleChange}
+                    value={subsidiary}
+                    onChange={(e) => setSubsidiary(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar filial</option>
@@ -447,8 +456,8 @@ const EditarPseries = () => {
                   <select
                     id="environment"
                     name="environment"
-                    value={formData.environment}
-                    onChange={handleChange}
+                    value={environment}
+                    onChange={(e) => setEnvironment(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar ambiente</option>
@@ -471,8 +480,8 @@ const EditarPseries = () => {
                     type="text"
                     id="slot"
                     name="slot"
-                    value={formData.slot}
-                    onChange={handleChange}
+                    value={slot}
+                    onChange={(e) => setSlot(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -488,8 +497,8 @@ const EditarPseries = () => {
                     type="text"
                     id="lpar_id"
                     name="lpar_id"
-                    value={formData.lpar_id}
-                    onChange={handleChange}
+                    value={lpar_id}
+                    onChange={(e) => setLparId(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -513,8 +522,8 @@ const EditarPseries = () => {
                     id="os"
                     name="os"
                     required
-                    value={formData.os}
-                    onChange={handleChange}
+                    value={os}
+                    onChange={(e) => setOs(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar S.O</option>
@@ -537,8 +546,8 @@ const EditarPseries = () => {
                     type="text"
                     id="version"
                     name="version"
-                    value={formData.version}
-                    onChange={handleChange}
+                    value={version}
+                    onChange={(e) => setVersion(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -561,8 +570,8 @@ const EditarPseries = () => {
                     id="min_cpu"
                     name="min_cpu"
                     required
-                    value={formData.min_cpu}
-                    onChange={handleChange}
+                    value={min_cpu}
+                    onChange={(e) => setMinCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -579,8 +588,8 @@ const EditarPseries = () => {
                     id="act_cpu"
                     name="act_cpu"
                     required
-                    value={formData.act_cpu}
-                    onChange={handleChange}
+                    value={act_cpu}
+                    onChange={(e) => setActCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -597,8 +606,8 @@ const EditarPseries = () => {
                     id="max_cpu"
                     name="max_cpu"
                     required
-                    value={formData.max_cpu}
-                    onChange={handleChange}
+                    value={max_cpu}
+                    onChange={(e) => setMaxCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -615,8 +624,8 @@ const EditarPseries = () => {
                     id="min_v_cpu"
                     name="min_v_cpu"
                     required
-                    value={formData.min_v_cpu}
-                    onChange={handleChange}
+                    value={min_v_cpu}
+                    onChange={(e) => setMinVCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -633,8 +642,8 @@ const EditarPseries = () => {
                     id="act_v_cpu"
                     name="act_v_cpu"
                     required
-                    value={formData.act_v_cpu}
-                    onChange={handleChange}
+                    value={act_v_cpu}
+                    onChange={(e) => setActVCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -651,8 +660,8 @@ const EditarPseries = () => {
                     id="max_v_cpu"
                     name="max_v_cpu"
                     required
-                    value={formData.max_v_cpu}
-                    onChange={handleChange}
+                    value={max_v_cpu}
+                    onChange={(e) => setMaxVCpu(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -677,8 +686,8 @@ const EditarPseries = () => {
                     id="min_memory"
                     name="min_memory"
                     required
-                    value={formData.min_memory}
-                    onChange={handleChange}
+                    value={min_memory}
+                    onChange={(e) => setMinMemory(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -694,8 +703,8 @@ const EditarPseries = () => {
                     type="text"
                     id="act_memory"
                     name="act_memory"
-                    value={formData.act_memory}
-                    onChange={handleChange}
+                    value={act_memory}
+                    onChange={(e) => setActMemory(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -711,8 +720,8 @@ const EditarPseries = () => {
                     type="text"
                     id="max_memory"
                     name="max_memory"
-                    value={formData.max_memory}
-                    onChange={handleChange}
+                    value={max_memory}
+                    onChange={(e) => setMaxMemory(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -736,8 +745,8 @@ const EditarPseries = () => {
                     type="text"
                     id="expansion_factor"
                     name="expansion_factor"
-                    value={formData.expansion_factor}
-                    onChange={handleChange}
+                    value={expansion_factor}
+                    onChange={(e) => setExpansionFactor(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -753,8 +762,8 @@ const EditarPseries = () => {
                     type="text"
                     id="memory_per_factor"
                     name="memory_per_factor"
-                    value={formData.memory_per_factor}
-                    onChange={handleChange}
+                    value={memory_per_factor}
+                    onChange={(e) => setMemoryPerFactor(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -769,8 +778,8 @@ const EditarPseries = () => {
                   <select
                     id="processor_compatibility"
                     name="processor_compatibility"
-                    value={formData.processor_compatibility}
-                    onChange={handleChange}
+                    value={processor_compatibility}
+                    onChange={(e) => setProcessorCompatibility(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar compatibilidad</option>

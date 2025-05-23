@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -31,43 +31,54 @@ const InputField = ({
 
 const EditarServer = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    model: "",
-    processor: "",
-    cpu_cores: "",
-    ram: "",
-    total_disk_size: "",
-    os_type: "",
-    os_version: "",
-    status: "",
-    role: "",
-    environment: "",
-    serial: "",
-    rack_id: "",
-    unit: "",
-    ip_address: "",
-    city: "",
-    location: "",
-    asset_id: "",
-    service_owner: "",
+    serial_number: "",
+    hostname: "",
+    ip_server: "",
+    ip_ilo: "",
+    service_status: "",
+    server_type: "",
+    total_disk_capacity: "",
+    action: "",
+    server_model: "",
+    service_type: "",
+    core_count: "",
+    manufacturer: "",
+    installed_memory: "",
     warranty_start_date: "",
     warranty_end_date: "",
-    application_code: "",
-    responsible_evc: "",
-    domain: "",
-    subsidiary: "",
-    responsible_organization: "",
-    billable: "",
-    oc_provisioning: "",
-    oc_deletion: "",
-    oc_modification: "",
-    maintenance_period: "",
-    maintenance_organization: "",
-    cost_center: "",
-    billing_type: "",
+    eos: "",
+    enclosure: "",
+    application: "",
+    owner: "",
+    location: "",
+    unit: "",
+    ubication: "",
     comments: "",
+    po_number: "",
   });
+
+  // Opciones para campos de selección
+  const serviceStatusOptions = [
+    "active",
+    "inactive",
+    "maintenance",
+    "decommissioned",
+  ];
+  const serverTypeOptions = ["Physical", "Virtual", "Blade", "Rack"];
+  const serviceTypeOptions = [
+    "Production",
+    "Development",
+    "Testing",
+    "Staging",
+  ];
+  const manufacturerOptions = [
+    "Dell",
+    "HP",
+    "IBM",
+    "Cisco",
+    "Lenovo",
+    "Supermicro",
+  ];
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -223,54 +234,99 @@ const EditarServer = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Nombre"
-                  name="name"
-                  value={formData.name}
+                  label="Hostname"
+                  name="hostname"
+                  value={formData.hostname}
                   onChange={handleInputChange}
                   required
                 />
                 <InputField
-                  label="Marca"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleInputChange}
-                  required
-                />
-                <InputField
-                  label="Modelo"
-                  name="model"
-                  value={formData.model}
-                  onChange={handleInputChange}
-                  required
-                />
-                <InputField
-                  label="Serial"
-                  name="serial"
-                  value={formData.serial}
+                  label="Número de Serie"
+                  name="serial_number"
+                  value={formData.serial_number}
                   onChange={handleInputChange}
                   required
                 />
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Estado <span className="text-red-500">*</span>
+                    Fabricante
                   </label>
                   <select
-                    name="status"
-                    value={formData.status}
+                    name="manufacturer"
+                    value={formData.manufacturer}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar fabricante</option>
+                    {manufacturerOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <InputField
+                  label="Modelo del Servidor"
+                  name="server_model"
+                  value={formData.server_model}
+                  onChange={handleInputChange}
+                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Tipo de Servidor
+                  </label>
+                  <select
+                    name="server_type"
+                    value={formData.server_type}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar tipo</option>
+                    {serverTypeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Estado del Servicio <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="service_status"
+                    value={formData.service_status}
                     onChange={handleInputChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccionar...</option>
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                    <option value="maintenance">Mantenimiento</option>
+                    {serviceStatusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </div>
+              </div>
+            </div>
+
+            {/* Sección: Configuración de Red */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Configuración de Red
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Dirección IP"
-                  name="ip_address"
-                  value={formData.ip_address}
+                  label="IP del Servidor"
+                  name="ip_server"
+                  value={formData.ip_server}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="IP iLO/IPMI"
+                  name="ip_ilo"
+                  value={formData.ip_ilo}
                   onChange={handleInputChange}
                 />
               </div>
@@ -283,39 +339,22 @@ const EditarServer = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Procesador"
-                  name="processor"
-                  value={formData.processor}
+                  label="Número de Núcleos"
+                  name="core_count"
+                  value={formData.core_count}
+                  onChange={handleInputChange}
+                  type="number"
+                />
+                <InputField
+                  label="Memoria Instalada"
+                  name="installed_memory"
+                  value={formData.installed_memory}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Núcleos CPU"
-                  name="cpu_cores"
-                  value={formData.cpu_cores}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="RAM"
-                  name="ram"
-                  value={formData.ram}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Tamaño Disco Total"
-                  name="total_disk_size"
-                  value={formData.total_disk_size}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Tipo de OS"
-                  name="os_type"
-                  value={formData.os_type}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Versión de OS"
-                  name="os_version"
-                  value={formData.os_version}
+                  label="Capacidad Total de Disco"
+                  name="total_disk_capacity"
+                  value={formData.total_disk_capacity}
                   onChange={handleInputChange}
                 />
               </div>
@@ -328,93 +367,81 @@ const EditarServer = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Rack ID"
-                  name="rack_id"
-                  value={formData.rack_id}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Unidad"
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Ciudad"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                />
-                <InputField
                   label="Ubicación"
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Sucursal"
-                  name="subsidiary"
-                  value={formData.subsidiary}
+                  label="Ubicación Específica"
+                  name="ubication"
+                  value={formData.ubication}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Dominio"
-                  name="domain"
-                  value={formData.domain}
+                  label="Unidad/Rack"
+                  name="unit"
+                  value={formData.unit}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Gabinete/Enclosure"
+                  name="enclosure"
+                  value={formData.enclosure}
                   onChange={handleInputChange}
                 />
               </div>
             </div>
 
-            {/* Sección: Información Administrativa */}
+            {/* Sección: Información de Servicio */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Información Administrativa
+                Información de Servicio
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Tipo de Servicio
+                  </label>
+                  <select
+                    name="service_type"
+                    value={formData.service_type}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar tipo de servicio</option>
+                    {serviceTypeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <InputField
-                  label="Rol"
-                  name="role"
-                  value={formData.role}
+                  label="Aplicación"
+                  name="application"
+                  value={formData.application}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Entorno"
-                  name="environment"
-                  value={formData.environment}
+                  label="Propietario/Responsable"
+                  name="owner"
+                  value={formData.owner}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="ID de Activo"
-                  name="asset_id"
-                  value={formData.asset_id}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Propietario del Servicio"
-                  name="service_owner"
-                  value={formData.service_owner}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Responsable EVC"
-                  name="responsible_evc"
-                  value={formData.responsible_evc}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Organización Responsable"
-                  name="responsible_organization"
-                  value={formData.responsible_organization}
+                  label="Acción"
+                  name="action"
+                  value={formData.action}
                   onChange={handleInputChange}
                 />
               </div>
             </div>
 
-            {/* Sección: Garantía y Facturación */}
+            {/* Sección: Garantía y Soporte */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Garantía y Facturación
+                Garantía y Soporte
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
@@ -432,60 +459,15 @@ const EditarServer = () => {
                   type="date"
                 />
                 <InputField
-                  label="Facturable"
-                  name="billable"
-                  value={formData.billable}
+                  label="End of Support (EOS)"
+                  name="eos"
+                  value={formData.eos}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Centro de Costos"
-                  name="cost_center"
-                  value={formData.cost_center}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Tipo de Facturación"
-                  name="billing_type"
-                  value={formData.billing_type}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Sección: Órdenes y Mantenimiento */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Órdenes y Mantenimiento
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <InputField
-                  label="Provisionamiento OC"
-                  name="oc_provisioning"
-                  value={formData.oc_provisioning}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Eliminación OC"
-                  name="oc_deletion"
-                  value={formData.oc_deletion}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Modificación OC"
-                  name="oc_modification"
-                  value={formData.oc_modification}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Periodo de Mantenimiento"
-                  name="maintenance_period"
-                  value={formData.maintenance_period}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Organización de Mantenimiento"
-                  name="maintenance_organization"
-                  value={formData.maintenance_organization}
+                  label="Número de Orden de Compra"
+                  name="po_number"
+                  value={formData.po_number}
                   onChange={handleInputChange}
                 />
               </div>
@@ -497,12 +479,6 @@ const EditarServer = () => {
                 Información Adicional
               </h2>
               <div className="grid grid-cols-1 gap-4">
-                <InputField
-                  label="Código de Aplicación"
-                  name="application_code"
-                  value={formData.application_code}
-                  onChange={handleInputChange}
-                />
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Comentarios
