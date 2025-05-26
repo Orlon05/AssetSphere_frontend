@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdEdit, MdArrowBack } from "react-icons/md";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft } from "lucide-react";
 
-//componente reutilizable para los campos del formulario
-
+// Componente reutilizable para los campos del formulario
 const InputField = ({
   label,
   name,
@@ -30,7 +29,7 @@ const InputField = ({
   </div>
 );
 
-const EditarBaseDeDatos = () => {
+const EditarBaseDatos = () => {
   const [formData, setFormData] = useState({
     instance_id: "",
     cost_center: "",
@@ -63,19 +62,19 @@ const EditarBaseDeDatos = () => {
   });
 
   const [loading, setLoading] = useState(true);
-  const { error, SetError } = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { basedatosId } = useParams();
+  const { baseDatosId } = useParams();
   const token = localStorage.getItem("authenticationToken");
 
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
-    showCOnfirmButton: false,
+    showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
     didOpen: (toast) => {
-      toast.ondmouseenter = Swal.stopTimer;
+      toast.onmouseenter = Swal.stopTimer;
       toast.onmouseleave = Swal.resumeTimer;
     },
   });
@@ -83,7 +82,7 @@ const EditarBaseDeDatos = () => {
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
-      title: "Base de datos editada correctamente",
+      title: "Base de datos actualizada exitosamente",
     });
   };
 
@@ -96,16 +95,14 @@ const EditarBaseDeDatos = () => {
   };
 
   useEffect(() => {
-    const fetchbasedata = async () => {
+    const fetchBaseDatosData = async () => {
       setLoading(true);
-      SetError(null);
+      setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/base_datos/get_by_id/${basedatosId}`,
+          `http://localhost:8000/base_datos/get_by_id/${baseDatosId}`,
           {
-            method: "GET",
             headers: {
-              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
@@ -117,29 +114,65 @@ const EditarBaseDeDatos = () => {
         }
 
         const data = await response.json();
-        if (data.status === "Success" && data.data && data.data.base_info) {
-          setFormData(data.data.base_info);
+        if (data.status === "success" && data.data) {
+          // Formatear las fechas para los inputs de tipo date
+          const formatDate = (dateString) => {
+            if (!dateString) return "";
+            return new Date(dateString).toISOString().split("T")[0];
+          };
+
+          setFormData({
+            instance_id: data.data.instance_id || "",
+            cost_center: data.data.cost_center || "",
+            category: data.data.category || "",
+            type: data.data.type || "",
+            item: data.data.item || "",
+            owner_contact: data.data.owner_contact || "",
+            name: data.data.name || "",
+            application_code: data.data.application_code || "",
+            inactive: data.data.inactive || "",
+            asset_life_cycle_status: data.data.asset_life_cycle_status || "",
+            system_environment: data.data.system_environment || "",
+            cloud: data.data.cloud || "",
+            version_number: data.data.version_number || "",
+            serial: data.data.serial || "",
+            ci_tag: data.data.ci_tag || "",
+            instance_name: data.data.instance_name || "",
+            model: data.data.model || "",
+            ha: data.data.ha || "",
+            port: data.data.port || "",
+            owner_name: data.data.owner_name || "",
+            department: data.data.department || "",
+            company: data.data.company || "",
+            manufacturer_name: data.data.manufacturer_name || "",
+            supplier_name: data.data.supplier_name || "",
+            supported: data.data.supported || "",
+            account_id: data.data.account_id || "",
+            create_date: formatDate(data.data.create_date),
+            modified_date: formatDate(data.data.modified_date),
+          });
         } else {
           throw new Error("Estructura de datos inesperada");
         }
       } catch (error) {
-        console.error("Error al obtener los datos:", error);
-        SetError(error.message);
+        console.error("Error al obtener datos de la base de datos:", error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (basedatosId) {
-      fetchbasedata();
+    if (baseDatosId) {
+      fetchBaseDatosData();
     }
-  }, [basedatosId, token]);
-  const handleSubmit = async (e) => {
+  }, [baseDatosId, token]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/edit/${basedatosId}`,
+        `http://localhost:8000/base_datos/edit/${baseDatosId}`,
         {
           method: "PUT",
           headers: {
@@ -154,18 +187,18 @@ const EditarBaseDeDatos = () => {
         const errorData = await response.json();
         const errorMessage = errorData.detail
           ? errorData.detail.map((e) => e.msg).join(", ")
-          : errorData.message || "Error al editar la base de datos";
+          : errorData.message || "Error en la solicitud";
         throw new Error(errorMessage);
       }
 
       showSuccessToast();
-      navigate("/inveplus/basededatos");
+      navigate("/inveplus/Base-De-Datos");
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error.message || "Ocurrió un error inesperado",
+        text: error.message || "Ocurrió un error inesperado.",
       });
     }
   };
@@ -174,7 +207,7 @@ const EditarBaseDeDatos = () => {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="text-xl font-semibold">
-          Cargando información de la Base de datos...
+          Cargando datos de la base de datos...
         </div>
       </div>
     );
@@ -194,7 +227,7 @@ const EditarBaseDeDatos = () => {
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            Editar Base de datos
+            Editar Base de Datos
           </h1>
           <p className="text-sm font-semibold text-gray-900">
             Modifica la información de la base de datos
@@ -213,499 +246,256 @@ const EditarBaseDeDatos = () => {
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Sección: Información Básica */}
+            {/* Sección: Información de Identificación */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Información Básica
+                Información de Identificación
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="instance_id"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    ID de instancia <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="instance_id"
-                    name="instance_id"
-                    required
-                    value={formData.instance_id}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="cost_center"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Centro de Costos
-                  </label>
-                  <input
-                    type="text"
-                    id="cost_center"
-                    name="cost_center"
-                    value={formData.cost_center}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Categoría
-                  </label>
-                  <input
-                    type="text"
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="type"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tipo
-                  </label>
-                  <input
-                    type="text"
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="item"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Objeto <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="item"
-                    name="item"
-                    required
-                    value={formData.item}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="active">Base de datos</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="owner_contact"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Contacto del Propietario
-                  </label>
-                  <input
-                    type="text"
-                    id="owner_contact"
-                    name="owner_contact"
-                    value={formData.owner_contact}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+                <InputField
+                  label="ID de Instancia"
+                  name="instance_id"
+                  value={formData.instance_id}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Nombre"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Nombre de Instancia"
+                  name="instance_name"
+                  value={formData.instance_name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Etiqueta CI"
+                  name="ci_tag"
+                  value={formData.ci_tag}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Serie"
+                  name="serial"
+                  value={formData.serial}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Puerto"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </div>
 
-            {/* Sección: Especificaciones Técnicas */}
+            {/* Sección: Clasificación y Categorización */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Especificaciones Técnicas
+                Clasificación y Categorización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="application_code"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Codigo de Aplicación
-                  </label>
-                  <input
-                    type="text"
-                    id="application_code"
-                    name="application_code"
-                    value={formData.application_code}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="inactive"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Estado <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="inactive"
-                    name="inactive"
-                    required
-                    value={formData.inactive}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="active">Activa</option>
-                    <option value="inactive">Inactiva</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="asset_life_cycle_status"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Estado del ciclo de vida del activo
-                  </label>
-                  <input
-                    type="text"
-                    id="asset_life_cycle_status"
-                    name="asset_life_cycle_status"
-                    value={formData.asset_life_cycle_status}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="system_environment"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Entorno del sistema
-                  </label>
-                  <input
-                    type="text"
-                    id="system_environment"
-                    name="system_environment"
-                    value={formData.system_environment}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="cloud"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nube
-                  </label>
-                  <input
-                    type="text"
-                    id="cloud"
-                    name="cloud"
-                    value={formData.cloud}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="version_number"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Numero de versión
-                  </label>
-                  <input
-                    type="text"
-                    id="version_number"
-                    name="version_number"
-                    value={formData.version_number}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="serial"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Serial
-                  </label>
-                  <input
-                    type="text"
-                    id="serial"
-                    name="serial"
-                    value={formData.serial}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="ci_tag"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    CI Tag
-                  </label>
-                  <input
-                    type="text"
-                    id="ci_tag"
-                    name="ci_tag"
-                    value={formData.ci_tag}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="instance_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre de la instancia
-                  </label>
-                  <input
-                    type="text"
-                    id="instance_name"
-                    name="instance_name"
-                    value={formData.instance_name}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="model"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Modelo
-                  </label>
-                  <input
-                    type="text"
-                    id="model"
-                    name="model"
-                    value={formData.model}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="ha"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Ha
-                  </label>
-                  <input
-                    type="text"
-                    id="ha"
-                    name="ha"
-                    value={formData.ha}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="port"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Puerto
-                  </label>
-                  <input
-                    type="port"
-                    id="port"
-                    name="port"
-                    value={formData.port}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+                <InputField
+                  label="Categoría"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Tipo"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Ítem"
+                  name="item"
+                  value={formData.item}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Modelo"
+                  name="model"
+                  value={formData.model}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Código de Aplicación"
+                  name="application_code"
+                  value={formData.application_code}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Número de Versión"
+                  name="version_number"
+                  value={formData.version_number}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
             </div>
 
-            {/* Sección: Ubicación y Organización */}
+            {/* Sección: Estado y Entorno */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Ubicación y Organización
+                Estado y Entorno
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="owner_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre del dueño
-                  </label>
-                  <input
-                    type="text"
-                    id="owner_name"
-                    name="owner_name"
-                    value={formData.owner_name}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+                <InputField
+                  label="Inactivo"
+                  name="inactive"
+                  value={formData.inactive}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Estado del Ciclo de Vida del Activo"
+                  name="asset_life_cycle_status"
+                  value={formData.asset_life_cycle_status}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Entorno del Sistema"
+                  name="system_environment"
+                  value={formData.system_environment}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Nube"
+                  name="cloud"
+                  value={formData.cloud}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="HA"
+                  name="ha"
+                  value={formData.ha}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Soporte"
+                  name="supported"
+                  value={formData.supported}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="department"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Departamento
-                  </label>
-                  <input
-                    type="text"
-                    id="department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+            {/* Sección: Información de Propietario */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Información de Propietario
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <InputField
+                  label="Nombre del Propietario"
+                  name="owner_name"
+                  value={formData.owner_name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Contacto del Propietario"
+                  name="owner_contact"
+                  value={formData.owner_contact}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Departamento"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Compañía"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Compañía
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+            {/* Sección: Información de Proveedores */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Información de Proveedores
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <InputField
+                  label="Nombre del Fabricante"
+                  name="manufacturer_name"
+                  value={formData.manufacturer_name}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="Nombre del Proveedor"
+                  name="supplier_name"
+                  value={formData.supplier_name}
+                  onChange={handleInputChange}
+                  required
+                />
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="manufacturer_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre del fabricante
-                  </label>
-                  <input
-                    type="text"
-                    id="manufacturer_name"
-                    name="manufacturer_name"
-                    value={formData.manufacturer_name}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+                <InputField
+                  label="Centro de Costos"
+                  name="cost_center"
+                  value={formData.cost_center}
+                  onChange={handleInputChange}
+                  required
+                />
+                <InputField
+                  label="ID de Cuenta"
+                  name="account_id"
+                  value={formData.account_id}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="supplier_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Nombre del Proveedor
-                  </label>
-                  <input
-                    type="text"
-                    id="supplier_name"
-                    name="supplier_name"
-                    value={formData.supplier_name}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="supported"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Apoyado Por
-                  </label>
-                  <input
-                    type="text"
-                    id="supported"
-                    name="supported"
-                    value={formData.supported}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="account_id"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    ID de Cuenta
-                  </label>
-                  <input
-                    type="text"
-                    id="account_id"
-                    name="account_id"
-                    value={formData.account_id}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="create_date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Fecha de creación
-                  </label>
-                  <input
-                    type="date"
-                    id="create_date"
-                    name="create_date"
-                    value={formData.create_date}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="modified_date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Fecha de modificación
-                  </label>
-                  <input
-                    type="date"
-                    id="modified_date"
-                    name="modified_date"
-                    value={formData.modified_date}
-                    onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
+            {/* Sección: Fechas */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Fechas
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputField
+                  label="Fecha de Creación"
+                  name="create_date"
+                  value={formData.create_date}
+                  onChange={handleInputChange}
+                  type="date"
+                  required
+                />
+                <InputField
+                  label="Fecha de Modificación"
+                  name="modified_date"
+                  value={formData.modified_date}
+                  onChange={handleInputChange}
+                  type="date"
+                  required
+                />
               </div>
             </div>
 
@@ -713,7 +503,7 @@ const EditarBaseDeDatos = () => {
             <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                onClick={() => navigate("/inveplus/servidoresf")}
+                onClick={() => navigate("/inveplus/base-de-datos")}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
               >
                 <MdArrowBack size={18} className="mr-2" />
@@ -734,4 +524,4 @@ const EditarBaseDeDatos = () => {
   );
 };
 
-export default EditarBaseDeDatos;
+export default EditarBaseDatos;

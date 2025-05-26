@@ -698,7 +698,11 @@ const Pseries = () => {
                             <Eye size={16} />
                           </button>
                           <button
-                            onClick={() => irEditar(server.id)}
+                            onClick={() =>
+                              navigate(
+                                `${BASE_PATH}/editar/${pseries.id}/pseries`
+                              )
+                            }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"
                           >

@@ -221,21 +221,19 @@ const CrearBasedeDatos = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="item"
+                    htmlFor="Objeto"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Objeto <span className="text-red-500">*</span>
+                    Objeto
                   </label>
-                  <select
+                  <input
+                    type="text"
                     id="item"
                     name="item"
-                    required
                     value={formData.item}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="active">Base de datos</option>
-                  </select>
+                  />
                 </div>
 
                 <div className="space-y-2">

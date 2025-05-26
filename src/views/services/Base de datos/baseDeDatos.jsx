@@ -14,7 +14,7 @@ import {
   Upload,
   Plus,
 } from "lucide-react";
-// import ExcelImporter from "../layouts/ExcelImporter";
+import ExcelImporter from "../../../hooks/Excelimporter";
 
 const BaseDeDatos = () => {
   const navigate = useNavigate();
@@ -99,8 +99,8 @@ const BaseDeDatos = () => {
           { name: "supplier_name", required: false, type: "string" },
           { name: "supported", required: false, type: "string" },
           { name: "account_id", required: false, type: "string" },
-          { name: "create_date", required: false, type: "DateTime" },
-          { name: "modified_date", required: false, type: "DateTime" },
+          { name: "create_date", required: false, type: "Date" },
+          { name: "modified_date", required: false, type: "Date" },
         ];
         const importer = (
           <ExcelImporter
@@ -168,8 +168,12 @@ const BaseDeDatos = () => {
         supplier_name: row.supplier_name || "",
         supported: row.supported || "",
         account_id: row.account_id || "",
-        create_date: row.create_date || "",
-        modified_date: row.modified_date || "",
+        create_date: new Date(row.CreateDate || row.create_date)
+          .toISOString()
+          .split("T")[0],
+        modified_date: new Date(row.ModifiedDate || row.modified_date)
+          .toISOString()
+          .split("T")[0],
       }));
 
       const response = await fetch(
@@ -528,9 +532,7 @@ const BaseDeDatos = () => {
                 <button
                   onClick={handleSearchButtonClick}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <Search size={18} className="text-blue-600" />
-                </button>
+                ></button>
               </div>
             ) : (
               <div className="flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-lg">
