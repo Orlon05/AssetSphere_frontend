@@ -54,13 +54,13 @@ export default function ServidoresFisicos() {
           [
             {
               name: "serial_number",
-              required: false,
+              required: true,
               type: "string",
               excelColumn: "Serial",
             },
             {
               name: "hostname",
-              required: false,
+              required: true,
               type: "string",
               excelColumn: "NombredeHost",
             },
@@ -78,7 +78,7 @@ export default function ServidoresFisicos() {
             },
             {
               name: "service_status",
-              required: false,
+              required: true,
               type: "string",
               excelColumn: "EstadodelServicio",
             },
@@ -237,110 +237,262 @@ export default function ServidoresFisicos() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      // Función para limpiar y formatear fechas
+      // Función mejorada para limpiar y formatear fechas
       const formatDate = (dateStr) => {
-        if (!dateStr || dateStr === "N/A" || dateStr.trim() === "") return null;
-
-        const formats = [
-          /(\d{1,2})-(\w{3})-(\d{2,4})/, // dd-mmm-yy o dd-mmm-yyyy
-          /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/, // dd/mm/yy o mm/dd/yy
-          /(\d{4})-(\d{1,2})-(\d{1,2})/, // yyyy-mm-dd
-        ];
-
-        const monthMap = {
-          ene: "01",
-          feb: "02",
-          mar: "03",
-          abr: "04",
-          may: "05",
-          jun: "06",
-          jul: "07",
-          ago: "08",
-          sep: "09",
-          oct: "10",
-          nov: "11",
-          dic: "12",
-        };
-
-        const match1 = dateStr.match(formats[0]);
-        if (match1) {
-          const [, day, month, year] = match1;
-          const monthNum = monthMap[month.toLowerCase()];
-          const fullYear = year.length === 2 ? `20${year}` : year;
-          return `${fullYear}-${monthNum}-${day.padStart(2, "0")}`;
+        // Si el valor está vacío, es null, undefined, "N/A", o solo espacios en blanco
+        if (
+          !dateStr ||
+          dateStr === null ||
+          dateStr === undefined ||
+          dateStr === "N/A" ||
+          dateStr === "n/a" ||
+          dateStr === "" ||
+          String(dateStr).trim() === "" ||
+          String(dateStr).toLowerCase() === "n/a"
+        ) {
+          return null;
         }
 
-        return null;
+        const cleanDateStr = String(dateStr).trim();
+
+        // Si después de limpiar queda vacío
+        if (cleanDateStr === "") {
+          return null;
+        }
+
+        try {
+          // Intentar diferentes formatos de fecha
+          const formats = [
+            /(\d{1,2})-(\w{3})-(\d{2,4})/, // dd-mmm-yy o dd-mmm-yyyy (29-dic-17)
+            /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/, // dd/mm/yy o mm/dd/yy
+            /(\d{4})-(\d{1,2})-(\d{1,2})/, // yyyy-mm-dd
+            /(\d{1,2})-(\d{1,2})-(\d{2,4})/, // dd-mm-yy o dd-mm-yyyy
+          ];
+
+          const monthMap = {
+            ene: "01",
+            jan: "01",
+            feb: "02",
+            mar: "03",
+            abr: "04",
+            apr: "04",
+            may: "05",
+            jun: "06",
+            jul: "07",
+            ago: "08",
+            aug: "08",
+            sep: "09",
+            oct: "10",
+            nov: "11",
+            dic: "12",
+            dec: "12",
+          };
+
+          const match1 = cleanDateStr.match(formats[0]);
+          if (match1) {
+            const [, day, month, year] = match1;
+            const monthNum = monthMap[month.toLowerCase()];
+            if (monthNum) {
+              const fullYear = year.length === 2 ? `20${year}` : year;
+              return `${fullYear}-${monthNum}-${day.padStart(2, "0")}`;
+            }
+          }
+
+          const match2 = cleanDateStr.match(formats[1]);
+          if (match2) {
+            const [, part1, part2, year] = match2;
+            const fullYear = year.length === 2 ? `20${year}` : year;
+            return `${fullYear}-${part2.padStart(2, "0")}-${part1.padStart(
+              2,
+              "0"
+            )}`;
+          }
+
+          const match3 = cleanDateStr.match(formats[2]);
+          if (match3) {
+            return cleanDateStr;
+          }
+
+          const match4 = cleanDateStr.match(formats[3]);
+          if (match4) {
+            const [, day, month, year] = match4;
+            const fullYear = year.length === 2 ? `20${year}` : year;
+            return `${fullYear}-${month.padStart(2, "0")}-${day.padStart(
+              2,
+              "0"
+            )}`;
+          }
+
+          console.warn(`Formato de fecha no reconocido: ${cleanDateStr}`);
+          return null;
+        } catch (error) {
+          console.warn(`Error al procesar fecha: ${cleanDateStr}`, error);
+          return null;
+        }
       };
 
       const cleanNumber = (numStr) => {
-        if (!numStr || numStr === "N/A" || numStr.trim() === "") return null;
-        const cleaned = numStr.toString().replace(/[^\d]/g, "");
+        if (
+          !numStr ||
+          numStr === null ||
+          numStr === undefined ||
+          numStr === "N/A" ||
+          numStr === "n/a" ||
+          String(numStr).trim() === ""
+        ) {
+          return null;
+        }
+
+        const cleaned = String(numStr).replace(/[^\d]/g, "");
         return cleaned ? Number.parseInt(cleaned) : null;
       };
 
       const normalizeStatus = (status) => {
-        if (!status) return "inactive";
-        const statusLower = status.toLowerCase().trim();
+        if (
+          !status ||
+          status === null ||
+          status === undefined ||
+          String(status).trim() === ""
+        ) {
+          return "inactive";
+        }
+
+        const statusLower = String(status).toLowerCase().trim();
         if (statusLower === "activo") return "active";
         if (statusLower === "inactivo") return "inactive";
+        if (statusLower === "mantenimiento") return "maintenance";
+        if (statusLower === "retirado" || statusLower === "retired")
+          return "decommissioned";
         return statusLower;
       };
 
-      const formattedData = importedData.map((row) => ({
-        serial_number: row.serial_number || "",
-        hostname: row.hostname || "",
-        ip_server: row.ip_server || "",
-        ip_ilo: row.ip_ilo || "",
-        service_status: normalizeStatus(row.service_status),
-        server_type: row.server_type || "",
-        total_disk_capacity: row.total_disk_capacity || "",
-        action: row.action || "",
-        server_model: row.server_model || "",
-        service_type: row.service_type || "",
-        core_count: cleanNumber(row.core_count),
-        manufacturer: row.manufacturer || "",
-        installed_memory: row.installed_memory || "",
-        warranty_start_date: formatDate(row.warranty_start_date),
-        warranty_end_date: formatDate(row.warranty_end_date),
-        eos: row.eos || "",
-        enclosure: row.enclosure || "",
-        application: row.application || "",
-        owner: row.owner || "",
-        location: row.location || "",
-        unit: row.unit || "",
-        ubication: row.ubication || "",
-        comments: row.comments || "",
-        po_number: row.po_number || "",
-      }));
-
-      console.log("Datos formateados:", formattedData.slice(0, 3));
-
-      const response = await fetch(
-        "http://localhost:8000/servers/add_from_excel",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedData),
+      const cleanString = (str) => {
+        if (
+          !str ||
+          str === null ||
+          str === undefined ||
+          str === "N/A" ||
+          str === "n/a"
+        ) {
+          return "";
         }
-      );
+        return String(str).trim();
+      };
 
-      if (!response.ok) {
-        const errorDetail = await response.text();
-        console.error("Error del servidor:", errorDetail);
-        throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
+      const formattedData = importedData.map((row, index) => {
+        try {
+          const result = {
+            serial_number: cleanString(row.serial_number),
+            hostname: cleanString(row.hostname),
+            ip_server: cleanString(row.ip_server),
+            ip_ilo: cleanString(row.ip_ilo),
+            service_status: normalizeStatus(row.service_status),
+            server_type: cleanString(row.server_type),
+            total_disk_capacity: cleanString(row.total_disk_capacity),
+            action: cleanString(row.action),
+            server_model: cleanString(row.server_model),
+            service_type: cleanString(row.service_type),
+            manufacturer: cleanString(row.manufacturer),
+            installed_memory: cleanString(row.installed_memory),
+            eos: cleanString(row.eos),
+            enclosure: cleanString(row.enclosure),
+            application: cleanString(row.application),
+            owner: cleanString(row.owner),
+            location: cleanString(row.location),
+            unit: cleanString(row.unit),
+            ubication: cleanString(row.ubication),
+            comments: cleanString(row.comments),
+            po_number: cleanString(row.po_number),
+          };
+
+          const startDate = formatDate(row.warranty_start_date);
+          result.warranty_start_date = startDate || "000-00-00"; 
+
+          const endDate = formatDate(row.warranty_end_date);
+          result.warranty_end_date = endDate || "000-00-00"; 
+
+          const coreCount = cleanNumber(row.core_count);
+          result.core_count = coreCount !== null ? coreCount : 0; 
+
+          return result;
+        } catch (error) {
+          console.error(`Error procesando fila ${index + 1}:`, error, row);
+          throw new Error(`Error en la fila ${index + 1}: ${error.message}`);
+        }
+      });
+
+      let successCount = 0;
+      let errorCount = 0;
+      const errors = [];
+
+      for (let i = 0; i < formattedData.length; i++) {
+        try {
+          const response = await fetch(
+            "http://localhost:8000/servers/physical/add",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formattedData[i]),
+            }
+          );
+
+          if (!response.ok) {
+            const errorDetail = await response.text();
+            console.error(`Error en servidor ${i + 1}:`, errorDetail);
+            errors.push(`Servidor ${i + 1}: ${errorDetail}`);
+            errorCount++;
+          } else {
+            successCount++;
+          }
+        } catch (error) {
+          console.error(`Error procesando servidor ${i + 1}:`, error);
+          errors.push(`Servidor ${i + 1}: ${error.message}`);
+          errorCount++;
+        }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      Swal.fire({
-        icon: "success",
-        title: "Importación exitosa",
-        text: `Se han importado ${importedData.length} servidores correctamente.`,
-      });
+      if (errorCount === 0) {
+        Swal.fire({
+          icon: "success",
+          title: "Importación exitosa",
+          text: `Se han importado ${successCount} servidores correctamente.`,
+        });
+      } else if (successCount > 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Importación parcial",
+          html: `
+            <p>Importación completada con algunos errores:</p>
+            <p><strong>Exitosos:</strong> ${successCount}</p>
+            <p><strong>Errores:</strong> ${errorCount}</p>
+            <details>
+              <summary>Ver errores</summary>
+              <pre style="text-align: left; max-height: 200px; overflow-y: auto;">${errors.join(
+                "\n"
+              )}</pre>
+            </details>
+          `,
+          width: "600px",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error en la importación",
+          html: `
+            <p>No se pudo importar ningún servidor:</p>
+            <details>
+              <summary>Ver errores</summary>
+              <pre style="text-align: left; max-height: 200px; overflow-y: auto;">${errors.join(
+                "\n"
+              )}</pre>
+            </details>
+          `,
+          width: "600px",
+        });
+      }
 
       fetchServers(currentPage, rowsPerPage);
     } catch (error) {
@@ -351,6 +503,7 @@ export default function ServidoresFisicos() {
         text:
           error.message ||
           "Ha ocurrido un error al procesar los datos importados.",
+        width: "600px",
       });
     }
   };

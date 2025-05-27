@@ -255,7 +255,7 @@ const CrearPseries = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate("/pseries");
+        navigate(`${BASE_PATH}/pseries`);
       }
     });
   };

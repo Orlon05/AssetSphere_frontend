@@ -28,9 +28,9 @@ const Pseries = lazy(() => import("../views/services/Pseries/Pseries"));
 const CrearPseries = lazy(() => import("../views/services/Pseries/crearPserie"));
 const EditarPseries = lazy(() => import("../views/services/Pseries/editarPseries"));
 const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
-// const CrearStorage = lazy(() => import("../pages/CrearStorage"));
-// const EditarStorage = lazy(() => import("../pages/EditarStorage"));
-// const VerStorage = lazy(() => import("../pages/VerStorage"));
+const CrearStorage = lazy(() => import("../views/services/storage/crearStorage"));
+const EditarStorage = lazy(() => import("../views/services/storage/editarStorage"));
+const VerStorage = lazy(() => import("../views/services/storage/verSotrage"));
 // const BaseDatos = lazy(() => import("../pages/BaseDatos"));
 // const CrearBaseDatos = lazy(() => import("../pages/CrearBaseDatos"));
 // const VerBaseDatos = lazy(() => import("../pages/VerBaseDatos"));
@@ -110,14 +110,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/storage`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Storage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/storage`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/pseries`,
     element: (
@@ -168,14 +168,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/crear-storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-storages`,
+    element: (
+      <ProtectedRoute>
+        <CrearStorage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/crear-pseries`,
     element: (
@@ -226,14 +226,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/editar/:storageId/storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <EditarStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/editar/:storageId/storages`,
+    element: (
+      <ProtectedRoute>
+        <EditarStorage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/editar/:pserieId/pseries`,
     element: (
@@ -276,14 +276,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/ver/:storageId/storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/ver/:storageId/storages`,
+    element: (
+      <ProtectedRoute>
+        <VerStorage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/ver/:pserieId/pseries`,
     element: (

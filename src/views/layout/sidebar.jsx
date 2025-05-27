@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import ServidoresVirtuales from "../services/servidoresV";
 // import BasesDeDatos from "../services/basesDeDatos";
 import Pseries from "../services/Pseries/Pseries";
-// import Storage from "../services/storage";
+import Storage from "../services/storage/Storage";
 // import Sucursales from "../services/sucursales";
 import {
   Server,
@@ -40,8 +40,8 @@ export default function Sidebar() {
       // return <BasesDeDatos />;
       case 4:
         return <Pseries />;
-      // case 5:
-      // //   return <Storage />;
+      case 5:
+        return <Storage />;
       // case 6:
       //   return <Sucursales />;
     }

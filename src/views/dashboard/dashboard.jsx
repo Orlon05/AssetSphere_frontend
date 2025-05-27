@@ -56,6 +56,7 @@ export default function Dashboard() {
     {
       id: 5,
       title: "Storage",
+      count: 0,
       count: 8,
       icon: HardDrive,
       description: "Administración de almacenamiento",
@@ -156,8 +157,6 @@ export default function Dashboard() {
 
       const data = await response.json();
 
-      console.log("Respuesta completa de la API PSeries:", data);
-
       if (data && data.status === "success" && data.data) {
         let totalCount = 0;
 
@@ -204,9 +203,77 @@ export default function Dashboard() {
     }
   };
 
+  const fetchStorageCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:8000/storage/get_all?page=1&limit=1000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Respuesta completa de la API Storage:", data);
+
+      if (data && data.status === "success" && data.data) {
+        let totalCount = 0;
+
+        if (data.data.total_count !== undefined) {
+          totalCount = data.data.total_count;
+        } else if (data.data.total !== undefined) {
+          totalCount = data.data.total;
+        } else if (data.data.storages && Array.isArray(data.data.storages)) {
+          totalCount = data.data.storages.length;
+        } else if (
+          data.data.total_pages !== undefined &&
+          data.data.per_page !== undefined
+        ) {
+          totalCount = data.data.total_pages * data.data.per_page;
+        }
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 5
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        console.warn("Formato de respuesta inesperado:", data);
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 5 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error al obtener el conteo de Storage:", error);
+      setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 5 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
   useEffect(() => {
     fetchServerCount();
     fetchPseriesCount();
+    fetchStorageCount();
   }, []);
 
   const handleLogout = () => {
@@ -240,6 +307,9 @@ export default function Dashboard() {
         break;
       case 4:
         navigate(`${BASE_PATH}/pseries`);
+        break;
+      case 5:
+        navigate(`${BASE_PATH}/storage`);
         break;
       default:
         console.warn("Módulo no reconocido:", moduleId);
