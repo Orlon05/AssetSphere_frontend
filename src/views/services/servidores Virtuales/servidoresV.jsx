@@ -1,66 +1,43 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { createRoot } from "react-dom/client";
 import {
-  Database,
   Search,
+  Server,
   Eye,
   Edit,
   Trash2,
   ChevronLeft,
   ChevronRight,
+  AlertCircle,
+  CheckCircle,
+  Clock,
   Download,
   Upload,
   Plus,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
+import { createRoot } from "react-dom/client";
 
-const BaseDeDatos = () => {
+export default function ServidoresVirtuales() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const [base_datos, setBasesDeDatos] = useState([]);
+  const [servers, setServers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedBasesDeDatos, setSelectedBasesDeDatos] = useState(new Set());
+  const [selectedServers, setSelectedServers] = useState(new Set());
   const [showSearch, setShowSearch] = useState(true);
-  const [unfilteredBasesDeDatos, setUnfilteredBasesDeDatos] = useState([]);
+  const [unfilteredServers, setUnfilteredServers] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
 
-  const selectedCount = selectedBasesDeDatos.size;
+  const selectedCount = selectedServers.size;
 
-  const BASE_PATH = "/inveplus";
-
-  useEffect(() => {
-    setShowSearch(selectedCount === 0);
-  }, [selectedCount]);
-
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
-
-  const showSuccessToast = () => {
-    Toast.fire({
-      icon: "success",
-      title: "Base de datos eliminada exitosamente",
-    });
-  };
-
-  // IMPORTAR
   const handleImport = () => {
     Swal.fire({
       title: "Importar desde Excel",
@@ -73,34 +50,19 @@ const BaseDeDatos = () => {
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
         const tableMetadata = [
-          { name: "instance_id", required: false, type: "string" },
-          { name: "cost_center", required: false, type: "string" },
-          { name: "category", required: false, type: "string" },
-          { name: "type", required: false, type: "string" },
-          { name: "item", required: false, type: "string" },
-          { name: "owner_contact", required: false, type: "string" },
-          { name: "name", required: false, type: "string" },
-          { name: "application_code", required: false, type: "string" },
-          { name: "inactive", required: false, type: "string" },
-          { name: "asset_life_cycle_status", required: false, type: "string" },
-          { name: "system_environment", required: false, type: "string" },
-          { name: "cloud", required: false, type: "string" },
-          { name: "version_number", required: false, type: "string" },
-          { name: "serial", required: false, type: "string" },
-          { name: "ci_tag", required: false, type: "string" },
-          { name: "instance_name", required: false, type: "string" },
-          { name: "model", required: false, type: "string" },
-          { name: "ha", required: false, type: "string" },
-          { name: "port", required: false, type: "string" },
-          { name: "owner_name", required: false, type: "string" },
-          { name: "department", required: false, type: "string" },
-          { name: "company", required: false, type: "string" },
-          { name: "manufacturer_name", required: false, type: "string" },
-          { name: "supplier_name", required: false, type: "string" },
-          { name: "supported", required: false, type: "string" },
-          { name: "account_id", required: false, type: "string" },
-          { name: "create_date", required: false, type: "Date" },
-          { name: "modified_date", required: false, type: "Date" },
+          [
+            { name: "platform", required: false, type: "string" },
+            { name: "id_vm", required: false, type: "string" },
+            { name: "server", required: false, type: "string" },
+            { name: "memory", required: false, type: "string" },
+            { name: "so", required: false, type: "string" },
+            { name: "status", required: false, type: "string" },
+            { name: "cluster", required: false, type: "string" },
+            { name: "hdd", required: false, type: "string" },
+            { name: "cores", required: false, type: "string" },
+            { name: "ip", required: false, type: "string" },
+            { name: "modified", required: false, type: "date" },
+          ],
         ];
         const importer = (
           <ExcelImporter
@@ -124,16 +86,16 @@ const BaseDeDatos = () => {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados listos para enviar:", importedData);
+    console.log("Datos importados:", importedData);
 
-    if (!Array.isArray(importedData) || importedData.length === 0) {
-      Swal.fire(
-        "Error",
-        "No se encontraron datos válidos en el archivo",
-        "error"
-      );
-      return;
-    }
+    Swal.fire({
+      title: "Procesando datos...",
+      text: "Estamos guardando los servidores virtuales importados",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -142,42 +104,21 @@ const BaseDeDatos = () => {
       }
 
       const formattedData = importedData.map((row) => ({
-        instance_id: row.instance_id || "",
-        cost_center: row.cost_center || "",
-        category: row.category || "",
-        type: row.type || "",
-        item: row.item || "",
-        owner_contact: row.owner_contact || "",
-        name: row.name || "",
-        application_code: row.application_code || "",
-        inactive: row.inactive || "",
-        asset_life_cycle_status: row.asset_life_cycle_status || "",
-        system_environment: row.system_environment || "",
-        cloud: row.cloud || "",
-        version_number: row.version_number || "",
-        serial: row.serial || "",
-        ci_tag: row.ci_tag || "",
-        instance_name: row.instance_name || "",
-        model: row.model || "",
-        ha: row.ha || "",
-        port: row.port || "",
-        owner_name: row.owner_name || "",
-        department: row.department || "",
-        company: row.company || "",
-        manufacturer_name: row.manufacturer_name || "",
-        supplier_name: row.supplier_name || "",
-        supported: row.supported || "",
-        account_id: row.account_id || "",
-        create_date: new Date(row.CreateDate || row.create_date)
-          .toISOString()
-          .split("T")[0],
-        modified_date: new Date(row.ModifiedDate || row.modified_date)
-          .toISOString()
-          .split("T")[0],
+        platform: row.platform || "",
+        id_vm: row.id_vm || "",
+        server: row.server || "",
+        memory: row.memory || "",
+        so: row.so || "",
+        status: row.status || "",
+        cluster: row.cluster || "",
+        hdd: row.hdd || "",
+        cores: row.cores || "",
+        ip: row.ip || "",
+        modified: row.modified ? new Date(row.modified).toISOString() : "",
       }));
 
       const response = await fetch(
-        "http://localhost:8000/base_datos/add_from_excel",
+        "http://localhost:8000/vservers/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -192,27 +133,98 @@ const BaseDeDatos = () => {
         throw new Error(`Error HTTP ${response.status}`);
       }
 
-      Swal.fire("Éxito", "Datos importados correctamente", "success");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      Swal.fire({
+        icon: "success",
+        title: "Importación exitosa",
+        text: `Se han importado ${importedData.length} servidores virtuales correctamente.`,
+      });
+
+      fetchServers(currentPage, rowsPerPage);
     } catch (error) {
-      console.error("Error al importar:", error);
-      Swal.fire("Error", error.message || "Error al importar datos", "error");
+      console.error("Error al procesar los datos importados:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error en la importación",
+        text:
+          error.message ||
+          "Ha ocurrido un error al procesar los datos importados.",
+      });
     }
+  };
+
+  useEffect(() => {
+    setShowSearch(selectedCount === 0);
+  }, [selectedCount]);
+
+  const BASE_PATH = "/inveplus";
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
+  const showSuccessToast = () => {
+    Toast.fire({
+      icon: "success",
+      title: "Servidor virtual eliminado exitosamente",
+    });
   };
 
   const handleError = (error) => {
     setError(error);
-    console.error("Error al obtener las bases de datos:", error);
+    console.error("Error al obtener servidores virtuales:", error);
+  };
+
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      const response = await fetch("http://localhost:8000/vservers/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error al exportar la lista: ${errorDetail}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "virtual_servers.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al exportar el archivo Excel:", error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const token = localStorage.getItem("authenticationToken");
 
-  const fetchBasesDeDatos = async (page, limit, search = "") => {
+  const fetchServers = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
+        `http://localhost:8000/vservers/virtual?page=${page}&limit=${limit}&server=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -227,8 +239,8 @@ const BaseDeDatos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredBasesDeDatos(data.data.base_datos);
-        setBasesDeDatos(data.data.base_datos);
+        setUnfilteredServers(data.data.servers);
+        setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -253,7 +265,7 @@ const BaseDeDatos = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/vservers/virtual/search?server=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -268,7 +280,7 @@ const BaseDeDatos = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setBasesDeDatos(data.data.base_datos);
+        setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -287,16 +299,16 @@ const BaseDeDatos = () => {
   };
 
   useEffect(() => {
-    fetchBasesDeDatos(currentPage, rowsPerPage);
+    fetchServers(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
-        setBasesDeDatos(unfilteredBasesDeDatos);
+        setServers(unfilteredServers);
         setTotalPages(
-          unfilteredBasesDeDatos.length > 0
-            ? Math.ceil(unfilteredBasesDeDatos.length / rowsPerPage)
+          unfilteredServers.length > 0
+            ? Math.ceil(unfilteredServers.length / rowsPerPage)
             : 0
         );
       } else {
@@ -305,43 +317,7 @@ const BaseDeDatos = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredBasesDeDatos, rowsPerPage]);
-
-  const handleExport = async () => {
-    try {
-      const token = localStorage.getItem("authenticationToken");
-      if (!token) {
-        throw new Error("Token de autorización no encontrado.");
-      }
-
-      const response = await fetch("http://localhost:8000/base_datos/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorDetail = await response.text();
-        throw new Error(`Error al exportar las bases de datos: ${errorDetail}`);
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "bases_de_datos.xlsx";
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error al exportar el archivo Excel:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al exportar",
-        text: error.message,
-      });
-    }
-  };
+  }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -357,47 +333,33 @@ const BaseDeDatos = () => {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
-      setSelectedBasesDeDatos(new Set());
+      setSelectedServers(new Set());
     } else {
-      setSelectedBasesDeDatos(
-        new Set(base_datos.map((baseDeDatos) => baseDeDatos.id))
-      );
+      setSelectedServers(new Set(servers.map((server) => server.id)));
     }
   };
 
-  const toggleSelectBasesDeDatos = (baseDeDatosId) => {
-    const newSelectedBasesDeDatos = new Set(selectedBasesDeDatos);
-    if (newSelectedBasesDeDatos.has(baseDeDatosId)) {
-      newSelectedBasesDeDatos.delete(baseDeDatosId);
+  const toggleSelectServer = (serverId) => {
+    const newSelectedServers = new Set(selectedServers);
+    if (newSelectedServers.has(serverId)) {
+      newSelectedServers.delete(serverId);
     } else {
-      newSelectedBasesDeDatos.add(baseDeDatosId);
+      newSelectedServers.add(serverId);
     }
-    setSelectedBasesDeDatos(newSelectedBasesDeDatos);
+    setSelectedServers(newSelectedServers);
   };
 
-  const filteredBasesDeDatos = base_datos.filter((baseDeDatos) =>
-    baseDeDatos.name?.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredServers = servers.filter((server) =>
+    server.server?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const indexOfLastBaseDatos = currentPage * rowsPerPage;
-  const indexOfFirstBaseDatos = indexOfLastBaseDatos - rowsPerPage;
+  const indexOfLastServer = currentPage * rowsPerPage;
+  const indexOfFirstServer = indexOfLastServer - rowsPerPage;
 
-  const irCrear = () => {
-    navigate(`${BASE_PATH}/crear-base-de-datos`);
-  };
-
-  const irVer = (base_datosId) => {
-    router.push(`${BASE_PATH}/ver/${base_datosId}/basedatos`);
-  };
-
-  const irEditar = (base_datosId) => {
-    router.push(`${BASE_PATH}/editar/${base_datosId}/basedatos`);
-  };
-
-  const handleDeleteStorage = async (baseDeDatosId) => {
+  const handleDeleteServer = async (serverId) => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: "¿Deseas eliminar esta base de datos?",
+      text: "¿Deseas eliminar este servidor virtual?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -408,7 +370,7 @@ const BaseDeDatos = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/base_datos/delete/${baseDeDatosId}`,
+            `http://localhost:8000/vservers/virtual/${serverId}`,
             {
               method: "DELETE",
               headers: {
@@ -429,7 +391,7 @@ const BaseDeDatos = () => {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
-                errorMessage = "La base de datos no existe.";
+                errorMessage = "El servidor virtual no existe.";
               } else if (errorData && errorData.message) {
                 errorMessage = errorData.message;
               }
@@ -441,36 +403,82 @@ const BaseDeDatos = () => {
 
             Swal.fire({
               icon: "error",
-              title: "Error al eliminar la base de datos",
+              title: "Error al eliminar el servidor virtual",
               text: errorMessage,
             });
           } else {
-            setBasesDeDatos(
-              base_datos.filter(
-                (baseDeDatos) => baseDeDatos.id !== baseDeDatosId
-              )
-            );
+            setServers(servers.filter((server) => server.id !== serverId));
             showSuccessToast();
           }
         } catch (error) {
-          console.error("Error al eliminar la base de datos:", error);
+          console.error("Error al eliminar el servidor virtual:", error);
           handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Ocurrió un error inesperado al eliminar la base de datos.",
+            text: "Ocurrió un error inesperado al eliminar el servidor virtual.",
           });
         }
       }
     });
   };
 
+  const irCrear = () => {
+    navigate(`${BASE_PATH}/crear-servidores-v`);
+  };
+
+  const getStatusBadge = (status) => {
+    if (!status) return null;
+
+    const statusLower = status.toLowerCase();
+
+    if (
+      statusLower === "active" ||
+      statusLower === "activo" ||
+      statusLower === "encendido"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-600 text-green-200">
+          <CheckCircle size={12} className="mr-1" />
+          Activo
+        </span>
+      );
+    } else if (
+      statusLower === "inactive" ||
+      statusLower === "inactivo" ||
+      statusLower === "apagado"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500 text-red-200">
+          <AlertCircle size={12} className="mr-1" />
+          Inactivo
+        </span>
+      );
+    } else if (
+      statusLower === "maintenance" ||
+      statusLower === "mantenimiento"
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-500 text-yellow-200">
+          <Clock size={12} className="mr-1" />
+          Mantenimiento
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+          {status}
+        </span>
+      );
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 text-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando bases de datos...</p>
+          <p>Cargando servidores virtuales...</p>
         </div>
       </div>
     );
@@ -478,16 +486,16 @@ const BaseDeDatos = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-800">
+      <div className="min-h-screen bg-gray-200 text-gray-100 flex items-center justify-center">
+        <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
+          <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
+          <p>
             {error.message ||
-              "Ha ocurrido un error al cargar las bases de datos"}
+              "Ha ocurrido un error al cargar los servidores virtuales"}
           </p>
           <button
-            onClick={() => fetchBasesDeDatos(currentPage, rowsPerPage)}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors"
+            onClick={() => fetchServers(currentPage, rowsPerPage)}
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
           >
             Reintentar
           </button>
@@ -497,34 +505,34 @@ const BaseDeDatos = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-gray-100">
       {/* Header */}
       <header className="w-full p-8 flex justify-between items-center border-b border-gray-200">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <Database className="mr-2 text-blue-500" />
-            Lista de Bases de datos
+            <Server className="mr-2 text-blue-400" />
+            Servidores Virtuales
           </h1>
-          <p className="text-sm text-gray-600">
-            Gestión y monitoreo de bases de datos
+          <p className="text-sm text-gray-900">
+            Gestión y monitoreo de servidores virtuales
           </p>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-50 border rounded-lg shadow-lg p-6">
+        <div className="bg-gray-300/30 border rounded-lg shadow-lg p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-500" />
+                  <Search size={18} className="text-gray-900" />
                 </div>
                 <input
                   type="text"
-                  placeholder="Buscar base de datos..."
-                  className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Buscar por nombre..."
+                  className="bg-white border-gray-400 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -535,10 +543,13 @@ const BaseDeDatos = () => {
                 ></button>
               </div>
             ) : (
-              <div className="flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-lg">
-                <span className="font-medium mr-2">{selectedCount}</span>
+              <div className="flex items-center bg-blue-600 px-4 py-2 rounded-lg">
+                <span className="font-medium text-white-400 mr-2">
+                  {selectedCount}
+                </span>
                 <span>
-                  Base de datos{selectedCount !== 1 ? "es" : ""} seleccionada
+                  Servidor{selectedCount !== 1 ? "es" : ""} virtual
+                  {selectedCount !== 1 ? "es" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -547,26 +558,32 @@ const BaseDeDatos = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={irCrear}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >
-                <Plus size={16} />
-                <span className="hidden sm:inline">Crear</span>
+                <Plus size={16} className="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Crear
+                </span>
               </button>
               <button
                 onClick={handleImport}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Download size={16} />
-                <span className="hidden sm:inline">Importar</span>
+                <Download size={16} className="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Importar
+                </span>
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
                 title="Exportar a Excel"
               >
-                <Upload size={16} />
-                <span className="hidden sm:inline">Exportar</span>
+                <Upload size={16} className="text-white" />
+                <span className="hidden text-white fond-medium sm:inline">
+                  Exportar
+                </span>
               </button>
             </div>
           </div>
@@ -574,30 +591,30 @@ const BaseDeDatos = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-gray-100 text-gray-700">
+              <thead className="text-xs uppercase bg-gray-300/20 text-gray-900">
                 <tr>
                   <th scope="col" className="px-4 py-3 rounded-tl-lg">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
+                      className="w-4 h-4 rounded border-gray-600 bg-gray-700 checked:bg-blue-600"
                       checked={
-                        base_datos.length > 0 &&
-                        selectedBasesDeDatos.size === base_datos.length
+                        servers.length > 0 &&
+                        selectedServers.size === servers.length
                       }
                       onChange={toggleSelectAll}
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Codigo de aplicación
+                    Nombre
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    ID de Instancia
+                    Estado
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Puerto
+                    ID VM
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Categoría
+                    IP
                   </th>
                   <th
                     scope="col"
@@ -608,12 +625,12 @@ const BaseDeDatos = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredBasesDeDatos.length > 0 ? (
-                  filteredBasesDeDatos.map((baseDeDatos, index) => (
+                {filteredServers.length > 0 ? (
+                  filteredServers.map((server, index) => (
                     <tr
-                      key={baseDeDatos.id}
+                      key={server.id}
                       className={`border-b border-gray-200 ${
-                        selectedBasesDeDatos.has(baseDeDatos.id)
+                        selectedServers.has(server.id)
                           ? "bg-blue-50"
                           : index % 2 === 0
                           ? "bg-white"
@@ -624,31 +641,25 @@ const BaseDeDatos = () => {
                         <input
                           type="checkbox"
                           className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
-                          checked={selectedBasesDeDatos.has(baseDeDatos.id)}
-                          onChange={() =>
-                            toggleSelectBasesDeDatos(baseDeDatos.id)
-                          }
+                          checked={selectedServers.has(server.id)}
+                          onChange={() => toggleSelectServer(server.id)}
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        {baseDeDatos.application_code}
+                        {server.server}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        {baseDeDatos.instance_id}
+                      <td className="px-6 py-4">
+                        {getStatusBadge(server.status)}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        {baseDeDatos.port}
+                      <td className="px-6 py-4 text-gray-900">
+                        {server.id_vm}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        {baseDeDatos.category}
-                      </td>
+                      <td className="px-6 py-4 text-gray-900">{server.ip}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/ver/${baseDeDatos.id}/base-de-datos`
-                              )
+                              navigate(`${BASE_PATH}/ver/${server.id}/vservers`)
                             }
                             className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             title="Ver detalles"
@@ -658,7 +669,7 @@ const BaseDeDatos = () => {
                           <button
                             onClick={() =>
                               navigate(
-                                `${BASE_PATH}/editar/${baseDeDatos.id}/base-de-datos`
+                                `${BASE_PATH}/editar/${server.id}/vservers`
                               )
                             }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
@@ -667,7 +678,7 @@ const BaseDeDatos = () => {
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeleteStorage(baseDeDatos.id)}
+                            onClick={() => handleDeleteServer(server.id)}
                             className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                             title="Eliminar"
                           >
@@ -681,10 +692,10 @@ const BaseDeDatos = () => {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-4 text-center text-gray-500"
+                      className="px-6 py-4 text-center text-gray-200"
                     >
-                      No se encontraron bases de datos que coincidan con la
-                      búsqueda
+                      No se encontraron servidores virtuales que coincidan con
+                      la búsqueda
                     </td>
                   </tr>
                 )}
@@ -695,7 +706,7 @@ const BaseDeDatos = () => {
           {/* Pagination */}
           <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
             <div className="flex items-center">
-              <span className="text-sm text-gray-700 mr-2">
+              <span className="text-sm text-gray-200 mr-2">
                 Filas por página:
               </span>
               <select
@@ -703,7 +714,7 @@ const BaseDeDatos = () => {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-gray-300 text-gray-900 rounded-md px-2 py-1 text-sm"
+                className="bg-white border border-gray-500 text-gray-900 rounded-md px-2 py-1 text-sm"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -713,17 +724,17 @@ const BaseDeDatos = () => {
               </select>
             </div>
 
-            <div className="text-sm text-gray-700">
-              Mostrando {indexOfFirstBaseDatos + 1} a{" "}
-              {Math.min(indexOfLastBaseDatos, filteredBasesDeDatos.length)} de{" "}
-              {filteredBasesDeDatos.length} bases de datos
+            <div className="text-sm text-gray-900">
+              Mostrando {indexOfFirstServer + 1} a{" "}
+              {Math.min(indexOfLastServer, filteredServers.length)} de{" "}
+              {filteredServers.length} servidores virtuales
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -735,7 +746,7 @@ const BaseDeDatos = () => {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight size={16} />
               </button>
@@ -745,6 +756,4 @@ const BaseDeDatos = () => {
       </main>
     </div>
   );
-};
-
-export default BaseDeDatos;
+}

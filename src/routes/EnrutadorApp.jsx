@@ -7,7 +7,9 @@ import Sidebar from "../views/layout/sidebar";
 const ServidoresFisicos = lazy(() =>
   import("../views/services/servidores Fisicos/servidoresF")
 );
-// const ServidoresV = lazy(() => import("../pages/ServidoresVirtuales"));
+const ServidoresVirtuales = lazy(() =>
+  import("../views/services/servidores Virtuales/servidoresV")
+);
 // const Analitica = lazy(() => import("../pages/Analitica"));
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
@@ -24,7 +26,7 @@ const VerServers = lazy(() =>
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
 // const Storage = lazy(() => import("../pages/Storage"));
-const Pseries = lazy(() => import("../views/services/Pseries/Pseries"));
+const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
 // const CrearPseries = lazy(() => import("../pages/CrearPseries"));
 const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
@@ -49,7 +51,9 @@ const EditarBaseDatos = lazy(() =>
 // const CrearSucursales = lazy(() => import("../pages/CrearSucursales"));
 // const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
 // const VerSucursales = lazy(() => import("../pages/VerSucursales"));
-// const VirtualForm = lazy(() => import("../pages/crearServidorv"));
+const CrearServidorVirtual = lazy(() =>
+  import("../views/services/servidores Virtuales/CrearServidorV")
+);
 // const EditarServerVirtual = lazy(() => import("../pages/editarServidorv"));
 // const VerServidoresVirtuales = lazy(() =>
 //   import("../pages/verServidoresVirtuales")
@@ -80,14 +84,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/servidoresv`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <ServidoresV />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/servidoresv`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/analitica`,
   //   element: (
@@ -162,14 +166,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/crear-servidores-v`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VirtualForm />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-servidores-v`,
+    element: (
+      <ProtectedRoute>
+        <CrearServidorVirtual />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/crear-usuarios`,
   //   element: (

@@ -152,7 +152,8 @@ export default function Dashboard() {
 
     if (moduleId === 1)
       navigate(`${BASE_PATH}/servidoresf?activeModule=${moduleKey}`);
-    // else if (moduleId === 2) navigate(`${BASE_PATH}/servidoresv?activeModule=${moduleKey}`);
+    else if (moduleId === 2)
+      navigate(`${BASE_PATH}/servidoresv?activeModule=${moduleKey}`);
     else if (moduleId === 3)
       navigate(`${BASE_PATH}/base-de-datos?activeModule=${moduleKey}`);
     else if (moduleId === 4)
