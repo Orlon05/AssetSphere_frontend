@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
-  ArrowLeft,
   Search,
   Server,
   Eye,
@@ -469,23 +468,27 @@ const Pseries = () => {
     });
   };
 
+  const irCrear = () => {
+    navigate(`${BASE_PATH}/crear-pseries`);
+  };
+
   const getStatusBadge = (status) => {
     if (!status) return null;
 
     const statusLower = status.toLowerCase();
 
-    if (statusLower === "active" || statusLower === "activo") {
+    if (statusLower === "active" || statusLower === "running") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Activo
+          Corriendo
         </span>
       );
-    } else if (statusLower === "inactive" || statusLower === "inactivo") {
+    } else if (statusLower === "inactive" || statusLower === "not activated") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          Inactivo
+          No activo
         </span>
       );
     } else if (
@@ -586,7 +589,7 @@ const Pseries = () => {
                   {selectedCount}
                 </span>
                 <span className="text-gray-700">
-                  Servidor{selectedCount !== 1 ? "es" : ""} seleccionado
+                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -594,7 +597,7 @@ const Pseries = () => {
 
             <div className="flex items-center gap-2 flex-wrap">
               <button
-                // onClick={irCrear}
+                onClick={irCrear}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
                 <Plus size={16} />
@@ -657,11 +660,11 @@ const Pseries = () => {
               </thead>
               <tbody>
                 {filteredPseries.length > 0 ? (
-                  filteredPseries.map((server, index) => (
+                  filteredPseries.map((pserie, index) => (
                     <tr
-                      key={server.id}
+                      key={pserie.id}
                       className={`border-b border-gray-200 ${
-                        selectedPseries.has(server.id)
+                        selectedPseries.has(pserie.id)
                           ? "bg-blue-50"
                           : index % 2 === 0
                           ? "bg-white"
@@ -672,25 +675,25 @@ const Pseries = () => {
                         <input
                           type="checkbox"
                           className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
-                          checked={selectedPseries.has(server.id)}
-                          onChange={() => toggleSelectPseries(server.id)}
+                          checked={selectedPseries.has(pserie.id)}
+                          onChange={() => toggleSelectPseries(pserie.id)}
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-800">
-                        {server.name}
+                        {pserie.name}
                       </td>
                       <td className="px-6 py-4 text-gray-600">
-                        {server.environment}
+                        {pserie.environment}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{server.slot}</td>
+                      <td className="px-6 py-4 text-gray-600">{pserie.slot}</td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(server.status)}
+                        {getStatusBadge(pserie.status)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() =>
-                              navigate(`${BASE_PATH}/ver/:pseriesId/pseries`)
+                              navigate(`${BASE_PATH}/ver/${pserie.id}/pseries`)
                             }
                             className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             title="Ver detalles"
@@ -709,7 +712,7 @@ const Pseries = () => {
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeletePseries(server.id)}
+                            onClick={() => handleDeletePseries(pserie.id)}
                             className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                             title="Eliminar"
                           >

@@ -457,7 +457,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
               <select
                 value={rowsPerPage}
                 onChange={handleRowsPerPageChange}
-                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>

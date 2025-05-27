@@ -29,62 +29,50 @@ const InputField = ({
   </div>
 );
 
-const EditarServer = () => {
+const EditarStorage = () => {
   const [formData, setFormData] = useState({
-    serial_number: "",
-    hostname: "",
-    ip_server: "",
-    ip_ilo: "",
-    service_status: "",
-    server_type: "",
-    total_disk_capacity: "",
-    action: "",
-    server_model: "",
-    service_type: "",
-    core_count: "",
+    cod_item_configuracion: "",
+    name: "",
+    application_code: "",
+    cost_center: "",
+    active: "Sí",
+    category: "",
+    type: "",
+    item: "",
+    company: "",
+    organization_responsible: "",
+    host_name: "",
     manufacturer: "",
-    installed_memory: "",
-    warranty_start_date: "",
-    warranty_end_date: "",
-    eos: "",
-    enclosure: "",
-    application: "",
+    status: "Aplicado",
     owner: "",
+    model: "",
+    serial: "",
+    org_maintenance: "",
+    ip_address: "",
+    disk_size: "",
     location: "",
-    unit: "",
-    ubication: "",
-    comments: "",
-    po_number: "",
   });
 
   // Opciones para campos de selección
-  const serviceStatusOptions = [
-    "active",
-    "inactive",
-    "maintenance",
-    "decommissioned",
-  ];
-  const serverTypeOptions = ["Physical", "Virtual", "Blade", "Rack"];
-  const serviceTypeOptions = [
-    "Production",
-    "Development",
-    "Testing",
-    "Staging",
-  ];
+  const statusOptions = ["Aplicado", "No Aplicado"];
+  const activeOptions = ["Sí", "No"];
+  const typeOptions = ["SAN", "NAS", "DAS", "Local Storage", "Cloud Storage"];
   const manufacturerOptions = [
     "Dell",
     "HP",
     "IBM",
-    "Cisco",
-    "Lenovo",
-    "Supermicro",
+    "NetApp",
+    "EMC",
+    "Hitachi",
+    "Pure Storage",
   ];
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { serverId } = useParams();
   const token = localStorage.getItem("authenticationToken");
+  const BASE_PATH = "/inveplus";
+  const { storageId } = useParams();
 
   const Toast = Swal.mixin({
     toast: true,
@@ -99,7 +87,7 @@ const EditarServer = () => {
   });
 
   const showSuccessToast = () => {
-    Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
+    Toast.fire({ icon: "success", title: "Storage actualizado exitosamente" });
   };
 
   const handleInputChange = (e) => {
@@ -111,15 +99,16 @@ const EditarServer = () => {
   };
 
   useEffect(() => {
-    const fetchServerData = async () => {
+    const fetchStorageData = async () => {
       setLoading(true);
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/servers/physical/${serverId}`,
+          `http://localhost:8000/storage/get_by_id/${storageId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         );
@@ -130,30 +119,44 @@ const EditarServer = () => {
         }
 
         const data = await response.json();
-        if (data.status === "success" && data.data && data.data.server_info) {
-          setFormData(data.data.server_info);
+        console.log("Respuesta completa de la API:", data); // Debug
+
+        // Intentar diferentes estructuras de respuesta
+        if (data && data.data && data.data.storage_info) {
+          // Estructura similar a servidores
+          setFormData(data.data.storage_info);
+        } else if (data && data.storage_info) {
+          // Estructura directa
+          setFormData(data.storage_info);
+        } else if (data && data.data) {
+          // Solo data
+          setFormData(data.data);
+        } else if (data && typeof data === "object") {
+          // Respuesta directa
+          setFormData(data);
         } else {
+          console.error("Estructura de respuesta no reconocida:", data);
           throw new Error("Estructura de datos inesperada");
         }
       } catch (error) {
-        console.error("Error al obtener datos del servidor:", error);
+        console.error("Error al obtener datos del storage:", error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (serverId) {
-      fetchServerData();
+    if (storageId) {
+      fetchStorageData();
     }
-  }, [serverId, token]);
+  }, [storageId, token]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/${serverId}`,
+        `http://localhost:8000/storage/edit/${storageId}`,
         {
           method: "PUT",
           headers: {
@@ -173,7 +176,7 @@ const EditarServer = () => {
       }
 
       showSuccessToast();
-      navigate("/inveplus/servidoresf");
+      navigate(`${BASE_PATH}/storage`);
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -188,7 +191,7 @@ const EditarServer = () => {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="text-xl font-semibold">
-          Cargando datos del servidor...
+          Cargando datos del storage...
         </div>
       </div>
     );
@@ -208,10 +211,10 @@ const EditarServer = () => {
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            Editar Servidor Físico
+            Editar Storage
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Modifica la información del servidor
+            Modifica la información del dispositivo de almacenamiento
           </p>
         </div>
         <button
@@ -234,19 +237,89 @@ const EditarServer = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Hostname"
-                  name="hostname"
-                  value={formData.hostname}
+                  label="Nombre"
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                 />
                 <InputField
-                  label="Número de Serie"
-                  name="serial_number"
-                  value={formData.serial_number}
+                  label="Código Item Configuración"
+                  name="cod_item_configuracion"
+                  value={formData.cod_item_configuracion}
                   onChange={handleInputChange}
-                  required
                 />
+                <InputField
+                  label="Número de Serie"
+                  name="serial"
+                  value={formData.serial}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Nombre del Host"
+                  name="host_name"
+                  value={formData.host_name}
+                  onChange={handleInputChange}
+                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Estado <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    {statusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Activo
+                  </label>
+                  <select
+                    name="active"
+                    value={formData.active}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {activeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Sección: Configuración de Red */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Configuración de Red
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <InputField
+                  label="Dirección IP"
+                  name="ip_address"
+                  value={formData.ip_address}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            {/* Sección: Especificaciones Técnicas */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                Especificaciones Técnicas
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Fabricante
@@ -266,231 +339,98 @@ const EditarServer = () => {
                   </select>
                 </div>
                 <InputField
-                  label="Modelo del Servidor"
-                  name="server_model"
-                  value={formData.server_model}
+                  label="Modelo"
+                  name="model"
+                  value={formData.model}
                   onChange={handleInputChange}
                 />
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Tipo de Servidor
+                    Tipo
                   </label>
                   <select
-                    name="server_type"
-                    value={formData.server_type}
+                    name="type"
+                    value={formData.type}
                     onChange={handleInputChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar tipo</option>
-                    {serverTypeOptions.map((option) => (
+                    {typeOptions.map((option) => (
                       <option key={option} value={option}>
                         {option}
                       </option>
                     ))}
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Estado del Servicio <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="service_status"
-                    value={formData.service_status}
-                    onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                  >
-                    <option value="">Seleccionar...</option>
-                    {serviceStatusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option.charAt(0).toUpperCase() + option.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Sección: Configuración de Red */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Configuración de Red
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="IP del Servidor"
-                  name="ip_server"
-                  value={formData.ip_server}
+                  label="Categoría"
+                  name="category"
+                  value={formData.category}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="IP iLO/IPMI"
-                  name="ip_ilo"
-                  value={formData.ip_ilo}
+                  label="Tamaño de Disco"
+                  name="disk_size"
+                  value={formData.disk_size}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Item"
+                  name="item"
+                  value={formData.item}
                   onChange={handleInputChange}
                 />
               </div>
             </div>
 
-            {/* Sección: Especificaciones Técnicas */}
+            {/* Sección: Información Organizacional */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Especificaciones Técnicas
+                Información Organizacional
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <InputField
-                  label="Número de Núcleos"
-                  name="core_count"
-                  value={formData.core_count}
-                  onChange={handleInputChange}
-                  type="number"
-                />
-                <InputField
-                  label="Memoria Instalada"
-                  name="installed_memory"
-                  value={formData.installed_memory}
+                  label="Empresa"
+                  name="company"
+                  value={formData.company}
                   onChange={handleInputChange}
                 />
                 <InputField
-                  label="Capacidad Total de Disco"
-                  name="total_disk_capacity"
-                  value={formData.total_disk_capacity}
+                  label="Organización Responsable"
+                  name="organization_responsible"
+                  value={formData.organization_responsible}
                   onChange={handleInputChange}
                 />
-              </div>
-            </div>
-
-            {/* Sección: Ubicación y Organización */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Ubicación y Organización
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <InputField
+                  label="Propietario"
+                  name="owner"
+                  value={formData.owner}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Organización de Mantenimiento"
+                  name="org_maintenance"
+                  value={formData.org_maintenance}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Centro de Costo"
+                  name="cost_center"
+                  value={formData.cost_center}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  label="Código de Aplicación"
+                  name="application_code"
+                  value={formData.application_code}
+                  onChange={handleInputChange}
+                />
                 <InputField
                   label="Ubicación"
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
                 />
-                <InputField
-                  label="Ubicación Específica"
-                  name="ubication"
-                  value={formData.ubication}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Unidad/Rack"
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Gabinete/Enclosure"
-                  name="enclosure"
-                  value={formData.enclosure}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Sección: Información de Servicio */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Información de Servicio
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Tipo de Servicio
-                  </label>
-                  <select
-                    name="service_type"
-                    value={formData.service_type}
-                    onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccionar tipo de servicio</option>
-                    {serviceTypeOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <InputField
-                  label="Aplicación"
-                  name="application"
-                  value={formData.application}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Propietario/Responsable"
-                  name="owner"
-                  value={formData.owner}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Acción"
-                  name="action"
-                  value={formData.action}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Sección: Garantía y Soporte */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Garantía y Soporte
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <InputField
-                  label="Fecha Inicio Garantía"
-                  name="warranty_start_date"
-                  value={formData.warranty_start_date}
-                  onChange={handleInputChange}
-                  type="date"
-                />
-                <InputField
-                  label="Fecha Fin Garantía"
-                  name="warranty_end_date"
-                  value={formData.warranty_end_date}
-                  onChange={handleInputChange}
-                  type="date"
-                />
-                <InputField
-                  label="End of Support (EOS)"
-                  name="eos"
-                  value={formData.eos}
-                  onChange={handleInputChange}
-                />
-                <InputField
-                  label="Número de Orden de Compra"
-                  name="po_number"
-                  value={formData.po_number}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Sección: Información Adicional */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                Información Adicional
-              </h2>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Comentarios
-                  </label>
-                  <textarea
-                    name="comments"
-                    rows="3"
-                    value={formData.comments}
-                    onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  ></textarea>
-                </div>
               </div>
             </div>
 
@@ -498,7 +438,7 @@ const EditarServer = () => {
             <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                onClick={() => navigate("/inveplus/servidoresf")}
+                onClick={() => navigate(`${BASE_PATH}/storage`)}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
               >
                 <MdArrowBack size={18} className="mr-2" />
@@ -519,4 +459,4 @@ const EditarServer = () => {
   );
 };
 
-export default EditarServer;
+export default EditarStorage;

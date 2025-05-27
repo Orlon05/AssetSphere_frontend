@@ -124,14 +124,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/storage`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Storage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/storage`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/pseries`,
     element: (
