@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const VerServers = () => {
   const { serverId } = useParams();

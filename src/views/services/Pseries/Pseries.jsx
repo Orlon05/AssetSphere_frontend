@@ -543,7 +543,7 @@ const Pseries = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
-      <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
+      <header className="w-full p-8 flex items-center border-b border-gray-200 bg-white shadow-sm">
         <div>
           <h1 className="text-2xl font-bold flex items-center text-gray-800">
             <Server className="mr-2 text-blue-600" />
@@ -701,7 +701,11 @@ const Pseries = () => {
                             <Eye size={16} />
                           </button>
                           <button
-                            onClick={() => navigate(`${BASE_PATH}/editar/${pserie.id}/pseries`)}
+                            onClick={() =>
+                              navigate(
+                                `${BASE_PATH}/editar/${pseries.id}/pseries`
+                              )
+                            }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"
                           >

@@ -253,11 +253,15 @@ export default function ServidoresFisicos() {
           return null;
         }
 
-        const cleanDateStr = String(dateStr).trim();
-
-        // Si después de limpiar queda vacío
-        if (cleanDateStr === "") {
-          return null;
+      const response = await fetch(
+        "http://localhost:8000/servers/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
         }
 
         try {
@@ -875,7 +879,7 @@ export default function ServidoresFisicos() {
   return (
     <div className="min-h-screen bg-white text-gray-100">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-8 flex justify-between items-center border-b border-gray-200">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-400" />
