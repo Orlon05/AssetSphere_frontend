@@ -98,6 +98,7 @@ export default function Sidebar() {
         </ul>
       </div>
       <div className="flex-1 overflow-auto">{renderComponent()}</div>
+      <div className="flex-1 overflow-auto">{renderComponent()}</div>
     </div>
   );
 }

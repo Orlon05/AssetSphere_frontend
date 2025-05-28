@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   Search,
-  Server,
+  HardDrive,
   Eye,
   Edit,
   Trash2,
@@ -19,24 +19,24 @@ import {
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
-export default function ServidoresFisicos() {
+export default function Storage() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const [servers, setServers] = useState([]);
+  const [storageList, setStorageList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedServers, setSelectedServers] = useState(new Set());
+  const [selectedStorage, setSelectedStorage] = useState(new Set());
   const [showSearch, setShowSearch] = useState(true);
-  const [unfilteredServers, setUnfilteredServers] = useState([]);
+  const [unfilteredStorage, setUnfilteredStorage] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
 
-  const selectedCount = selectedServers.size;
+  const selectedCount = selectedStorage.size;
 
   const handleImport = () => {
     Swal.fire({
@@ -49,74 +49,73 @@ export default function ServidoresFisicos() {
       height: "80%",
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
-        // Mapeo correcto de columnas Excel a campos del backend
         const tableMetadata = [
           [
             {
-              name: "serial_number",
+              name: "cod_item_configuracion",
+              required: false,
+              type: "string",
+              excelColumn: "Código Item Config.",
+            },
+            {
+              name: "name",
               required: true,
               type: "string",
-              excelColumn: "Serial",
+              excelColumn: "Nombre",
             },
             {
-              name: "hostname",
-              required: true,
-              type: "string",
-              excelColumn: "NombredeHost",
-            },
-            {
-              name: "ip_server",
+              name: "application_code",
               required: false,
               type: "string",
-              excelColumn: "IP SERVER",
+              excelColumn: "Código Aplicación",
             },
             {
-              name: "ip_ilo",
+              name: "cost_center",
               required: false,
               type: "string",
-              excelColumn: "IP ILO",
+              excelColumn: "Centro de Costo",
             },
             {
-              name: "service_status",
-              required: true,
-              type: "string",
-              excelColumn: "EstadodelServicio",
-            },
-            {
-              name: "server_type",
+              name: "active",
               required: false,
               type: "string",
-              excelColumn: "TipodeServidor",
+              excelColumn: "Activo",
             },
             {
-              name: "total_disk_capacity",
+              name: "category",
               required: false,
               type: "string",
-              excelColumn: "Capacidadtotaldedisco",
+              excelColumn: "Categoría",
             },
             {
-              name: "action",
+              name: "type",
               required: false,
               type: "string",
-              excelColumn: "Accion",
+              excelColumn: "Tipo",
             },
             {
-              name: "server_model",
+              name: "item",
               required: false,
               type: "string",
-              excelColumn: "ModelodelServidor",
+              excelColumn: "Item",
             },
             {
-              name: "service_type",
+              name: "company",
               required: false,
               type: "string",
-              excelColumn: "Service Type",
+              excelColumn: "Empresa",
             },
             {
-              name: "core_count",
+              name: "organization_responsible",
               required: false,
-              type: "integer",
-              excelColumn: "NúmerodeCore",
+              type: "string",
+              excelColumn: "Organización Responsable",
+            },
+            {
+              name: "host_name",
+              required: false,
+              type: "string",
+              excelColumn: "Nombre Host",
             },
             {
               name: "manufacturer",
@@ -125,40 +124,10 @@ export default function ServidoresFisicos() {
               excelColumn: "Fabricante",
             },
             {
-              name: "installed_memory",
+              name: "status",
               required: false,
               type: "string",
-              excelColumn: "Memoriainstalada",
-            },
-            {
-              name: "warranty_start_date",
-              required: false,
-              type: "date",
-              excelColumn: "FechaInicioGarantía",
-            },
-            {
-              name: "warranty_end_date",
-              required: false,
-              type: "date",
-              excelColumn: "FechaFinGarantía",
-            },
-            {
-              name: "eos",
-              required: false,
-              type: "string",
-              excelColumn: "EOS",
-            },
-            {
-              name: "enclosure",
-              required: false,
-              type: "string",
-              excelColumn: "Enclosure",
-            },
-            {
-              name: "application",
-              required: false,
-              type: "string",
-              excelColumn: "Aplicacion",
+              excelColumn: "Estado",
             },
             {
               name: "owner",
@@ -167,34 +136,40 @@ export default function ServidoresFisicos() {
               excelColumn: "Propietario",
             },
             {
+              name: "model",
+              required: false,
+              type: "string",
+              excelColumn: "Modelo",
+            },
+            {
+              name: "serial",
+              required: false,
+              type: "string",
+              excelColumn: "Serial",
+            },
+            {
+              name: "org_maintenance",
+              required: false,
+              type: "string",
+              excelColumn: "Org. Mantenimiento",
+            },
+            {
+              name: "ip_address",
+              required: false,
+              type: "string",
+              excelColumn: "Dirección IP",
+            },
+            {
+              name: "disk_size",
+              required: false,
+              type: "string",
+              excelColumn: "Tamaño Disco",
+            },
+            {
               name: "location",
               required: false,
               type: "string",
               excelColumn: "Ubicación",
-            },
-            {
-              name: "unit",
-              required: false,
-              type: "string",
-              excelColumn: "Unidad",
-            },
-            {
-              name: "ubication",
-              required: false,
-              type: "string",
-              excelColumn: "Ubicación",
-            },
-            {
-              name: "comments",
-              required: false,
-              type: "string",
-              excelColumn: "Observaciones",
-            },
-            {
-              name: "po_number",
-              required: false,
-              type: "string",
-              excelColumn: "PO",
             },
           ],
         ];
@@ -224,7 +199,7 @@ export default function ServidoresFisicos() {
 
     Swal.fire({
       title: "Procesando datos...",
-      text: "Estamos guardando los servidores importados",
+      text: "Estamos guardando los dispositivos de storage importados",
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
@@ -236,135 +211,6 @@ export default function ServidoresFisicos() {
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
-
-      // Función mejorada para limpiar y formatear fechas
-      const formatDate = (dateStr) => {
-        // Si el valor está vacío, es null, undefined, "N/A", o solo espacios en blanco
-        if (
-          !dateStr ||
-          dateStr === null ||
-          dateStr === undefined ||
-          dateStr === "N/A" ||
-          dateStr === "n/a" ||
-          dateStr === "" ||
-          String(dateStr).trim() === "" ||
-          String(dateStr).toLowerCase() === "n/a"
-        ) {
-          return null;
-        }
-
-        const cleanDateStr = String(dateStr).trim();
-
-        // Si después de limpiar queda vacío
-        if (cleanDateStr === "") {
-          return null;
-        }
-
-        try {
-          // Intentar diferentes formatos de fecha
-          const formats = [
-            /(\d{1,2})-(\w{3})-(\d{2,4})/, // dd-mmm-yy o dd-mmm-yyyy (29-dic-17)
-            /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/, // dd/mm/yy o mm/dd/yy
-            /(\d{4})-(\d{1,2})-(\d{1,2})/, // yyyy-mm-dd
-            /(\d{1,2})-(\d{1,2})-(\d{2,4})/, // dd-mm-yy o dd-mm-yyyy
-          ];
-
-          const monthMap = {
-            ene: "01",
-            jan: "01",
-            feb: "02",
-            mar: "03",
-            abr: "04",
-            apr: "04",
-            may: "05",
-            jun: "06",
-            jul: "07",
-            ago: "08",
-            aug: "08",
-            sep: "09",
-            oct: "10",
-            nov: "11",
-            dic: "12",
-            dec: "12",
-          };
-
-          const match1 = cleanDateStr.match(formats[0]);
-          if (match1) {
-            const [, day, month, year] = match1;
-            const monthNum = monthMap[month.toLowerCase()];
-            if (monthNum) {
-              const fullYear = year.length === 2 ? `20${year}` : year;
-              return `${fullYear}-${monthNum}-${day.padStart(2, "0")}`;
-            }
-          }
-
-          const match2 = cleanDateStr.match(formats[1]);
-          if (match2) {
-            const [, part1, part2, year] = match2;
-            const fullYear = year.length === 2 ? `20${year}` : year;
-            return `${fullYear}-${part2.padStart(2, "0")}-${part1.padStart(
-              2,
-              "0"
-            )}`;
-          }
-
-          const match3 = cleanDateStr.match(formats[2]);
-          if (match3) {
-            return cleanDateStr;
-          }
-
-          const match4 = cleanDateStr.match(formats[3]);
-          if (match4) {
-            const [, day, month, year] = match4;
-            const fullYear = year.length === 2 ? `20${year}` : year;
-            return `${fullYear}-${month.padStart(2, "0")}-${day.padStart(
-              2,
-              "0"
-            )}`;
-          }
-
-          console.warn(`Formato de fecha no reconocido: ${cleanDateStr}`);
-          return null;
-        } catch (error) {
-          console.warn(`Error al procesar fecha: ${cleanDateStr}`, error);
-          return null;
-        }
-      };
-
-      const cleanNumber = (numStr) => {
-        if (
-          !numStr ||
-          numStr === null ||
-          numStr === undefined ||
-          numStr === "N/A" ||
-          numStr === "n/a" ||
-          String(numStr).trim() === ""
-        ) {
-          return null;
-        }
-
-        const cleaned = String(numStr).replace(/[^\d]/g, "");
-        return cleaned ? Number.parseInt(cleaned) : null;
-      };
-
-      const normalizeStatus = (status) => {
-        if (
-          !status ||
-          status === null ||
-          status === undefined ||
-          String(status).trim() === ""
-        ) {
-          return "inactive";
-        }
-
-        const statusLower = String(status).toLowerCase().trim();
-        if (statusLower === "activo") return "active";
-        if (statusLower === "inactivo") return "inactive";
-        if (statusLower === "mantenimiento") return "maintenance";
-        if (statusLower === "retirado" || statusLower === "retired")
-          return "decommissioned";
-        return statusLower;
-      };
 
       const cleanString = (str) => {
         if (
@@ -379,42 +225,44 @@ export default function ServidoresFisicos() {
         return String(str).trim();
       };
 
+      const normalizeStatus = (status) => {
+        if (!status) return "Inactivo";
+        const statusStr = String(status).toLowerCase().trim();
+        if (
+          statusStr === "activo" ||
+          statusStr === "active" ||
+          statusStr === "1" ||
+          statusStr === "true"
+        ) {
+          return "Activo";
+        }
+        return "Inactivo";
+      };
+
       const formattedData = importedData.map((row, index) => {
         try {
-          const result = {
-            serial_number: cleanString(row.serial_number),
-            hostname: cleanString(row.hostname),
-            ip_server: cleanString(row.ip_server),
-            ip_ilo: cleanString(row.ip_ilo),
-            service_status: normalizeStatus(row.service_status),
-            server_type: cleanString(row.server_type),
-            total_disk_capacity: cleanString(row.total_disk_capacity),
-            action: cleanString(row.action),
-            server_model: cleanString(row.server_model),
-            service_type: cleanString(row.service_type),
+          return {
+            cod_item_configuracion: cleanString(row.cod_item_configuracion),
+            name: cleanString(row.name),
+            application_code: cleanString(row.application_code),
+            cost_center: cleanString(row.cost_center),
+            active: normalizeStatus(row.active),
+            category: cleanString(row.category),
+            type: cleanString(row.type),
+            item: cleanString(row.item),
+            company: cleanString(row.company),
+            organization_responsible: cleanString(row.organization_responsible),
+            host_name: cleanString(row.host_name),
             manufacturer: cleanString(row.manufacturer),
-            installed_memory: cleanString(row.installed_memory),
-            eos: cleanString(row.eos),
-            enclosure: cleanString(row.enclosure),
-            application: cleanString(row.application),
+            status: normalizeStatus(row.status),
             owner: cleanString(row.owner),
+            model: cleanString(row.model),
+            serial: cleanString(row.serial),
+            org_maintenance: cleanString(row.org_maintenance),
+            ip_address: cleanString(row.ip_address),
+            disk_size: cleanString(row.disk_size),
             location: cleanString(row.location),
-            unit: cleanString(row.unit),
-            ubication: cleanString(row.ubication),
-            comments: cleanString(row.comments),
-            po_number: cleanString(row.po_number),
           };
-
-          const startDate = formatDate(row.warranty_start_date);
-          result.warranty_start_date = startDate || "000-00-00"; 
-
-          const endDate = formatDate(row.warranty_end_date);
-          result.warranty_end_date = endDate || "000-00-00"; 
-
-          const coreCount = cleanNumber(row.core_count);
-          result.core_count = coreCount !== null ? coreCount : 0; 
-
-          return result;
         } catch (error) {
           console.error(`Error procesando fila ${index + 1}:`, error, row);
           throw new Error(`Error en la fila ${index + 1}: ${error.message}`);
@@ -427,29 +275,26 @@ export default function ServidoresFisicos() {
 
       for (let i = 0; i < formattedData.length; i++) {
         try {
-          const response = await fetch(
-            "http://localhost:8000/servers/physical/add",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formattedData[i]),
-            }
-          );
+          const response = await fetch("http://localhost:8000/storage/add", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formattedData[i]),
+          });
 
           if (!response.ok) {
             const errorDetail = await response.text();
-            console.error(`Error en servidor ${i + 1}:`, errorDetail);
-            errors.push(`Servidor ${i + 1}: ${errorDetail}`);
+            console.error(`Error en storage ${i + 1}:`, errorDetail);
+            errors.push(`Storage ${i + 1}: ${errorDetail}`);
             errorCount++;
           } else {
             successCount++;
           }
         } catch (error) {
-          console.error(`Error procesando servidor ${i + 1}:`, error);
-          errors.push(`Servidor ${i + 1}: ${error.message}`);
+          console.error(`Error procesando storage ${i + 1}:`, error);
+          errors.push(`Storage ${i + 1}: ${error.message}`);
           errorCount++;
         }
       }
@@ -458,7 +303,7 @@ export default function ServidoresFisicos() {
         Swal.fire({
           icon: "success",
           title: "Importación exitosa",
-          text: `Se han importado ${successCount} servidores correctamente.`,
+          text: `Se han importado ${successCount} dispositivos de storage correctamente.`,
         });
       } else if (successCount > 0) {
         Swal.fire({
@@ -482,7 +327,7 @@ export default function ServidoresFisicos() {
           icon: "error",
           title: "Error en la importación",
           html: `
-            <p>No se pudo importar ningún servidor:</p>
+            <p>No se pudo importar ningún dispositivo de storage:</p>
             <details>
               <summary>Ver errores</summary>
               <pre style="text-align: left; max-height: 200px; overflow-y: auto;">${errors.join(
@@ -494,7 +339,7 @@ export default function ServidoresFisicos() {
         });
       }
 
-      fetchServers(currentPage, rowsPerPage);
+      fetchStorage(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al procesar los datos importados:", error);
       Swal.fire({
@@ -529,13 +374,13 @@ export default function ServidoresFisicos() {
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
-      title: "Servidor eliminado exitosamente",
+      title: "Storage eliminado exitosamente",
     });
   };
 
   const handleError = (error) => {
     setError(error);
-    console.error("Error al obtener servidores:", error);
+    console.error("Error al obtener storage:", error);
   };
 
   const handleExport = async () => {
@@ -545,7 +390,7 @@ export default function ServidoresFisicos() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/servers/export", {
+      const response = await fetch("http://localhost:8000/storage/export", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -561,7 +406,7 @@ export default function ServidoresFisicos() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "servers.xlsx";
+      a.download = "storage.xlsx";
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -572,32 +417,37 @@ export default function ServidoresFisicos() {
 
   const token = localStorage.getItem("authenticationToken");
 
-  const fetchServers = async (page, limit, search = "") => {
+  const fetchStorage = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&hostname=${search}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      let url = `http://localhost:8000/storage/get_all?page=${page}&limit=${limit}`;
+
+      if (search.trim()) {
+        url = `http://localhost:8000/storage/search_by_name?name=${encodeURIComponent(
+          search
+        )}&page=${page}&limit=${limit}`;
+      }
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw await response.json();
       }
 
       const data = await response.json();
-      console.log("Respuesta completa del servidor:", data); // Debug log
+      console.log("Respuesta completa del servidor:", data);
 
       if (data && data.status === "success" && data.data) {
-        console.log("Servidores recibidos:", data.data.servers); // Debug log
-        setUnfilteredServers(data.data.servers);
-        setServers(data.data.servers);
+        console.log("Storage recibido:", data.data.storages);
+        setUnfilteredStorage(data.data.storages || []);
+        setStorageList(data.data.storages || []);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -622,7 +472,9 @@ export default function ServidoresFisicos() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/search?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/storage/search_by_name?name=${encodeURIComponent(
+          search
+        )}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -637,7 +489,7 @@ export default function ServidoresFisicos() {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setServers(data.data.servers);
+        setStorageList(data.data.storages || []);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -656,16 +508,16 @@ export default function ServidoresFisicos() {
   };
 
   useEffect(() => {
-    fetchServers(currentPage, rowsPerPage);
+    fetchStorage(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
-        setServers(unfilteredServers);
+        setStorageList(unfilteredStorage);
         setTotalPages(
-          unfilteredServers.length > 0
-            ? Math.ceil(unfilteredServers.length / rowsPerPage)
+          unfilteredStorage.length > 0
+            ? Math.ceil(unfilteredStorage.length / rowsPerPage)
             : 0
         );
       } else {
@@ -674,7 +526,7 @@ export default function ServidoresFisicos() {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredServers, rowsPerPage]);
+  }, [isSearchButtonClicked, searchValue, unfilteredStorage, rowsPerPage]);
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -690,33 +542,33 @@ export default function ServidoresFisicos() {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
-      setSelectedServers(new Set());
+      setSelectedStorage(new Set());
     } else {
-      setSelectedServers(new Set(servers.map((server) => server.id)));
+      setSelectedStorage(new Set(storageList.map((storage) => storage.id)));
     }
   };
 
-  const toggleSelectServer = (serverId) => {
-    const newSelectedServers = new Set(selectedServers);
-    if (newSelectedServers.has(serverId)) {
-      newSelectedServers.delete(serverId);
+  const toggleSelectStorage = (storageId) => {
+    const newSelectedStorage = new Set(selectedStorage);
+    if (newSelectedStorage.has(storageId)) {
+      newSelectedStorage.delete(storageId);
     } else {
-      newSelectedServers.add(serverId);
+      newSelectedStorage.add(storageId);
     }
-    setSelectedServers(newSelectedServers);
+    setSelectedStorage(newSelectedStorage);
   };
 
-  const filteredServers = servers.filter((server) =>
-    server.hostname?.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredStorage = storageList.filter((storage) =>
+    storage.name?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const indexOfLastServer = currentPage * rowsPerPage;
-  const indexOfFirstServer = indexOfLastServer - rowsPerPage;
+  const indexOfLastStorage = currentPage * rowsPerPage;
+  const indexOfFirstStorage = indexOfLastStorage - rowsPerPage;
 
-  const handleDeleteServer = async (serverId) => {
+  const handleDeleteStorage = async (storageId) => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: "¿Deseas eliminar este servidor?",
+      text: "¿Deseas eliminar este dispositivo de storage?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -727,7 +579,7 @@ export default function ServidoresFisicos() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/servers/physical/${serverId}`,
+            `http://localhost:8000/storage/delete/${storageId}`,
             {
               method: "DELETE",
               headers: {
@@ -748,7 +600,7 @@ export default function ServidoresFisicos() {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
-                errorMessage = "El servidor no existe.";
+                errorMessage = "El dispositivo de storage no existe.";
               } else if (errorData && errorData.message) {
                 errorMessage = errorData.message;
               }
@@ -760,20 +612,22 @@ export default function ServidoresFisicos() {
 
             Swal.fire({
               icon: "error",
-              title: "Error al eliminar el servidor",
+              title: "Error al eliminar el storage",
               text: errorMessage,
             });
           } else {
-            setServers(servers.filter((server) => server.id !== serverId));
+            setStorageList(
+              storageList.filter((storage) => storage.id !== storageId)
+            );
             showSuccessToast();
           }
         } catch (error) {
-          console.error("Error al eliminar el servidor:", error);
+          console.error("Error al eliminar el storage:", error);
           handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Ocurrió un error inesperado al eliminar el servidor.",
+            text: "Ocurrió un error inesperado al eliminar el storage.",
           });
         }
       }
@@ -781,11 +635,11 @@ export default function ServidoresFisicos() {
   };
 
   const irCrear = () => {
-    navigate(`${BASE_PATH}/crear-servidores-f`);
+    navigate(`${BASE_PATH}/crear-storages`);
   };
 
   const getStatusBadge = (status) => {
-    console.log("Estado recibido en getStatusBadge:", status); // Debug log
+    console.log("Estado recibido en getStatusBadge:", status);
 
     if (!status) {
       return (
@@ -822,17 +676,6 @@ export default function ServidoresFisicos() {
           Mantenimiento
         </span>
       );
-    } else if (
-      statusLower === "decommissioned" ||
-      statusLower === "retirado" ||
-      statusLower === "retired"
-    ) {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          <AlertCircle size={12} className="mr-1" />
-          Retirado
-        </span>
-      );
     } else {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -847,7 +690,7 @@ export default function ServidoresFisicos() {
       <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando servidores...</p>
+          <p>Cargando dispositivos de storage...</p>
         </div>
       </div>
     );
@@ -859,10 +702,11 @@ export default function ServidoresFisicos() {
         <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
           <p>
-            {error.message || "Ha ocurrido un error al cargar los servidores"}
+            {error.message ||
+              "Ha ocurrido un error al cargar los dispositivos de storage"}
           </p>
           <button
-            onClick={() => fetchServers(currentPage, rowsPerPage)}
+            onClick={() => fetchStorage(currentPage, rowsPerPage)}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
           >
             Reintentar
@@ -875,14 +719,14 @@ export default function ServidoresFisicos() {
   return (
     <div className="min-h-screen bg-white text-gray-100">
       {/* Header */}
-      <header className="w-full p-8 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <Server className="mr-2 text-blue-400" />
-            Servidores Físicos
+            <HardDrive className="mr-2 text-blue-400" />
+            Dispositivos de Storage
           </h1>
           <p className="text-sm text-gray-900">
-            Gestión y monitoreo de servidores físicos
+            Gestión y monitoreo de dispositivos de almacenamiento
           </p>
         </div>
       </header>
@@ -899,7 +743,7 @@ export default function ServidoresFisicos() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Buscar por hostname..."
+                  placeholder="Buscar por nombre..."
                   className="bg-white border-gray-400 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
@@ -916,7 +760,7 @@ export default function ServidoresFisicos() {
                   {selectedCount}
                 </span>
                 <span>
-                  Servidor{selectedCount !== 1 ? "es" : ""} seleccionado
+                  Storage{selectedCount !== 1 ? "s" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -965,14 +809,14 @@ export default function ServidoresFisicos() {
                       type="checkbox"
                       className="w-4 h-4 rounded border-gray-600 bg-gray-700 checked:bg-blue-600"
                       checked={
-                        servers.length > 0 &&
-                        selectedServers.size === servers.length
+                        storageList.length > 0 &&
+                        selectedStorage.size === storageList.length
                       }
                       onChange={toggleSelectAll}
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Hostname
+                    Nombre
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Estado
@@ -981,7 +825,10 @@ export default function ServidoresFisicos() {
                     Serial
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    IP
+                    Fabricante
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Modelo
                   </th>
                   <th
                     scope="col"
@@ -992,14 +839,14 @@ export default function ServidoresFisicos() {
                 </tr>
               </thead>
               <tbody>
-                {filteredServers.length > 0 ? (
-                  filteredServers.map((server, index) => {
-                    console.log("Servidor en tabla:", server); // Debug log
+                {filteredStorage.length > 0 ? (
+                  filteredStorage.map((storage, index) => {
+                    console.log("Storage en tabla:", storage);
                     return (
                       <tr
-                        key={server.id}
+                        key={storage.id}
                         className={`border-b border-gray-200 ${
-                          selectedServers.has(server.id)
+                          selectedStorage.has(storage.id)
                             ? "bg-blue-50"
                             : index % 2 === 0
                             ? "bg-white"
@@ -1010,28 +857,31 @@ export default function ServidoresFisicos() {
                           <input
                             type="checkbox"
                             className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
-                            checked={selectedServers.has(server.id)}
-                            onChange={() => toggleSelectServer(server.id)}
+                            checked={selectedStorage.has(storage.id)}
+                            onChange={() => toggleSelectStorage(storage.id)}
                           />
                         </td>
                         <td className="px-6 py-4 font-medium text-gray-900">
-                          {server.hostname}
+                          {storage.name}
                         </td>
                         <td className="px-6 py-4">
-                          {getStatusBadge(server.service_status)}
+                          {getStatusBadge(storage.status)}
                         </td>
                         <td className="px-6 py-4 text-gray-900">
-                          {server.serial_number}
+                          {storage.serial || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-gray-900">
-                          {server.ip_server}
+                          {storage.manufacturer || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-900">
+                          {storage.model || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end space-x-2">
                             <button
                               onClick={() =>
                                 navigate(
-                                  `${BASE_PATH}/ver/${server.id}/servers`
+                                  `${BASE_PATH}/ver/${storage.id}/storages`
                                 )
                               }
                               className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
@@ -1042,7 +892,7 @@ export default function ServidoresFisicos() {
                             <button
                               onClick={() =>
                                 navigate(
-                                  `${BASE_PATH}/editar/${server.id}/servers`
+                                  `${BASE_PATH}/editar/${storage.id}/storages`
                                 )
                               }
                               className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
@@ -1051,7 +901,7 @@ export default function ServidoresFisicos() {
                               <Edit size={16} />
                             </button>
                             <button
-                              onClick={() => handleDeleteServer(server.id)}
+                              onClick={() => handleDeleteStorage(storage.id)}
                               className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                               title="Eliminar"
                             >
@@ -1065,10 +915,11 @@ export default function ServidoresFisicos() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="px-6 py-4 text-center text-gray-500"
                     >
-                      No se encontraron servidores que coincidan con la búsqueda
+                      No se encontraron dispositivos de storage que coincidan
+                      con la búsqueda
                     </td>
                   </tr>
                 )}
@@ -1098,9 +949,9 @@ export default function ServidoresFisicos() {
             </div>
 
             <div className="text-sm text-gray-900">
-              Mostrando {indexOfFirstServer + 1} a{" "}
-              {Math.min(indexOfLastServer, filteredServers.length)} de{" "}
-              {filteredServers.length} servidores
+              Mostrando {indexOfFirstStorage + 1} a{" "}
+              {Math.min(indexOfLastStorage, filteredStorage.length)} de{" "}
+              {filteredStorage.length} dispositivos
             </div>
 
             <div className="flex items-center space-x-2">
