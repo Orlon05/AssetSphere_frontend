@@ -60,7 +60,6 @@ export default function Dashboard() {
       id: 5,
       title: "Storage",
       count: 0,
-      count: 8,
       icon: HardDrive,
       description: "Administración de almacenamiento",
       route: `${BASE_PATH}/storage`,
