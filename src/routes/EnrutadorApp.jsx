@@ -1,8 +1,9 @@
-import { lazy } from "react";
-import ProtectedRoute from "./ProtectedRoute";
-import Login from "../views/auth/Login";
-import Dashboard from "../views/dashboard/dashboard";
-import Sidebar from "../views/layout/sidebar";
+import { lazy, Suspense } from "react";
+
+const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
+const Login = lazy(() => import("../views/auth/Login"));
+const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
+const Sidebar = lazy(() => import("../views/layout/sidebar"));
 
 // const ServidoresFisicos = lazy(() =>
 //   import("../views/services/servidores Fisicos/servidoresF")
