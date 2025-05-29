@@ -26,7 +26,7 @@ const VerServers = lazy(() =>
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
 // const Storage = lazy(() => import("../pages/Storage"));
-const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
+// const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
 // const CrearPseries = lazy(() => import("../pages/CrearPseries"));
 const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
@@ -48,11 +48,13 @@ const EditarBaseDatos = lazy(() =>
   import("../views/services/Base de datos/editarbasededatos")
 );
 // const Sucursales = lazy(() => import("../pages/Sucursales"));
-// const CrearSucursales = lazy(() => import("../pages/CrearSucursales"));
+const CrearSucursal = lazy(() =>
+  import("../views/services/Sucursales/crearSucursales")
+);
 // const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
 // const VerSucursales = lazy(() => import("../pages/VerSucursales"));
 const CrearServidorVirtual = lazy(() =>
-  import("../views/services/servidores Virtuales/CrearServidorV")
+  import("../views/services/servidores Virtuales/crearservidorv")
 );
 // const EditarServerVirtual = lazy(() => import("../pages/editarServidorv"));
 // const VerServidoresVirtuales = lazy(() =>
@@ -148,14 +150,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/sucursales`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Sucursales />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/sucursales`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
 
   // Crear
   {
@@ -206,14 +208,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/crear-sucursales`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearSucursales />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-sucursales`,
+    element: (
+      <ProtectedRoute>
+        <CrearSucursal />
+      </ProtectedRoute>
+    ),
+  },
 
   // // Editar
   {

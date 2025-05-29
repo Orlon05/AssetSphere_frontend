@@ -4,6 +4,8 @@ import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import BasesDeDatos from "../services/Base de datos/baseDeDatos";
 import Pseries from "../services/pseries/Pseries";
 import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
+import Storage from "../services/storage/Storage";
+import Sucursales from "../services/Sucursales/sucursales"
 // Importa los demás componentes que necesites
 import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
 
@@ -51,6 +53,10 @@ export default function Sidebar() {
       return <Pseries />;
     } else if (path.includes("servidoresv")) {
       return <ServidoresVirtuales />;
+    } else if (path.includes("storage")) {
+      return <Storage />;
+    } else if (path.includes("sucursales")) {
+      return <Sucursales />;
     }
     // Agrega aquí los demás componentes según el path
     else {
