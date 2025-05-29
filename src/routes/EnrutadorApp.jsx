@@ -4,12 +4,12 @@ import Login from "../views/auth/Login";
 import Dashboard from "../views/dashboard/dashboard";
 import Sidebar from "../views/layout/sidebar";
 
-const ServidoresFisicos = lazy(() =>
-  import("../views/services/servidores Fisicos/servidoresF")
-);
-const ServidoresVirtuales = lazy(() =>
-  import("../views/services/servidores Virtuales/servidoresV")
-);
+// const ServidoresFisicos = lazy(() =>
+//   import("../views/services/servidores Fisicos/servidoresF")
+// );
+// const ServidoresVirtuales = lazy(() =>
+//   import("../views/services/servidores Virtuales/servidoresV")
+// );
 // const Analitica = lazy(() => import("../pages/Analitica"));
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
