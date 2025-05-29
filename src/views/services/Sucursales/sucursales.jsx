@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   Search,
-  Server,
+  Building,
   Eye,
   Edit,
   Trash2,
@@ -16,27 +16,27 @@ import {
   Upload,
   Plus,
 } from "lucide-react";
-import { createRoot } from "react-dom/client";
 import ExcelImporter from "../../../hooks/Excelimporter";
+import { createRoot } from "react-dom/client";
 
-const Pseries = () => {
+export default function Sucursales() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const [pseries, setPseries] = useState([]);
+  const [sucursalesList, setSucursalesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
-  const [selectedPseries, setSelectedPseries] = useState(new Set());
+  const [selectedSucursales, setSelectedSucursales] = useState(new Set());
   const [showSearch, setShowSearch] = useState(true);
-  const [unfilteredPseries, setUnfilteredPseries] = useState([]);
+  const [unfilteredSucursales, setUnfilteredSucursales] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
 
-  const selectedCount = selectedPseries.size;
+  const selectedCount = selectedSucursales.size;
 
   const BASE_PATH = "/inveplus";
 
@@ -59,24 +59,24 @@ const Pseries = () => {
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
-      title: "Servidor eliminado exitosamente",
+      title: "Sucursal eliminada exitosamente",
     });
   };
 
   const handleError = (error) => {
     setError(error);
-    console.error("Error al obtener servidores PSeries:", error);
+    console.error("Error al obtener sucursales:", error);
   };
 
   const token = localStorage.getItem("authenticationToken");
 
-  const fetchPseries = async (page, limit, search = "") => {
+  const fetchSucursales = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
+        `http://localhost:8000/sucursales/get_all?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -91,8 +91,8 @@ const Pseries = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setUnfilteredPseries(data.data.pseries);
-        setPseries(data.data.pseries);
+        setUnfilteredSucursales(data.data.branches || []);
+        setSucursalesList(data.data.branches || []);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -117,7 +117,9 @@ const Pseries = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `http://localhost:8000/sucursales/search?name=${encodeURIComponent(
+          search
+        )}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -132,7 +134,7 @@ const Pseries = () => {
 
       const data = await response.json();
       if (data && data.status === "success" && data.data) {
-        setPseries(data.data.pseries);
+        setSucursalesList(data.data.branches || []);
         setTotalPages(data.data.total_pages || 0);
       } else {
         throw new Error("Respuesta inesperada de la API");
@@ -151,16 +153,16 @@ const Pseries = () => {
   };
 
   useEffect(() => {
-    fetchPseries(currentPage, rowsPerPage);
+    fetchSucursales(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
-        setPseries(unfilteredPseries);
+        setSucursalesList(unfilteredSucursales);
         setTotalPages(
-          unfilteredPseries.length > 0
-            ? Math.ceil(unfilteredPseries.length / rowsPerPage)
+          unfilteredSucursales.length > 0
+            ? Math.ceil(unfilteredSucursales.length / rowsPerPage)
             : 0
         );
       } else {
@@ -169,9 +171,8 @@ const Pseries = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
+  }, [isSearchButtonClicked, searchValue, unfilteredSucursales, rowsPerPage]);
 
-  // Función modificada para manejar la importación sin createRoot
   const handleImport = () => {
     Swal.fire({
       title: "Importar desde Excel",
@@ -185,28 +186,45 @@ const Pseries = () => {
         const container = document.getElementById("excel-importer-container");
         const tableMetadata = [
           { name: "name", required: true, type: "string" },
-          { name: "application", required: true, type: "string" },
-          { name: "hostname", required: true, type: "string" },
-          { name: "ip_address", required: false, type: "string" },
+          { name: "brand", required: false, type: "string" },
+          { name: "model", required: false, type: "string" },
+          { name: "processor", required: false, type: "string" },
+          { name: "cpu_cores", required: false, type: "number" },
+          { name: "ram", required: false, type: "number" },
+          { name: "total_disk_size", required: false, type: "string" },
+          { name: "os_type", required: false, type: "string" },
+          { name: "os_version", required: false, type: "string" },
+          { name: "status", required: false, type: "string" },
+          { name: "role", required: false, type: "string" },
           { name: "environment", required: false, type: "string" },
-          { name: "slot", required: false, type: "string" },
-          { name: "lpar_id", required: false, type: "string" },
-          { name: "status", required: true, type: "string" },
-          { name: "os", required: true, type: "string" },
-          { name: "version", required: false, type: "string" },
+          { name: "serial", required: false, type: "string" },
+          { name: "rack_id", required: false, type: "string" },
+          { name: "unit", required: false, type: "string" },
+          { name: "ip_address", required: false, type: "string" },
+          { name: "city", required: false, type: "string" },
+          { name: "location", required: false, type: "string" },
+          { name: "asset_id", required: false, type: "string" },
+          { name: "service_owner", required: false, type: "string" },
+          { name: "warranty_start_date", required: false, type: "date" },
+          { name: "warranty_end_date", required: false, type: "date" },
+          { name: "application_code", required: false, type: "string" },
+          { name: "responsible_evc", required: false, type: "string" },
+          { name: "domain", required: false, type: "string" },
           { name: "subsidiary", required: false, type: "string" },
-          { name: "min_cpu", required: true, type: "string" },
-          { name: "act_cpu", required: false, type: "string" },
-          { name: "max_cpu", required: true, type: "string" },
-          { name: "min_v_cpu", required: true, type: "string" },
-          { name: "act_v_cpu", required: true, type: "string" },
-          { name: "max_v_cpu", required: true, type: "string" },
-          { name: "min_memory", required: true, type: "string" },
-          { name: "act_memory", required: false, type: "string" },
-          { name: "max_memory", required: false, type: "string" },
-          { name: "expansion_factor", required: false, type: "string" },
-          { name: "memory_per_factor", required: false, type: "string" },
-          { name: "processor_compatibility", required: false, type: "string" },
+          { name: "responsible_organization", required: false, type: "string" },
+          { name: "billable", required: false, type: "string" },
+          { name: "oc_provisioning", required: false, type: "string" },
+          { name: "oc_deletion", required: false, type: "string" },
+          { name: "oc_modification", required: false, type: "string" },
+          { name: "maintenance_period", required: false, type: "string" },
+          { name: "maintenance_organization", required: false, type: "string" },
+          { name: "cost_center", required: false, type: "string" },
+          { name: "billing_type", required: false, type: "string" },
+          { name: "branch_code", required: false, type: "string" },
+          { name: "branch_name", required: false, type: "string" },
+          { name: "region", required: false, type: "string" },
+          { name: "department", required: false, type: "string" },
+          { name: "comments", required: false, type: "string" },
         ];
         const importer = (
           <ExcelImporter
@@ -228,7 +246,7 @@ const Pseries = () => {
       },
     });
   };
-  // Función para manejar los datos importados
+
   const handleImportComplete = async (importedData) => {
     console.log("Datos importados (cantidad):", importedData.length);
     console.log("Datos importados (muestra):", importedData.slice(0, 3));
@@ -242,10 +260,9 @@ const Pseries = () => {
       return;
     }
 
-    // Mostrar un mensaje de carga
     Swal.fire({
       title: "Procesando datos...",
-      text: `Estamos guardando ${importedData.length} servidores importados`,
+      text: `Estamos guardando ${importedData.length} sucursales importadas`,
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
@@ -258,44 +275,61 @@ const Pseries = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      // Formateamos los datos para enviarlos al servidor
       const formattedData = importedData.map((row) => {
-        // Crear una copia para no modificar el original
         const formattedRow = {};
 
-        // Asegurarse de que todos los campos existan y sean strings
         formattedRow.name = String(row.name || "");
-        formattedRow.application = String(row.application || "");
-        formattedRow.hostname = String(row.hostname || "");
-        formattedRow.ip_address = String(row.ip_address || "");
-        formattedRow.environment = String(row.environment || "");
-        formattedRow.slot = String(row.slot || "");
-        formattedRow.lpar_id = String(row.lpar_id || "");
+        formattedRow.brand = String(row.brand || "");
+        formattedRow.model = String(row.model || "");
+        formattedRow.processor = String(row.processor || "");
+        formattedRow.cpu_cores = row.cpu_cores
+          ? Number.parseInt(row.cpu_cores)
+          : null;
+        formattedRow.ram = row.ram ? Number.parseInt(row.ram) : null;
+        formattedRow.total_disk_size = String(row.total_disk_size || "");
+        formattedRow.os_type = String(row.os_type || "");
+        formattedRow.os_version = String(row.os_version || "");
         formattedRow.status = String(row.status || "");
-        formattedRow.os = String(row.os || "");
-        formattedRow.version = String(row.version || "");
+        formattedRow.role = String(row.role || "");
+        formattedRow.environment = String(row.environment || "");
+        formattedRow.serial = String(row.serial || "");
+        formattedRow.rack_id = String(row.rack_id || "");
+        formattedRow.unit = String(row.unit || "");
+        formattedRow.ip_address = String(row.ip_address || "");
+        formattedRow.city = String(row.city || "");
+        formattedRow.location = String(row.location || "");
+        formattedRow.asset_id = String(row.asset_id || "");
+        formattedRow.service_owner = String(row.service_owner || "");
+        formattedRow.warranty_start_date = row.warranty_start_date || null;
+        formattedRow.warranty_end_date = row.warranty_end_date || null;
+        formattedRow.application_code = String(row.application_code || "");
+        formattedRow.responsible_evc = String(row.responsible_evc || "");
+        formattedRow.domain = String(row.domain || "");
         formattedRow.subsidiary = String(row.subsidiary || "");
-        formattedRow.min_cpu = String(row.min_cpu || "");
-        formattedRow.act_cpu = String(row.act_cpu || "");
-        formattedRow.max_cpu = String(row.max_cpu || "");
-        formattedRow.min_v_cpu = String(row.min_v_cpu || "");
-        formattedRow.act_v_cpu = String(row.act_v_cpu || "");
-        formattedRow.max_v_cpu = String(row.max_v_cpu || "");
-        formattedRow.min_memory = String(row.min_memory || "");
-        formattedRow.act_memory = String(row.act_memory || "");
-        formattedRow.max_memory = String(row.max_memory || "");
-        formattedRow.expansion_factor = String(row.expansion_factor || "");
-        formattedRow.memory_per_factor = String(row.memory_per_factor || "");
-        formattedRow.processor_compatibility = String(
-          row.processor_compatibility || ""
+        formattedRow.responsible_organization = String(
+          row.responsible_organization || ""
         );
+        formattedRow.billable = String(row.billable || "");
+        formattedRow.oc_provisioning = String(row.oc_provisioning || "");
+        formattedRow.oc_deletion = String(row.oc_deletion || "");
+        formattedRow.oc_modification = String(row.oc_modification || "");
+        formattedRow.maintenance_period = String(row.maintenance_period || "");
+        formattedRow.maintenance_organization = String(
+          row.maintenance_organization || ""
+        );
+        formattedRow.cost_center = String(row.cost_center || "");
+        formattedRow.billing_type = String(row.billing_type || "");
+        formattedRow.branch_code = String(row.branch_code || "");
+        formattedRow.branch_name = String(row.branch_name || "");
+        formattedRow.region = String(row.region || "");
+        formattedRow.department = String(row.department || "");
+        formattedRow.comments = String(row.comments || "");
 
         return formattedRow;
       });
 
-      // Enviar los datos al servidor
       const response = await fetch(
-        "http://localhost:8000/pseries/add_from_excel",
+        "http://localhost:8000/sucursales/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -311,15 +345,13 @@ const Pseries = () => {
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
-      // Mostrar mensaje de éxito
       Swal.fire({
         icon: "success",
         title: "Importación exitosa",
-        text: `Se han importado ${importedData.length} servidores correctamente.`,
+        text: `Se han importado ${importedData.length} sucursales correctamente.`,
       });
 
-      // Actualizar la lista de servidores
-      fetchPseries(currentPage, rowsPerPage);
+      fetchSucursales(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al procesar los datos importados:", error);
       Swal.fire({
@@ -339,7 +371,7 @@ const Pseries = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/pseries/export", {
+      const response = await fetch("http://localhost:8000/sucursales/export", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -355,7 +387,7 @@ const Pseries = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "pseries.xlsx";
+      a.download = "sucursales.xlsx";
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -378,33 +410,38 @@ const Pseries = () => {
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
-      setSelectedPseries(new Set());
+      setSelectedSucursales(new Set());
     } else {
-      setSelectedPseries(new Set(pseries.map((server) => server.id)));
+      setSelectedSucursales(
+        new Set(sucursalesList.map((sucursal) => sucursal.id))
+      );
     }
   };
 
-  const toggleSelectPseries = (pseriesId) => {
-    const newSelectedPseries = new Set(selectedPseries);
-    if (newSelectedPseries.has(pseriesId)) {
-      newSelectedPseries.delete(pseriesId);
+  const toggleSelectSucursal = (sucursalId) => {
+    const newSelectedSucursales = new Set(selectedSucursales);
+    if (newSelectedSucursales.has(sucursalId)) {
+      newSelectedSucursales.delete(sucursalId);
     } else {
-      newSelectedPseries.add(pseriesId);
+      newSelectedSucursales.add(sucursalId);
     }
-    setSelectedPseries(newSelectedPseries);
+    setSelectedSucursales(newSelectedSucursales);
   };
 
-  const filteredPseries = pseries.filter((server) =>
-    server.name?.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredSucursales = sucursalesList.filter(
+    (sucursal) =>
+      sucursal.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      sucursal.branch_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      sucursal.branch_code?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  const indexOfLastPseries = currentPage * rowsPerPage;
-  const indexOfFirstPseries = indexOfLastPseries - rowsPerPage;
+  const indexOfLastSucursal = currentPage * rowsPerPage;
+  const indexOfFirstSucursal = indexOfLastSucursal - rowsPerPage;
 
-  const handleDeletePseries = async (pseriesId) => {
+  const handleDeleteSucursal = async (sucursalId) => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: "¿Deseas eliminar este servidor?",
+      text: "¿Deseas eliminar esta sucursal?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -415,7 +452,7 @@ const Pseries = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/pseries/pseries/${pseriesId}`,
+            `http://localhost:8000/sucursales/delete/${sucursalId}`,
             {
               method: "DELETE",
               headers: {
@@ -436,7 +473,7 @@ const Pseries = () => {
                 errorMessage =
                   "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
               } else if (response.status === 404) {
-                errorMessage = "El servidor no existe.";
+                errorMessage = "La sucursal no existe.";
               } else if (errorData && errorData.message) {
                 errorMessage = errorData.message;
               }
@@ -448,20 +485,22 @@ const Pseries = () => {
 
             Swal.fire({
               icon: "error",
-              title: "Error al eliminar el servidor",
+              title: "Error al eliminar la sucursal",
               text: errorMessage,
             });
           } else {
-            setPseries(pseries.filter((server) => server.id !== pseriesId));
+            setSucursalesList(
+              sucursalesList.filter((sucursal) => sucursal.id !== sucursalId)
+            );
             showSuccessToast();
           }
         } catch (error) {
-          console.error("Error al eliminar el servidor:", error);
+          console.error("Error al eliminar la sucursal:", error);
           handleError(error);
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Ocurrió un error inesperado al eliminar el servidor.",
+            text: "Ocurrió un error inesperado al eliminar la sucursal.",
           });
         }
       }
@@ -469,7 +508,7 @@ const Pseries = () => {
   };
 
   const irCrear = () => {
-    navigate(`${BASE_PATH}/crear-pseries`);
+    navigate(`${BASE_PATH}/crear-sucursales`);
   };
 
   const getStatusBadge = (status) => {
@@ -477,18 +516,18 @@ const Pseries = () => {
 
     const statusLower = status.toLowerCase();
 
-    if (statusLower === "active" || statusLower === "running") {
+    if (statusLower === "active" || statusLower === "activo") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Corriendo
+          Activo
         </span>
       );
-    } else if (statusLower === "inactive" || statusLower === "not activated") {
+    } else if (statusLower === "inactive" || statusLower === "inactivo") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          No activo
+          Inactivo
         </span>
       );
     } else if (
@@ -515,7 +554,7 @@ const Pseries = () => {
       <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando servidores...</p>
+          <p>Cargando sucursales...</p>
         </div>
       </div>
     );
@@ -527,10 +566,10 @@ const Pseries = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p>
-            {error.message || "Ha ocurrido un error al cargar los servidores"}
+            {error.message || "Ha ocurrido un error al cargar las sucursales"}
           </p>
           <button
-            onClick={() => fetchPseries(currentPage, rowsPerPage)}
+            onClick={() => fetchSucursales(currentPage, rowsPerPage)}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             Reintentar
@@ -546,11 +585,11 @@ const Pseries = () => {
       <header className="w-full p-8 flex items-center border-b border-gray-200 bg-white shadow-sm">
         <div>
           <h1 className="text-2xl font-bold flex items-center text-gray-800">
-            <Server className="mr-2 text-blue-600" />
-            PSeries
+            <Building className="mr-2 text-blue-600" />
+            Sucursales
           </h1>
           <p className="text-sm text-gray-500">
-            Gestión y monitoreo de servidores PSeries
+            Gestión y monitoreo de sucursales
           </p>
         </div>
       </header>
@@ -567,7 +606,7 @@ const Pseries = () => {
                 </div>
                 <input
                   type="text"
-                  placeholder="Buscar por nombre..."
+                  placeholder="Buscar por nombre o código..."
                   className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
@@ -589,7 +628,7 @@ const Pseries = () => {
                   {selectedCount}
                 </span>
                 <span className="text-gray-700">
-                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
+                  Sucursal{selectedCount !== 1 ? "es" : ""} seleccionada
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -632,8 +671,8 @@ const Pseries = () => {
                       type="checkbox"
                       className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
                       checked={
-                        pseries.length > 0 &&
-                        selectedPseries.size === pseries.length
+                        sucursalesList.length > 0 &&
+                        selectedSucursales.size === sucursalesList.length
                       }
                       onChange={toggleSelectAll}
                     />
@@ -642,13 +681,16 @@ const Pseries = () => {
                     Nombre
                   </th>
                   <th scope="col" className="px-6 py-3 font-semibold">
-                    Ambiente
-                  </th>
-                  <th scope="col" className="px-6 py-3 font-semibold">
-                    Cajón
+                    Código
                   </th>
                   <th scope="col" className="px-6 py-3 font-semibold">
                     Estado
+                  </th>
+                  <th scope="col" className="px-6 py-3 font-semibold">
+                    Ciudad
+                  </th>
+                  <th scope="col" className="px-6 py-3 font-semibold">
+                    Región
                   </th>
                   <th
                     scope="col"
@@ -659,12 +701,12 @@ const Pseries = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPseries.length > 0 ? (
-                  filteredPseries.map((pserie, index) => (
+                {filteredSucursales.length > 0 ? (
+                  filteredSucursales.map((sucursal, index) => (
                     <tr
-                      key={pserie.id}
+                      key={sucursal.id}
                       className={`border-b border-gray-200 ${
-                        selectedPseries.has(pserie.id)
+                        selectedSucursales.has(sucursal.id)
                           ? "bg-blue-50"
                           : index % 2 === 0
                           ? "bg-white"
@@ -675,25 +717,32 @@ const Pseries = () => {
                         <input
                           type="checkbox"
                           className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
-                          checked={selectedPseries.has(pserie.id)}
-                          onChange={() => toggleSelectPseries(pserie.id)}
+                          checked={selectedSucursales.has(sucursal.id)}
+                          onChange={() => toggleSelectSucursal(sucursal.id)}
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-800">
-                        {pserie.name}
+                        {sucursal.branch_name || sucursal.name || "N/A"}
                       </td>
                       <td className="px-6 py-4 text-gray-600">
-                        {pserie.environment}
+                        {sucursal.branch_code || "N/A"}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{pserie.slot}</td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(pserie.status)}
+                        {getStatusBadge(sucursal.status)}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {sucursal.city || "N/A"}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {sucursal.region || "N/A"}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() =>
-                              navigate(`${BASE_PATH}/ver/${pserie.id}/pseries`)
+                              navigate(
+                                `${BASE_PATH}/ver/${sucursal.id}/sucursal`
+                              )
                             }
                             className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                             title="Ver detalles"
@@ -703,7 +752,7 @@ const Pseries = () => {
                           <button
                             onClick={() =>
                               navigate(
-                                `${BASE_PATH}/editar/${pseries.id}/pseries`
+                                `${BASE_PATH}/editar/${sucursal.id}/sucursal`
                               )
                             }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
@@ -712,7 +761,7 @@ const Pseries = () => {
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeletePseries(pserie.id)}
+                            onClick={() => handleDeleteSucursal(sucursal.id)}
                             className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                             title="Eliminar"
                           >
@@ -725,10 +774,10 @@ const Pseries = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="px-6 py-4 text-center text-gray-500"
                     >
-                      No se encontraron servidores que coincidan con la búsqueda
+                      No se encontraron sucursales que coincidan con la búsqueda
                     </td>
                   </tr>
                 )}
@@ -758,9 +807,9 @@ const Pseries = () => {
             </div>
 
             <div className="text-sm text-gray-500">
-              Mostrando {indexOfFirstPseries + 1} a{" "}
-              {Math.min(indexOfLastPseries, filteredPseries.length)} de{" "}
-              {filteredPseries.length} servidores
+              Mostrando {indexOfFirstSucursal + 1} a{" "}
+              {Math.min(indexOfLastSucursal, filteredSucursales.length)} de{" "}
+              {filteredSucursales.length} sucursales
             </div>
 
             <div className="flex items-center space-x-2">
@@ -789,6 +838,4 @@ const Pseries = () => {
       </main>
     </div>
   );
-};
-
-export default Pseries;
+}

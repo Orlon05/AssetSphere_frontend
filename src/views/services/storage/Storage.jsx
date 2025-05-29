@@ -195,7 +195,6 @@ export default function Storage() {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados:", importedData);
 
     Swal.fire({
       title: "Procesando datos...",
@@ -442,10 +441,8 @@ export default function Storage() {
       }
 
       const data = await response.json();
-      console.log("Respuesta completa del servidor:", data);
 
       if (data && data.status === "success" && data.data) {
-        console.log("Storage recibido:", data.data.storages);
         setUnfilteredStorage(data.data.storages || []);
         setStorageList(data.data.storages || []);
         setTotalPages(data.data.total_pages || 0);
@@ -639,8 +636,6 @@ export default function Storage() {
   };
 
   const getStatusBadge = (status) => {
-    console.log("Estado recibido en getStatusBadge:", status);
-
     if (!status) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -652,18 +647,18 @@ export default function Storage() {
 
     const statusLower = status.toLowerCase();
 
-    if (statusLower === "active" || statusLower === "activo") {
+    if (statusLower === "aplicado") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Activo
+          Aplicado
         </span>
       );
-    } else if (statusLower === "inactive" || statusLower === "inactivo") {
+    } else if (statusLower === "no aplicado") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          Inactivo
+          No aplicado
         </span>
       );
     } else if (
@@ -687,7 +682,7 @@ export default function Storage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando dispositivos de storage...</p>
@@ -698,16 +693,16 @@ export default function Storage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-100 flex items-center justify-center">
-        <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
+      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p>
             {error.message ||
               "Ha ocurrido un error al cargar los dispositivos de storage"}
           </p>
           <button
             onClick={() => fetchStorage(currentPage, rowsPerPage)}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             Reintentar
           </button>
@@ -717,15 +712,15 @@ export default function Storage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-100">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-8 flex items-center border-b border-gray-200 bg-white shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <HardDrive className="mr-2 text-blue-400" />
+          <h1 className="text-2xl font-bold flex items-center text-gray-800">
+            <HardDrive className="mr-2 text-blue-600" />
             Dispositivos de Storage
           </h1>
-          <p className="text-sm text-gray-900">
+          <p className="text-sm text-gray-500">
             Gestión y monitoreo de dispositivos de almacenamiento
           </p>
         </div>
@@ -733,18 +728,18 @@ export default function Storage() {
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-300/30 border rounded-lg shadow-lg p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-900" />
+                  <Search size={18} className="text-gray-400" />
                 </div>
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="bg-white border-gray-400 text-gray-900 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -752,14 +747,19 @@ export default function Storage() {
                 <button
                   onClick={handleSearchButtonClick}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                ></button>
+                >
+                  <Search
+                    size={18}
+                    className="text-gray-400 hover:text-gray-600"
+                  />
+                </button>
               </div>
             ) : (
-              <div className="flex items-center bg-blue-600 px-4 py-2 rounded-lg">
-                <span className="font-medium text-white-400 mr-2">
+              <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg border border-blue-100">
+                <span className="font-medium text-blue-600 mr-2">
                   {selectedCount}
                 </span>
-                <span>
+                <span className="text-gray-700">
                   Storage{selectedCount !== 1 ? "s" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
@@ -769,45 +769,39 @@ export default function Storage() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={irCrear}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
-                <Plus size={16} className="text-white" />
-                <span className="hidden text-white fond-medium sm:inline">
-                  Crear
-                </span>
+                <Plus size={16} />
+                <span className="hidden sm:inline">Crear</span>
               </button>
               <button
                 onClick={handleImport}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
                 title="Importar desde Excel"
               >
-                <Download size={16} className="text-white" />
-                <span className="hidden text-white fond-medium sm:inline">
-                  Importar
-                </span>
+                <Download size={16} />
+                <span className="hidden sm:inline">Importar</span>
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
                 title="Exportar a Excel"
               >
-                <Upload size={16} className="text-white" />
-                <span className="hidden text-white fond-medium sm:inline">
-                  Exportar
-                </span>
+                <Upload size={16} />
+                <span className="hidden sm:inline">Exportar</span>
               </button>
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto border border-gray-200 rounded-lg">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-gray-300/20 text-gray-900">
+              <thead className="text-xs uppercase bg-gray-50 text-gray-700 border-b border-gray-200">
                 <tr>
                   <th scope="col" className="px-4 py-3 rounded-tl-lg">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-600 bg-gray-700 checked:bg-blue-600"
+                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
                       checked={
                         storageList.length > 0 &&
                         selectedStorage.size === storageList.length
@@ -815,21 +809,21 @@ export default function Storage() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 font-semibold">
                     Nombre
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 font-semibold">
                     Estado
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 font-semibold">
                     Serial
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Fabricante
+                  <th scope="col" className="px-6 py-3 font-semibold">
+                    Modelo
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 rounded-tr-lg text-right"
+                    className="px-6 py-3 rounded-tr-lg text-right font-semibold"
                   >
                     Acciones
                   </th>
@@ -838,7 +832,6 @@ export default function Storage() {
               <tbody>
                 {filteredStorage.length > 0 ? (
                   filteredStorage.map((storage, index) => {
-                    console.log("Storage en tabla:", storage);
                     return (
                       <tr
                         key={storage.id}
@@ -858,17 +851,17 @@ export default function Storage() {
                             onChange={() => toggleSelectStorage(storage.id)}
                           />
                         </td>
-                        <td className="px-6 py-4 font-medium text-gray-900">
+                        <td className="px-6 py-4 font-medium text-gray-800">
                           {storage.name}
                         </td>
                         <td className="px-6 py-4">
                           {getStatusBadge(storage.status)}
                         </td>
-                        <td className="px-6 py-4 text-gray-900">
-                          {storage.serial}
+                        <td className="px-6 py-4 text-gray-600">
+                          {storage.serial || "N/A"}
                         </td>
-                        <td className="px-6 py-4 text-gray-900">
-                          {storage.manufacturer}
+                        <td className="px-6 py-4 text-gray-600">
+                          {storage.model || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end space-x-2">
@@ -932,7 +925,7 @@ export default function Storage() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-gray-500 text-gray-900 rounded-md px-2 py-1 text-sm"
+                className="bg-white border border-gray-300 text-gray-700 rounded-md px-2 py-1 text-sm"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -942,7 +935,7 @@ export default function Storage() {
               </select>
             </div>
 
-            <div className="text-sm text-gray-900">
+            <div className="text-sm text-gray-500">
               Mostrando {indexOfFirstStorage + 1} a{" "}
               {Math.min(indexOfLastStorage, filteredStorage.length)} de{" "}
               {filteredStorage.length} dispositivos
@@ -952,9 +945,9 @@ export default function Storage() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={16} className="text-gray-600" />
               </button>
               <span className="px-3 py-1 rounded-md bg-blue-600 text-white">
                 {currentPage}
@@ -964,9 +957,9 @@ export default function Storage() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-md bg-white text-black hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={16} className="text-gray-600" />
               </button>
             </div>
           </div>

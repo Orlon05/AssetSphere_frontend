@@ -288,6 +288,7 @@ export default function ServidoresFisicos() {
             dec: "12",
           };
 
+          // Formato dd-mmm-yy (como 29-dic-17)
           const match1 = cleanDateStr.match(formats[0]);
           if (match1) {
             const [, day, month, year] = match1;
@@ -298,21 +299,25 @@ export default function ServidoresFisicos() {
             }
           }
 
+          // Formato dd/mm/yyyy o mm/dd/yyyy
           const match2 = cleanDateStr.match(formats[1]);
           if (match2) {
             const [, part1, part2, year] = match2;
             const fullYear = year.length === 2 ? `20${year}` : year;
+            // Asumir formato dd/mm/yyyy
             return `${fullYear}-${part2.padStart(2, "0")}-${part1.padStart(
               2,
               "0"
             )}`;
           }
 
+          // Formato yyyy-mm-dd (ya está correcto)
           const match3 = cleanDateStr.match(formats[2]);
           if (match3) {
             return cleanDateStr;
           }
 
+          // Formato dd-mm-yyyy
           const match4 = cleanDateStr.match(formats[3]);
           if (match4) {
             const [, day, month, year] = match4;
@@ -323,6 +328,7 @@ export default function ServidoresFisicos() {
             )}`;
           }
 
+          // Si no coincide con ningún formato, retornar null
           console.warn(`Formato de fecha no reconocido: ${cleanDateStr}`);
           return null;
         } catch (error) {
@@ -331,6 +337,7 @@ export default function ServidoresFisicos() {
         }
       };
 
+      // Función para limpiar números
       const cleanNumber = (numStr) => {
         if (
           !numStr ||
@@ -347,6 +354,7 @@ export default function ServidoresFisicos() {
         return cleaned ? Number.parseInt(cleaned) : null;
       };
 
+      // Función para normalizar estados
       const normalizeStatus = (status) => {
         if (
           !status ||
@@ -366,6 +374,7 @@ export default function ServidoresFisicos() {
         return statusLower;
       };
 
+      // Función para limpiar strings
       const cleanString = (str) => {
         if (
           !str ||
@@ -405,14 +414,17 @@ export default function ServidoresFisicos() {
             po_number: cleanString(row.po_number),
           };
 
+          // Manejar warranty_start_date (requerido por el backend)
           const startDate = formatDate(row.warranty_start_date);
-          result.warranty_start_date = startDate || "000-00-00"; 
+          result.warranty_start_date = startDate || "1900-01-01"; // Valor por defecto si está vacío
 
+          // Manejar warranty_end_date (requerido por el backend)
           const endDate = formatDate(row.warranty_end_date);
-          result.warranty_end_date = endDate || "000-00-00"; 
+          result.warranty_end_date = endDate || "1900-01-01"; // Valor por defecto si está vacío
 
+          // Manejar core_count (requerido por el backend)
           const coreCount = cleanNumber(row.core_count);
-          result.core_count = coreCount !== null ? coreCount : 0; 
+          result.core_count = coreCount !== null ? coreCount : 0; // Valor por defecto si está vacío
 
           return result;
         } catch (error) {
@@ -421,6 +433,10 @@ export default function ServidoresFisicos() {
         }
       });
 
+      console.log("Datos formateados (muestra):", formattedData.slice(0, 3));
+      console.log("Total de registros a enviar:", formattedData.length);
+
+      // Enviar servidores uno por uno usando el endpoint que funciona
       let successCount = 0;
       let errorCount = 0;
       const errors = [];
@@ -454,6 +470,7 @@ export default function ServidoresFisicos() {
         }
       }
 
+      // Mostrar resultado final
       if (errorCount === 0) {
         Swal.fire({
           icon: "success",
@@ -506,7 +523,7 @@ export default function ServidoresFisicos() {
         width: "600px",
       });
     }
-  };
+  }
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);

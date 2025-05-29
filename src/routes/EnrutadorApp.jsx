@@ -1,15 +1,16 @@
-import { lazy } from "react";
-import ProtectedRoute from "./ProtectedRoute";
-import Login from "../views/auth/Login";
-import Dashboard from "../views/dashboard/dashboard";
-import Sidebar from "../views/layout/sidebar";
+import { lazy, Suspense } from "react";
 
-const ServidoresFisicos = lazy(() =>
-  import("../views/services/servidores Fisicos/servidoresF")
-);
-const ServidoresVirtuales = lazy(() =>
-  import("../views/services/servidores Virtuales/servidoresV")
-);
+const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
+const Login = lazy(() => import("../views/auth/Login"));
+const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
+const Sidebar = lazy(() => import("../views/layout/sidebar"));
+
+// const ServidoresFisicos = lazy(() =>
+//   import("../views/services/servidores Fisicos/servidoresF")
+// );
+// const ServidoresVirtuales = lazy(() =>
+//   import("../views/services/servidores Virtuales/servidoresV")
+// );
 // const Analitica = lazy(() => import("../pages/Analitica"));
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
@@ -25,11 +26,9 @@ const VerServers = lazy(() =>
 // const CrearUsuario = lazy(() => import("../forms/CrearUsuario"));
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
-const Storage = lazy(() => import("../views/services/Storage/Storage"));
-const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
-const CrearPseries = lazy(() =>
-  import("../views/services/Pseries/crearPserie")
-);
+// const Storage = lazy(() => import("../pages/Storage"));
+// const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
+// const CrearPseries = lazy(() => import("../pages/CrearPseries"));
 const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
 );
@@ -54,11 +53,13 @@ const EditarBaseDatos = lazy(() =>
   import("../views/services/Base de datos/editarbasededatos")
 );
 // const Sucursales = lazy(() => import("../pages/Sucursales"));
-// const CrearSucursales = lazy(() => import("../pages/CrearSucursales"));
+const CrearSucursal = lazy(() =>
+  import("../views/services/Sucursales/crearSucursales")
+);
 // const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
 // const VerSucursales = lazy(() => import("../pages/VerSucursales"));
 const CrearServidorVirtual = lazy(() =>
-  import("../views/services/servidores Virtuales/CrearServidorV")
+  import("../views/services/servidores Virtuales/crearservidorv")
 );
 const EditarservidorV = lazy(() =>
   import("../views/services/servidores Virtuales/editarservidorv")
@@ -156,14 +157,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/sucursales`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Sucursales />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/sucursales`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
 
   // Crear
   {
@@ -190,22 +191,22 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  {
-    path: `${BASE_PATH}/crear-storages`,
-    element: (
-      <ProtectedRoute>
-        <CrearStorage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: `${BASE_PATH}/crear-pseries`,
-    element: (
-      <ProtectedRoute>
-        <CrearPseries />
-      </ProtectedRoute>
-    ),
-  },
+  // {
+  //   path: `${BASE_PATH}/crear-storages`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <CrearStorage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
+  // {
+  //   path: `${BASE_PATH}/crear-pseries`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <CrearPseries />
+  //     </ProtectedRoute>
+  //   ),
+  // },
   {
     path: `${BASE_PATH}/crear-base-de-datos`,
     element: (
@@ -214,14 +215,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/crear-sucursales`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearSucursales />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-sucursales`,
+    element: (
+      <ProtectedRoute>
+        <CrearSucursal />
+      </ProtectedRoute>
+    ),
+  },
 
   // // Editar
   {
@@ -248,14 +249,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  {
-    path: `${BASE_PATH}/editar/:storageId/storages`,
-    element: (
-      <ProtectedRoute>
-        <EditarStorage />
-      </ProtectedRoute>
-    ),
-  },
+  // {
+  //   path: `${BASE_PATH}/editar/:storageId/storages`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <EditarStorage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
   {
     path: `${BASE_PATH}/editar/:pserieId/pseries`,
     element: (
@@ -290,30 +291,30 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  {
-    path: `${BASE_PATH}/ver/:serverId/vservers`,
-    element: (
-      <ProtectedRoute>
-        <VerServidoresV />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: `${BASE_PATH}/ver/:storageId/storages`,
-    element: (
-      <ProtectedRoute>
-        <VerStorage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: `${BASE_PATH}/ver/:pserieId/pseries`,
-    element: (
-      <ProtectedRoute>
-        <VerPseries />
-      </ProtectedRoute>
-    ),
-  },
+  // {
+  //   path: `${BASE_PATH}/ver/:serverId/servidoresv`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <VerServidoresVirtuales />
+  //     </ProtectedRoute>
+  //   ),
+  // },
+  // {
+  //   path: `${BASE_PATH}/ver/:storageId/storages`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <VerStorage />
+  //     </ProtectedRoute>
+  //   ),
+  // },
+  // {
+  //   path: `${BASE_PATH}/ver/:pserieId/pseries`,
+  //   element: (
+  //     <ProtectedRoute>
+  //       <VerPseries />
+  //     </ProtectedRoute>
+  //   ),
+  // },
   {
     path: `${BASE_PATH}/ver/:baseDeDatosId/base-de-datos`,
     element: (

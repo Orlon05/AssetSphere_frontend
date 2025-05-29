@@ -41,7 +41,7 @@ export default function Dashboard() {
     {
       id: 3,
       title: "Bases de Datos",
-      count: 18,
+      count: 0,
       icon: Database,
       description: "Control de bases de datos y respaldos",
       route: `${BASE_PATH}/base-de-datos`,
@@ -68,7 +68,7 @@ export default function Dashboard() {
     {
       id: 6,
       title: "Sucursales",
-      count: 32,
+      count: 0,
       icon: Building,
       description: "Gestión de infraestructura por sucursal",
       route: `${BASE_PATH}/sucursales`,
@@ -81,11 +81,14 @@ export default function Dashboard() {
   const [error, setError] = useState(null); // Estado de error
   const navigate = useNavigate(); // Navegación entre rutas
 
-  // Función para obtener el conteo de servidores físicos
   const fetchServerCount = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
-      if (!token) return;
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
 
       const response = await fetch(
         "http://localhost:8000/servers/physical?page=1&limit=1000",
@@ -97,15 +100,19 @@ export default function Dashboard() {
         }
       );
 
-      if (!response.ok) throw new Error(`Error HTTP ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
 
       const data = await response.json();
-      if (data?.status === "success" && data.data) {
+
+      if (data && data.status === "success" && data.data) {
         const totalCount =
           data.data.total_count ||
           data.data.total ||
           data.data.servers?.length ||
-          0;
+          0; // Si no hay nada, el conteo es 0
+
         setModules((prevModules) =>
           prevModules.map((module) =>
             module.id === 1
@@ -113,16 +120,316 @@ export default function Dashboard() {
               : module
           )
         );
+      } else {
+        console.warn("Formato de respuesta inesperado:", data);
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 1 ? { ...module, loading: false } : module
+          )
+        );
       }
     } catch (error) {
+      console.error("Error al obtener el conteo de servidores:", error);
       setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 1 ? { ...module, loading: false } : module
+        )
+      );
     }
   };
 
-  // Llama a la función de conteo al cargar el componente
+  const fetchPseriesCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+      const response = await fetch(
+        "http://localhost:8000/pseries/pseries?page=1&limit=10000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.status === "success" && data.data) {
+        let totalCount = 0;
+
+        if (data.data.total_count !== undefined) {
+          totalCount = data.data.total_count;
+        } else if (data.data.total !== undefined) {
+          totalCount = data.data.total;
+        } else if (data.data.pseries && Array.isArray(data.data.pseries)) {
+          totalCount = data.data.pseries.length;
+        } else if (
+          data.data.total_pages !== undefined &&
+          data.data.per_page !== undefined
+        ) {
+          totalCount = data.data.total_pages * data.data.per_page;
+        }
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 4
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 4 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 4 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
+
+  const fetchStorageCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:8000/storage/get_all?page=1&limit=1000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.status === "success" && data.data) {
+        let totalCount = 0;
+
+        if (data.data.total_count !== undefined) {
+          totalCount = data.data.total_count;
+        } else if (data.data.total !== undefined) {
+          totalCount = data.data.total;
+        } else if (data.data.storages && Array.isArray(data.data.storages)) {
+          totalCount = data.data.storages.length;
+        } else if (
+          data.data.total_pages !== undefined &&
+          data.data.per_page !== undefined
+        ) {
+          totalCount = data.data.total_pages * data.data.per_page;
+        }
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 5
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 5 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      setError(error);
+      console.error("Error en fetchStorageCount:", error);
+
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 5 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
+
+  const fetchBaseDatosCount = async () => {
+    try {
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 3 ? { ...module, loading: true } : module
+        )
+      );
+
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 3 ? { ...module, loading: false } : module
+          )
+        );
+        return;
+      }
+
+      console.log("Obteniendo conteo de bases de datos...");
+
+      const response = await fetch(
+        "http://localhost:8000/base_datos/get_all?page=1&limit=5000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Error HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+
+      console.log("Respuesta completa de la API:", data);
+
+      if (!data || data.status !== "success") {
+        throw new Error(
+          `Respuesta inválida de la API: ${
+            data?.message || "Error desconocido"
+          }`
+        );
+      }
+
+      let totalCount = 0;
+
+      // Buscar el conteo en el orden más probable
+      if (
+        data.data?.total_count !== undefined &&
+        data.data.total_count !== null
+      ) {
+        totalCount = data.data.total_count;
+        console.log("✅ Usando total_count:", totalCount);
+      } else if (data.data?.total !== undefined && data.data.total !== null) {
+        totalCount = data.data.total;
+        console.log("✅ Usando total:", totalCount);
+      } else if (data.data?.count !== undefined && data.data.count !== null) {
+        totalCount = data.data.count;
+        console.log("✅ Usando count:", totalCount);
+      } else if (
+        data.data?.bases_datos &&
+        Array.isArray(data.data.bases_datos)
+      ) {
+        totalCount = data.data.bases_datos.length;
+        console.log("✅ Contando array bases_datos:", totalCount);
+
+        if (data.data.total_pages && data.data.total_pages > 1) {
+          console.warn(
+            `⚠️ ATENCIÓN: Solo se está contando la primera página de ${data.data.total_pages}`
+          );
+          if (data.data.per_page) {
+            totalCount = data.data.total_pages * data.data.per_page;
+            console.log("✅ Recalculado con paginación:", totalCount);
+          }
+        }
+      } else if (data.data?.total_pages && data.data?.per_page) {
+        totalCount = data.data.total_pages * data.data.per_page;
+        console.log("✅ Calculado con paginación:", totalCount);
+      } else {
+        console.warn("Buscando conteo en todas las propiedades...");
+
+        const findLargestNumber = (obj, path = "") => {
+          let maxValue = 0;
+          let maxPath = "";
+
+          for (const key in obj) {
+            const currentPath = path ? `${path}.${key}` : key;
+            const value = obj[key];
+
+            if (typeof value === "number" && value > maxValue) {
+              // Priorizar propiedades que contengan palabras clave
+              if (
+                key.toLowerCase().includes("total") ||
+                key.toLowerCase().includes("count") ||
+                key.toLowerCase().includes("size")
+              ) {
+                maxValue = value;
+                maxPath = currentPath;
+                console.log(`🎯 Encontrado: ${currentPath} = ${value}`);
+              }
+            } else if (
+              typeof value === "object" &&
+              value !== null &&
+              !Array.isArray(value)
+            ) {
+              const result = findLargestNumber(value, currentPath);
+              if (result.value > maxValue) {
+                maxValue = result.value;
+                maxPath = result.path;
+              }
+            }
+          }
+
+          return { value: maxValue, path: maxPath };
+        };
+
+        const result = findLargestNumber(data.data);
+        if (result.value > 0) {
+          totalCount = result.value;
+          console.log(`✅ Usando ${result.path}:`, totalCount);
+        } else {
+          console.error("❌ No se encontró ningún conteo válido");
+          console.log("Propiedades disponibles:", Object.keys(data.data || {}));
+        }
+      }
+
+      console.log(`🎯 CONTEO FINAL: ${totalCount}`);
+
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 3
+            ? { ...module, count: totalCount, loading: false }
+            : module
+        )
+      );
+
+      setError(null);
+    } catch (error) {
+      console.error("❌ Error en fetchBaseDatosCount:", error);
+      setError(error);
+
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 3 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     fetchServerCount();
-    // fetchPseriesCount();
+    fetchPseriesCount();
+    fetchStorageCount();
+    fetchBaseDatosCount();
   }, []);
 
   // Función para cerrar sesión
@@ -141,6 +448,7 @@ export default function Dashboard() {
       }
     });
   };
+
   const handleModuleClick = (moduleId) => {
     // Encontrar el módulo seleccionado
     const selectedModule = modules.find((module) => module.id === moduleId);
@@ -160,30 +468,29 @@ export default function Dashboard() {
       navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
     else if (moduleId === 5)
       navigate(`${BASE_PATH}/storage?activeModule=${moduleKey}`);
-    // else if (moduleId === 6) navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
+    else if (moduleId === 6)
+      navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
   };
 
   // Renderizado del componente
   return (
-    <div className="min-h-screen bg-gray-300/20 dark:bg-zinc-800  ">
+    <div className="min-h-screen bg-gray-300/20">
       {/* Encabezado */}
       <header className="w-full p-4 flex justify-between items-center">
-        <h1 className="text-slate-900 dark:text-gray-100 text-4xl font-bold">
+        <h1 className="text-slate-900 text-4xl font-bold">
           Inveplus
         </h1>
         <div className="relative">
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center bg-gray-400 dark:bg-gray-800 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-700"
+            className="flex items-center bg-gray-300 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-400/30"
           >
             <span>{user.name}</span>
             <ChevronDown size={16} />
           </button>
           {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-300 rounded-lg shadow-lg py-1 z-10">
+            <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
               <div className="px-4 py-2 border-b border-gray-600">
-                <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-xs text-gray-900">{user.email}</p>
               </div>
               <button
                 onClick={handleLogout}
@@ -198,8 +505,8 @@ export default function Dashboard() {
       </header>
 
       <main className="container mx-auto p-6">
-        <div className="rounded-lg p-6 mb-8 shadow-lg bg-white dark:bg-stone-700">
-          <h2 className="text-2xl text-gray-900 dark:text-white font-bold mb-2">
+        <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
+          <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
             ¡Bienvenido, {user.name}!
           </h2>
           <p className="text-gray-800">
@@ -208,8 +515,8 @@ export default function Dashboard() {
         </div>
 
         {/* Módulos disponibles */}
-        <div className="bg-white dark:bg-stone-700 rounded-lg p-6 shadow-lg">
-          <h3 className="text-2xl text-gray-900 dark:bg-stone-700 dark:text-gray-200 font-bold mb-6">
+        <div className="bg-white :bg-stone-700 rounded-lg p-6 shadow-lg">
+          <h3 className="text-2xl text-gray-900 :bg-stone-700 :text-gray-200 font-bold mb-6">
             Módulos Disponibles
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
