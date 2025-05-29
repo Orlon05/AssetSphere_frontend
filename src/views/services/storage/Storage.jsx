@@ -827,9 +827,6 @@ export default function Storage() {
                   <th scope="col" className="px-6 py-3">
                     Fabricante
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Modelo
-                  </th>
                   <th
                     scope="col"
                     className="px-6 py-3 rounded-tr-lg text-right"
@@ -868,13 +865,10 @@ export default function Storage() {
                           {getStatusBadge(storage.status)}
                         </td>
                         <td className="px-6 py-4 text-gray-900">
-                          {storage.serial || "N/A"}
+                          {storage.serial}
                         </td>
                         <td className="px-6 py-4 text-gray-900">
-                          {storage.manufacturer || "N/A"}
-                        </td>
-                        <td className="px-6 py-4 text-gray-900">
-                          {storage.model || "N/A"}
+                          {storage.manufacturer}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end space-x-2">

@@ -588,7 +588,7 @@ const BaseDeDatos = () => {
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Codigo de aplicación
+                    Nombre
                   </th>
                   <th scope="col" className="px-6 py-3">
                     ID de Instancia
@@ -631,7 +631,7 @@ const BaseDeDatos = () => {
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        {baseDeDatos.application_code}
+                        {baseDeDatos.name}
                       </td>
                       <td className="px-6 py-4 text-gray-700">
                         {baseDeDatos.instance_id}
