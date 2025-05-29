@@ -159,7 +159,8 @@ export default function Dashboard() {
       navigate(`${BASE_PATH}/base-de-datos?activeModule=${moduleKey}`);
     else if (moduleId === 4)
       navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
-    // else if (moduleId === 5) navigate(`${BASE_PATH}/storage?activeModule=${moduleKey}`);
+    else if (moduleId === 5)
+      navigate(`${BASE_PATH}/storage?activeModule=${moduleKey}`);
     // else if (moduleId === 6) navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
   };
 

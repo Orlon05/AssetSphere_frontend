@@ -4,8 +4,16 @@ import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import BasesDeDatos from "../services/Base de datos/baseDeDatos";
 import Pseries from "../services/pseries/Pseries";
 import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
+import Storage from "../services/Storage/Storage";
 // Importa los demás componentes que necesites
-import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
+import {
+  Server,
+  Database,
+  HardDrive,
+  Building,
+  Cloud,
+  LayoutGrid,
+} from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
@@ -39,6 +47,12 @@ export default function Sidebar() {
       icon: Building,
       path: "/inveplus/sucursales",
     },
+    {
+      id: 7,
+      title: "Panel Principal",
+      icon: LayoutGrid,
+      path: "/inveplus/dashboard",
+    },
   ];
 
   const renderComponent = () => {
@@ -51,6 +65,8 @@ export default function Sidebar() {
       return <Pseries />;
     } else if (path.includes("servidoresv")) {
       return <ServidoresVirtuales />;
+    } else if (path.includes("storage")) {
+      return <Storage />;
     }
     // Agrega aquí los demás componentes según el path
     else {
@@ -63,7 +79,7 @@ export default function Sidebar() {
       <div
         className={`flex flex-col justify-center  ${
           open ? "w-72" : "w-20"
-        } bg-gray-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
+        } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
           src="./src/assets/chevron-left.png"
@@ -97,7 +113,6 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
-      <div className="flex-1 overflow-auto">{renderComponent()}</div>
       <div className="flex-1 overflow-auto">{renderComponent()}</div>
     </div>
   );

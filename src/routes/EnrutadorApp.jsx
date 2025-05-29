@@ -25,16 +25,22 @@ const VerServers = lazy(() =>
 // const CrearUsuario = lazy(() => import("../forms/CrearUsuario"));
 // const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
 // const Logs = lazy(() => import("../pages/Logs"));
-// const Storage = lazy(() => import("../pages/Storage"));
+const Storage = lazy(() => import("../views/services/Storage/Storage"));
 const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
-// const CrearPseries = lazy(() => import("../pages/CrearPseries"));
+const CrearPseries = lazy(() =>
+  import("../views/services/Pseries/crearPserie")
+);
 const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
 );
 const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
-// const CrearStorage = lazy(() => import("../pages/CrearStorage"));
-// const EditarStorage = lazy(() => import("../pages/EditarStorage"));
-// const VerStorage = lazy(() => import("../pages/VerStorage"));
+const CrearStorage = lazy(() =>
+  import("../views/services/Storage/crearStorage")
+);
+const EditarStorage = lazy(() =>
+  import("../views/services/Storage/editarStorage")
+);
+const VerStorage = lazy(() => import("../views/services/Storage/VerStorage"));
 const BaseDatos = lazy(() =>
   import("../views/services/Base de datos/baseDeDatos")
 );
@@ -54,10 +60,12 @@ const EditarBaseDatos = lazy(() =>
 const CrearServidorVirtual = lazy(() =>
   import("../views/services/servidores Virtuales/CrearServidorV")
 );
-// const EditarServerVirtual = lazy(() => import("../pages/editarServidorv"));
-// const VerServidoresVirtuales = lazy(() =>
-//   import("../pages/verServidoresVirtuales")
-// );
+const EditarservidorV = lazy(() =>
+  import("../views/services/servidores Virtuales/editarservidorv")
+);
+const VerServidoresV = lazy(() =>
+  import("../views/services/servidores Virtuales/verservidoresv")
+);
 
 const BASE_PATH = "/inveplus";
 
@@ -182,22 +190,22 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/crear-storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
-  // {
-  //   path: `${BASE_PATH}/crear-pseries`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <CrearPseries />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/crear-storages`,
+    element: (
+      <ProtectedRoute>
+        <CrearStorage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/crear-pseries`,
+    element: (
+      <ProtectedRoute>
+        <CrearPseries />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/crear-base-de-datos`,
     element: (
@@ -224,14 +232,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/editar/:serverId/servidoresv`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <EditarServerVirtual />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/editar/:serverId/vservers`,
+    element: (
+      <ProtectedRoute>
+        <EditarservidorV />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/editar-usuarios`,
   //   element: (
@@ -240,14 +248,14 @@ const EnrutadorApp = [
   //     </ProtectedRoute>
   //   ),
   // },
-  // {
-  //   path: `${BASE_PATH}/editar/:storageId/storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <EditarStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/editar/:storageId/storages`,
+    element: (
+      <ProtectedRoute>
+        <EditarStorage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/editar/:pserieId/pseries`,
     element: (
@@ -282,30 +290,30 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/ver/:serverId/servidoresv`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerServidoresVirtuales />
-  //     </ProtectedRoute>
-  //   ),
-  // },
-  // {
-  //   path: `${BASE_PATH}/ver/:storageId/storages`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerStorage />
-  //     </ProtectedRoute>
-  //   ),
-  // },
-  // {
-  //   path: `${BASE_PATH}/ver/:pserieId/pseries`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <VerPseries />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/ver/:serverId/vservers`,
+    element: (
+      <ProtectedRoute>
+        <VerServidoresV />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/ver/:storageId/storages`,
+    element: (
+      <ProtectedRoute>
+        <VerStorage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/ver/:pserieId/pseries`,
+    element: (
+      <ProtectedRoute>
+        <VerPseries />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: `${BASE_PATH}/ver/:baseDeDatosId/base-de-datos`,
     element: (

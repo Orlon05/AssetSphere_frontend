@@ -706,7 +706,7 @@ export default function ServidoresVirtuales() {
           {/* Pagination */}
           <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
             <div className="flex items-center">
-              <span className="text-sm text-gray-200 mr-2">
+              <span className="text-sm text-gray-800 mr-2">
                 Filas por página:
               </span>
               <select
