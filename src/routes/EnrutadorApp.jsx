@@ -41,7 +41,7 @@ const CrearStorage = lazy(() =>
 const EditarStorage = lazy(() =>
   import("../views/services/storage/editarStorage")
 );
-const VerStorage = lazy(() => import("../views/services/Storage/VerStorage"));
+const VerStorage = lazy(() => import("../views/services/storage/verStorage"));
 
 const CrearBaseDatos = lazy(() =>
   import("../views/services/Base de datos/CrearBasedeDatos")
