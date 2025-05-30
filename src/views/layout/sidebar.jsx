@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import BasesDeDatos from "../services/Base de datos/baseDeDatos";
-import Pseries from "../services/pseries/Pseries";
+import Pseries from "../services/Pseries/Pseries";
 import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
 import Storage from "../services/storage/Storage";
 import Sucursales from "../services/Sucursales/sucursales"
