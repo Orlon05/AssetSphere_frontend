@@ -7,7 +7,7 @@ import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
 import Storage from "../services/storage/Storage";
 import Sucursales from "../services/Sucursales/sucursales"
 // Importa los demás componentes que necesites
-import { Server, Database, HardDrive, Building, Cloud } from "lucide-react";
+import { Server, Database, HardDrive, Building, Cloud, LayoutGrid } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
