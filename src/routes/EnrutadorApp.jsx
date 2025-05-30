@@ -36,10 +36,10 @@ const EditarPseries = lazy(() =>
 );
 const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
 const CrearStorage = lazy(() =>
-  import("../views/services/Storage/crearStorage")
+  import("../views/services/storage/crearStorage")
 );
 const EditarStorage = lazy(() =>
-  import("../views/services/Storage/editarStorage")
+  import("../views/services/storage/editarStorage")
 );
 const VerStorage = lazy(() => import("../views/services/Storage/VerStorage"));
 
