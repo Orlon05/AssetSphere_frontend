@@ -819,7 +819,7 @@ export default function Storage() {
                     Serial
                   </th>
                   <th scope="col" className="px-6 py-3 font-semibold">
-                    Modelo
+                    Fabricante
                   </th>
                   <th
                     scope="col"
@@ -861,7 +861,7 @@ export default function Storage() {
                           {storage.serial || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-gray-600">
-                          {storage.model || "N/A"}
+                          {storage.manufacturer || "N/A"}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end space-x-2">
