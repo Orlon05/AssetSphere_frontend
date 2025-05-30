@@ -82,7 +82,7 @@ const Login = () => {
           <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
             <div className="w-full">
               <div className="flex justify-center mb-6">
-                <img src="src/assets/logo.png" />
+                <img src="/logo.png" alt="Logo" />
               </div>
               <div className="text-center">
                 <h1 className="text-3xl font-semibold text-gray-900">
