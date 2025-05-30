@@ -5,59 +5,21 @@ const Login = lazy(() => import("../views/auth/Login"));
 const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
 const Sidebar = lazy(() => import("../views/layout/sidebar"));
 
-// const ServidoresFisicos = lazy(() =>
-//   import("../views/services/servidores Fisicos/servidoresF")
-// );
-// const ServidoresVirtuales = lazy(() =>
-//   import("../views/services/servidores Virtuales/servidoresV")
-// );
-// const Analitica = lazy(() => import("../pages/Analitica"));
+// Servidores Fisicos
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
 );
+
 const EditarServer = lazy(() =>
   import("../views/services/servidores Fisicos/editarservidor")
 );
+
 const VerServers = lazy(() =>
   import("../views/services/servidores Fisicos/verservidor")
 );
-// const Perfil = lazy(() => import("../perfil/Perfil"));
-// const Usuarios = lazy(() => import("../pages/Usuarios"));
-// const CrearUsuario = lazy(() => import("../forms/CrearUsuario"));
-// const EditarUsuario = lazy(() => import("../forms/EditarUsuario"));
-// const Logs = lazy(() => import("../pages/Logs"));
-// const Storage = lazy(() => import("../pages/Storage"));
-// const pseries = lazy(() => import("../views/services/Pseries/Pseries"));
-const CrearPseries = lazy(() =>
-  import("../views/services/Pseries/crearPserie")
-);
-const EditarPseries = lazy(() =>
-  import("../views/services/Pseries/editarPseries")
-);
-const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
-const CrearStorage = lazy(() =>
-  import("../views/services/storage/crearStorage")
-);
-const EditarStorage = lazy(() =>
-  import("../views/services/storage/editarStorage")
-);
-const VerStorage = lazy(() => import("../views/services/storage/verStorage"));
 
-const CrearBaseDatos = lazy(() =>
-  import("../views/services/Base de datos/CrearBasedeDatos")
-);
-const VerBaseDatos = lazy(() =>
-  import("../views/services/Base de datos/verbasededatos")
-);
-const EditarBaseDatos = lazy(() =>
-  import("../views/services/Base de datos/editarbasededatos")
-);
-// const Sucursales = lazy(() => import("../pages/Sucursales"));
-const CrearSucursal = lazy(() =>
-  import("../views/services/Sucursales/crearSucursales")
-);
-// const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
-// const VerSucursales = lazy(() => import("../pages/VerSucursales"));
+// Servidores Virtuales
+
 const CrearServidorVirtual = lazy(() =>
   import("../views/services/servidores Virtuales/crearservidorv")
 );
@@ -67,6 +29,46 @@ const EditarservidorV = lazy(() =>
 const VerServidoresV = lazy(() =>
   import("../views/services/servidores Virtuales/verservidoresv")
 );
+
+// Base de Datos
+
+const CrearBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/CrearBasedeDatos")
+);
+const VerBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/verbasededatos")
+);
+const EditarBaseDatos = lazy(() =>
+  import("../views/services/Base de datos/Editarbasededatos")
+);
+
+// Pseries
+
+const CrearPseries = lazy(() =>
+  import("../views/services/Pseries/crearPserie")
+);
+const EditarPseries = lazy(() =>
+  import("../views/services/Pseries/editarPseries")
+);
+const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
+
+// Storage
+
+const CrearStorage = lazy(() =>
+  import("../views/services/storage/crearStorage")
+);
+const EditarStorage = lazy(() =>
+  import("../views/services/storage/editarStorage")
+);
+const VerStorage = lazy(() => import("../views/services/storage/verStorage"));
+
+// Sucursales
+
+const CrearSucursal = lazy(() =>
+  import("../views/services/Sucursales/crearSucursales")
+);
+// const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
+// const VerSucursales = lazy(() => import("../pages/VerSucursales"));
 
 const BASE_PATH = "/inveplus";
 
