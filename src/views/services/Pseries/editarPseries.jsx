@@ -14,8 +14,8 @@ const EditarPseries = () => {
   const [application, setApplication] = useState("");
   const [hostname, setHostName] = useState("");
   const [ip_address, setIpAddress] = useState("");
-  const [environment, setEnvironment] = useState(0);
-  const [slot, setSlot] = useState(0);
+  const [environment, setEnvironment] = useState("");
+  const [slot, setSlot] = useState("");
   const [lpar_id, setLparId] = useState("");
   const [status, setStatus] = useState("");
   const [os, setOs] = useState("");
@@ -127,13 +127,14 @@ const EditarPseries = () => {
           setMaxCpu(data.data.max_cpu || "");
           setMinVCpu(data.data.min_v_cpu || "");
           setActVCpu(data.data.act_v_cpu || "");
-          setMaxVCpu(data.data.max_cpu || "");
+          setMaxVCpu(data.data.max_v_cpu || ""); 
           setMinMemory(data.data.min_memory || "");
           setActMemory(data.data.act_memory || "");
           setMaxMemory(data.data.max_memory || "");
           setExpansionFactor(data.data.expansion_factor || "");
           setMemoryPerFactor(data.data.memory_per_factor || "");
           setProcessorCompatibility(data.data.processor_compatibility || "");
+
         } else {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");

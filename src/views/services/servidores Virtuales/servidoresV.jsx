@@ -104,18 +104,21 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => ({
-        platform: row.platform || "",
-        id_vm: row.id_vm || "",
-        server: row.server || "",
-        memory: row.memory || "",
-        so: row.so || "",
-        status: row.status || "",
-        cluster: row.cluster || "",
-        hdd: row.hdd || "",
-        cores: row.cores || "",
-        ip: row.ip || "",
-        modified: row.modified ? new Date(row.modified).toISOString() : "",
+        platform: String(row.platform || ""),
+        id_vm: String(row.id_vm || ""),
+        server: String(row.server || ""),
+        memory: row.memory ? parseInt(row.memory) : 0,
+        so: String(row.so || ""),
+        status: String(row.status || ""),
+        cluster: String(row.cluster || ""),
+        hdd: String(row.hdd || ""),
+        cores: row.cores ? parseInt(row.cores) : 0,
+        ip: String(row.ip || ""),
+        modified: row.modified
+        ? new Date(String(row.modified).trim()).toISOString().split("T")[0]
+        : "1970-01-01"
       }));
+
 
       const response = await fetch(
         "http://localhost:8000/vservers/virtual/add_from_excel",

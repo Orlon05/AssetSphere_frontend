@@ -192,7 +192,7 @@ const EditarBaseDatos = () => {
       }
 
       showSuccessToast();
-      navigate("/inveplus/Base-De-Datos");
+      navigate("/inveplus/base-de-datos");
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
