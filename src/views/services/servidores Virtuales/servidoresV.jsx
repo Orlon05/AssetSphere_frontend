@@ -118,7 +118,7 @@ export default function ServidoresVirtuales() {
       }));
 
       const response = await fetch(
-        "http://localhost:8000/vservers/add_from_excel",
+        "http://localhost:8000/vservers/virtual/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -191,7 +191,7 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/vservers/export", {
+      const response = await fetch("http://localhost:8000/vservers/virtual/export", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -370,7 +370,7 @@ export default function ServidoresVirtuales() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/vservers/virtual/${serverId}`,
+            `http://localhost:8000/vservers/virtual/delete/${serverId}`,
             {
               method: "DELETE",
               headers: {

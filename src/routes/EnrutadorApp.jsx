@@ -294,7 +294,7 @@ const EnrutadorApp = [
     ),
   },
   {
-    path: `${BASE_PATH}/ver/:serverId/servidoresv`,
+    path: `${BASE_PATH}/ver/:serverId/vservers`,
     element: (
       <ProtectedRoute>
         <VerServidoresV />

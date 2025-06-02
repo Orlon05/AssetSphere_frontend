@@ -43,64 +43,67 @@ const EditarServidorVirtual = () => {
   const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
-    const fetchServerData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(
-          `http://localhost:8000/vservers/virtual/get/${serverId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error al obtener datos del servidor:", errorData);
-          if (response.status === 404) {
-            throw new Error("Servidor no encontrado");
-          } else if (response.status === 401) {
-            throw new Error("No autorizado");
-          } else {
-            throw new Error(
-              `Error HTTP ${response.status}: ${
-                errorData.message || errorData.detail
-              }`
-            );
-          }
+  const fetchServerData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/vservers/virtual/get/${serverId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const data = await response.json();
-        if (data.status === "success" && data.data) {
-          setPlatform(data.data.platform || "");
-          setIdVm(data.data.id_vm || "");
-          setServer(data.data.server || "");
-          setMemory(data.data.memory || "");
-          setSo(data.data.so || "");
-          setStatus(data.data.status || "");
-          setCluster(data.data.cluster || "");
-          setHdd(data.data.hdd || "");
-          setCores(data.data.cores || "");
-          setIp(data.data.ip || "");
-          setModified(data.data.modified || "");
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al obtener datos del servidor:", errorData);
+        if (response.status === 404) {
+          throw new Error("Servidor no encontrado");
+        } else if (response.status === 401) {
+          throw new Error("No autorizado");
         } else {
-          console.error("Estructura de datos inesperada:", data);
-          setError("Estructura de datos inesperada del servidor");
+          throw new Error(
+            `Error HTTP ${response.status}: ${
+              errorData.message || errorData.detail
+            }`
+          );
         }
-      } catch (error) {
-        console.error("Error en fetchServerData:", error);
-        setError(error.message || "Error al obtener los datos del servidor");
-      } finally {
-        setLoading(false);
       }
-    };
 
-    if (serverId) {
-      fetchServerData();
+      const data = await response.json();
+      if (data.status === "success" && data.data?.server_info) {
+        const server = data.data.server_info;
+
+        setPlatform(server.platform || "");
+        setIdVm(server.id_vm || "");
+        setServer(server.server || "");
+        setMemory(server.memory || "");
+        setSo(server.so || "");
+        setStatus(server.status || "");
+        setCluster(server.cluster || "");
+        setHdd(server.hdd || "");
+        setCores(server.cores || "");
+        setIp(server.ip || "");
+        setModified(server.modified || "");
+      } else {
+        console.error("Estructura de datos inesperada:", data);
+        setError("Estructura de datos inesperada del servidor");
+      }
+    } catch (error) {
+      console.error("Error en fetchServerData:", error);
+      setError(error.message || "Error al obtener los datos del servidor");
+    } finally {
+      setLoading(false);
     }
-  }, [serverId, token]);
+  };
+
+  if (serverId) {
+    fetchServerData();
+  }
+}, [serverId, token]);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
