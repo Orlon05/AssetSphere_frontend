@@ -50,128 +50,26 @@ export default function Storage() {
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
         const tableMetadata = [
-          [
-            {
-              name: "cod_item_configuracion",
-              required: false,
-              type: "string",
-              excelColumn: "Código Item Config.",
-            },
-            {
-              name: "name",
-              required: true,
-              type: "string",
-              excelColumn: "Nombre",
-            },
-            {
-              name: "application_code",
-              required: false,
-              type: "string",
-              excelColumn: "Código Aplicación",
-            },
-            {
-              name: "cost_center",
-              required: false,
-              type: "string",
-              excelColumn: "Centro de Costo",
-            },
-            {
-              name: "active",
-              required: false,
-              type: "string",
-              excelColumn: "Activo",
-            },
-            {
-              name: "category",
-              required: false,
-              type: "string",
-              excelColumn: "Categoría",
-            },
-            {
-              name: "type",
-              required: false,
-              type: "string",
-              excelColumn: "Tipo",
-            },
-            {
-              name: "item",
-              required: false,
-              type: "string",
-              excelColumn: "Item",
-            },
-            {
-              name: "company",
-              required: false,
-              type: "string",
-              excelColumn: "Empresa",
-            },
-            {
-              name: "organization_responsible",
-              required: false,
-              type: "string",
-              excelColumn: "Organización Responsable",
-            },
-            {
-              name: "host_name",
-              required: false,
-              type: "string",
-              excelColumn: "Nombre Host",
-            },
-            {
-              name: "manufacturer",
-              required: false,
-              type: "string",
-              excelColumn: "Fabricante",
-            },
-            {
-              name: "status",
-              required: false,
-              type: "string",
-              excelColumn: "Estado",
-            },
-            {
-              name: "owner",
-              required: false,
-              type: "string",
-              excelColumn: "Propietario",
-            },
-            {
-              name: "model",
-              required: false,
-              type: "string",
-              excelColumn: "Modelo",
-            },
-            {
-              name: "serial",
-              required: false,
-              type: "string",
-              excelColumn: "Serial",
-            },
-            {
-              name: "org_maintenance",
-              required: false,
-              type: "string",
-              excelColumn: "Org. Mantenimiento",
-            },
-            {
-              name: "ip_address",
-              required: false,
-              type: "string",
-              excelColumn: "Dirección IP",
-            },
-            {
-              name: "disk_size",
-              required: false,
-              type: "string",
-              excelColumn: "Tamaño Disco",
-            },
-            {
-              name: "location",
-              required: false,
-              type: "string",
-              excelColumn: "Ubicación",
-            },
-          ],
+          { name: "cod_item_configuracion", required: false, type: "string" },
+          { name: "name", required: true, type: "string" },
+          { name: "application_code", required: false, type: "string" },
+          { name: "cost_center", required: false, type: "string" },
+          { name: "active", required: false, type: "string" },
+          { name: "category", required: false, type: "string" },
+          { name: "type", required: false, type: "string" },
+          { name: "item", required: false, type: "string" },
+          { name: "company", required: false, type: "string" },
+          { name: "organization_responsible", required: false, type: "string" },
+          { name: "host_name", required: false, type: "string" },
+          { name: "manufacturer", required: false, type: "string" },
+          { name: "status", required: false, type: "string" },
+          { name: "owner", required: false, type: "string" },
+          { name: "model", required: false, type: "string" },
+          { name: "serial", required: false, type: "string" },
+          { name: "org_maintenance", required: false, type: "string" },
+          { name: "ip_address", required: false, type: "string" },
+          { name: "disk_size", required: false, type: "string" },
+          { name: "location", required: false, type: "string" },
         ];
         const importer = (
           <ExcelImporter
@@ -194,7 +92,7 @@ export default function Storage() {
     });
   };
 
-  const handleImportComplete = async () => {
+  const handleImportComplete = async (importedData) => {
     console.log("Datos importados (cantidad):", importedData.length);
     console.log("Datos importados (muestra):", importedData.slice(0, 3));
 

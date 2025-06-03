@@ -293,7 +293,7 @@ export default function Dashboard() {
       console.log("Obteniendo conteo de bases de datos...");
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=5000",
+        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=1000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
