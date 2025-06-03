@@ -34,7 +34,7 @@ const Login = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://10.8.150.90/auth/login/", {
+      const response = await fetch("https://10.8.150.90/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
