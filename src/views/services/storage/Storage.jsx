@@ -272,14 +272,17 @@ export default function Storage() {
 
       for (let i = 0; i < formattedData.length; i++) {
         try {
-          const response = await fetch("http://localhost:8000/storage/add", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formattedData[i]),
-          });
+          const response = await fetch(
+            "https://10.8.150.90/api/inveplus/storage/add",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formattedData[i]),
+            }
+          );
 
           if (!response.ok) {
             const errorDetail = await response.text();

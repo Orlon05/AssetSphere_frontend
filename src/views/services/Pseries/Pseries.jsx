@@ -705,9 +705,7 @@ const Pseries = () => {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/editar/${pseries.id}/pseries`
-                              )
+                              navigate(`${BASE_PATH}/editar/${pserie.id}/pseries`)
                             }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"
