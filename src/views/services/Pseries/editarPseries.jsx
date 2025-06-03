@@ -82,7 +82,7 @@ const EditarPseries = () => {
       setError(null);
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
+          `http://localhost:8000/pseries/get_by_id/${pserieId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem(
@@ -93,8 +93,8 @@ const EditarPseries = () => {
         );
 
         if (!response.ok) {
-          const errorData = await response.json(); // Intenta leer la respuesta en caso de error
-          console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
+          const errorData = await response.json();
+          console.error("Error al obtener datos del servidor:", errorData);
           if (response.status === 404) {
             throw new Error("Servidor no encontrado");
           } else if (response.status === 401) {
@@ -108,8 +108,6 @@ const EditarPseries = () => {
           }
         }
         const data = await response.json();
-        // console.log("Datos recibidos:", data);
-        // Actualiza los estados con los datos recibidos
         if (data.status === "success" && data.data) {
           setName(data.data.name || "");
           setApplication(data.data.application || "");
@@ -127,14 +125,13 @@ const EditarPseries = () => {
           setMaxCpu(data.data.max_cpu || "");
           setMinVCpu(data.data.min_v_cpu || "");
           setActVCpu(data.data.act_v_cpu || "");
-          setMaxVCpu(data.data.max_v_cpu || ""); 
+          setMaxVCpu(data.data.max_cpu || "");
           setMinMemory(data.data.min_memory || "");
           setActMemory(data.data.act_memory || "");
           setMaxMemory(data.data.max_memory || "");
           setExpansionFactor(data.data.expansion_factor || "");
           setMemoryPerFactor(data.data.memory_per_factor || "");
           setProcessorCompatibility(data.data.processor_compatibility || "");
-
         } else {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");
@@ -191,15 +188,9 @@ const EditarPseries = () => {
       processor_compatibility: processor_compatibility,
     };
 
-    console.log(
-      "Token de autenticación:",
-      localStorage.getItem("authenticationToken")
-    );
-    console.log("Datos a enviar:", pserieData);
-
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/pseries/edit/${pserieId}`,
+        `http://localhost:8000/pseries/edit/${pserieId}`,
         {
           method: "PUT",
           headers: {

@@ -195,7 +195,6 @@ export default function Storage() {
   };
 
   const handleImportComplete = async (importedData) => {
-
     Swal.fire({
       title: "Procesando datos...",
       text: "Estamos guardando los dispositivos de storage importados",
@@ -263,7 +262,6 @@ export default function Storage() {
             location: cleanString(row.location),
           };
         } catch (error) {
-          console.error(`Error procesando fila ${index + 1}:`, error, row);
           throw new Error(`Error en la fila ${index + 1}: ${error.message}`);
         }
       });
@@ -274,28 +272,23 @@ export default function Storage() {
 
       for (let i = 0; i < formattedData.length; i++) {
         try {
-          const response = await fetch(
-            "https://10.8.150.90/api/inveplus/storage//add_from_excel",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formattedData[i]),
-            }
-          );
+          const response = await fetch("http://localhost:8000/storage/add", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formattedData[i]),
+          });
 
           if (!response.ok) {
             const errorDetail = await response.text();
-            console.error(`Error en storage ${i + 1}:`, errorDetail);
             errors.push(`Storage ${i + 1}: ${errorDetail}`);
             errorCount++;
           } else {
             successCount++;
           }
         } catch (error) {
-          console.error(`Error procesando storage ${i + 1}:`, error);
           errors.push(`Storage ${i + 1}: ${error.message}`);
           errorCount++;
         }
@@ -343,7 +336,6 @@ export default function Storage() {
 
       fetchStorage(currentPage, rowsPerPage);
     } catch (error) {
-      console.error("Error al procesar los datos importados:", error);
       Swal.fire({
         icon: "error",
         title: "Error en la importación",
