@@ -272,28 +272,15 @@ export default function Dashboard() {
 
   const fetchBaseDatosCount = async () => {
     try {
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === 3 ? { ...module, loading: true } : module
-        )
-      );
-
       const token = localStorage.getItem("authenticationToken");
 
       if (!token) {
         console.warn("No se encontró token de autenticación");
-        setModules((prevModules) =>
-          prevModules.map((module) =>
-            module.id === 3 ? { ...module, loading: false } : module
-          )
-        );
         return;
       }
 
-      console.log("Obteniendo conteo de bases de datos...");
-
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=1000",
+        "https://10.8.150.90/api/inveplus/storage/get_all?page=1&limit=1000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -303,119 +290,44 @@ export default function Dashboard() {
       );
 
       if (!response.ok) {
-        throw new Error(
-          `Error HTTP ${response.status}: ${response.statusText}`
-        );
+        throw new Error(`Error HTTP ${response.status}`);
       }
 
       const data = await response.json();
 
-      console.log("Respuesta completa de la API:", data);
+      if (data && data.status === "success" && data.data) {
+        let totalCount = 0;
 
-      if (!data || data.status !== "success") {
-        throw new Error(
-          `Respuesta inválida de la API: ${
-            data?.message || "Error desconocido"
-          }`
+        if (data.data.total_count !== undefined) {
+          totalCount = data.data.total_count;
+        } else if (data.data.total !== undefined) {
+          totalCount = data.data.total;
+        } else if (data.data.bases_datos && Array.isArray(data.data.bases_datos)) {
+          totalCount = data.data.bases_datos.length;
+        } else if (
+          data.data.total_pages !== undefined &&
+          data.data.per_page !== undefined
+        ) {
+          totalCount = data.data.total_pages * data.data.per_page;
+        }
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 3
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 3 ? { ...module, loading: false } : module
+          )
         );
       }
-
-      let totalCount = 0;
-
-      // Buscar el conteo en el orden más probable
-      if (
-        data.data?.total_count !== undefined &&
-        data.data.total_count !== null
-      ) {
-        totalCount = data.data.total_count;
-        console.log("✅ Usando total_count:", totalCount);
-      } else if (data.data?.total !== undefined && data.data.total !== null) {
-        totalCount = data.data.total;
-        console.log("✅ Usando total:", totalCount);
-      } else if (data.data?.count !== undefined && data.data.count !== null) {
-        totalCount = data.data.count;
-        console.log("✅ Usando count:", totalCount);
-      } else if (
-        data.data?.bases_datos &&
-        Array.isArray(data.data.bases_datos)
-      ) {
-        totalCount = data.data.bases_datos.length;
-        console.log("✅ Contando array bases_datos:", totalCount);
-
-        if (data.data.total_pages && data.data.total_pages > 1) {
-          console.warn(
-            `⚠️ ATENCIÓN: Solo se está contando la primera página de ${data.data.total_pages}`
-          );
-          if (data.data.per_page) {
-            totalCount = data.data.total_pages * data.data.per_page;
-            console.log("✅ Recalculado con paginación:", totalCount);
-          }
-        }
-      } else if (data.data?.total_pages && data.data?.per_page) {
-        totalCount = data.data.total_pages * data.data.per_page;
-        console.log("✅ Calculado con paginación:", totalCount);
-      } else {
-        console.warn("Buscando conteo en todas las propiedades...");
-
-        const findLargestNumber = (obj, path = "") => {
-          let maxValue = 0;
-          let maxPath = "";
-
-          for (const key in obj) {
-            const currentPath = path ? `${path}.${key}` : key;
-            const value = obj[key];
-
-            if (typeof value === "number" && value > maxValue) {
-              // Priorizar propiedades que contengan palabras clave
-              if (
-                key.toLowerCase().includes("total") ||
-                key.toLowerCase().includes("count") ||
-                key.toLowerCase().includes("size")
-              ) {
-                maxValue = value;
-                maxPath = currentPath;
-                console.log(`🎯 Encontrado: ${currentPath} = ${value}`);
-              }
-            } else if (
-              typeof value === "object" &&
-              value !== null &&
-              !Array.isArray(value)
-            ) {
-              const result = findLargestNumber(value, currentPath);
-              if (result.value > maxValue) {
-                maxValue = result.value;
-                maxPath = result.path;
-              }
-            }
-          }
-
-          return { value: maxValue, path: maxPath };
-        };
-
-        const result = findLargestNumber(data.data);
-        if (result.value > 0) {
-          totalCount = result.value;
-          console.log(`✅ Usando ${result.path}:`, totalCount);
-        } else {
-          console.error("❌ No se encontró ningún conteo válido");
-          console.log("Propiedades disponibles:", Object.keys(data.data || {}));
-        }
-      }
-
-      console.log(`🎯 CONTEO FINAL: ${totalCount}`);
-
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === 3
-            ? { ...module, count: totalCount, loading: false }
-            : module
-        )
-      );
-
-      setError(null);
     } catch (error) {
-      console.error("❌ Error en fetchBaseDatosCount:", error);
       setError(error);
+      console.error("Error en fetchBaseDatosCount:", error);
 
       setModules((prevModules) =>
         prevModules.map((module) =>
@@ -424,7 +336,6 @@ export default function Dashboard() {
       );
     }
   };
-
   const fetchServervCount = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
