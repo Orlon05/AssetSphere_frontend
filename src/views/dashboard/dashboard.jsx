@@ -294,6 +294,7 @@ export default function Dashboard() {
       }
 
       const data = await response.json();
+      console.log("Respuesta del backend:", data);
 
       if (data && data.status === "success" && data.data) {
         let totalCount = 0;
@@ -302,7 +303,10 @@ export default function Dashboard() {
           totalCount = data.data.total_count;
         } else if (data.data.total !== undefined) {
           totalCount = data.data.total;
-        } else if (data.data.bases_datos && Array.isArray(data.data.bases_datos)) {
+        } else if (
+          data.data.bases_datos &&
+          Array.isArray(data.data.bases_datos)
+        ) {
           totalCount = data.data.bases_datos.length;
         } else if (
           data.data.total_pages !== undefined &&
@@ -319,6 +323,7 @@ export default function Dashboard() {
           )
         );
       } else {
+        console.warn("Formato de respuesta inesperado:", data);
         setModules((prevModules) =>
           prevModules.map((module) =>
             module.id === 3 ? { ...module, loading: false } : module
@@ -326,9 +331,8 @@ export default function Dashboard() {
         );
       }
     } catch (error) {
-      setError(error);
       console.error("Error en fetchBaseDatosCount:", error);
-
+      setError(error);
       setModules((prevModules) =>
         prevModules.map((module) =>
           module.id === 3 ? { ...module, loading: false } : module
@@ -336,6 +340,7 @@ export default function Dashboard() {
       );
     }
   };
+  
   const fetchServervCount = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
