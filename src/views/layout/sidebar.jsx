@@ -79,7 +79,7 @@ export default function Sidebar() {
         } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
-          src="./src/assets/chevron-left.png"
+          src="/inveplus/chevron-left.png"
           className={`absolute cursor-pointer -right-3 top-9 w-7 border-gray-700 bg-gray-800 border-2 rounded-full ${
             !open && "rotate-180"
           }`}
@@ -87,7 +87,7 @@ export default function Sidebar() {
         />
         <div className="gap-x-8 items-center mb-32">
           <img
-            src="./src/assets/logowhite.png"
+            src="/inveplus/logowhite.png"
             className={`cursor-pointer duration-500 ${open}`}
           />
         </div>

@@ -275,7 +275,7 @@ export default function Storage() {
       for (let i = 0; i < formattedData.length; i++) {
         try {
           const response = await fetch(
-            "https://10.8.150.90/api/inveplus/storage/add",
+            "https://10.8.150.90/api/inveplus/storage//add_from_excel",
             {
               method: "POST",
               headers: {
@@ -582,7 +582,7 @@ export default function Storage() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/storage/delete/${storageId}`,
+            `https://10.8.150.90/api/inveplus/storage/delete/${storageId}`,
             {
               method: "DELETE",
               headers: {
