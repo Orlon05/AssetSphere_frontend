@@ -32,7 +32,7 @@ export default function Dashboard() {
     {
       id: 2,
       title: "Servidores Virtuales",
-      count: 56,
+      count: 0,
       icon: Cloud,
       description: "Administración de máquinas virtuales",
       route: `${BASE_PATH}/servidoresv`,
@@ -91,7 +91,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "http://localhost:8000/servers/physical?page=1&limit=1000",
+        "https://10.8.150.90/api/inveplus/servers/physical?page=1&limit=1000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,7 +148,7 @@ export default function Dashboard() {
         return;
       }
       const response = await fetch(
-        "http://localhost:8000/pseries/pseries?page=1&limit=10000",
+        "https://10.8.150.90/api/inveplus/pseries/pseries?page=1&limit=10000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -213,7 +213,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "http://localhost:8000/storage/get_all?page=1&limit=1000",
+        "https://10.8.150.90/api/inveplus/storage/get_all?page=1&limit=1000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -293,7 +293,7 @@ export default function Dashboard() {
       console.log("Obteniendo conteo de bases de datos...");
 
       const response = await fetch(
-        "http://localhost:8000/base_datos/get_all?page=1&limit=5000",
+        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=5000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -425,11 +425,71 @@ export default function Dashboard() {
     }
   };
 
+  const fetchServervCount = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+
+      if (!token) {
+        console.warn("No se encontró token de autenticación");
+        return;
+      }
+
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/vservers/virtual?page=1&limit=1000",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.status === "success" && data.data) {
+        const totalCount =
+          data.data.total_count ||
+          data.data.total ||
+          data.data.servers?.length ||
+          0; 
+
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 2
+              ? { ...module, count: totalCount, loading: false }
+              : module
+          )
+        );
+      } else {
+        console.warn("Formato de respuesta inesperado:", data);
+        setModules((prevModules) =>
+          prevModules.map((module) =>
+            module.id === 2 ? { ...module, loading: false } : module
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error al obtener el conteo de servidores:", error);
+      setError(error);
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === 2 ? { ...module, loading: false } : module
+        )
+      );
+    }
+  };
+
+
   useEffect(() => {
     fetchServerCount();
     fetchPseriesCount();
     fetchStorageCount();
     fetchBaseDatosCount();
+    fetchServervCount();
   }, []);
 
   // Función para cerrar sesión

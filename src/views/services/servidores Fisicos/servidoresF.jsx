@@ -444,7 +444,7 @@ export default function ServidoresFisicos() {
       for (let i = 0; i < formattedData.length; i++) {
         try {
           const response = await fetch(
-            "http://localhost:8000/servers/physical/add",
+            "https://10.8.150.90/api/inveplus/servers/physical/add",
             {
               method: "POST",
               headers: {
@@ -562,12 +562,15 @@ export default function ServidoresFisicos() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/servers/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/servers/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();
@@ -595,7 +598,7 @@ export default function ServidoresFisicos() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical?page=${page}&limit=${limit}&hostname=${search}`,
+        `https://10.8.150.90/api/inveplus/servers/physical?page=${page}&limit=${limit}&hostname=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -639,7 +642,7 @@ export default function ServidoresFisicos() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/servers/physical/search?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `https://10.8.150.90/api/inveplus/servers/physical/search?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -744,7 +747,7 @@ export default function ServidoresFisicos() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/servers/physical/${serverId}`,
+            `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
             {
               method: "DELETE",
               headers: {

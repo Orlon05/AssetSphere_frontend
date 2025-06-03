@@ -35,12 +35,12 @@ export default function Sidebar() {
     },
     { id: 4, title: "Pseries", icon: Server, path: "/inveplus/pseries" },
     { id: 5, title: "Storage", icon: HardDrive, path: "/inveplus/storage" },
-    {
-      id: 6,
-      title: "Sucursales",
-      icon: Building,
-      path: "/inveplus/sucursales",
-    },
+    // {
+    //   id: 6,
+    //   title: "Sucursales",
+    //   icon: Building,
+    //   path: "/inveplus/sucursales",
+    // },
     {
       id: 7,
       title: "Panel Principal",
@@ -61,9 +61,10 @@ export default function Sidebar() {
       return <ServidoresVirtuales />;
     } else if (path.includes("storage")) {
       return <Storage />;
-    } else if (path.includes("sucursales")) {
-      return <Sucursales />;
-    }
+    } 
+    // else if (path.includes("sucursales")) {
+    //   return <Sucursales />;
+    // }
     // Agrega aquí los demás componentes según el path
     else {
       return <ServidoresFisicos />; // Componente por defecto

@@ -76,7 +76,7 @@ const Pseries = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
+        `https://10.8.150.90/api/inveplus/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const Pseries = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `https://10.8.150.90/api/inveplus/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -295,7 +295,7 @@ const Pseries = () => {
 
       // Enviar los datos al servidor
       const response = await fetch(
-        "http://localhost:8000/pseries/add_from_excel",
+        "https://10.8.150.90/api/inveplus/pseries/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -339,12 +339,15 @@ const Pseries = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/pseries/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/pseries/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();
@@ -415,7 +418,7 @@ const Pseries = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/pseries/pseries/${pseriesId}`,
+            `https://10.8.150.90/api/inveplus/pseries/pseries/${pseriesId}`,
             {
               method: "DELETE",
               headers: {

@@ -55,14 +55,17 @@ const CrearBasedeDatos = () => {
     try {
       const token = localStorage.getItem("authenticationToken");
 
-      const response = await fetch("http://localhost:8000/base_datos/add", {
-        method: "post",
-        headers: {
-          "content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/base_datos/add",
+        {
+          method: "post",
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Error HTTP ${response.status}`);

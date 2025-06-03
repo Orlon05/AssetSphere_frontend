@@ -104,7 +104,7 @@ const VerStorage = () => {
 
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `http://localhost:8000/storage/get_by_id/${storageId}`,
+          `https://10.8.150.90/api/inveplus/storage/get_by_id/${storageId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -82,7 +82,7 @@ const EditarPseries = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/pseries/get_by_id/${pserieId}`,
+          `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem(
@@ -199,7 +199,7 @@ const EditarPseries = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/pseries/edit/${pserieId}`,
+        `https://10.8.150.90/api/inveplus/pseries/edit/${pserieId}`,
         {
           method: "PUT",
           headers: {

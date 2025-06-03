@@ -63,14 +63,17 @@ const CrearStorage = () => {
     try {
       const token = localStorage.getItem("authenticationToken");
 
-      const response = await fetch("http://localhost:8000/storage/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/storage/add",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();

@@ -42,7 +42,7 @@ const CrearServidorVirtual = () => {
       }
 
       const response = await fetch(
-        "http://localhost:8000/vservers/virtual/add",
+        "https://10.8.150.90/api/inveplus/vservers/virtual/add",
         {
           method: "POST",
           headers: {

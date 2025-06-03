@@ -274,14 +274,17 @@ export default function Storage() {
 
       for (let i = 0; i < formattedData.length; i++) {
         try {
-          const response = await fetch("http://localhost:8000/storage/add", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formattedData[i]),
-          });
+          const response = await fetch(
+            "https://10.8.150.90/api/inveplus/storage/add",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formattedData[i]),
+            }
+          );
 
           if (!response.ok) {
             const errorDetail = await response.text();
@@ -389,12 +392,15 @@ export default function Storage() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/storage/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/storage/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();
@@ -421,10 +427,10 @@ export default function Storage() {
     setLoading(true);
     setError(null);
     try {
-      let url = `http://localhost:8000/storage/get_all?page=${page}&limit=${limit}`;
+      let url = `https://10.8.150.90/api/inveplus/storage/get_all?page=${page}&limit=${limit}`;
 
       if (search.trim()) {
-        url = `http://localhost:8000/storage/search_by_name?name=${encodeURIComponent(
+        url = `https://10.8.150.90/api/inveplus/storage/search_by_name?name=${encodeURIComponent(
           search
         )}&page=${page}&limit=${limit}`;
       }
@@ -469,7 +475,7 @@ export default function Storage() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/storage/search_by_name?name=${encodeURIComponent(
+        `https://10.8.150.90/api/inveplus/storage/search_by_name?name=${encodeURIComponent(
           search
         )}&page=${currentPage}&limit=${rowsPerPage}`,
         {

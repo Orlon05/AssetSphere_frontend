@@ -177,7 +177,7 @@ const BaseDeDatos = () => {
       }));
 
       const response = await fetch(
-        "http://localhost:8000/base_datos/add_from_excel",
+        "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -212,7 +212,7 @@ const BaseDeDatos = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
+        `https://10.8.150.90/api/inveplus/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -253,7 +253,7 @@ const BaseDeDatos = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `https://10.8.150.90/api/inveplus/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -314,12 +314,15 @@ const BaseDeDatos = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/base_datos/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/base_datos/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();
@@ -386,14 +389,6 @@ const BaseDeDatos = () => {
     navigate(`${BASE_PATH}/crear-base-de-datos`);
   };
 
-  const irVer = (base_datosId) => {
-    router.push(`${BASE_PATH}/ver/${base_datosId}/basedatos`);
-  };
-
-  const irEditar = (base_datosId) => {
-    router.push(`${BASE_PATH}/editar/${base_datosId}/basedatos`);
-  };
-
   const handleDeleteStorage = async (baseDeDatosId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -408,7 +403,7 @@ const BaseDeDatos = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/base_datos/delete/${baseDeDatosId}`,
+            `https://10.8.150.90/api/inveplus/base_datos/delete/${baseDeDatosId}`,
             {
               method: "DELETE",
               headers: {

@@ -100,7 +100,7 @@ const EditarBaseDatos = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/base_datos/get_by_id/${baseDatosId}`,
+          `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDatosId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -172,7 +172,7 @@ const EditarBaseDatos = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/base_datos/edit/${baseDatosId}`,
+        `https://10.8.150.90/api/inveplus/base_datos/edit/${baseDatosId}`,
         {
           method: "PUT",
           headers: {

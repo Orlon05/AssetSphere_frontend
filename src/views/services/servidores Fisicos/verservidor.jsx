@@ -114,7 +114,7 @@ const VerServers = () => {
 
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `http://localhost:8000/servers/physical/${serverId}`,
+          `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -68,7 +68,7 @@ const VerServidorVirtual = () => {
 
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `http://localhost:8000/vservers/virtual/get/${serverId}`,
+          `https://10.8.150.90/api/inveplus/vservers/virtual/get/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

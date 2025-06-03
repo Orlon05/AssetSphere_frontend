@@ -48,7 +48,7 @@ const EditarServidorVirtual = () => {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/vservers/virtual/get/${serverId}`,
+        `https://10.8.150.90/api/inveplus/vservers/virtual/get/${serverId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ const EditarServidorVirtual = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/vservers/virtual/edit/${serverId}`,
+        `https://10.8.150.90/api/inveplus/vservers/virtual/edit/${serverId}`,
         {
           method: "PUT",
           headers: {

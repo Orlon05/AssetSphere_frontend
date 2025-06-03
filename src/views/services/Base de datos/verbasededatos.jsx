@@ -139,7 +139,7 @@ const VerDatabase = () => {
         console.log("Fetching data for ID:", baseDeDatosId);
 
         const response = await fetch(
-          `http://localhost:8000/base_datos/get_by_id/${baseDeDatosId}`,
+          `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDeDatosId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

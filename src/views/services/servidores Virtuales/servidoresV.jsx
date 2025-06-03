@@ -121,7 +121,7 @@ export default function ServidoresVirtuales() {
 
 
       const response = await fetch(
-        "http://localhost:8000/vservers/virtual/add_from_excel",
+        "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
         {
           method: "POST",
           headers: {
@@ -194,12 +194,15 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const response = await fetch("http://localhost:8000/vservers/virtual/export", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/vservers/virtual/export",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorDetail = await response.text();
@@ -227,7 +230,7 @@ export default function ServidoresVirtuales() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/vservers/virtual?page=${page}&limit=${limit}&server=${search}`,
+        `https://10.8.150.90/api/inveplus/vservers/virtual?page=${page}&limit=${limit}&server=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -268,7 +271,7 @@ export default function ServidoresVirtuales() {
     setError(null);
     try {
       const response = await fetch(
-        `http://localhost:8000/vservers/virtual/search?server=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `https://10.8.150.90/api/inveplus/vservers/virtual/search?server=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -373,7 +376,7 @@ export default function ServidoresVirtuales() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:8000/vservers/virtual/delete/${serverId}`,
+            `https://10.8.150.90/api/inveplus/vservers/virtual/delete/${serverId}`,
             {
               method: "DELETE",
               headers: {
