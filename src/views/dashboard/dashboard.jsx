@@ -280,7 +280,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/storage/get_all?page=1&limit=1000",
+        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=1000",
         {
           headers: {
             Authorization: `Bearer ${token}`,
