@@ -194,10 +194,23 @@ export default function Storage() {
     });
   };
 
-  const handleImportComplete = async (importedData) => {
+  const handleImportComplete = async () => {
+    console.log("Datos importados (cantidad):", importedData.length);
+    console.log("Datos importados (muestra):", importedData.slice(0, 3));
+
+    if (!Array.isArray(importedData) || importedData.length === 0) {
+      Swal.fire(
+        "Error",
+        "No se encontraron datos válidos en el archivo",
+        "error"
+      );
+      return;
+    }
+
+    // Mostrar un mensaje de carga
     Swal.fire({
       title: "Procesando datos...",
-      text: "Estamos guardando los dispositivos de storage importados",
+      text: `Estamos guardando ${importedData.length} dispositivos de storage importados`,
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
@@ -210,146 +223,70 @@ export default function Storage() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const cleanString = (str) => {
-        if (
-          !str ||
-          str === null ||
-          str === undefined ||
-          str === "N/A" ||
-          str === "n/a"
-        ) {
-          return "";
-        }
-        return String(str).trim();
-      };
+      const formattedData = importedData.map((row) => {
+        const formattedRow = {};
 
-      const normalizeStatus = (status) => {
-        if (!status) return "Inactivo";
-        const statusStr = String(status).toLowerCase().trim();
-        if (
-          statusStr === "activo" ||
-          statusStr === "active" ||
-          statusStr === "1" ||
-          statusStr === "true"
-        ) {
-          return "Activo";
-        }
-        return "Inactivo";
-      };
+        formattedRow.cod_item_configuracion = String(
+          row.cod_item_configuracion || ""
+        );
+        formattedRow.name = String(row.name || "");
+        formattedRow.application_code = String(row.application_code || "");
+        formattedRow.cost_center = String(row.cost_center || "");
+        formattedRow.active = String(row.active || "");
+        formattedRow.category = String(row.category || "");
+        formattedRow.type = String(row.type || "");
+        formattedRow.item = String(row.item || "");
+        formattedRow.company = String(row.company || "");
+        formattedRow.organization_responsible = String(
+          row.organization_responsible || ""
+        );
+        formattedRow.host_name = String(row.host_name || "");
+        formattedRow.manufacturer = String(row.manufacturer || "");
+        formattedRow.status = String(row.status || "");
+        formattedRow.owner = String(row.owner || "");
+        formattedRow.model = String(row.model || "");
+        formattedRow.serial = String(row.serial || "");
+        formattedRow.org_maintenance = String(row.org_maintenance || "");
+        formattedRow.ip_address = String(row.ip_address || "");
+        formattedRow.disk_size = String(row.disk_size || "");
+        formattedRow.location = String(row.location || "");
 
-      const formattedData = importedData.map((row, index) => {
-        try {
-          return {
-            cod_item_configuracion: cleanString(row.cod_item_configuracion),
-            name: cleanString(row.name),
-            application_code: cleanString(row.application_code),
-            cost_center: cleanString(row.cost_center),
-            active: normalizeStatus(row.active),
-            category: cleanString(row.category),
-            type: cleanString(row.type),
-            item: cleanString(row.item),
-            company: cleanString(row.company),
-            organization_responsible: cleanString(row.organization_responsible),
-            host_name: cleanString(row.host_name),
-            manufacturer: cleanString(row.manufacturer),
-            status: normalizeStatus(row.status),
-            owner: cleanString(row.owner),
-            model: cleanString(row.model),
-            serial: cleanString(row.serial),
-            org_maintenance: cleanString(row.org_maintenance),
-            ip_address: cleanString(row.ip_address),
-            disk_size: cleanString(row.disk_size),
-            location: cleanString(row.location),
-          };
-        } catch (error) {
-          throw new Error(`Error en la fila ${index + 1}: ${error.message}`);
-        }
+        return formattedRow;
       });
 
-      let successCount = 0;
-      let errorCount = 0;
-      const errors = [];
-
-      for (let i = 0; i < formattedData.length; i++) {
-        try {
-          const response = await fetch(
-            "https://10.8.150.90/api/inveplus/storage/add",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formattedData[i]),
-            }
-          );
-
-          if (!response.ok) {
-            const errorDetail = await response.text();
-            errors.push(`Storage ${i + 1}: ${errorDetail}`);
-            errorCount++;
-          } else {
-            successCount++;
-          }
-        } catch (error) {
-          errors.push(`Storage ${i + 1}: ${error.message}`);
-          errorCount++;
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/storage/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedData),
         }
+      );
+
+      if (!response.ok) {
+        const errorDetail = await response.text();
+        throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
-      if (errorCount === 0) {
-        Swal.fire({
-          icon: "success",
-          title: "Importación exitosa",
-          text: `Se han importado ${successCount} dispositivos de storage correctamente.`,
-        });
-      } else if (successCount > 0) {
-        Swal.fire({
-          icon: "warning",
-          title: "Importación parcial",
-          html: `
-            <p>Importación completada con algunos errores:</p>
-            <p><strong>Exitosos:</strong> ${successCount}</p>
-            <p><strong>Errores:</strong> ${errorCount}</p>
-            <details>
-              <summary>Ver errores</summary>
-              <pre style="text-align: left; max-height: 200px; overflow-y: auto;">${errors.join(
-                "\n"
-              )}</pre>
-            </details>
-          `,
-          width: "600px",
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error en la importación",
-          html: `
-            <p>No se pudo importar ningún dispositivo de storage:</p>
-            <details>
-              <summary>Ver errores</summary>
-              <pre style="text-align: left; max-height: 200px; overflow-y: auto;">${errors.join(
-                "\n"
-              )}</pre>
-            </details>
-          `,
-          width: "600px",
-        });
-      }
-
-      fetchStorage(currentPage, rowsPerPage);
+      Swal.fire({
+        icon: "success",
+        title: "Importación exitosa",
+        text: `Se han importado ${importedData.length} dispositivos de storage correctamente.`,
+      });
     } catch (error) {
+      console.error("Error al procesar los datos importados:", error);
       Swal.fire({
         icon: "error",
         title: "Error en la importación",
         text:
           error.message ||
           "Ha ocurrido un error al procesar los datos importados.",
-        width: "600px",
       });
     }
   };
-
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
