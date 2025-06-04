@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   ChevronDown,
   LogOut,
+  User,
   Server,
   Database,
   HardDrive,
@@ -453,9 +454,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-300/20">
       {/* Encabezado */}
       <header className="w-full p-4 flex justify-between items-center">
-        <h1 className="text-slate-900 text-4xl font-bold">
-          Inveplus
-        </h1>
+        <h1 className="text-slate-900 text-4xl font-bold">Inveplus</h1>
         <div className="relative">
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -464,10 +463,21 @@ export default function Dashboard() {
             <span>{user.name}</span>
             <ChevronDown size={16} />
           </button>
+
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
-              <div className="px-4 py-2 border-b border-gray-600">
-              </div>
+              <div className="px-4 py-2 border-b border-gray-600"></div>
+
+              {/* Botón Perfil */}
+              <button
+                onClick={handleProfileClick}
+                className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+              >
+                <User size={16} />
+                Perfil
+              </button>
+
+              {/* Botón Cerrar Sesión */}
               <button
                 onClick={handleLogout}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"

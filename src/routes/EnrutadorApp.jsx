@@ -5,6 +5,12 @@ const Login = lazy(() => import("../views/auth/Login"));
 const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
 const Sidebar = lazy(() => import("../views/layout/sidebar"));
 
+
+// Perfil
+// const Perfil = lazy(() =>
+//   import("../views/Perfil/Perfil")
+// );
+
 // Servidores Fisicos
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
@@ -73,6 +79,10 @@ const CrearSucursal = lazy(() =>
 const BASE_PATH = "/inveplus";
 
 const EnrutadorApp = [
+  // {
+  //   path: `${BASE_PATH}/perfil`,
+  //   element: <Perfil />,
+  // },
   {
     path: `${BASE_PATH}/login`,
     element: <Login />,
