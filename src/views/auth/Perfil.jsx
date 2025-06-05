@@ -1,15 +1,26 @@
 import { useState, useEffect } from "react";
 
 export default function Perfil() {
-  const [user, setUser] = useState({ name: "", role: "" });
+  const [user, setUser] = useState({
+    name: "",
+    username: "",
+    email: "",
+    role: "",
+  });
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    // Cargar el usuario desde almacenamiento local o contexto
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
+    if (storedUser) {
+      setUser({
+        name: storedUser.name || "",
+        username: storedUser.username || "",
+        email: storedUser.email || "",
+        role: storedUser.role || "",
+      });
+    }
   }, []);
 
   const handleChangePassword = async () => {
@@ -19,11 +30,10 @@ export default function Perfil() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/users/edit", {
+      const response = await fetch("/api/inveplus/users/edit", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: user.email, // o username, según tu backend
           current_password: currentPassword,
           new_password: newPassword,
         }),
@@ -46,15 +56,51 @@ export default function Perfil() {
           Perfil de Usuario
         </h2>
 
-        <div className="mb-6 space-y-2">
-          <p>
-            <span className="font-semibold text-gray-700">Nombre:</span>{" "}
-            {user.name}
-          </p>
-          <p>
-            <span className="font-semibold text-gray-700">Rol:</span>{" "}
-            {user.role}
-          </p>
+        <div className="space-y-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Nombre de asociado
+            </label>
+            <input
+              type="text"
+              value={user.name}
+              readOnly
+              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              value={user.username}
+              readOnly
+              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              value={user.email}
+              readOnly
+              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Rol
+            </label>
+            <input
+              type="text"
+              value={user.role}
+              readOnly
+              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+            />
+          </div>
         </div>
 
         <div className="space-y-4">
