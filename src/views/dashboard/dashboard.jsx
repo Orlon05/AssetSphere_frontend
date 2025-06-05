@@ -476,10 +476,9 @@ export default function Dashboard() {
 
               {/* Botón Perfil */}
               <button
-                // onClick={handlePerfil}
+                onClick={handlePerfil}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
               >
-                onClick={handlePerfil}
                 <User size={16} />
                 Perfil
               </button>
