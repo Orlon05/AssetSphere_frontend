@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function Perfil() {
   const navigate = useNavigate();
-  const { userId } = useParams(); 
+  const { userId } = useParams();
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -20,6 +20,9 @@ export default function Perfil() {
   const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
+    console.log("userId recibido:", userId); // Debug
+    console.log("token:", token); // Debug
+
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
@@ -50,6 +53,8 @@ export default function Perfil() {
         }
 
         const data = await response.json();
+        console.log("Respuesta de la API:", data); // Debug
+
         if (data.status === "success" && data.data) {
           setUser({
             name: data.data.name || "",
