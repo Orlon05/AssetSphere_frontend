@@ -428,7 +428,7 @@ export default function Dashboard() {
 
   // Al presionar el botón de perfil esta función me lleva a la vista del perfil
   const handlePerfil = () => {
-    navigate(`${BASE_PATH}/perfil`);
+    navigate(`${BASE_PATH}/Perfil`);
   };
 
 

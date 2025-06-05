@@ -105,7 +105,7 @@ const EnrutadorApp = [
     ),
   },
   {
-    path: `${BASE_PATH}/perfil`,
+    path: `${BASE_PATH}/Perfil`,
     element: (
       <ProtectedRoute>
         <Perfil />
