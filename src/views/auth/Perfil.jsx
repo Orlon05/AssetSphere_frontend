@@ -7,21 +7,95 @@ export default function Perfil() {
     email: "",
     role: "",
   });
+  const [userId, setUserId] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser({
-        name: storedUser.name || "",
-        username: storedUser.username || "",
-        email: storedUser.email || "",
-        role: storedUser.role || "",
-      });
+    const getUserId = () => {
+      try {
+        const storedUserId = localStorage.getItem("userId");
+        if (storedUserId) {
+          return storedUserId;
+        }
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          return parsedUser.id || parsedUser.userId;
+        }
+
+        return null;
+      } catch (error) {
+        console.error("Error al obtener userId:", error);
+        return null;
+      }
+    };
+
+    const id = getUserId();
+    if (id) {
+      setUserId(id);
+      fetchUserData(id);
+    } else {
+      setLoading(false);
+      setError(
+        "No se pudo obtener la información del usuario. Por favor, inicia sesión nuevamente."
+      );
     }
   }, []);
+
+  const fetchUserData = async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `https://10.8.150.90/api/inveplus/users/get_by_id/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al obtener datos del usuario:", errorData);
+        if (response.status === 404) {
+          throw new Error("Usuario no encontrado");
+        } else if (response.status === 401) {
+          throw new Error("No autorizado");
+        } else {
+          throw new Error(
+            `Error HTTP ${response.status}: ${
+              errorData.message || errorData.detail
+            }`
+          );
+        }
+      }
+
+      const data = await response.json();
+      if (data.status === "success" && data.data) {
+        setUser({
+          name: data.data.name || data.data.full_name || "",
+          username: data.data.username || "",
+          email: data.data.email || "",
+          role: data.data.role || data.data.role_name || "",
+        });
+      } else {
+        console.error("Estructura de datos inesperada:", data);
+        setError("Estructura de datos inesperada del servidor");
+      }
+    } catch (error) {
+      console.error("Error en fetchUserData:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -29,25 +103,85 @@ export default function Perfil() {
       return;
     }
 
-    try {
-      const response = await fetch("/api/inveplus/users/edit", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_password: newPassword,
-        }),
-      });
+    if (!userId) {
+      alert("Error: No se pudo identificar al usuario");
+      return;
+    }
 
-      if (!response.ok) throw new Error("Error al cambiar la contraseña");
-      alert("Contraseña actualizada con éxito");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+    try {
+      const response = await fetch(
+        `https://10.8.150.90/api/inveplus/users/edit/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Error HTTP ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error("Detalles del error (JSON):", errorData);
+          if (errorData && Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+          } else if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData) {
+            errorMessage = JSON.stringify(errorData);
+          }
+          alert(errorMessage);
+        } catch (jsonError) {
+          console.error("Error al parsear JSON:", jsonError);
+          alert(errorMessage);
+        }
+      } else {
+        alert("Contraseña actualizada con éxito");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      }
     } catch (error) {
-      alert(error.message);
+      console.error("Error inesperado:", error);
+      alert("Ocurrió un error inesperado.");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
+        <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-500 mb-4"></div>
+            <p>Cargando información del usuario...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
+        <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-700 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
