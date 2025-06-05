@@ -426,6 +426,12 @@ export default function Dashboard() {
     });
   };
 
+  // Al presionar el botón de perfil esta función me lleva a la vista del perfil
+  const handlePerfil = () => {
+    navigate(`${BASE_PATH}/perfil`);
+  };
+
+
   const handleModuleClick = (moduleId) => {
     // Encontrar el módulo seleccionado
     const selectedModule = modules.find((module) => module.id === moduleId);
@@ -470,9 +476,10 @@ export default function Dashboard() {
 
               {/* Botón Perfil */}
               <button
-                // onClick={handleProfileClick}
+                // onClick={handlePerfil}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
               >
+                onClick={handlePerfil}
                 <User size={16} />
                 Perfil
               </button>
