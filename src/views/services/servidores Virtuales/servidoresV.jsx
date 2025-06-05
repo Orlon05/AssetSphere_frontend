@@ -439,35 +439,32 @@ export default function ServidoresVirtuales() {
     const statusLower = status.toLowerCase();
 
     if (
-      statusLower === "active" ||
-      statusLower === "activo" ||
-      statusLower === "encendido"
+      statusLower === "running" ||
+      statusLower === "running" ||
+      statusLower === "running"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-600 text-green-200">
           <CheckCircle size={12} className="mr-1" />
-          Activo
+          Running
         </span>
       );
     } else if (
-      statusLower === "inactive" ||
-      statusLower === "inactivo" ||
-      statusLower === "apagado"
+      statusLower === "stopped" ||
+      statusLower === "stopped" ||
+      statusLower === "stopped"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500 text-red-200">
           <AlertCircle size={12} className="mr-1" />
-          Inactivo
+          Stopped
         </span>
       );
-    } else if (
-      statusLower === "maintenance" ||
-      statusLower === "mantenimiento"
-    ) {
+    } else if (statusLower === "paused" || statusLower === "paused") {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-500 text-yellow-200">
           <Clock size={12} className="mr-1" />
-          Mantenimiento
+          Paused
         </span>
       );
     } else {
