@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UserCircle  } from "lucide-react";
 
 export default function Perfil() {
   const navigate = useNavigate();
@@ -222,112 +222,112 @@ export default function Perfil() {
   // }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-slate-800 mb-6">
-          Perfil de Usuario
-        </h2>
-        <div className="space-y-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nombre de asociado
-            </label>
-            <input
-              type="text"
-              value={user.name}
-              readOnly
-              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nombre de usuario
-            </label>
-            <input
-              type="text"
-              value={user.username}
-              readOnly
-              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              value={user.email}
-              readOnly
-              className="mt-1 w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
-            />
-          </div>
-          {/* Campo Rol oculto */}
+  <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
+    <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+      <div className="flex items-center justify-center mb-6">
+        <UserCircle size={28} className="text-sky-600 mr-2" />
+        <h2 className="text-2xl font-bold text-slate-800">Perfil de Usuario</h2>
+      </div>
+
+      <hr className="mb-6 border-gray-300" />
+
+      <div className="space-y-4 mb-8">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nombre de asociado
+          </label>
+          <input
+            type="text"
+            value={user.name}
+            readOnly
+            className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nombre de usuario
+          </label>
+          <input
+            type="text"
+            value={user.username}
+            readOnly
+            className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            value={user.email}
+            readOnly
+            className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+          />
+        </div>
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleChangePassword();
+        }}
+        className="space-y-4"
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Contraseña actual
+          </label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nueva contraseña
+          </label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Confirmar nueva contraseña
+          </label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
+            required
+          />
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleChangePassword();
-          }}
-          className="space-y-4"
+        <button
+          type="submit"
+          className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
         >
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Contraseña actual
-            </label>
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              className="mt-1 w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nueva contraseña
-            </label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirmar nueva contraseña
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
+          Cambiar contraseña
+        </button>
 
-          <button
-            type="submit"
-            className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
-          >
-            Cambiar contraseña
-          </button>
-
-          {/* Botón Regresar después de Cambiar contraseña */}
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => navigate(`${BASE_PATH}/dashboard`)}
-              className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition flex items-center justify-center"
-            >
-              <ArrowLeft className="mr-2" size={20} />
-              Regresar
-            </button>
-          </div>
-        </form>
-      </div>
+        <button
+          type="button"
+          onClick={() => navigate(`${BASE_PATH}/dashboard`)}
+          className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition flex items-center justify-center mt-2"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Regresar
+        </button>
+      </form>
     </div>
-  );
+  </div>
+);
 }
