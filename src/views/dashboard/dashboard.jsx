@@ -14,7 +14,6 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -34,13 +33,13 @@ const decodeJWT = (token) => {
 
 export default function Dashboard() {
   const { logout } = useAuth();
-  // const [user, setUser] = useState({ name: "", email: "", username: "", user_id: null });
   const BASE_PATH = "/inveplus";
   const [user, setUser] = useState({
     name: "",
     username: "",
     email: "",
     role: "",
+    user_id: null,
   });
 
   const [modules, setModules] = useState([
@@ -105,30 +104,79 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchUserData = async (userId, token) => {
     try {
-      const userData = JSON.parse(localStorage.getItem("user")) || {};
 
-      let userId = userData.user_id;
+      const response = await fetch(
+        `https://10.8.150.90/api/inveplus/users/get_by_id/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (!userId) {
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.status === "success" && data.data) {
+        setUser((prevUser) => ({
+          ...prevUser,
+          name: data.data.name || "Usuario",
+          username: data.data.username || "Usuario",
+          email: data.data.email || "",
+          role: data.data.role || "",
+        }));
+      }
+    } catch (error) {
+      console.error("Error al obtener datos del usuario:", error);
+      setUser((prevUser) => ({
+        ...prevUser,
+        name: "Usuario",
+        username: "Usuario",
+      }));
+    }
+  };
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem("user")) || {};
+        let userId = userData.user_id;
+
         const token = localStorage.getItem("authenticationToken");
-        if (token) {
+        if (!userId && token) {
           const decodedToken = decodeJWT(token);
           userId = decodedToken?.user_id;
         }
-      }
 
-      setUser({
-        name: userData.name || "",
-        email: userData.email || "",
-        username: userData.username|| "",
-        user_id: userId,
-      });
-    } catch (error) {
-      console.error("Error al cargar datos del usuario:", error);
-      setUser({ name: "", email: "", username: "", user_id: null });
-    }
+        setUser((prevUser) => ({
+          ...prevUser,
+          user_id: userId,
+          name: userData.name || "Usuario",
+          username: userData.username || "Usuario",
+          email: userData.email || "",
+        }));
+
+        if (userId && token) {
+          await fetchUserData(userId, token);
+        }
+      } catch (error) {
+        console.error("Error al inicializar usuario:", error);
+        setUser({
+          name: "Usuario",
+          username: "Usuario",
+          email: "",
+          role: "",
+          user_id: null,
+        });
+      }
+    };
+
+    initializeUser();
   }, []);
 
   const fetchServerCount = async () => {
@@ -509,7 +557,7 @@ export default function Dashboard() {
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center bg-gray-300 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-400/30"
           >
-            <span>{user.name}</span>
+            <span>{user.name || "Usuario"}</span>
             <ChevronDown size={16} />
           </button>
 
@@ -543,7 +591,7 @@ export default function Dashboard() {
       <main className="container mx-auto p-6">
         <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
           <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
-            ¡Bienvenido, {user.username}!
+            ¡Bienvenido, {user.username || "Usuario"}!
           </h2>
           <p className="text-gray-800">
             Desde aquí puedes gestionar todos los módulos del sistema.
