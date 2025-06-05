@@ -8,16 +8,34 @@ import {
   HardDrive,
   Building,
   Cloud,
-  ShieldCheck 
+  ShieldCheck,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+// Función para decodificar JWT
+const decodeJWT = (token) => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Error decodificando JWT:", error);
+    return null;
+  }
+};
+
 // Componente principal del Dashboard
 export default function Dashboard() {
   const { logout } = useAuth(); // Función para cerrar sesión
-  const [user, setUser] = useState({ name: "", email: "" }); // Estado para el usuario
+  const [user, setUser] = useState({ name: "", email: "", user_id: null }); // Agregar user_id
   const BASE_PATH = "/inveplus"; // Ruta base del sistema
 
   // Estado para los módulos del dashboard
@@ -82,6 +100,37 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true); // Estado de carga
   const [error, setError] = useState(null); // Estado de error
   const navigate = useNavigate(); // Navegación entre rutas
+
+  // Cargar información del usuario desde localStorage y token
+  useEffect(() => {
+    try {
+      // Primero intentar obtener desde localStorage
+      const userData = JSON.parse(localStorage.getItem("user")) || {};
+
+      // Si no hay user_id en localStorage, extraerlo del token
+      let userId = userData.user_id;
+
+      if (!userId) {
+        const token = localStorage.getItem("authenticationToken");
+        if (token) {
+          const decodedToken = decodeJWT(token);
+          console.log("Token decodificado:", decodedToken); // Debug
+          userId = decodedToken?.user_id;
+        }
+      }
+
+      console.log("userId final:", userId); // Debug
+
+      setUser({
+        name: userData.name || "Usuario",
+        email: userData.email || "",
+        user_id: userId,
+      });
+    } catch (error) {
+      console.error("Error al cargar datos del usuario:", error);
+      setUser({ name: "Usuario", email: "", user_id: null });
+    }
+  }, []);
 
   const fetchServerCount = async () => {
     try {
@@ -341,7 +390,7 @@ export default function Dashboard() {
       );
     }
   };
-  
+
   const fetchServervCount = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -372,7 +421,7 @@ export default function Dashboard() {
           data.data.total_count ||
           data.data.total ||
           data.data.servers?.length ||
-          0; 
+          0;
 
         setModules((prevModules) =>
           prevModules.map((module) =>
@@ -399,7 +448,6 @@ export default function Dashboard() {
       );
     }
   };
-
 
   useEffect(() => {
     fetchServerCount();
@@ -475,6 +523,8 @@ export default function Dashboard() {
               <button
                 onClick={() => {
                   setIsProfileOpen(false);
+                  console.log("Navegando a perfil con user_id:", user.user_id); // Debug
+                  // Usar user.user_id extraído del token
                   navigate(`${BASE_PATH}/perfil/${user.user_id}`);
                 }}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
