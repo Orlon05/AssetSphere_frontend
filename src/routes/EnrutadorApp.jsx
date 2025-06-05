@@ -5,8 +5,6 @@ const Login = lazy(() => import("../views/auth/Login"));
 const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
 const Sidebar = lazy(() => import("../views/layout/sidebar"));
 
-const Perfil = lazy(() => import("../views/services/Perfil/Perfil"));
-
 // Servidores Fisicos
 const CrearServerF = lazy(() =>
   import("../views/services/servidores Fisicos/CrearServidor")
@@ -173,11 +171,10 @@ const EnrutadorApp = [
     path: `${BASE_PATH}/perfil`,
     element: (
       <ProtectedRoute>
-        <Perfil />
+        <Sidebar />
       </ProtectedRoute>
     ),
   },
-
   // Crear
   {
     path: `${BASE_PATH}/crear-servidores-f`,
