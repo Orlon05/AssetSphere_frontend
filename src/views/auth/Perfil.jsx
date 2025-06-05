@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Perfil() {
   const navigate = useNavigate();
@@ -20,9 +21,6 @@ export default function Perfil() {
   const token = localStorage.getItem("authenticationToken");
 
   useEffect(() => {
-    console.log("userId recibido:", userId); // Debug
-    console.log("token:", token); // Debug
-
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
@@ -53,7 +51,6 @@ export default function Perfil() {
         }
 
         const data = await response.json();
-        console.log("Respuesta de la API:", data); // Debug
 
         if (data.status === "success" && data.data) {
           setUser({
@@ -86,12 +83,24 @@ export default function Perfil() {
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      Swal.fire({
+        title: "Error",
+        text: "Las contraseñas no coinciden",
+        icon: "error",
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
     if (!userId) {
-      alert("Error: No se pudo identificar al usuario");
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo identificar al usuario",
+        icon: "error",
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
@@ -127,21 +136,57 @@ export default function Perfil() {
           } else if (errorData) {
             errorMessage = JSON.stringify(errorData);
           }
-          alert(errorMessage);
+
+          Swal.fire({
+            title: "Error",
+            text: errorMessage,
+            icon: "error",
+            confirmButtonText: "Entendido",
+            confirmButtonColor: "#3085d6",
+          });
         } catch (jsonError) {
           console.error("Error al parsear JSON:", jsonError);
-          alert(errorMessage);
+          Swal.fire({
+            title: "Error",
+            text: errorMessage,
+            icon: "error",
+            confirmButtonText: "Entendido",
+            confirmButtonColor: "#3085d6",
+          });
         }
       } else {
-        alert("Contraseña actualizada con éxito");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        navigate(`${BASE_PATH}/dashboard`);
+        Swal.fire({
+          title: "¡Éxito!",
+          text: "Contraseña actualizada con éxito",
+          icon: "success",
+          confirmButtonText: "Continuar",
+          confirmButtonColor: "#10b981",
+          background: "#ffffff",
+          color: "#374151",
+          iconColor: "#10b981",
+          customClass: {
+            popup: "rounded-lg shadow-xl",
+            title: "text-xl font-bold text-gray-800",
+            content: "text-gray-600",
+            confirmButton:
+              "bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors",
+          },
+        }).then(() => {
+          setCurrentPassword("");
+          setNewPassword("");
+          setConfirmPassword("");
+          navigate(`${BASE_PATH}/dashboard`);
+        });
       }
     } catch (error) {
       console.error("Error inesperado:", error);
-      alert("Ocurrió un error inesperado.");
+      Swal.fire({
+        title: "Error",
+        text: "Ocurrió un error inesperado",
+        icon: "error",
+        confirmButtonText: "Entendido",
+        confirmButtonColor: "#3085d6",
+      });
     }
   };
 
@@ -229,7 +274,13 @@ export default function Perfil() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleChangePassword();
+          }}
+          className="space-y-4"
+        >
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Contraseña actual
@@ -268,12 +319,12 @@ export default function Perfil() {
           </div>
 
           <button
-            onClick={handleChangePassword}
+            type="submit"
             className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
           >
             Cambiar contraseña
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

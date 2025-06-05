@@ -14,7 +14,6 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// Función para decodificar JWT
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -32,13 +31,11 @@ const decodeJWT = (token) => {
   }
 };
 
-// Componente principal del Dashboard
 export default function Dashboard() {
-  const { logout } = useAuth(); // Función para cerrar sesión
-  const [user, setUser] = useState({ name: "", email: "", user_id: null }); // Agregar user_id
-  const BASE_PATH = "/inveplus"; // Ruta base del sistema
+  const { logout } = useAuth();
+  const [user, setUser] = useState({ name: "", email: "", user_id: null });
+  const BASE_PATH = "/inveplus";
 
-  // Estado para los módulos del dashboard
   const [modules, setModules] = useState([
     {
       id: 1,
@@ -96,30 +93,24 @@ export default function Dashboard() {
     },
   ]);
 
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // Estado para el menú de perfil
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const [error, setError] = useState(null); // Estado de error
-  const navigate = useNavigate(); // Navegación entre rutas
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Cargar información del usuario desde localStorage y token
   useEffect(() => {
     try {
-      // Primero intentar obtener desde localStorage
       const userData = JSON.parse(localStorage.getItem("user")) || {};
 
-      // Si no hay user_id en localStorage, extraerlo del token
       let userId = userData.user_id;
 
       if (!userId) {
         const token = localStorage.getItem("authenticationToken");
         if (token) {
           const decodedToken = decodeJWT(token);
-          console.log("Token decodificado:", decodedToken); // Debug
           userId = decodedToken?.user_id;
         }
       }
-
-      console.log("userId final:", userId); // Debug
 
       setUser({
         name: userData.name || "Usuario",
@@ -162,7 +153,7 @@ export default function Dashboard() {
           data.data.total_count ||
           data.data.total ||
           data.data.servers?.length ||
-          0; // Si no hay nada, el conteo es 0
+          0;
 
         setModules((prevModules) =>
           prevModules.map((module) =>
@@ -457,7 +448,6 @@ export default function Dashboard() {
     fetchServervCount();
   }, []);
 
-  // Función para cerrar sesión
   const handleLogout = () => {
     Swal.fire({
       title: "¿Estás seguro de que deseas cerrar sesión?",
@@ -475,12 +465,10 @@ export default function Dashboard() {
   };
 
   const handleModuleClick = (moduleId) => {
-    // Encontrar el módulo seleccionado
     const selectedModule = modules.find((module) => module.id === moduleId);
 
     if (!selectedModule) return;
 
-    // Usar el campo moduleKey para el parámetro URL
     const { moduleKey } = selectedModule;
 
     if (moduleId === 1)
@@ -497,7 +485,6 @@ export default function Dashboard() {
       navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
   };
 
-  // Renderizado del componente
   return (
     <div className="min-h-screen bg-gray-300/20">
       {/* Encabezado */}
@@ -550,7 +537,7 @@ export default function Dashboard() {
       <main className="container mx-auto p-6">
         <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
           <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
-            ¡Bienvenido, {user.name}!
+            ¡Bienvenido, {user.username}!
           </h2>
           <p className="text-gray-800">
             Desde aquí puedes gestionar todos los módulos del sistema.
