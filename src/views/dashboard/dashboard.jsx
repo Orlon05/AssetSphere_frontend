@@ -33,7 +33,7 @@ const decodeJWT = (token) => {
 
 export default function Dashboard() {
   const { logout } = useAuth();
-  const [user, setUser] = useState({ name: "", email: "", user_id: null });
+  const [user, setUser] = useState({ name: "", email: "", username: "", user_id: null });
   const BASE_PATH = "/inveplus";
 
   const [modules, setModules] = useState([
