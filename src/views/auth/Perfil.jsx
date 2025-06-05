@@ -12,9 +12,10 @@ export default function Perfil() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { userId } = useParams();
 
   const token = localStorage.getItem("authenticationToken");
-  const userId = localStorage.getItem("userId"); 
+
 
   useEffect(() => {
     const fetchUserData = async () => {
