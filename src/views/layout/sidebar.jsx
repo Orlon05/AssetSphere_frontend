@@ -83,7 +83,7 @@ export default function Sidebar() {
     <div className="flex h-screen">
       <div
         className={`flex flex-col justify-center  ${
-          open ? "w-72" : "w-20"
+          open ? "w-80" : "w-20"
         } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
@@ -100,7 +100,7 @@ export default function Sidebar() {
         >
           <ShieldCheck className="text-blue-600" size={40} />
           <h1
-            className={`text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide ${
+            className={`text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide ${
               !open && "hidden"
             }`}
           >
