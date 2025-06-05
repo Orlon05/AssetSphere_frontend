@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Perfil() {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -13,9 +14,10 @@ export default function Perfil() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { userId } = useParams();
+  const BASE_PATH = "/inveplus";
 
   const token = localStorage.getItem("authenticationToken");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -126,7 +128,8 @@ export default function Perfil() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        navigate
+        // Navegación al dashboard cuando el edit es exitoso
+        navigate(`${BASE_PATH}/dashboard`);
       }
     } catch (error) {
       console.error("Error inesperado:", error);
