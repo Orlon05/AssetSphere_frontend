@@ -114,8 +114,6 @@ export default function ServidoresVirtuales() {
         cores: row.cores ? parseInt(row.cores) : 0,
         ip: String(row.ip || ""),
         modified: row.modified
-        ? new Date(String(row.modified).trim()).toISOString().split("T")[0]
-        : "1970-01-01"
       }));
 
 
