@@ -113,8 +113,9 @@ export default function Dashboard() {
       }
 
       setUser({
-        name: userData.name || "Usuario",
+        name: userData.name || "",
         email: userData.email || "",
+        username: userData.username|| "",
         user_id: userId,
       });
     } catch (error) {
@@ -537,7 +538,7 @@ export default function Dashboard() {
       <main className="container mx-auto p-6">
         <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
           <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
-            ¡Bienvenido, {user.username}!
+            ¡Bienvenido, {setUser(username)}!
           </h2>
           <p className="text-gray-800">
             Desde aquí puedes gestionar todos los módulos del sistema.
