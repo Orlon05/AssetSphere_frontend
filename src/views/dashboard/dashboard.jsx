@@ -474,10 +474,8 @@ export default function Dashboard() {
             <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
               <button
                 onClick={() => {
-                  const userData = JSON.parse(localStorage.getItem("user")); // Confirma la clave
-                  const userId = userData.user_id;
                   setIsProfileOpen(false);
-                  navigate(`${BASE_PATH}/perfil/${userId}`);
+                  navigate(`${BASE_PATH}/perfil/${user.id}`);
                 }}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
               >
