@@ -78,7 +78,7 @@ export default function Sidebar() {
       <div
         className={`flex flex-col justify-center  ${
           open ? "w-72" : "w-20"
-        } bg-zinc-800 h-full p-8 pt-10 relative duration-300 border-r border-gray-700`}
+        } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
           src="/inveplus/chevron-left.png"
@@ -87,7 +87,7 @@ export default function Sidebar() {
           }`}
           onClick={() => setOpen(!open)}
         />
-         <div className="flex items-center gap-3 p-4">
+         <div div className="gap-x-8 items-center mb-32">
           <ShieldCheck className="text-blue-600" size={40} />
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
             Inveplus
