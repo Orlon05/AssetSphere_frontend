@@ -119,7 +119,7 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error("Error al cargar datos del usuario:", error);
-      setUser({ name: "Usuario", email: "", user_id: null });
+      setUser({ name: "", email: "", username: "", user_id: null });
     }
   }, []);
 
