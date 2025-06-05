@@ -61,7 +61,7 @@ export default function ServidoresVirtuales() {
             { name: "hdd", required: false, type: "string" },
             { name: "cores", required: false, type: "string" },
             { name: "ip", required: false, type: "string" },
-            { name: "modified", required: false, type: "date" },
+            { name: "modified", required: false, type: "datetime" },
           ],
         ];
         const importer = (
@@ -113,7 +113,7 @@ export default function ServidoresVirtuales() {
         hdd: String(row.hdd || ""),
         cores: row.cores ? parseInt(row.cores) : 0,
         ip: String(row.ip || ""),
-        modified: row.modified
+        modified: row.modified || ""
       }));
 
 

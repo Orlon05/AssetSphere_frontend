@@ -167,12 +167,8 @@ const BaseDeDatos = () => {
         supplier_name: row.supplier_name || "",
         supported: row.supported || "",
         account_id: row.account_id || "",
-        create_date: new Date(row.CreateDate || row.create_date)
-          .toISOString()
-          .split("T")[0],
-        modified_date: new Date(row.ModifiedDate || row.modified_date)
-          .toISOString()
-          .split("T")[0],
+        create_date: row.create_date || "",
+        modified_date: row.modified_date || "" 
       }));
 
       const response = await fetch(
