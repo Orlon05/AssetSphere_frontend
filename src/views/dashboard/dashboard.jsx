@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -33,8 +34,14 @@ const decodeJWT = (token) => {
 
 export default function Dashboard() {
   const { logout } = useAuth();
-  const [user, setUser] = useState({ name: "", email: "", username: "", user_id: null });
+  // const [user, setUser] = useState({ name: "", email: "", username: "", user_id: null });
   const BASE_PATH = "/inveplus";
+  const [user, setUser] = useState({
+    name: "",
+    username: "",
+    email: "",
+    role: "",
+  });
 
   const [modules, setModules] = useState([
     {
@@ -511,8 +518,6 @@ export default function Dashboard() {
               <button
                 onClick={() => {
                   setIsProfileOpen(false);
-                  console.log("Navegando a perfil con user_id:", user.user_id); // Debug
-                  // Usar user.user_id extraído del token
                   navigate(`${BASE_PATH}/perfil/${user.user_id}`);
                 }}
                 className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
