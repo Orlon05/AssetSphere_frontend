@@ -460,7 +460,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-300/20">
       {/* Encabezado */}
       <header className="w-full p-4 flex justify-between items-center">
-        <h1 className="text-slate-900 text-4xl font-bold">Inveplus</h1>
+        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-transparent bg-clip-text drop-shadow-md tracking-tight">
+          Inveplus
+        </h1>
+
         <div className="relative">
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
