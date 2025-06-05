@@ -167,14 +167,6 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  {
-    path: `${BASE_PATH}/perfil`,
-    element: (
-      <ProtectedRoute>
-        <Sidebar />
-      </ProtectedRoute>
-    ),
-  },
   // Crear
   {
     path: `${BASE_PATH}/crear-servidores-f`,
