@@ -87,7 +87,7 @@ export default function Sidebar() {
           }`}
           onClick={() => setOpen(!open)}
         />
-         <div className="flex items-center gap-3">
+         <div className="flex items-center gap-3 p-8">
           <ShieldCheck className="text-blue-600" size={40} />
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
             Inveplus
