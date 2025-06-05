@@ -17,25 +17,25 @@ export default function Sidebar() {
 
   const Menus = [
     {
-      id: 1,
+      id: 2,
       title: "Servidores Fisicos",
       icon: Server,
       path: "/inveplus/servidoresf",
     },
     {
-      id: 2,
+      id: 3,
       title: "Servidores Virtuales",
       icon: Cloud,
       path: "/inveplus/servidoresv",
     },
     {
-      id: 3,
+      id: 4,
       title: "Bases de Datos",
       icon: Database,
       path: "/inveplus/base-de-datos",
     },
-    { id: 4, title: "Pseries", icon: Server, path: "/inveplus/pseries" },
-    { id: 5, title: "Storage", icon: HardDrive, path: "/inveplus/storage" },
+    { id: 5, title: "Pseries", icon: Server, path: "/inveplus/pseries" },
+    { id: 6, title: "Storage", icon: HardDrive, path: "/inveplus/storage" },
     // {
     //   id: 6,
     //   title: "Sucursales",
@@ -43,7 +43,7 @@ export default function Sidebar() {
     //   path: "/inveplus/sucursales",
     // },
     {
-      id: 7,
+      id: 1,
       title: "Panel Principal",
       icon: LayoutGrid,
       path: "/inveplus/dashboard",
