@@ -51,7 +51,6 @@ const Login = () => {
     } catch (error) {
       setErrorMessage(error.message || "Usuario o contraseña incorrectos.");
       setModalError(true);
-      console.error("Error de inicio de sesión:", error);
     } finally {
       setIsLoading(false);
     }
