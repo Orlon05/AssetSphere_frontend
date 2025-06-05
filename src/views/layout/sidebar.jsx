@@ -17,6 +17,12 @@ export default function Sidebar() {
 
   const Menus = [
     {
+      id: 1,
+      title: "Panel Principal",
+      icon: LayoutGrid,
+      path: "/inveplus/dashboard",
+    },
+    {
       id: 2,
       title: "Servidores Fisicos",
       icon: Server,
@@ -42,12 +48,6 @@ export default function Sidebar() {
     //   icon: Building,
     //   path: "/inveplus/sucursales",
     // },
-    {
-      id: 1,
-      title: "Panel Principal",
-      icon: LayoutGrid,
-      path: "/inveplus/dashboard",
-    },
   ];
 
   const renderComponent = () => {
