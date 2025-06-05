@@ -8,7 +8,7 @@ import {
   HardDrive,
   Building,
   Cloud,
-  ShieldCheck
+  ShieldCheck 
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
@@ -451,7 +451,10 @@ export default function Dashboard() {
   };
 
   // Renderizado del componente
- <header className="w-full p-4 flex justify-between items-center bg-white shadow-md rounded-b-xl">
+  return (
+    <div className="min-h-screen bg-gray-300/20">
+      {/* Encabezado */}
+      <header className="w-full p-4 flex justify-between items-center bg-white shadow-md rounded-b-xl">
   <div className="flex items-center gap-3">
     <ShieldCheck className="text-blue-600" size={40} />
     <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
@@ -495,4 +498,51 @@ export default function Dashboard() {
   </div>
 </header>
 
+
+      <main className="container mx-auto p-6">
+        <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
+          <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
+            ¡Bienvenido, {user.name}!
+          </h2>
+          <p className="text-gray-800">
+            Desde aquí puedes gestionar todos los módulos del sistema.
+          </p>
+        </div>
+
+        {/* Módulos disponibles */}
+        <div className="bg-white :bg-stone-700 rounded-lg p-6 shadow-lg">
+          <h3 className="text-2xl text-gray-900 :bg-stone-700 :text-gray-200 font-bold mb-6">
+            Módulos Disponibles
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modules.map((module) => (
+              <div
+                key={module.id}
+                onClick={() => handleModuleClick(module.id)}
+                className="bg-gray-300/30 rounded-lg p-5 shadow-md hover:shadow-lg transition-all cursor-pointer"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="p-3 bg-gray-300/30 rounded-lg">
+                    <module.icon size={24} className="text-blue-500" />
+                  </div>
+                  <span className="text-2xl font-bold text-blue-500">
+                    {module.loading ? "..." : module.count}
+                  </span>
+                </div>
+                <h4 className="text-lg text-gray-900 font-medium mb-2">
+                  {module.title}
+                </h4>
+                <p className="text-gray-900 font-semibold text-sm mb-4">
+                  {module.description}
+                </p>
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
+                  Gestionar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
