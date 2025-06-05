@@ -77,7 +77,7 @@ export default function Sidebar() {
     <div className="flex h-screen">
       <div
         className={`flex flex-col justify-center  ${
-          open ? "w-72" : "w-20"
+          open ? "w-80" : "w-20"
         } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
