@@ -475,7 +475,7 @@ export default function Dashboard() {
         <button
           onClick={() => {
             setIsProfileOpen(false);
-            navigate(`${BASE_PATH}/Perfil`);
+            navigate(`${BASE_PATH}/perfil`);
           }}
           className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
         >
