@@ -320,7 +320,7 @@ export default function Perfil() {
             <button
               type="button"
               onClick={() => navigate(`${BASE_PATH}/dashboard`)}
-              className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+              className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition flex items-center justify-center"
             >
               <ArrowLeft className="mr-2" size={20} />
               Regresar
