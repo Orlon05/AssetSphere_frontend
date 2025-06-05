@@ -89,7 +89,7 @@ export default function Sidebar() {
         />
          <div div className="gap-x-8 items-center mb-32">
           <ShieldCheck className="text-blue-600" size={40} />
-          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
             Inveplus
           </h1>
         </div>
