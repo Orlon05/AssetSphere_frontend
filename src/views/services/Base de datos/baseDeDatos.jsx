@@ -124,7 +124,6 @@ const BaseDeDatos = () => {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados listos para enviar:", importedData);
 
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(

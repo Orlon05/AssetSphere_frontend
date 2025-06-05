@@ -230,8 +230,6 @@ const Pseries = () => {
   };
   // Función para manejar los datos importados
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados (cantidad):", importedData.length);
-    console.log("Datos importados (muestra):", importedData.slice(0, 3));
 
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(

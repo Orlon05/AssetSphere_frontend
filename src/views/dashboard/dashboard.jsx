@@ -296,7 +296,6 @@ export default function Dashboard() {
       }
 
       const data = await response.json();
-      console.log("Respuesta del backend:", data);
 
       if (data && data.status === "success" && data.data) {
         let totalCount = 0;

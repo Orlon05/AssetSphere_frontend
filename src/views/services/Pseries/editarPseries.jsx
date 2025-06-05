@@ -201,8 +201,6 @@ const EditarPseries = () => {
         }
       );
 
-      console.log("Respuesta del servidor:", response);
-
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
         try {

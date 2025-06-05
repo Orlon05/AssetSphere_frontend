@@ -82,7 +82,6 @@ const VerServidorVirtual = () => {
         }
 
         const data = await response.json();
-        console.log("Respuesta completa de la API:", data);
 
         // Intentar diferentes estructuras de respuesta
         let serverInfo = null;
@@ -98,7 +97,6 @@ const VerServidorVirtual = () => {
         }
 
         if (serverInfo) {
-          console.log("Datos del servidor encontrados:", serverInfo);
           setServerData(serverInfo);
         } else {
           console.error("Estructura no reconocida:", data);

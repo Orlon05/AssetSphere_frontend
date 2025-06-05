@@ -136,7 +136,6 @@ const VerDatabase = () => {
         setError(null);
 
         const token = localStorage.getItem("authenticationToken");
-        console.log("Fetching data for ID:", baseDeDatosId);
 
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDeDatosId}`,
@@ -154,7 +153,6 @@ const VerDatabase = () => {
         }
 
         const data = await response.json();
-        console.log("API response:", data);
 
         // Intentamos ser más flexibles con la estructura de la respuesta
         if (data?.status === "success") {

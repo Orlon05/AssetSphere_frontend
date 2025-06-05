@@ -143,8 +143,7 @@ const VerPseries = () => {
           }
         }
         const data = await response.json();
-        // console.log("Datos recibidos:", data);
-        // Actualiza los estados con los datos recibidos
+
         if (data.status === "success" && data.data) {
           setName(data.data.name || "");
           setApplication(data.data.application || "");

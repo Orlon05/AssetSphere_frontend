@@ -119,20 +119,14 @@ const EditarStorage = () => {
         }
 
         const data = await response.json();
-        console.log("Respuesta completa de la API:", data); // Debug
 
-        // Intentar diferentes estructuras de respuesta
         if (data && data.data && data.data.storage_info) {
-          // Estructura similar a servidores
           setFormData(data.data.storage_info);
         } else if (data && data.storage_info) {
-          // Estructura directa
           setFormData(data.storage_info);
         } else if (data && data.data) {
-          // Solo data
           setFormData(data.data);
         } else if (data && typeof data === "object") {
-          // Respuesta directa
           setFormData(data);
         } else {
           console.error("Estructura de respuesta no reconocida:", data);

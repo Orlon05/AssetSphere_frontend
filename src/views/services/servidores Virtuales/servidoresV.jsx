@@ -86,7 +86,6 @@ export default function ServidoresVirtuales() {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados:", importedData);
 
     Swal.fire({
       title: "Procesando datos...",
@@ -444,7 +443,7 @@ export default function ServidoresVirtuales() {
       statusLower === "running"
     ) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-600 text-green-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
           Running
         </span>
@@ -455,14 +454,14 @@ export default function ServidoresVirtuales() {
       statusLower === "stopped"
     ) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500 text-red-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
           Stopped
         </span>
       );
     } else if (statusLower === "paused" || statusLower === "paused") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-500 text-yellow-200">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
           <Clock size={12} className="mr-1" />
           Paused
         </span>

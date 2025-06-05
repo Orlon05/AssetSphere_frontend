@@ -220,7 +220,6 @@ export default function ServidoresFisicos() {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("Datos importados:", importedData);
 
     Swal.fire({
       title: "Procesando datos...",
@@ -433,9 +432,6 @@ export default function ServidoresFisicos() {
         }
       });
 
-      console.log("Datos formateados (muestra):", formattedData.slice(0, 3));
-      console.log("Total de registros a enviar:", formattedData.length);
-
       // Enviar servidores uno por uno usando el endpoint que funciona
       let successCount = 0;
       let errorCount = 0;
@@ -612,10 +608,8 @@ export default function ServidoresFisicos() {
       }
 
       const data = await response.json();
-      console.log("Respuesta completa del servidor:", data); // Debug log
 
       if (data && data.status === "success" && data.data) {
-        console.log("Servidores recibidos:", data.data.servers); // Debug log
         setUnfilteredServers(data.data.servers);
         setServers(data.data.servers);
         setTotalPages(data.data.total_pages || 0);
@@ -805,7 +799,6 @@ export default function ServidoresFisicos() {
   };
 
   const getStatusBadge = (status) => {
-    console.log("Estado recibido en getStatusBadge:", status); // Debug log
 
     if (!status) {
       return (
@@ -1014,7 +1007,6 @@ export default function ServidoresFisicos() {
               <tbody>
                 {filteredServers.length > 0 ? (
                   filteredServers.map((server, index) => {
-                    console.log("Servidor en tabla:", server); // Debug log
                     return (
                       <tr
                         key={server.id}

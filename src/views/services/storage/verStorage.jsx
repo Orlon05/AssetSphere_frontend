@@ -118,27 +118,20 @@ const VerStorage = () => {
         }
 
         const data = await response.json();
-        console.log("Respuesta completa de la API:", data);
 
-        // Intentar diferentes estructuras de respuesta
         let storageInfo = null;
 
         if (data?.status === "success" && data.data?.storage_info) {
-          // Estructura como servidores: data.data.storage_info
           storageInfo = data.data.storage_info;
         } else if (data?.data?.storage_info) {
-          // Estructura: data.storage_info
           storageInfo = data.data.storage_info;
         } else if (data?.data) {
-          // Estructura: data.data
           storageInfo = data.data;
         } else if (data && typeof data === "object" && !data.error) {
-          // Respuesta directa
           storageInfo = data;
         }
 
         if (storageInfo) {
-          console.log("Datos del storage encontrados:", storageInfo);
           setStorageData(storageInfo);
         } else {
           console.error("Estructura no reconocida:", data);
