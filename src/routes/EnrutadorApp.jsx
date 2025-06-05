@@ -4,6 +4,7 @@ const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
 const Login = lazy(() => import("../views/auth/Login"));
 const Dashboard = lazy(() => import("../views/dashboard/dashboard"));
 const Sidebar = lazy(() => import("../views/layout/sidebar"));
+const Perfil = lazy(() => import("../views/auth/Perfil"));
 
 // Servidores Fisicos
 const CrearServerF = lazy(() =>
@@ -103,14 +104,14 @@ const EnrutadorApp = [
       </ProtectedRoute>
     ),
   },
-  // {
-  //   path: `${BASE_PATH}/analitica`,
-  //   element: (
-  //     <ProtectedRoute>
-  //       <Analitica />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: `${BASE_PATH}/perfil`,
+    element: (
+      <ProtectedRoute>
+        <Perfil />
+      </ProtectedRoute>
+    ),
+  },
   // {
   //   path: `${BASE_PATH}/usuarios`,
   //   element: (
