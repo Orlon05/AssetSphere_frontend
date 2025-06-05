@@ -86,11 +86,11 @@ export default function Sidebar() {
           }`}
           onClick={() => setOpen(!open)}
         />
-        <div className="gap-x-8 items-center mb-32">
-          <img
-            src="/inveplus/logowhite.png"
-            className={`cursor-pointer duration-500 ${open}`}
-          />
+         <div className="flex items-center gap-3">
+          <ShieldCheck className="text-blue-600" size={40} />
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
+            Inveplus
+          </h1>
         </div>
         <ul className="pt-6">
           {Menus.map((Menu) => (
