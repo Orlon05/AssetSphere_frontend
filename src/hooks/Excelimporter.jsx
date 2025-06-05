@@ -48,7 +48,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         const workbook = XLSX.read(data, { type: "array" });
         setSheetNames(workbook.SheetNames);
         setWorkbookData(workbook);
-        console.log("Workbook Data:", workbook.SheetNames);
       } catch (error) {
         console.error("Error al leer archivo:", error);
         setFileError("Error al leer archivo. Por favor, inténtalo de nuevo.");
@@ -88,11 +87,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           (header, idx) => header || `Column ${idx + 1}`
         );
         const dataRows = filteredData.slice(1);
-
-        console.log("Headers detectados:", headers);
-        console.log("Filas de datos:", dataRows);
-        console.log("Total de filas:", dataRows.length);
-
         setColumns(headers);
         setExcelData(dataRows);
         setShowTable(true);
@@ -161,8 +155,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         });
       }
 
-      // Registrar para depuración
-      console.log("Fila mapeada:", mappedRow);
 
       return mappedRow;
     });
@@ -226,8 +218,6 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         throw new Error("No se pudieron mapear los datos correctamente");
       }
 
-      console.log("Datos mapeados para guardar:", mappedData);
-      console.log("Cantidad de registros a guardar:", mappedData.length);
 
       // Simulación de guardado
       await new Promise((resolve) => setTimeout(resolve, 1000));
