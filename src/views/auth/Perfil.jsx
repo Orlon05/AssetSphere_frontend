@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Perfil() {
   const [user, setUser] = useState({
@@ -15,7 +16,6 @@ export default function Perfil() {
   const { userId } = useParams();
 
   const token = localStorage.getItem("authenticationToken");
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -126,6 +126,7 @@ export default function Perfil() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
+        navigate
       }
     } catch (error) {
       console.error("Error inesperado:", error);
