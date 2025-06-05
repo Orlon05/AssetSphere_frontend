@@ -454,49 +454,50 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-300/20">
       {/* Encabezado */}
       <header className="w-full p-4 flex justify-between items-center bg-white shadow-md rounded-b-xl">
-  <div className="flex items-center gap-3">
-    <ShieldCheck className="text-blue-600" size={40} />
-    <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
-      Inveplus
-    </h1>
-  </div>
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="text-blue-600" size={40} />
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
+            Inveplus
+          </h1>
+        </div>
 
-  <div className="relative">
-    <button
-      onClick={() => setIsProfileOpen(!isProfileOpen)}
-      className="flex items-center bg-gray-300 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-400/30"
-    >
-      <span>{user.name}</span>
-      <ChevronDown size={16} />
-    </button>
+        <div className="relative">
+          <button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="flex items-center bg-gray-300 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-400/30"
+          >
+            <span>{user.name}</span>
+            <ChevronDown size={16} />
+          </button>
 
-    {isProfileOpen && (
-      <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
-        <button
-          onClick={() => {
-            setIsProfileOpen(false);
-            navigate(`${BASE_PATH}/perfil`);
-          }}
-          className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
-        >
-          <UserIcon size={16} />
-          Ver Perfil
-        </button>
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
+              <button
+                onClick={() => {
+                  const userData = JSON.parse(localStorage.getItem("user")); // Confirma la clave
+                  const userId = userData.user_id;
+                  setIsProfileOpen(false);
+                  navigate(`${BASE_PATH}/perfil/${userId}`);
+                }}
+                className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+              >
+                <UserIcon size={16} />
+                Ver Perfil
+              </button>
 
-        <div className="border-t border-gray-500 my-1"></div>
+              <div className="border-t border-gray-500 my-1"></div>
 
-        <button
-          onClick={handleLogout}
-          className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
-        >
-          <LogOut size={16} />
-          Cerrar Sesión
-        </button>
-      </div>
-    )}
-  </div>
-</header>
-
+              <button
+                onClick={handleLogout}
+                className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+              >
+                <LogOut size={16} />
+                Cerrar Sesión
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
       <main className="container mx-auto p-6">
         <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">

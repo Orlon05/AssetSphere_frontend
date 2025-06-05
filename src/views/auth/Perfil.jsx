@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Perfil() {
   const navigate = useNavigate();
+  const { userId } = useParams(); 
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -17,7 +18,6 @@ export default function Perfil() {
   const BASE_PATH = "/inveplus";
 
   const token = localStorage.getItem("authenticationToken");
-  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,10 +52,10 @@ export default function Perfil() {
         const data = await response.json();
         if (data.status === "success" && data.data) {
           setUser({
-            name: data.data.name || data.data.full_name || "",
+            name: data.data.name || "",
             username: data.data.username || "",
             email: data.data.email || "",
-            role: data.data.role || data.data.role_name || "",
+            role: data.data.role || "",
           });
         } else {
           console.error("Estructura de datos inesperada:", data);
@@ -100,8 +100,12 @@ export default function Perfil() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            authorized: true,
+            password: newPassword,
           }),
         }
       );
@@ -128,7 +132,6 @@ export default function Perfil() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
-        // Navegación al dashboard cuando el edit es exitoso
         navigate(`${BASE_PATH}/dashboard`);
       }
     } catch (error) {
@@ -157,10 +160,10 @@ export default function Perfil() {
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p className="text-gray-700 mb-4">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => navigate(`${BASE_PATH}/dashboard`)}
             className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
           >
-            Reintentar
+            Volver al Dashboard
           </button>
         </div>
       </div>
