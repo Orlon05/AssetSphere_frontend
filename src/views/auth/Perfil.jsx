@@ -7,7 +7,6 @@ export default function Perfil() {
     email: "",
     role: "",
   });
-  const [userId, setUserId] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,87 +14,67 @@ export default function Perfil() {
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem("authenticationToken");
+  const userId = localStorage.getItem("userId"); 
 
   useEffect(() => {
-    const getUserId = () => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const storedUserId = localStorage.getItem("userId");
-        if (storedUserId) {
-          return storedUserId;
-        }
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          return parsedUser.id || parsedUser.userId;
+        const response = await fetch(
+          `https://10.8.150.90/api/inveplus/users/get_by_id/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error al obtener datos del usuario:", errorData);
+          if (response.status === 404) {
+            throw new Error("Usuario no encontrado");
+          } else if (response.status === 401) {
+            throw new Error("No autorizado");
+          } else {
+            throw new Error(
+              `Error HTTP ${response.status}: ${
+                errorData.message || errorData.detail
+              }`
+            );
+          }
         }
 
-        return null;
+        const data = await response.json();
+        if (data.status === "success" && data.data) {
+          setUser({
+            name: data.data.name || data.data.full_name || "",
+            username: data.data.username || "",
+            email: data.data.email || "",
+            role: data.data.role || data.data.role_name || "",
+          });
+        } else {
+          console.error("Estructura de datos inesperada:", data);
+          setError("Estructura de datos inesperada del servidor");
+        }
       } catch (error) {
-        console.error("Error al obtener userId:", error);
-        return null;
+        console.error("Error en fetchUserData:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    const id = getUserId();
-    if (id) {
-      setUserId(id);
-      fetchUserData(id);
+    if (userId) {
+      fetchUserData();
     } else {
       setLoading(false);
       setError(
         "No se pudo obtener la información del usuario. Por favor, inicia sesión nuevamente."
       );
     }
-  }, []);
-
-  const fetchUserData = async (id) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        `https://10.8.150.90/api/inveplus/users/get_by_id/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error al obtener datos del usuario:", errorData);
-        if (response.status === 404) {
-          throw new Error("Usuario no encontrado");
-        } else if (response.status === 401) {
-          throw new Error("No autorizado");
-        } else {
-          throw new Error(
-            `Error HTTP ${response.status}: ${
-              errorData.message || errorData.detail
-            }`
-          );
-        }
-      }
-
-      const data = await response.json();
-      if (data.status === "success" && data.data) {
-        setUser({
-          name: data.data.name || data.data.full_name || "",
-          username: data.data.username || "",
-          email: data.data.email || "",
-          role: data.data.role || data.data.role_name || "",
-        });
-      } else {
-        console.error("Estructura de datos inesperada:", data);
-        setError("Estructura de datos inesperada del servidor");
-      }
-    } catch (error) {
-      console.error("Error en fetchUserData:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [userId, token]);
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
