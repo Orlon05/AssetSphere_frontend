@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-// import style from "../../css/login.module";
-//import PopupError from "../popups/PopupError";
-// import Loader from "../layouts/Loader";
 import { useAuth } from "../../routes/AuthContext";
 
 const gradientStyle = {
@@ -17,31 +14,25 @@ const gradientStyle = {
 
 const Login = () => {
   const user = useAuth();
-  //estado para manejar el correo y la contraseña
   const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [modalError, setModalError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // //estado para mostrar el modal de error
-  // const [modalError, setModalError] = useState(false);
-
-  // Función para logearse
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const response = await fetch(
-        "https://10.8.150.90/api/inveplus/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        }
-      );
+      const response = await fetch("https://10.8.150.90/api/inveplus/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
       const data = await response.json();
 
@@ -54,25 +45,20 @@ const Login = () => {
       }
 
       const tokenFromResponse = data.data.accessToken;
-
       user.login(tokenFromResponse);
-      const tokenFromLocalStorage = localStorage.getItem("authenticationToken");
-
       localStorage.setItem("userInfo", JSON.stringify(data.data));
       navigate("/dashboard");
     } catch (error) {
-      // setErrorMessage(error.message);
-      // setModalError(true);
-      console.error("Error de inicio de sesión:", error);
+      setErrorMessage(error.message || "Usuario o contraseña incorrectos.");
+      setModalError(true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  //función para cerrar el modal de error
-  // const cerrarModalError = () => {
-  //   setModalError(false);
-  // };
+  const cerrarModalError = () => {
+    setModalError(false);
+  };
 
   useEffect(() => {
     if (user.token) navigate("/inveplus/dashboard");
@@ -81,19 +67,35 @@ const Login = () => {
   return (
     !user.token && (
       <div style={gradientStyle}>
+        {/* Modal de error */}
+        {modalError && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+              <h2 className="text-xl font-bold text-red-600 mb-2">Error</h2>
+              <p className="text-gray-700 mb-4">{errorMessage}</p>
+              <div className="text-right">
+                <button
+                  onClick={cerrarModalError}
+                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
             <div className="w-full">
               <div className="flex justify-center mb-6">
-                <img src="/inveplus/logo.png" />
+                <img src="/inveplus/logo.png" alt="Logo Inveplus" />
               </div>
               <div className="text-center">
-                <h1 className="text-3xl font-semibold text-gray-900">
-                  Iniciar Sesión
-                </h1>
+                <h1 className="text-3xl font-semibold text-gray-900">Iniciar Sesión</h1>
               </div>
               <div className="mt-5">
-                <form action="" onSubmit={handleLoginSubmit}>
+                <form onSubmit={handleLoginSubmit}>
                   <div className="relative mt-6">
                     <input
                       type="text"
@@ -104,10 +106,7 @@ const Login = () => {
                       required
                       autoComplete="username"
                     />
-                    <label
-                      className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 
-                                    peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800"
-                    >
+                    <label className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">
                       Usuario
                     </label>
                   </div>
@@ -121,20 +120,17 @@ const Login = () => {
                       required
                       autoComplete="current-password"
                     />
-                    <label
-                      htmlFor="password"
-                      className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 
-                                    ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800"
-                    >
+                    <label className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">
                       Contraseña
                     </label>
                   </div>
-                  <div className="my-6 ">
+                  <div className="my-6">
                     <button
                       type="submit"
-                      className="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none"
+                      disabled={isLoading}
+                      className="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none disabled:opacity-50"
                     >
-                      Ingresar
+                      {isLoading ? "Cargando..." : "Ingresar"}
                     </button>
                   </div>
                 </form>
