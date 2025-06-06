@@ -174,11 +174,13 @@ const BaseDeDatos = () => {
         },
       });
 
+      const formattedData = formatDataForAPI(validData);
+
       const batchSize = 500;
-      const totalBatches = Math.ceil(validData.length / batchSize);
+      const totalBatches = Math.ceil(formattedData.length / batchSize);
 
       for (let i = 0; i < totalBatches; i++) {
-        const batch = validData.slice(i * batchSize, (i + 1) * batchSize);
+        const batch = formattedData.slice(i * batchSize, (i + 1) * batchSize);
 
         const response = await fetch(
           "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
@@ -241,6 +243,47 @@ const BaseDeDatos = () => {
       console.error("Error al importar:", error);
       Swal.fire("Error", error.message || "Error al importar datos", "error");
     }
+  };
+
+  const formatDataForAPI = (data) => {
+    return data.map((row) => {
+      const formatDate = (date) => {
+        if (!date) return null;
+        const [year, month, day] = date.split("-");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
+
+      return {
+        instance_id: row.instance_id || null,
+        cost_center: row.cost_center || null,
+        category: row.category || null,
+        type: row.type || null,
+        item: row.item || null,
+        owner_contact: row.owner_contact || null,
+        name: row.name || null,
+        application_code: row.application_code || null,
+        inactive: row.inactive || null,
+        asset_life_cycle_status: row.asset_life_cycle_status || null,
+        system_environment: row.system_environment || null,
+        cloud: row.cloud || null,
+        version_number: row.version_number || null,
+        serial: row.serial || null,
+        ci_tag: row.ci_tag || null,
+        instance_name: row.instance_name || null,
+        model: row.model || null,
+        ha: row.ha || null,
+        port: row.port || null,
+        owner_name: row.owner_name || null,
+        department: row.department || null,
+        company: row.company || null,
+        manufacturer_name: row.manufacturer_name || null,
+        supplier_name: row.supplier_name || null,
+        supported: row.supported || null,
+        account_id: row.account_id || null,
+        create_date: formatDate(row.create_date) || null,
+        modified_date: formatDate(row.modified_date) || null,
+      };
+    });
   };
 
   const handleError = (error) => {
