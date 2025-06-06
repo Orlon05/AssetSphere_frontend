@@ -395,20 +395,18 @@ export default function Dashboard() {
       if (data && data.status === "success" && data.data) {
         let totalCount = 0;
 
-        if (data.data.total_count !== undefined) {
-          totalCount = data.data.total_count;
-        } else if (data.data.total !== undefined) {
-          totalCount = data.data.total;
-        } else if (
+        if (
           data.data.total_pages !== undefined &&
-          data.data.per_page !== undefined
+          Array.isArray(data.data.base_datos)
         ) {
-          totalCount = data.data.total_pages * data.data.per_page;
-        } else if (
-          data.data.bases_datos &&
-          Array.isArray(data.data.bases_datos)
-        ) {
-          totalCount = data.data.bases_datos.length;
+          const itemsOnPage = data.data.base_datos.length;
+          const currentPage = data.data.current_page || 1;
+
+          if (data.data.total_pages === currentPage) {
+            totalCount = (data.data.total_pages - 1) * 1000 + itemsOnPage;
+          } else {
+            totalCount = data.data.total_pages * 1000;
+          }
         }
 
         setModules((prevModules) =>
@@ -436,7 +434,7 @@ export default function Dashboard() {
       );
     }
   };
-
+  
   const fetchServervCount = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");

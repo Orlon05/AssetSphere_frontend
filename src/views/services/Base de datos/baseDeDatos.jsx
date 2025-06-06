@@ -122,7 +122,6 @@ const BaseDeDatos = () => {
     });
   };
 
-
   const handleImportComplete = async (importedData) => {
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
@@ -287,6 +286,7 @@ const BaseDeDatos = () => {
       };
     });
   };
+
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener las bases de datos:", error);
