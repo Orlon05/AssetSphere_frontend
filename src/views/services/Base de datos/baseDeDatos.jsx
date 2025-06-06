@@ -128,83 +128,83 @@ const BaseDeDatos = () => {
     });
   };
 
-  // Reemplazar la función formatDate actual con esta versión mejorada
   const formatDate = (dateValue) => {
     if (!dateValue) return null;
 
     try {
-      // Si ya es una fecha válida
       if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
-        // Formato YYYY-MM-DD
         return `${dateValue.getFullYear()}-${String(
           dateValue.getMonth() + 1
         ).padStart(2, "0")}-${String(dateValue.getDate()).padStart(2, "0")}`;
       }
 
-      // Si es un string, intentar parsearlo
       if (typeof dateValue === "string") {
+        if (!dateValue.trim()) return null;
+
         const parsedDate = new Date(dateValue);
         if (!isNaN(parsedDate.getTime())) {
-          // Formato YYYY-MM-DD
           return `${parsedDate.getFullYear()}-${String(
             parsedDate.getMonth() + 1
           ).padStart(2, "0")}-${String(parsedDate.getDate()).padStart(2, "0")}`;
         }
       }
 
-      // Si es un número (timestamp de Excel)
       if (typeof dateValue === "number") {
-        // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
         const excelEpoch = new Date(1900, 0, 1);
         const jsDate = new Date(
           excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
         );
         if (!isNaN(jsDate.getTime())) {
-          // Formato YYYY-MM-DD
           return `${jsDate.getFullYear()}-${String(
             jsDate.getMonth() + 1
           ).padStart(2, "0")}-${String(jsDate.getDate()).padStart(2, "0")}`;
         }
       }
 
-      return null;
+      return "0000-00-00";
     } catch (error) {
       console.error("Error al formatear fecha:", error, dateValue);
-      return null;
+      return "0000-00-00"; 0
     }
   };
 
   const formatDataForAPI = (data) => {
-    return data.map((row) => ({
-      instance_id: row.instance_id?.toString() || "",
-      cost_center: row.cost_center?.toString() || "",
-      category: row.category?.toString() || "",
-      type: row.type?.toString() || "",
-      item: row.item?.toString() || "",
-      owner_contact: row.owner_contact?.toString() || "",
-      name: row.name?.toString() || "",
-      application_code: row.application_code?.toString() || "",
-      inactive: row.inactive?.toString() || "",
-      asset_life_cycle_status: row.asset_life_cycle_status?.toString() || "",
-      system_environment: row.system_environment?.toString() || "",
-      cloud: row.cloud?.toString() || "",
-      version_number: row.version_number?.toString() || "",
-      serial: row.serial?.toString() || "",
-      ci_tag: row.ci_tag?.toString() || "",
-      instance_name: row.instance_name?.toString() || "",
-      model: row.model?.toString() || "",
-      ha: row.ha?.toString() || "",
-      port: row.port?.toString() || "",
-      owner_name: row.owner_name?.toString() || "",
-      department: row.department?.toString() || "",
-      company: row.company?.toString() || "",
-      manufacturer_name: row.manufacturer_name?.toString() || "",
-      supplier_name: row.supplier_name?.toString() || "",
-      supported: row.supported?.toString() || "",
-      account_id: row.account_id?.toString() || "",
-      create_date: formatDate(row.create_date),
-      modified_date: formatDate(row.modified_date),
-    }));
+    return data.map((row) => {
+      const createDate = formatDate(row.create_date) || "0000-00-00";
+      const modifiedDate =
+        formatDate(row.modified_date) || createDate || "0000-00-00";
+
+      return {
+        instance_id: row.instance_id?.toString() || "",
+        cost_center: row.cost_center?.toString() || "",
+        category: row.category?.toString() || "",
+        type: row.type?.toString() || "",
+        item: row.item?.toString() || "",
+        owner_contact: row.owner_contact?.toString() || "",
+        name: row.name?.toString() || "",
+        application_code: row.application_code?.toString() || "",
+        inactive: row.inactive?.toString() || "",
+        asset_life_cycle_status: row.asset_life_cycle_status?.toString() || "",
+        system_environment: row.system_environment?.toString() || "",
+        cloud: row.cloud?.toString() || "",
+        version_number: row.version_number?.toString() || "",
+        serial: row.serial?.toString() || "",
+        ci_tag: row.ci_tag?.toString() || "",
+        instance_name: row.instance_name?.toString() || "",
+        model: row.model?.toString() || "",
+        ha: row.ha?.toString() || "",
+        port: row.port?.toString() || "",
+        owner_name: row.owner_name?.toString() || "",
+        department: row.department?.toString() || "",
+        company: row.company?.toString() || "",
+        manufacturer_name: row.manufacturer_name?.toString() || "",
+        supplier_name: row.supplier_name?.toString() || "",
+        supported: row.supported?.toString() || "",
+        account_id: row.account_id?.toString() || "",
+        create_date: createDate,
+        modified_date: modifiedDate,
+      };
+    });
   };
 
   const sendBatch = async (batch, token, batchNumber, totalBatches) => {
