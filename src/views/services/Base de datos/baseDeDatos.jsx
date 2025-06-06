@@ -15,7 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
-
+// hola
 const BaseDeDatos = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -128,20 +128,107 @@ const BaseDeDatos = () => {
     });
   };
 
+  // Función mejorada para formatear fechas con múltiples formatos
   const formatDate = (dateValue) => {
-    if (!dateValue) return null;
+    if (!dateValue) return "2023-01-01"; // Fecha por defecto
 
     try {
+      // Si ya es una fecha válida
       if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
         return `${dateValue.getFullYear()}-${String(
           dateValue.getMonth() + 1
         ).padStart(2, "0")}-${String(dateValue.getDate()).padStart(2, "0")}`;
       }
 
+      // Si es un string, intentar múltiples formatos
       if (typeof dateValue === "string") {
-        if (!dateValue.trim()) return null;
+        if (!dateValue.trim()) return "2023-01-01";
 
-        const parsedDate = new Date(dateValue);
+        // Limpiar el string
+        const cleanDate = dateValue.trim();
+
+        // Patrones de fecha comunes
+        const patterns = [
+          // DD/MM/YYYY o DD-MM-YYYY
+          /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/,
+          // MM/DD/YYYY o MM-DD-YYYY
+          /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/,
+          // YYYY/MM/DD o YYYY-MM-DD
+          /^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/,
+          // DD.MM.YYYY
+          /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
+        ];
+
+        // Intentar con formato DD/MM/YYYY primero (más común en Excel)
+        const ddmmyyyy = cleanDate.match(
+          /^(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{4})$/
+        );
+        if (ddmmyyyy) {
+          const day = Number.parseInt(ddmmyyyy[1], 10);
+          const month = Number.parseInt(ddmmyyyy[2], 10);
+          const year = Number.parseInt(ddmmyyyy[3], 10);
+
+          // Validar rangos
+          if (
+            month >= 1 &&
+            month <= 12 &&
+            day >= 1 &&
+            day <= 31 &&
+            year >= 1900 &&
+            year <= 2100
+          ) {
+            return `${year}-${String(month).padStart(2, "0")}-${String(
+              day
+            ).padStart(2, "0")}`;
+          }
+        }
+
+        // Si el formato DD/MM/YYYY no funciona, intentar MM/DD/YYYY
+        if (ddmmyyyy) {
+          const month = Number.parseInt(ddmmyyyy[1], 10);
+          const day = Number.parseInt(ddmmyyyy[2], 10);
+          const year = Number.parseInt(ddmmyyyy[3], 10);
+
+          // Validar rangos
+          if (
+            month >= 1 &&
+            month <= 12 &&
+            day >= 1 &&
+            day <= 31 &&
+            year >= 1900 &&
+            year <= 2100
+          ) {
+            return `${year}-${String(month).padStart(2, "0")}-${String(
+              day
+            ).padStart(2, "0")}`;
+          }
+        }
+
+        // Intentar con formato YYYY/MM/DD
+        const yyyymmdd = cleanDate.match(
+          /^(\d{4})[/\-.](\d{1,2})[/\-.](\d{1,2})$/
+        );
+        if (yyyymmdd) {
+          const year = Number.parseInt(yyyymmdd[1], 10);
+          const month = Number.parseInt(yyyymmdd[2], 10);
+          const day = Number.parseInt(yyyymmdd[3], 10);
+
+          if (
+            month >= 1 &&
+            month <= 12 &&
+            day >= 1 &&
+            day <= 31 &&
+            year >= 1900 &&
+            year <= 2100
+          ) {
+            return `${year}-${String(month).padStart(2, "0")}-${String(
+              day
+            ).padStart(2, "0")}`;
+          }
+        }
+
+        // Intentar parsear directamente con Date
+        const parsedDate = new Date(cleanDate);
         if (!isNaN(parsedDate.getTime())) {
           return `${parsedDate.getFullYear()}-${String(
             parsedDate.getMonth() + 1
@@ -149,7 +236,9 @@ const BaseDeDatos = () => {
         }
       }
 
+      // Si es un número (timestamp de Excel)
       if (typeof dateValue === "number") {
+        // Excel usa 1900-01-01 como base
         const excelEpoch = new Date(1900, 0, 1);
         const jsDate = new Date(
           excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
@@ -161,18 +250,60 @@ const BaseDeDatos = () => {
         }
       }
 
-      return "0000-00-00";
+      // Si nada funciona, usar fecha por defecto
+      console.warn(
+        "No se pudo formatear la fecha:",
+        dateValue,
+        "usando fecha por defecto"
+      );
+      return "2023-01-01";
     } catch (error) {
       console.error("Error al formatear fecha:", error, dateValue);
-      return "0000-00-00"; 0
+      return "2023-01-01";
     }
   };
 
+  // Función para validar y limpiar datos antes del envío
+  const validateAndCleanData = (data) => {
+    return data.map((row, index) => {
+      const cleanedRow = { ...row };
+
+      // Validar y limpiar fechas específicamente
+      if (row.create_date) {
+        console.log(
+          `Fila ${index + 1} - create_date original:`,
+          row.create_date
+        );
+        cleanedRow.create_date = formatDate(row.create_date);
+        console.log(
+          `Fila ${index + 1} - create_date formateada:`,
+          cleanedRow.create_date
+        );
+      }
+
+      if (row.modified_date) {
+        console.log(
+          `Fila ${index + 1} - modified_date original:`,
+          row.modified_date
+        );
+        cleanedRow.modified_date = formatDate(row.modified_date);
+        console.log(
+          `Fila ${index + 1} - modified_date formateada:`,
+          cleanedRow.modified_date
+        );
+      }
+
+      return cleanedRow;
+    });
+  };
+
+  // Reemplazar la función formatDataForAPI con esta versión mejorada
   const formatDataForAPI = (data) => {
     return data.map((row) => {
-      const createDate = formatDate(row.create_date) || "0000-00-00";
+      // Asegurarse de que create_date y modified_date siempre tengan un valor válido
+      const createDate = formatDate(row.create_date) || "2023-01-01";
       const modifiedDate =
-        formatDate(row.modified_date) || createDate || "0000-00-00";
+        formatDate(row.modified_date) || createDate || "2023-01-01";
 
       return {
         instance_id: row.instance_id?.toString() || "",
@@ -209,12 +340,20 @@ const BaseDeDatos = () => {
 
   const sendBatch = async (batch, token, batchNumber, totalBatches) => {
     try {
-      const formattedBatch = formatDataForAPI(batch);
+      // Validar y limpiar datos antes del formateo
+      const validatedBatch = validateAndCleanData(batch);
+      const formattedBatch = formatDataForAPI(validatedBatch);
 
       console.log(
         `Enviando lote ${batchNumber} con ${formattedBatch.length} registros`
       );
-      console.log("Muestra de datos del lote:", formattedBatch.slice(0, 2)); // Mostrar solo los primeros 2 registros
+      console.log(
+        "Muestra de fechas del lote:",
+        formattedBatch.slice(0, 2).map((item) => ({
+          create_date: item.create_date,
+          modified_date: item.modified_date,
+        }))
+      );
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
