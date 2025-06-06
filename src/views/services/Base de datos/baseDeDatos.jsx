@@ -135,6 +135,7 @@ const BaseDeDatos = () => {
       return;
     }
 
+    // Validar que al menos tengan un campo requerido
     const validData = importedData.filter((row) => row.name || row.instance_id);
     if (validData.length === 0) {
       Swal.fire(
@@ -150,6 +151,37 @@ const BaseDeDatos = () => {
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
+
+      const formatDate = (dateValue) => {
+        if (!dateValue) return null;
+
+        // Si ya es una fecha válida
+        if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+          return dateValue.toISOString();
+        }
+
+        // Si es un string, intentar parsearlo
+        if (typeof dateValue === "string") {
+          const parsedDate = new Date(dateValue);
+          if (!isNaN(parsedDate.getTime())) {
+            return parsedDate.toISOString();
+          }
+        }
+
+        // Si es un número (timestamp de Excel)
+        if (typeof dateValue === "number") {
+          // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
+          const excelEpoch = new Date(1900, 0, 1);
+          const jsDate = new Date(
+            excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
+          );
+          if (!isNaN(jsDate.getTime())) {
+            return jsDate.toISOString();
+          }
+        }
+
+        return null;
+      };
 
       const formattedData = validData.map((row) => ({
         instance_id: row.instance_id?.toString() || "",
@@ -178,13 +210,11 @@ const BaseDeDatos = () => {
         supplier_name: row.supplier_name?.toString() || "",
         supported: row.supported?.toString() || "",
         account_id: row.account_id?.toString() || "",
-        create_date: row.create_date
-          ? new Date(row.create_date).toISOString()
-          : null,
-        modified_date: row.modified_date
-          ? new Date(row.modified_date).toISOString()
-          : null,
+        create_date: formatDate(row.create_date),
+        modified_date: formatDate(row.modified_date),
       }));
+
+      console.log("Datos a enviar:", formattedData); // Para debug
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
@@ -211,6 +241,7 @@ const BaseDeDatos = () => {
       const result = await response.json();
       Swal.fire("Éxito", "Datos importados correctamente", "success");
 
+      // Recargar la lista después de importar
       fetchBasesDeDatos(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al importar:", error);
