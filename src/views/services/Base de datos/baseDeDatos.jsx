@@ -196,6 +196,11 @@ const BaseDeDatos = () => {
     try {
       const formattedBatch = formatDataForAPI(batch);
 
+      console.log(
+        `Enviando lote ${batchNumber} con ${formattedBatch.length} registros`
+      );
+      console.log("Muestra de datos del lote:", formattedBatch.slice(0, 2)); // Mostrar solo los primeros 2 registros
+
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
         {
@@ -208,22 +213,60 @@ const BaseDeDatos = () => {
         }
       );
 
+      console.log(
+        `Respuesta del lote ${batchNumber}:`,
+        response.status,
+        response.statusText
+      );
+
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status} en lote ${batchNumber}`;
+        let errorDetails = "";
 
         try {
           const errorData = await response.json();
-          errorMessage = errorData.detail || errorData.message || errorMessage;
+          console.error(`Error detallado del lote ${batchNumber}:`, errorData);
+
+          if (errorData.detail) {
+            if (Array.isArray(errorData.detail)) {
+              errorDetails = errorData.detail
+                .map((err) => {
+                  if (typeof err === "object" && err.msg) {
+                    return `${err.loc ? err.loc.join(".") + ": " : ""}${
+                      err.msg
+                    }`;
+                  }
+                  return JSON.stringify(err);
+                })
+                .join("; ");
+            } else if (typeof errorData.detail === "string") {
+              errorDetails = errorData.detail;
+            } else {
+              errorDetails = JSON.stringify(errorData.detail);
+            }
+          } else if (errorData.message) {
+            errorDetails = errorData.message;
+          } else {
+            errorDetails = JSON.stringify(errorData);
+          }
+
+          errorMessage = `${errorMessage}: ${errorDetails}`;
         } catch (parseError) {
-          // Si no puede parsear JSON, probablemente es una página HTML de error
+          console.error(
+            `Error parseando respuesta del lote ${batchNumber}:`,
+            parseError
+          );
           const errorText = await response.text();
-          console.error("Error del servidor (HTML):", errorText);
+          console.error(`Texto de error del lote ${batchNumber}:`, errorText);
+          errorMessage = `${errorMessage}: ${errorText.substring(0, 200)}...`;
         }
 
         throw new Error(errorMessage);
       }
 
-      return await response.json();
+      const result = await response.json();
+      console.log(`Lote ${batchNumber} procesado exitosamente:`, result);
+      return result;
     } catch (error) {
       console.error(`Error en lote ${batchNumber}:`, error);
       throw error;
@@ -251,10 +294,13 @@ const BaseDeDatos = () => {
       return;
     }
 
+    console.log("Datos válidos encontrados:", validData.length);
+    console.log("Muestra de datos:", validData.slice(0, 3));
+
     // Confirmar importación con el usuario
     const result = await Swal.fire({
       title: `Importar ${validData.length} registros`,
-      text: `Se encontraron ${validData.length} registros válidos. Debido al tamaño, se importarán en lotes de 500 registros. ¿Deseas continuar?`,
+      text: `Se encontraron ${validData.length} registros válidos. Debido al tamaño, se importarán en lotes de 100 registros. ¿Deseas continuar?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Sí, importar",
@@ -271,13 +317,17 @@ const BaseDeDatos = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      // Dividir en lotes de 500 registros
-      const BATCH_SIZE = 500;
+      // Dividir en lotes más pequeños de 100 registros
+      const BATCH_SIZE = 100;
       const batches = [];
 
       for (let i = 0; i < validData.length; i += BATCH_SIZE) {
         batches.push(validData.slice(i, i + BATCH_SIZE));
       }
+
+      console.log(
+        `Dividiendo en ${batches.length} lotes de máximo ${BATCH_SIZE} registros`
+      );
 
       // Mostrar progreso
       const progressSwal = Swal.fire({
@@ -305,7 +355,9 @@ const BaseDeDatos = () => {
         try {
           // Actualizar progreso
           Swal.update({
-            html: `Procesando lote ${i + 1} de ${batches.length}...`,
+            html: `Procesando lote ${i + 1} de ${
+              batches.length
+            }...<br>Registros procesados: ${successCount}`,
           });
           setImportProgress({
             current: i + 1,
@@ -315,11 +367,17 @@ const BaseDeDatos = () => {
 
           await sendBatch(batches[i], token, i + 1, batches.length);
           successCount += batches[i].length;
+          console.log(
+            `Lote ${i + 1} completado. Total exitosos: ${successCount}`
+          );
         } catch (error) {
           console.error(`Error en lote ${i + 1}:`, error);
           errorCount += batches[i].length;
           errors.push(`Lote ${i + 1}: ${error.message}`);
         }
+
+        // Pequeña pausa entre lotes para no sobrecargar el servidor
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       setImportProgress({ current: 0, total: 0, isImporting: false });
@@ -332,20 +390,24 @@ const BaseDeDatos = () => {
         Swal.fire({
           title: "Importación completada con errores",
           html: `
-            <p>Se importaron correctamente ${successCount} registros.</p>
-            <p>Fallaron ${errorCount} registros.</p>
-            <div style="max-height: 200px; overflow-y: auto; margin-top: 15px; text-align: left;">
-              <p>Errores:</p>
-              <ul style="padding-left: 20px;">
-                ${errors.map((err) => `<li>${err}</li>`).join("")}
-              </ul>
+            <p><strong>Se importaron correctamente ${successCount} registros.</strong></p>
+            <p><strong>Fallaron ${errorCount} registros.</strong></p>
+            <div style="max-height: 300px; overflow-y: auto; margin-top: 15px; text-align: left; background: #f5f5f5; padding: 10px; border-radius: 5px;">
+              <p><strong>Errores detallados:</strong></p>
+              ${errors
+                .map(
+                  (err) =>
+                    `<div style="margin-bottom: 10px; padding: 5px; background: white; border-left: 3px solid #dc3545;">${err}</div>`
+                )
+                .join("")}
             </div>
           `,
           icon: "warning",
+          width: "80%",
         });
       } else {
         Swal.fire({
-          title: "Importación completada",
+          title: "¡Importación completada exitosamente!",
           text: `Se importaron correctamente ${successCount} registros.`,
           icon: "success",
         });
