@@ -287,7 +287,6 @@ const BaseDeDatos = () => {
       };
     });
   };
-
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener las bases de datos:", error);
