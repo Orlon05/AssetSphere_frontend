@@ -174,13 +174,11 @@ const BaseDeDatos = () => {
         },
       });
 
-      const formattedData = formatDataForAPI(validData);
-
-      const batchSize = 500; 
-      const totalBatches = Math.ceil(formattedData.length / batchSize);
+      const batchSize = 500;
+      const totalBatches = Math.ceil(validData.length / batchSize);
 
       for (let i = 0; i < totalBatches; i++) {
-        const batch = formattedData.slice(i * batchSize, (i + 1) * batchSize);
+        const batch = validData.slice(i * batchSize, (i + 1) * batchSize);
 
         const response = await fetch(
           "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
