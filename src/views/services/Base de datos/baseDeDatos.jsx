@@ -248,8 +248,10 @@ const BaseDeDatos = () => {
   const formatDataForAPI = (data) => {
     return data.map((row) => {
       const formatDate = (date) => {
-        if (!date) return null;
-        const [year, month, day] = date.split("-");
+        if (!date) return null; // Si la fecha no está definida, devuelve null
+        const dateParts = date.split("-").map((part) => part.trim());
+        if (dateParts.length !== 3) return null; // Si no hay 3 partes, devuelve null
+        const [year, month, day] = dateParts;
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       };
 
