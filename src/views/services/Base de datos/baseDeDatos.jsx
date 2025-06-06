@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -34,6 +32,11 @@ const BaseDeDatos = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
   const searchInputRef = useRef(null);
+  const [importProgress, setImportProgress] = useState({
+    current: 0,
+    total: 0,
+    isImporting: false,
+  });
 
   const selectedCount = selectedBasesDeDatos.size;
 
@@ -125,6 +128,108 @@ const BaseDeDatos = () => {
     });
   };
 
+  const formatDate = (dateValue) => {
+    if (!dateValue) return null;
+
+    // Si ya es una fecha válida
+    if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+      return dateValue.toISOString();
+    }
+
+    // Si es un string, intentar parsearlo
+    if (typeof dateValue === "string") {
+      const parsedDate = new Date(dateValue);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toISOString();
+      }
+    }
+
+    // Si es un número (timestamp de Excel)
+    if (typeof dateValue === "number") {
+      // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
+      const excelEpoch = new Date(1900, 0, 1);
+      const jsDate = new Date(
+        excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
+      );
+      if (!isNaN(jsDate.getTime())) {
+        return jsDate.toISOString();
+      }
+    }
+
+    return null;
+  };
+
+  const formatDataForAPI = (data) => {
+    return data.map((row) => ({
+      instance_id: row.instance_id?.toString() || "",
+      cost_center: row.cost_center?.toString() || "",
+      category: row.category?.toString() || "",
+      type: row.type?.toString() || "",
+      item: row.item?.toString() || "",
+      owner_contact: row.owner_contact?.toString() || "",
+      name: row.name?.toString() || "",
+      application_code: row.application_code?.toString() || "",
+      inactive: row.inactive?.toString() || "",
+      asset_life_cycle_status: row.asset_life_cycle_status?.toString() || "",
+      system_environment: row.system_environment?.toString() || "",
+      cloud: row.cloud?.toString() || "",
+      version_number: row.version_number?.toString() || "",
+      serial: row.serial?.toString() || "",
+      ci_tag: row.ci_tag?.toString() || "",
+      instance_name: row.instance_name?.toString() || "",
+      model: row.model?.toString() || "",
+      ha: row.ha?.toString() || "",
+      port: row.port?.toString() || "",
+      owner_name: row.owner_name?.toString() || "",
+      department: row.department?.toString() || "",
+      company: row.company?.toString() || "",
+      manufacturer_name: row.manufacturer_name?.toString() || "",
+      supplier_name: row.supplier_name?.toString() || "",
+      supported: row.supported?.toString() || "",
+      account_id: row.account_id?.toString() || "",
+      create_date: formatDate(row.create_date),
+      modified_date: formatDate(row.modified_date),
+    }));
+  };
+
+  const sendBatch = async (batch, token, batchNumber, totalBatches) => {
+    try {
+      const formattedBatch = formatDataForAPI(batch);
+
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formattedBatch),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = `Error HTTP ${response.status} en lote ${batchNumber}`;
+
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (parseError) {
+          // Si no puede parsear JSON, probablemente es una página HTML de error
+          const errorText = await response.text();
+          console.error("Error del servidor (HTML):", errorText);
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`Error en lote ${batchNumber}:`, error);
+      throw error;
+    }
+  };
+
   const handleImportComplete = async (importedData) => {
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
@@ -146,105 +251,111 @@ const BaseDeDatos = () => {
       return;
     }
 
+    // Confirmar importación con el usuario
+    const result = await Swal.fire({
+      title: `Importar ${validData.length} registros`,
+      text: `Se encontraron ${validData.length} registros válidos. Debido al tamaño, se importarán en lotes de 500 registros. ¿Deseas continuar?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, importar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const formatDate = (dateValue) => {
-        if (!dateValue) return null;
+      // Dividir en lotes de 500 registros
+      const BATCH_SIZE = 500;
+      const batches = [];
 
-        // Si ya es una fecha válida
-        if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
-          return dateValue.toISOString();
-        }
-
-        // Si es un string, intentar parsearlo
-        if (typeof dateValue === "string") {
-          const parsedDate = new Date(dateValue);
-          if (!isNaN(parsedDate.getTime())) {
-            return parsedDate.toISOString();
-          }
-        }
-
-        // Si es un número (timestamp de Excel)
-        if (typeof dateValue === "number") {
-          // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
-          const excelEpoch = new Date(1900, 0, 1);
-          const jsDate = new Date(
-            excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
-          );
-          if (!isNaN(jsDate.getTime())) {
-            return jsDate.toISOString();
-          }
-        }
-
-        return null;
-      };
-
-      const formattedData = validData.map((row) => ({
-        instance_id: row.instance_id?.toString() || "",
-        cost_center: row.cost_center?.toString() || "",
-        category: row.category?.toString() || "",
-        type: row.type?.toString() || "",
-        item: row.item?.toString() || "",
-        owner_contact: row.owner_contact?.toString() || "",
-        name: row.name?.toString() || "",
-        application_code: row.application_code?.toString() || "",
-        inactive: row.inactive?.toString() || "",
-        asset_life_cycle_status: row.asset_life_cycle_status?.toString() || "",
-        system_environment: row.system_environment?.toString() || "",
-        cloud: row.cloud?.toString() || "",
-        version_number: row.version_number?.toString() || "",
-        serial: row.serial?.toString() || "",
-        ci_tag: row.ci_tag?.toString() || "",
-        instance_name: row.instance_name?.toString() || "",
-        model: row.model?.toString() || "",
-        ha: row.ha?.toString() || "",
-        port: row.port?.toString() || "",
-        owner_name: row.owner_name?.toString() || "",
-        department: row.department?.toString() || "",
-        company: row.company?.toString() || "",
-        manufacturer_name: row.manufacturer_name?.toString() || "",
-        supplier_name: row.supplier_name?.toString() || "",
-        supported: row.supported?.toString() || "",
-        account_id: row.account_id?.toString() || "",
-        create_date: formatDate(row.create_date),
-        modified_date: formatDate(row.modified_date),
-      }));
-
-      console.log("Datos a enviar:", formattedData); // Para debug
-
-      const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error del servidor:", errorData);
-        throw new Error(
-          errorData.detail ||
-            errorData.message ||
-            `Error HTTP ${response.status}`
-        );
+      for (let i = 0; i < validData.length; i += BATCH_SIZE) {
+        batches.push(validData.slice(i, i + BATCH_SIZE));
       }
 
-      const result = await response.json();
-      Swal.fire("Éxito", "Datos importados correctamente", "success");
+      // Mostrar progreso
+      const progressSwal = Swal.fire({
+        title: "Importando datos",
+        html: `Procesando lote 0 de ${batches.length}...`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      setImportProgress({
+        current: 0,
+        total: batches.length,
+        isImporting: true,
+      });
+
+      // Procesar lotes secuencialmente
+      let successCount = 0;
+      let errorCount = 0;
+      const errors = [];
+
+      for (let i = 0; i < batches.length; i++) {
+        try {
+          // Actualizar progreso
+          Swal.update({
+            html: `Procesando lote ${i + 1} de ${batches.length}...`,
+          });
+          setImportProgress({
+            current: i + 1,
+            total: batches.length,
+            isImporting: true,
+          });
+
+          await sendBatch(batches[i], token, i + 1, batches.length);
+          successCount += batches[i].length;
+        } catch (error) {
+          console.error(`Error en lote ${i + 1}:`, error);
+          errorCount += batches[i].length;
+          errors.push(`Lote ${i + 1}: ${error.message}`);
+        }
+      }
+
+      setImportProgress({ current: 0, total: 0, isImporting: false });
+
+      // Cerrar el diálogo de progreso
+      progressSwal.close();
+
+      // Mostrar resultado final
+      if (errors.length > 0) {
+        Swal.fire({
+          title: "Importación completada con errores",
+          html: `
+            <p>Se importaron correctamente ${successCount} registros.</p>
+            <p>Fallaron ${errorCount} registros.</p>
+            <div style="max-height: 200px; overflow-y: auto; margin-top: 15px; text-align: left;">
+              <p>Errores:</p>
+              <ul style="padding-left: 20px;">
+                ${errors.map((err) => `<li>${err}</li>`).join("")}
+              </ul>
+            </div>
+          `,
+          icon: "warning",
+        });
+      } else {
+        Swal.fire({
+          title: "Importación completada",
+          text: `Se importaron correctamente ${successCount} registros.`,
+          icon: "success",
+        });
+      }
 
       // Recargar la lista después de importar
       fetchBasesDeDatos(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al importar:", error);
+      setImportProgress({ current: 0, total: 0, isImporting: false });
       Swal.fire("Error", error.message || "Error al importar datos", "error");
     }
   };
@@ -601,9 +712,14 @@ const BaseDeDatos = () => {
                 onClick={handleImport}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                 title="Importar desde Excel"
+                disabled={importProgress.isImporting}
               >
                 <Download size={16} />
-                <span className="hidden sm:inline">Importar</span>
+                <span className="hidden sm:inline">
+                  {importProgress.isImporting
+                    ? `Importando ${importProgress.current}/${importProgress.total}`
+                    : "Importar"}
+                </span>
               </button>
               <button
                 onClick={handleExport}
