@@ -85,74 +85,73 @@ export default function ServidoresVirtuales() {
     });
   };
 
-  const handleImportComplete = async (importedData) => {
+ const handleImportComplete = async (importedData) => {
+  Swal.fire({
+    title: "Procesando datos...",
+    text: "Estamos guardando los servidores virtuales importados",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
+  try {
+    const token = localStorage.getItem("authenticationToken");
+    if (!token) {
+      throw new Error("Token de autorización no encontrado.");
+    }
+
+    const formattedData = importedData.map((row) => ({
+      platform: String(row.platform || ""),
+      id_vm: String(row.id_vm || ""),
+      server: String(row.server || ""),
+      memory: row.memory ? parseInt(row.memory) : 0,
+      so: String(row.so || ""),
+      status: String(row.status || ""),
+      cluster: String(row.cluster || ""),
+      hdd: String(row.hdd || ""),
+      cores: row.cores ? parseInt(row.cores) : 0,
+      ip: String(row.ip || ""),
+      modified: row.modified ? new Date(row.modified).toISOString() : null,
+    }));
+
+    const response = await fetch(
+      "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP ${response.status}`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     Swal.fire({
-      title: "Procesando datos...",
-      text: "Estamos guardando los servidores virtuales importados",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
+      icon: "success",
+      title: "Importación exitosa",
+      text: `Se han importado ${importedData.length} servidores virtuales correctamente.`,
     });
 
-    try {
-      const token = localStorage.getItem("authenticationToken");
-      if (!token) {
-        throw new Error("Token de autorización no encontrado.");
-      }
+    fetchServers(currentPage, rowsPerPage);
+  } catch (error) {
+    console.error("Error al procesar los datos importados:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error en la importación",
+      text:
+        error.message ||
+        "Ha ocurrido un error al procesar los datos importados.",
+    });
+  }
+};
 
-      const formattedData = importedData.map((row) => ({
-        platform: String(row.platform || ""),
-        id_vm: String(row.id_vm || ""),
-        server: String(row.server || ""),
-        memory: row.memory ? parseInt(row.memory) : 0,
-        so: String(row.so || ""),
-        status: String(row.status || ""),
-        cluster: String(row.cluster || ""),
-        hdd: String(row.hdd || ""),
-        cores: row.cores ? parseInt(row.cores) : 0,
-        ip: String(row.ip || ""),
-        modified: row.modified || ""
-      }));
-
-
-      const response = await fetch(
-        "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      Swal.fire({
-        icon: "success",
-        title: "Importación exitosa",
-        text: `Se han importado ${importedData.length} servidores virtuales correctamente.`,
-      });
-
-      fetchServers(currentPage, rowsPerPage);
-    } catch (error) {
-      console.error("Error al procesar los datos importados:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error en la importación",
-        text:
-          error.message ||
-          "Ha ocurrido un error al procesar los datos importados.",
-      });
-    }
-  };
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
