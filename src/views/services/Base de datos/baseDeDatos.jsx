@@ -15,7 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
-// hola
+
 const BaseDeDatos = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -128,35 +128,50 @@ const BaseDeDatos = () => {
     });
   };
 
+  // Reemplazar la función formatDate actual con esta versión mejorada
   const formatDate = (dateValue) => {
     if (!dateValue) return null;
 
-    // Si ya es una fecha válida
-    if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
-      return dateValue.toISOString();
-    }
-
-    // Si es un string, intentar parsearlo
-    if (typeof dateValue === "string") {
-      const parsedDate = new Date(dateValue);
-      if (!isNaN(parsedDate.getTime())) {
-        return parsedDate.toISOString();
+    try {
+      // Si ya es una fecha válida
+      if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+        // Formato YYYY-MM-DD
+        return `${dateValue.getFullYear()}-${String(
+          dateValue.getMonth() + 1
+        ).padStart(2, "0")}-${String(dateValue.getDate()).padStart(2, "0")}`;
       }
-    }
 
-    // Si es un número (timestamp de Excel)
-    if (typeof dateValue === "number") {
-      // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
-      const excelEpoch = new Date(1900, 0, 1);
-      const jsDate = new Date(
-        excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
-      );
-      if (!isNaN(jsDate.getTime())) {
-        return jsDate.toISOString();
+      // Si es un string, intentar parsearlo
+      if (typeof dateValue === "string") {
+        const parsedDate = new Date(dateValue);
+        if (!isNaN(parsedDate.getTime())) {
+          // Formato YYYY-MM-DD
+          return `${parsedDate.getFullYear()}-${String(
+            parsedDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(parsedDate.getDate()).padStart(2, "0")}`;
+        }
       }
-    }
 
-    return null;
+      // Si es un número (timestamp de Excel)
+      if (typeof dateValue === "number") {
+        // Excel usa 1900-01-01 como base, JavaScript usa 1970-01-01
+        const excelEpoch = new Date(1900, 0, 1);
+        const jsDate = new Date(
+          excelEpoch.getTime() + (dateValue - 1) * 24 * 60 * 60 * 1000
+        );
+        if (!isNaN(jsDate.getTime())) {
+          // Formato YYYY-MM-DD
+          return `${jsDate.getFullYear()}-${String(
+            jsDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(jsDate.getDate()).padStart(2, "0")}`;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error al formatear fecha:", error, dateValue);
+      return null;
+    }
   };
 
   const formatDataForAPI = (data) => {
