@@ -399,14 +399,22 @@ export default function Dashboard() {
           data.data.total_pages !== undefined &&
           Array.isArray(data.data.base_datos)
         ) {
-          const itemsOnPage = data.data.base_datos.length;
-          const currentPage = data.data.current_page || 1;
+          const totalPages = data.data.total_pages;
 
-          if (data.data.total_pages === currentPage) {
-            totalCount = (data.data.total_pages - 1) * 1000 + itemsOnPage;
-          } else {
-            totalCount = data.data.total_pages * 1000;
-          }
+          const lastPageResponse = await fetch(
+            `https://10.8.150.90/api/inveplus/base_datos/get_all?page=${totalPages}&limit=1000`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const lastPageData = await lastPageResponse.json();
+          const lastPageCount = lastPageData.data.base_datos.length;
+
+          totalCount = (totalPages - 1) * 1000 + lastPageCount;
         }
 
         setModules((prevModules) =>
@@ -434,6 +442,7 @@ export default function Dashboard() {
       );
     }
   };
+  
   
   const fetchServervCount = async () => {
     try {
