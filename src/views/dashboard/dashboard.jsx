@@ -106,7 +106,6 @@ export default function Dashboard() {
 
   const fetchUserData = async (userId, token) => {
     try {
-
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/users/get_by_id/${userId}`,
         {
@@ -401,15 +400,15 @@ export default function Dashboard() {
         } else if (data.data.total !== undefined) {
           totalCount = data.data.total;
         } else if (
-          data.data.bases_datos &&
-          Array.isArray(data.data.bases_datos)
-        ) {
-          totalCount = data.data.bases_datos.length;
-        } else if (
           data.data.total_pages !== undefined &&
           data.data.per_page !== undefined
         ) {
           totalCount = data.data.total_pages * data.data.per_page;
+        } else if (
+          data.data.bases_datos &&
+          Array.isArray(data.data.bases_datos)
+        ) {
+          totalCount = data.data.bases_datos.length;
         }
 
         setModules((prevModules) =>
