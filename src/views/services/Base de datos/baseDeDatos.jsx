@@ -332,7 +332,6 @@ const BaseDeDatos = () => {
 
     console.log("Datos válidos encontrados:", validData.length);
 
-    // Confirmar importación con el usuario
     const result = await Swal.fire({
       title: `Importar ${validData.length} registros`,
       text: `¿Deseas continuar con la importación de ${validData.length} registros?`,
@@ -352,7 +351,6 @@ const BaseDeDatos = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      // Mostrar progreso
       Swal.fire({
         title: "Importando datos",
         text: "Por favor espera...",
@@ -363,54 +361,63 @@ const BaseDeDatos = () => {
         },
       });
 
-      // Formatear y truncar datos
       const formattedData = formatDataForAPI(validData);
 
-      const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formattedData),
-        }
-      );
+      const batchSize = 500; 
+      const totalBatches = Math.ceil(formattedData.length / batchSize);
 
-      if (!response.ok) {
-        let errorMessage = `Error HTTP ${response.status}`;
-        try {
-          const errorData = await response.json();
-          console.error("Error detallado:", errorData);
+      for (let i = 0; i < totalBatches; i++) {
+        const batch = formattedData.slice(i * batchSize, (i + 1) * batchSize);
 
-          if (errorData.detail) {
-            if (Array.isArray(errorData.detail)) {
-              errorMessage = errorData.detail
-                .map((err) => {
-                  if (typeof err === "object" && err.msg) {
-                    return `${err.loc ? err.loc.join(".") + ": " : ""}${
-                      err.msg
-                    }`;
-                  }
-                  return JSON.stringify(err);
-                })
-                .join("; ");
-            } else {
-              errorMessage = errorData.detail;
-            }
-          } else if (errorData.message) {
-            errorMessage = errorData.message;
+        const response = await fetch(
+          "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(batch),
           }
-        } catch (parseError) {
-          console.error("Error parseando respuesta:", parseError);
+        );
+
+        if (!response.ok) {
+          let errorMessage = `Error HTTP ${response.status}`;
+          try {
+            const errorData = await response.json();
+            console.error("Error detallado:", errorData);
+
+            if (errorData.detail) {
+              if (Array.isArray(errorData.detail)) {
+                errorMessage = errorData.detail
+                  .map((err) => {
+                    if (typeof err === "object" && err.msg) {
+                      return `${err.loc ? err.loc.join(".") + ": " : ""}${
+                        err.msg
+                      }`;
+                    }
+                    return JSON.stringify(err);
+                  })
+                  .join("; ");
+              } else {
+                errorMessage = errorData.detail;
+              }
+            } else if (errorData.message) {
+              errorMessage = errorData.message;
+            }
+          } catch (parseError) {
+            console.error("Error parseando respuesta:", parseError);
+          }
+
+          throw new Error(errorMessage);
         }
 
-        throw new Error(errorMessage);
+        const result = await response.json();
+        console.log(
+          `Importación exitosa del lote ${i + 1}/${totalBatches}:`,
+          result
+        );
       }
-
-      const result = await response.json();
-      console.log("Importación exitosa:", result);
 
       Swal.fire({
         title: "¡Importación completada exitosamente!",
@@ -418,7 +425,6 @@ const BaseDeDatos = () => {
         icon: "success",
       });
 
-      // Recargar la lista después de importar
       fetchBasesDeDatos(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al importar:", error);
