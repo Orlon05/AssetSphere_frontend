@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -124,11 +126,20 @@ const BaseDeDatos = () => {
   };
 
   const handleImportComplete = async (importedData) => {
-
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
         "Error",
         "No se encontraron datos válidos en el archivo",
+        "error"
+      );
+      return;
+    }
+
+    const validData = importedData.filter((row) => row.name || row.instance_id);
+    if (validData.length === 0) {
+      Swal.fire(
+        "Error",
+        "No se encontraron registros válidos con nombre o ID de instancia",
         "error"
       );
       return;
@@ -140,35 +151,39 @@ const BaseDeDatos = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const formattedData = importedData.map((row) => ({
-        instance_id: row.instance_id || "",
-        cost_center: row.cost_center || "",
-        category: row.category || "",
-        type: row.type || "",
-        item: row.item || "",
-        owner_contact: row.owner_contact || "",
-        name: row.name || "",
-        application_code: row.application_code || "",
-        inactive: row.inactive || "",
-        asset_life_cycle_status: row.asset_life_cycle_status || "",
-        system_environment: row.system_environment || "",
-        cloud: row.cloud || "",
-        version_number: row.version_number || "",
-        serial: row.serial || "",
-        ci_tag: row.ci_tag || "",
-        instance_name: row.instance_name || "",
-        model: row.model || "",
-        ha: row.ha || "",
-        port: row.port || "",
-        owner_name: row.owner_name || "",
-        department: row.department || "",
-        company: row.company || "",
-        manufacturer_name: row.manufacturer_name || "",
-        supplier_name: row.supplier_name || "",
-        supported: row.supported || "",
-        account_id: row.account_id || "",
-        create_date: row.create_date || "",
-        modified_date: row.modified_date || "" 
+      const formattedData = validData.map((row) => ({
+        instance_id: row.instance_id?.toString() || "",
+        cost_center: row.cost_center?.toString() || "",
+        category: row.category?.toString() || "",
+        type: row.type?.toString() || "",
+        item: row.item?.toString() || "",
+        owner_contact: row.owner_contact?.toString() || "",
+        name: row.name?.toString() || "",
+        application_code: row.application_code?.toString() || "",
+        inactive: row.inactive?.toString() || "",
+        asset_life_cycle_status: row.asset_life_cycle_status?.toString() || "",
+        system_environment: row.system_environment?.toString() || "",
+        cloud: row.cloud?.toString() || "",
+        version_number: row.version_number?.toString() || "",
+        serial: row.serial?.toString() || "",
+        ci_tag: row.ci_tag?.toString() || "",
+        instance_name: row.instance_name?.toString() || "",
+        model: row.model?.toString() || "",
+        ha: row.ha?.toString() || "",
+        port: row.port?.toString() || "",
+        owner_name: row.owner_name?.toString() || "",
+        department: row.department?.toString() || "",
+        company: row.company?.toString() || "",
+        manufacturer_name: row.manufacturer_name?.toString() || "",
+        supplier_name: row.supplier_name?.toString() || "",
+        supported: row.supported?.toString() || "",
+        account_id: row.account_id?.toString() || "",
+        create_date: row.create_date
+          ? new Date(row.create_date).toISOString()
+          : null,
+        modified_date: row.modified_date
+          ? new Date(row.modified_date).toISOString()
+          : null,
       }));
 
       const response = await fetch(
@@ -184,10 +199,19 @@ const BaseDeDatos = () => {
       );
 
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
+        const errorData = await response.json();
+        console.error("Error del servidor:", errorData);
+        throw new Error(
+          errorData.detail ||
+            errorData.message ||
+            `Error HTTP ${response.status}`
+        );
       }
 
+      const result = await response.json();
       Swal.fire("Éxito", "Datos importados correctamente", "success");
+
+      fetchBasesDeDatos(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al importar:", error);
       Swal.fire("Error", error.message || "Error al importar datos", "error");
