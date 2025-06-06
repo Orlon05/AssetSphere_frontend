@@ -244,7 +244,6 @@ const BaseDeDatos = () => {
         }
       }
 
-      // Si nada funciona, usar fecha por defecto
       console.warn(
         "No se pudo formatear la fecha:",
         dateValue,
@@ -259,7 +258,6 @@ const BaseDeDatos = () => {
 
   const formatDataForAPI = (data) => {
     return data.map((row) => {
-      // Función para truncar strings a una longitud máxima
       const truncateString = (str, maxLength) => {
         if (!str) return "";
         const stringValue = str.toString();
@@ -268,21 +266,20 @@ const BaseDeDatos = () => {
           : stringValue;
       };
 
-      // Asegurarse de que create_date y modified_date siempre tengan un valor válido
       const createDate = formatDate(row.create_date) || "2023-01-01";
       const modifiedDate =
         formatDate(row.modified_date) || createDate || "2023-01-01";
 
       return {
         instance_id: truncateString(row.instance_id, 50),
-        cost_center: truncateString(row.cost_center, 100),
+        cost_center: truncateString(row.cost_center, 200),
         category: truncateString(row.category, 50),
         type: truncateString(row.type, 50),
         item: truncateString(row.item, 50),
-        owner_contact: truncateString(row.owner_contact, 100),
+        owner_contact: truncateString(row.owner_contact, 200),
         name: truncateString(row.name, 200),
-        application_code: truncateString(row.application_code, 100), // Truncar a 100 caracteres
-        inactive: truncateString(row.inactive, 50), // Truncar a 50 caracteres
+        application_code: truncateString(row.application_code, 200), 
+        inactive: truncateString(row.inactive, 50), 
         asset_life_cycle_status: truncateString(
           row.asset_life_cycle_status,
           50
@@ -290,10 +287,10 @@ const BaseDeDatos = () => {
         system_environment: truncateString(row.system_environment, 50),
         cloud: truncateString(row.cloud, 50),
         version_number: truncateString(row.version_number, 50),
-        serial: truncateString(row.serial, 100), // Truncar a 100 caracteres
+        serial: truncateString(row.serial, 200), 
         ci_tag: truncateString(row.ci_tag, 100),
-        instance_name: truncateString(row.instance_name, 150), // Truncar a 150 caracteres
-        model: truncateString(row.model, 100),
+        instance_name: truncateString(row.instance_name, 200), 
+        model: truncateString(row.model, 200),
         ha: truncateString(row.ha, 50),
         port: truncateString(row.port, 10),
         owner_name: truncateString(row.owner_name, 200),
@@ -319,7 +316,6 @@ const BaseDeDatos = () => {
       return;
     }
 
-    // Validar que al menos tengan un campo requerido
     const validData = importedData.filter((row) => row.name || row.instance_id);
     if (validData.length === 0) {
       Swal.fire(
