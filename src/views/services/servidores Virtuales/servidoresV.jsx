@@ -95,25 +95,41 @@ export default function ServidoresVirtuales() {
     },
   });
 
+  // Función para convertir "4/06/2025 4:46" a un Date válido
+function parseExcelDate(fechaStr) {
+  if (!fechaStr) return null;
+
+  // Reemplaza tabuladores invisibles o saltos de línea si existen
+  fechaStr = fechaStr.trim().replace(/\s+/g, " ");
+
+  const [fechaParte, horaParte] = fechaStr.split(" ");
+  const [dia, mes, anio] = fechaParte.split("/").map(Number);
+  const [hora, minuto] = horaParte.split(":").map(Number);
+
+  const fecha = new Date(anio, mes - 1, dia, hora, minuto);
+  return isNaN(fecha.getTime()) ? null : fecha.toISOString(); // formato ISO válido
+}
+
   try {
     const token = localStorage.getItem("authenticationToken");
     if (!token) {
       throw new Error("Token de autorización no encontrado.");
     }
 
-    const formattedData = importedData.map((row) => ({
-      platform: String(row.platform || ""),
-      id_vm: String(row.id_vm || ""),
-      server: String(row.server || ""),
-      memory: row.memory ? parseInt(row.memory) : 0,
-      so: String(row.so || ""),
-      status: String(row.status || ""),
-      cluster: String(row.cluster || ""),
-      hdd: String(row.hdd || ""),
-      cores: row.cores ? parseInt(row.cores) : 0,
-      ip: String(row.ip || ""),
-      modified: row.modified ? new Date(row.modified).toISOString() : null,
-    }));
+   const formattedData = importedData.map((row) => ({
+  platform: String(row.platform || ""),
+  id_vm: String(row.id_vm || ""),
+  server: String(row.server || ""),
+  memory: row.memory ? parseInt(row.memory) : 0,
+  so: String(row.so || ""),
+  status: String(row.status || ""),
+  cluster: String(row.cluster || ""),
+  hdd: String(row.hdd || ""),
+  cores: row.cores ? parseInt(row.cores) : 0,
+  ip: String(row.ip || ""),
+  modified: parseExcelDate(row.modified),
+}));
+
 
     const response = await fetch(
       "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
