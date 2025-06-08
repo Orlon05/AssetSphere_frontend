@@ -52,6 +52,7 @@ export default function ServidoresVirtuales() {
         const tableMetadata = [
           [
             { name: "platform", required: false, type: "string" },
+            { name: "strategic_ally", required: false, type: "string" },
             { name: "id_vm", required: false, type: "string" },
             { name: "server", required: false, type: "string" },
             { name: "memory", required: false, type: "int" },
@@ -132,6 +133,7 @@ export default function ServidoresVirtuales() {
 
       const formattedData = importedData.map((row) => ({
         platform: String(row.platform || ""),
+        strategic_ally: String(row.strategic_ally || ""),
         id_vm: String(row.id_vm || ""),
         server: String(row.server || ""),
         memory: Number.isFinite(Number(row.memory)) ? Number(row.memory) : 0,
