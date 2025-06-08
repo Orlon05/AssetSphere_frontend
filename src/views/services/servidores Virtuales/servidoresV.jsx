@@ -634,16 +634,16 @@ export default function ServidoresVirtuales() {
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Server
+                    Plataforma
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Estado
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    ID VM
+                    Aliado estratégico
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    IP
+                    Servidor
                   </th>
                   <th
                     scope="col"
@@ -675,15 +675,15 @@ export default function ServidoresVirtuales() {
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        {server.server}
+                        {server.platform}
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(server.status)}
                       </td>
                       <td className="px-6 py-4 text-gray-900">
-                        {server.id_vm}
+                        {server.strategic_ally}
                       </td>
-                      <td className="px-6 py-4 text-gray-900">{server.ip}</td>
+                      <td className="px-6 py-4 text-gray-900">{server.server}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
