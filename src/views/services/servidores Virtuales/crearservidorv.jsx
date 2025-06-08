@@ -11,6 +11,7 @@ const CrearServidorVirtual = () => {
 
   const [formData, setFormData] = useState({
     platform: "",
+    strategic_ally: "",
     id_vm: "",
     server: "",
     memory: "",
@@ -151,6 +152,24 @@ const CrearServidorVirtual = () => {
                     name="platform"
                     required
                     value={formData.platform}
+                    onChange={handleChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="platform"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Aliado estratégico <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="platform"
+                    name="platform"
+                    required
+                    value={formData.strategic_ally}
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
