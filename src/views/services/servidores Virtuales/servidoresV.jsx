@@ -52,7 +52,6 @@ export default function ServidoresVirtuales() {
         const tableMetadata = [
           [
             { name: "platform", required: false, type: "string" },
-            { name: "strategic_ally", required: false, type: "string" },
             { name: "id_vm", required: false, type: "string" },
             { name: "server", required: false, type: "string" },
             { name: "memory", required: false, type: "int" },
@@ -133,7 +132,6 @@ export default function ServidoresVirtuales() {
 
       const formattedData = importedData.map((row) => ({
         platform: String(row.platform || ""),
-        strategic_ally: String(row.strategic_ally || ""),
         id_vm: String(row.id_vm || ""),
         server: String(row.server || ""),
         memory: Number.isFinite(Number(row.memory)) ? Number(row.memory) : 0,
@@ -634,16 +632,16 @@ export default function ServidoresVirtuales() {
                     />
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Plataforma
+                    Server
                   </th>
                   <th scope="col" className="px-6 py-3">
                     Estado
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Aliado estratégico
+                    ID VM
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Servidor
+                    IP
                   </th>
                   <th
                     scope="col"
@@ -675,15 +673,15 @@ export default function ServidoresVirtuales() {
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        {server.platform}
+                        {server.server}
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(server.status)}
                       </td>
                       <td className="px-6 py-4 text-gray-900">
-                        {server.strategic_ally}
+                        {server.id_vm}
                       </td>
-                      <td className="px-6 py-4 text-gray-900">{server.server}</td>
+                      <td className="px-6 py-4 text-gray-900">{server.ip}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button

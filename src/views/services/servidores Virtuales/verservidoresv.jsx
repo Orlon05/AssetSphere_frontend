@@ -14,7 +14,7 @@ const VerServidorVirtual = () => {
   const formSections = [
     {
       title: "Información Básica",
-      fields: ["server", "id_vm", "platform", "strategic_ally", "status"],
+      fields: ["server", "id_vm", "platform", "status"],
     },
     {
       title: "Configuración Técnica",
@@ -35,7 +35,6 @@ const VerServidorVirtual = () => {
     server: "Nombre del Servidor",
     id_vm: "ID de la VM",
     platform: "Plataforma",
-    strategic_ally: "Aliado estratégico",
     status: "Estado",
     memory: "Memoria (GB)",
     cores: "Núcleos",

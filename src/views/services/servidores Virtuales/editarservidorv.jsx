@@ -13,7 +13,6 @@ const EditarServidorVirtual = () => {
 
   // Estados para los campos del formulario
   const [platform, setPlatform] = useState("");
-  const [strategic_ally, setStrategic_ally] = useState("");
   const [id_vm, setIdVm] = useState("");
   const [server, setServer] = useState("");
   const [memory, setMemory] = useState("");
@@ -78,7 +77,6 @@ const EditarServidorVirtual = () => {
         const server = data.data.server_info;
 
         setPlatform(server.platform || "");
-        setStrategic_ally(server.strategic_ally || "");
         setIdVm(server.id_vm || "");
         setServer(server.server || "");
         setMemory(server.memory || "");
@@ -113,7 +111,6 @@ const EditarServidorVirtual = () => {
 
     const serverData = {
       platform,
-      strategic_ally,
       id_vm,
       server,
       memory: parseInt(memory) || null,
@@ -263,23 +260,6 @@ const EditarServidorVirtual = () => {
                     name="platform"
                     value={platform}
                     onChange={(e) => setPlatform(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label
-                    htmlFor="platform"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Aliado estratégico
-                  </label>
-                  <input
-                    type="text"
-                    id="strategic_ally"
-                    name="strategic_ally"
-                    value={strategic_ally}
-                    onChange={(e) => setStrategic_ally(e.target.value)}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
