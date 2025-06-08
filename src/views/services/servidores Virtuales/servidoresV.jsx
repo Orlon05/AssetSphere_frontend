@@ -675,13 +675,13 @@ export default function ServidoresVirtuales() {
                         />
                       </td>
                       <td className="px-6 py-4 font-medium text-gray-900">
-                        {server.server}
+                        {server.cluster}
                       </td>
                       <td className="px-6 py-4">
                         {getStatusBadge(server.status)}
                       </td>
                       <td className="px-6 py-4 text-gray-900">
-                        {server.id_vm}
+                        {server.strategic_ally}
                       </td>
                       <td className="px-6 py-4 text-gray-900">{server.ip}</td>
                       <td className="px-6 py-4 text-right">
