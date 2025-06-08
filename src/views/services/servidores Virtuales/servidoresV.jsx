@@ -681,7 +681,7 @@ export default function ServidoresVirtuales() {
                         {getStatusBadge(server.status)}
                       </td>
                       <td className="px-6 py-4 text-gray-900">
-                        {server.cluster}
+                        {server.id_vm}
                       </td>
                       <td className="px-6 py-4 text-gray-900">{server.ip}</td>
                       <td className="px-6 py-4 text-right">
