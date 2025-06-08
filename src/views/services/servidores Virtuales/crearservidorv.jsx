@@ -159,15 +159,15 @@ const CrearServidorVirtual = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="platform"
+                    htmlFor="strategic_ally"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Aliado estratégico <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="platform"
-                    name="platform"
+                    id="strategic_ally"
+                    name="strategic_ally"
                     required
                     value={formData.strategic_ally}
                     onChange={handleChange}
