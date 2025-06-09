@@ -87,6 +87,12 @@ export default function ServidoresVirtuales() {
   };
 
   const handleImportComplete = async (importedData) => {
+    console.log("=== DEBUG: Datos recibidos del importador ===");
+    console.log("Tipo:", typeof importedData);
+    console.log("Es array:", Array.isArray(importedData));
+    console.log("Longitud:", importedData?.length);
+    console.log("Primeros 3 elementos:", importedData?.slice(0, 3));
+
     Swal.fire({
       title: "Procesando datos...",
       text: "Estamos guardando los servidores virtuales importados",
@@ -96,6 +102,7 @@ export default function ServidoresVirtuales() {
       },
     });
 
+    // Función para parsear fechas de Excel a formato SQL
     function parseExcelDateToSQL(dateStr) {
       // 1. Manejo de valores vacíos o nulos
       if (!dateStr) return null;
@@ -129,9 +136,6 @@ export default function ServidoresVirtuales() {
         }
 
         // Determinar el formato basado en los valores
-        // Si el primer número es > 12, asume DD/MM/YYYY
-        // Si el segundo número es > 12, asume MM/DD/YYYY
-        // Si ambos son <= 12, asume DD/MM/YYYY por defecto (formato europeo)
         if (dateParts[0] > 12) {
           // DD/MM/YYYY
           [day, month, year] = dateParts;
@@ -140,18 +144,11 @@ export default function ServidoresVirtuales() {
           [month, day, year] = dateParts;
         } else {
           // Ambiguos - usar DD/MM/YYYY por defecto
-          // Puedes cambiar esto según tu preferencia regional
           [day, month, year] = dateParts;
-
-          // Opcional: detectar automáticamente basado en contexto
-          // Si encuentras fechas como "06/04/2025", podrías asumir MM/DD/YYYY
-          // Descomenta la siguiente línea si prefieres MM/DD/YYYY por defecto:
-          // [month, day, year] = dateParts;
         }
 
         // Manejo de años de 2 dígitos
         if (year < 100) {
-          // Asume años 00-29 como 2000-2029, y 30-99 como 1930-1999
           year = year < 30 ? 2000 + year : 1900 + year;
         }
 
@@ -212,22 +209,135 @@ export default function ServidoresVirtuales() {
       }
     }
 
-    function validateDataBeforeSend(data) {
-      return data.map((item) => {
-        // Validar campos numéricos
-        if (!Number.isInteger(item.cores) || item.cores < 0) {
-          item.cores = 0;
-        }
-        if (!Number.isInteger(item.memory) || item.memory < 0) {
-          item.memory = 0;
-        }
+    // Función mejorada para validar y procesar datos
+    function processAndValidateData(data) {
+      console.log("=== Procesando datos ===");
 
-        // Validar que las fechas sean strings válidos o null
-        if (item.modified && typeof item.modified !== "string") {
-          item.modified = null;
-        }
+      if (!Array.isArray(data)) {
+        console.error("Los datos no son un array:", data);
+        return [];
+      }
 
-        return item;
+      const processedData = data
+        .map((item, index) => {
+          try {
+            // Crear objeto procesado
+            const processedItem = {};
+
+            // Procesar cada campo según su tipo
+            const expectedFields = [
+              "platform",
+              "strategic_ally",
+              "id_vm",
+              "server",
+              "memory",
+              "so",
+              "status",
+              "cluster",
+              "hdd",
+              "cores",
+              "ip",
+              "modified",
+            ];
+
+            expectedFields.forEach((field) => {
+              let value = item[field];
+
+              // Procesar según el tipo de campo
+              switch (field) {
+                case "memory":
+                case "cores":
+                  // Convertir a entero, usar 0 como default
+                  processedItem[field] = parseInt(value) || 0;
+                  break;
+
+                case "modified":
+                  // Procesar fecha
+                  processedItem[field] = parseExcelDateToSQL(value);
+                  break;
+
+                default:
+                  // Campos de texto - convertir a string o null
+                  processedItem[field] = value ? String(value).trim() : null;
+              }
+            });
+
+            console.log(`Item ${index + 1} procesado:`, processedItem);
+            return processedItem;
+          } catch (error) {
+            console.error(`Error procesando item ${index + 1}:`, error, item);
+            return null;
+          }
+        })
+        .filter((item) => item !== null); // Filtrar items nulos
+
+      console.log(
+        `Datos procesados: ${processedData.length} de ${data.length} items`
+      );
+      return processedData;
+    }
+
+    try {
+      // 1. Validar que recibimos datos
+      if (
+        !importedData ||
+        !Array.isArray(importedData) ||
+        importedData.length === 0
+      ) {
+        throw new Error("No se recibieron datos válidos para importar");
+      }
+
+      // 2. Procesar y validar datos
+      const processedData = processAndValidateData(importedData);
+
+      if (processedData.length === 0) {
+        throw new Error("No se pudieron procesar los datos importados");
+      }
+
+      // 3. Log de datos finales antes de enviar
+      console.log("=== Datos finales para enviar ===");
+      console.log("Total de registros:", processedData.length);
+      console.log("Primeros 2 registros:", processedData.slice(0, 2));
+
+      // 4. Enviar datos al servidor
+      const response = await fetch("/api/virtual-servers/import", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(processedData),
+      });
+
+      // 5. Manejar respuesta del servidor
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error del servidor:", errorText);
+        throw new Error(
+          `Error del servidor (${response.status}): ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Respuesta del servidor:", result);
+
+      // 6. Mostrar éxito
+      Swal.fire({
+        title: "¡Importación exitosa!",
+        text: `Se importaron ${processedData.length} servidores virtuales correctamente`,
+        icon: "success",
+        confirmButtonText: "Aceptar",
+      }).then(() => {
+        // Recargar datos o actualizar la vista
+        window.location.reload(); // O llamar a una función para actualizar la tabla
+      });
+    } catch (error) {
+      console.error("Error en la importación:", error);
+
+      Swal.fire({
+        title: "Error en la importación",
+        text: error.message || "Ocurrió un error al procesar los datos",
+        icon: "error",
+        confirmButtonText: "Aceptar",
       });
     }
 
