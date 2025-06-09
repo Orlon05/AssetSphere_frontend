@@ -122,23 +122,26 @@ export default function ServidoresVirtuales() {
       return date.toISOString();
     }
 
-    function validateDataBeforeSend(data) {
-      return data.map((item) => {
-        // Validar campos numéricos
-        if (!Number.isInteger(item.cores) || item.cores < 0) {
-          item.cores = 0;
-        }
-        if (!Number.isInteger(item.memory) || item.memory < 0) {
-          item.memory = 0;
-        }
+    function parseExcelDateToSQL(dateStr) {
+      if (!dateStr || typeof dateStr !== "string") return null;
 
-        // Validar que las fechas sean strings válidos o null
-        if (item.modified && typeof item.modified !== "string") {
-          item.modified = null;
-        }
+      const [datePart, timePart] = dateStr.split(" ");
+      if (!datePart || !timePart) return null;
 
-        return item;
-      });
+      const [day, month, year] = datePart.split("/");
+      const [hour, minute] = timePart.split(":");
+
+      const date = new Date(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute)
+      );
+
+      if (isNaN(date.getTime())) return null;
+
+      return date.toISOString(); // ✅ ESTE RETURN ES FUNDAMENTAL
     }
 
     try {
