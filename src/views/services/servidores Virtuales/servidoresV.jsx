@@ -99,20 +99,27 @@ export default function ServidoresVirtuales() {
     function parseExcelDateToISO(value) {
       if (!value) return null;
 
-      // Si ya es objeto tipo Date
+      // ✅ 1. Si es Date válido
       if (value instanceof Date && !isNaN(value)) {
         return value.toISOString().split(".")[0];
       }
 
+      // ✅ 2. Si es número serial de Excel
+      if (typeof value === "number") {
+        // Excel usa 1900 como base y considera 1900-01-01 como día 1 (en realidad es 0)
+        const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // 1899-12-30
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const date = new Date(excelEpoch.getTime() + value * msPerDay);
+        return date.toISOString().split(".")[0];
+      }
+
+      // ✅ 3. Si es string con formato dd/mm/yyyy h:mm
       if (typeof value === "string") {
-        // Soportar formatos como 4/6/2025 4:46
         const regex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/;
         const match = value.match(regex);
-
         if (match) {
           const [, day, month, year, hour, minute] = match;
 
-          // Añadir ceros si hace falta
           const dd = day.padStart(2, "0");
           const mm = month.padStart(2, "0");
           const hh = hour.padStart(2, "0");
@@ -151,10 +158,7 @@ export default function ServidoresVirtuales() {
         modified: parseExcelDateToISO(row.modified),
       }));
 
-      console.log(
-        "Fechas transformadas:",
-        formattedData.map((r) => r.modified)
-      );
+      console.log("Tipo de 'modified':", typeof row.modified, row.modified);
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
