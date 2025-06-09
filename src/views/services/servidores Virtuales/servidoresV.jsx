@@ -143,22 +143,24 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const formattedData = importedData.map((row) => ({
-        platform: String(row.platform || ""),
-        strategic_ally: String(row.strategic_ally || ""),
-        id_vm: String(row.id_vm || ""),
-        server: String(row.server || ""),
-        memory: Number(row.memory) || 0,
-        so: String(row.so || ""),
-        status: String(row.status || ""),
-        cluster: String(row.cluster || ""),
-        hdd: String(row.hdd || ""),
-        cores: Number(row.cores) || 0,
-        ip: String(row.ip || ""),
-        modified: parseExcelDateToISO(row.modified),
-      }));
+      const formattedData = importedData.map((row) => {
+        console.log("Tipo de 'modified':", typeof row.modified, row.modified);
 
-      console.log("Tipo de 'modified':", typeof row.modified, row.modified);
+        return {
+          platform: String(row.platform || ""),
+          strategic_ally: String(row.strategic_ally || ""),
+          id_vm: String(row.id_vm || ""),
+          server: String(row.server || ""),
+          memory: Number(row.memory) || 0,
+          so: String(row.so || ""),
+          status: String(row.status || ""),
+          cluster: String(row.cluster || ""),
+          hdd: String(row.hdd || ""),
+          cores: Number(row.cores) || 0,
+          ip: String(row.ip || ""),
+          modified: parseExcelDateToISO(row.modified),
+        };
+      });
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
