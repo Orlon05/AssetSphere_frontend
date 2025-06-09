@@ -100,7 +100,7 @@ export default function ServidoresVirtuales() {
       if (!fechaStr) return "1970-01-01 00:00:00"; // Valor por defecto
 
       try {
-        // 1. Si ya es un string en formato SQL (caso raro)
+        // Si ya es un string en formato SQL
         if (
           typeof fechaStr === "string" &&
           /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(fechaStr)
@@ -108,27 +108,39 @@ export default function ServidoresVirtuales() {
           return fechaStr;
         }
 
-        // 2. Si es número (fecha serial de Excel)
+        // Si es número (fecha serial de Excel)
         if (typeof fechaStr === "number") {
           const date = new Date(Math.round((fechaStr - 25569) * 86400 * 1000));
           return date.toISOString().split("T").join(" ").substring(0, 19);
         }
 
-        // 3. Para tu formato específico "DD/MM/YYYY HH:mm"
+        // Si es string con formato regional "DD/MM/YYYY HH:mm:ss a. m." o similar
         if (typeof fechaStr === "string") {
-          // Extrae fecha y hora
-          const [datePart, timePart] = fechaStr.split(" ");
+          const [datePart, timePart, meridiemRaw] = fechaStr
+            .trim()
+            .split(/\s+/);
           const [day, month, year] = datePart.split("/").map(Number);
 
-          // Extrae horas y minutos (si existe)
           let hours = 0,
-            minutes = 0;
+            minutes = 0,
+            seconds = 0;
           if (timePart) {
-            [hours, minutes] = timePart.split(":").map(Number);
+            const [h, m, s] = timePart.split(":").map(Number);
+            hours = h || 0;
+            minutes = m || 0;
+            seconds = s || 0;
+
+            // Detecta si hay "a. m." o "p. m." (puede variar si hay espacios especiales)
+            const meridiem = (meridiemRaw || "").toLowerCase();
+            if (meridiem.includes("p") && hours < 12) {
+              hours += 12;
+            } else if (meridiem.includes("a") && hours === 12) {
+              hours = 0;
+            }
           }
 
-          // Crea la fecha y formatea
-          const date = new Date(year, month - 1, day, hours, minutes);
+          const date = new Date(year, month - 1, day, hours, minutes, seconds);
+
           return (
             `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
               2,
@@ -137,7 +149,7 @@ export default function ServidoresVirtuales() {
             `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
               2,
               "0"
-            )}:00`
+            )}:${String(seconds).padStart(2, "0")}`
           );
         }
 
