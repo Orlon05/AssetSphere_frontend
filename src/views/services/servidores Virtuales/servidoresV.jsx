@@ -96,18 +96,12 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    // Función para convertir "4/06/2025 4:46" a un Date válido
-    function parseExcelDate(fechaStr) {
+    function parseExcelDateToSQL(fechaStr) {
       if (!fechaStr || typeof fechaStr !== "string") return null;
-
       try {
-        // Limpieza del string por si vienen caracteres invisibles
         fechaStr = fechaStr.trim().replace(/\s+/g, " ");
-
-        // Separar fecha y hora
         const [fechaParte, horaParte] = fechaStr.split(" ");
         const [dia, mes, anio] = fechaParte.split("/").map(Number);
-
         let hora = 0,
           minuto = 0;
 
@@ -118,7 +112,16 @@ export default function ServidoresVirtuales() {
         }
 
         const fecha = new Date(anio, mes - 1, dia, hora, minuto);
-        return isNaN(fecha.getTime()) ? null : fecha.toISOString();
+        if (isNaN(fecha.getTime())) return null;
+
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, "0");
+        const day = String(fecha.getDate()).padStart(2, "0");
+        const hours = String(fecha.getHours()).padStart(2, "0");
+        const minutes = String(fecha.getMinutes()).padStart(2, "0");
+        const seconds = String(fecha.getSeconds()).padStart(2, "0");
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       } catch (error) {
         console.warn("Error al parsear fecha:", fechaStr, error);
         return null;
@@ -143,7 +146,7 @@ export default function ServidoresVirtuales() {
         hdd: String(row.hdd || ""),
         cores: Number.isFinite(Number(row.cores)) ? Number(row.cores) : 0,
         ip: String(row.ip || ""),
-        modified: parseExcelDate(row.modified),
+        modified: parseExcelDateToSQL(row.modified),
       }));
 
       const response = await fetch(
