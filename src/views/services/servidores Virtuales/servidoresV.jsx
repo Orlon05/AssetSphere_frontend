@@ -108,7 +108,7 @@ export default function ServidoresVirtuales() {
         return dateStr;
       }
 
-      // 3. Conversión desde formato Excel "DD/MM/YYYY HH:mm"
+      // 3. Conversión desde múltiples formatos posibles
       try {
         // Limpieza del string
         const cleanStr = String(dateStr)
@@ -118,21 +118,86 @@ export default function ServidoresVirtuales() {
 
         // Extrae fecha y hora
         const [datePart, timePart = "0:0"] = cleanStr.split(" ");
-        const [day, month, year] = datePart.split("/").map(Number);
-        const [hour, minute] = timePart.split(":").map(Number);
+
+        // Detectar formato de fecha (DD/MM/YYYY vs MM/DD/YYYY)
+        const dateParts = datePart.split("/").map(Number);
+        let day, month, year;
+
+        if (dateParts.length !== 3) {
+          console.warn("Formato de fecha inválido:", dateStr);
+          return null;
+        }
+
+        // Determinar el formato basado en los valores
+        // Si el primer número es > 12, asume DD/MM/YYYY
+        // Si el segundo número es > 12, asume MM/DD/YYYY
+        // Si ambos son <= 12, asume DD/MM/YYYY por defecto (formato europeo)
+        if (dateParts[0] > 12) {
+          // DD/MM/YYYY
+          [day, month, year] = dateParts;
+        } else if (dateParts[1] > 12) {
+          // MM/DD/YYYY
+          [month, day, year] = dateParts;
+        } else {
+          // Ambiguos - usar DD/MM/YYYY por defecto
+          // Puedes cambiar esto según tu preferencia regional
+          [day, month, year] = dateParts;
+
+          // Opcional: detectar automáticamente basado en contexto
+          // Si encuentras fechas como "06/04/2025", podrías asumir MM/DD/YYYY
+          // Descomenta la siguiente línea si prefieres MM/DD/YYYY por defecto:
+          // [month, day, year] = dateParts;
+        }
+
+        // Manejo de años de 2 dígitos
+        if (year < 100) {
+          // Asume años 00-29 como 2000-2029, y 30-99 como 1930-1999
+          year = year < 30 ? 2000 + year : 1900 + year;
+        }
+
+        // Procesar hora
+        const timeParts = timePart.split(":").map(Number);
+        const hour = timeParts[0] || 0;
+        const minute = timeParts[1] || 0;
+        const second = timeParts[2] || 0;
 
         // Validación de componentes
         if (
           isNaN(day) ||
           isNaN(month) ||
           isNaN(year) ||
+          isNaN(hour) ||
+          isNaN(minute) ||
           day < 1 ||
           day > 31 ||
           month < 1 ||
           month > 12 ||
-          year < 1900
+          year < 1900 ||
+          year > 2100 ||
+          hour < 0 ||
+          hour > 23 ||
+          minute < 0 ||
+          minute > 59 ||
+          second < 0 ||
+          second > 59
         ) {
-          console.warn("Fecha inválida:", dateStr);
+          console.warn(
+            "Componentes de fecha inválidos:",
+            { day, month, year, hour, minute, second },
+            "desde:",
+            dateStr
+          );
+          return null;
+        }
+
+        // Validación adicional: crear objeto Date para verificar
+        const testDate = new Date(year, month - 1, day, hour, minute, second);
+        if (
+          testDate.getFullYear() !== year ||
+          testDate.getMonth() !== month - 1 ||
+          testDate.getDate() !== day
+        ) {
+          console.warn("Fecha no existe en el calendario:", dateStr);
           return null;
         }
 
@@ -140,7 +205,7 @@ export default function ServidoresVirtuales() {
         const pad = (n) => String(n).padStart(2, "0");
         return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(
           minute
-        )}:00`;
+        )}:${pad(second)}`;
       } catch (error) {
         console.error("Error al convertir fecha:", dateStr, error);
         return null;
