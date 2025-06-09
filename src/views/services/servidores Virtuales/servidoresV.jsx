@@ -115,8 +115,17 @@ export default function ServidoresVirtuales() {
 
       if (isNaN(date.getTime())) return null;
 
-      return date.toISOString();
-    }
+      // ✅ Formato YYYY-MM-DD HH:mm:ss
+      const pad = (n) => n.toString().padStart(2, "0");
+
+      const formattedDate = `${date.getFullYear()}-${pad(
+        date.getMonth() + 1
+      )}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(
+        date.getMinutes()
+      )}:00`;
+
+      return formattedDate;
+    }    
 
     try {
       const token = localStorage.getItem("authenticationToken");
