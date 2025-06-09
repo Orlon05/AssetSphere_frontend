@@ -96,56 +96,24 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToSQL(fechaStr) {
-      if (!fechaStr) return "01-01-1979 00:00:00"; // Valor por defecto
+    function parseExcelDateToSQL(dateStr) {
+      // Verificamos que la cadena no esté vacía o inválida
+      if (!dateStr || typeof dateStr !== "string") return null;
 
-      try {
-        // 1. Si ya es un string en formato SQL (caso raro)
-        if (
-          typeof fechaStr === "string" &&
-          /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(fechaStr)
-        ) {
-          return fechaStr;
-        }
+      const [datePart, timePart] = dateStr.split(" ");
+      if (!datePart || !timePart) return null;
 
-        // 2. Si es número (fecha serial de Excel)
-        if (typeof fechaStr === "number") {
-          const date = new Date(Math.round((fechaStr - 25569) * 86400 * 1000));
-          return date.toISOString().split("T").join(" ").substring(0, 19);
-        }
+      const [day, month, year] = datePart.split("/");
+      const [hour, minute] = timePart.split(":");
 
-        // 3. Para tu formato específico "DD/MM/YYYY HH:mm"
-        if (typeof fechaStr === "string") {
-          // Extrae fecha y hora
-          const [datePart, timePart] = fechaStr.split(" ");
-          const [day, month, year] = datePart.split("/").map(Number);
-
-          // Extrae horas y minutos (si existe)
-          let hours = 0,
-            minutes = 0;
-          if (timePart) {
-            [hours, minutes] = timePart.split(":").map(Number);
-          }
-
-          // Crea la fecha y formatea
-          const date = new Date(year, month - 1, day, hours, minutes);
-          return (
-            `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
-              2,
-              "0"
-            )} ` +
-            `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-              2,
-              "0"
-            )}:00`
-          );
-        }
-
-        return "1970-01-01 00:00:00"; // Fallback
-      } catch (error) {
-        console.error("Error parsing date:", fechaStr, error);
-        return "1970-01-01 00:00:00";
-      }
+      // Creamos un objeto Date con los valores correctos
+      const date = new Date(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute)
+      );
     }
 
     function validateDataBeforeSend(data) {
