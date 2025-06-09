@@ -97,17 +97,50 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToSQL(dateStr) {
-      if (!dateStr || typeof dateStr !== "string") return null;
+      // 1. Validación de entrada
+      if (!dateStr) return "1970-01-01 00:00:00"; // Valor por defecto en lugar de null
 
-      const [datePart, timePart] = dateStr.trim().split(" ");
-      if (!datePart || !timePart) return null;
+      // 2. Limpieza del string
+      dateStr = String(dateStr).trim().replace(/\s+/g, " ");
 
-      const [day, month, year] = datePart.split("/");
-      const [hour, minute] = timePart.split(":");
+      try {
+        // 3. Manejo de fechas Excel numéricas
+        if (typeof dateStr === "number") {
+          const date = new Date(Math.round((dateStr - 25569) * 86400 * 1000));
+          return date.toISOString().replace("T", " ").substring(0, 19);
+        }
 
-      const pad = (n) => String(n).padStart(2, "0");
+        // 4. Procesamiento del formato "DD/MM/YYYY HH:mm"
+        const [datePart, timePart] = dateStr.split(" ");
 
-      return `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00`;
+        if (!datePart) return "1970-01-01 00:00:00";
+
+        const [day, month, year] = datePart.split("/").map(Number);
+        const [hour = 0, minute = 0] = (timePart || "").split(":").map(Number);
+
+        // 5. Validación de componentes
+        if (
+          isNaN(day) ||
+          isNaN(month) ||
+          isNaN(year) ||
+          day < 1 ||
+          day > 31 ||
+          month < 1 ||
+          month > 12 ||
+          year < 1900
+        ) {
+          return "1970-01-01 00:00:00";
+        }
+
+        // 6. Creación y formateo de fecha
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(
+          minute
+        )}:00`;
+      } catch (error) {
+        console.error("Error al parsear fecha:", dateStr, error);
+        return "1970-01-01 00:00:00";
+      }
     }
 
     function validateDataBeforeSend(data) {
