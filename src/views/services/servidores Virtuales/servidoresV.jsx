@@ -96,29 +96,30 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToSQL(dateStr) {
-      if (!dateStr || typeof dateStr !== "string") return null;
+    function parseExcelDateToISO(value) {
+      if (!value) return null;
 
-      const [datePart, timePart] = dateStr.split(" ");
-      if (!datePart || !timePart) return null;
+      // Si es un objeto Date
+      if (value instanceof Date && !isNaN(value)) {
+        return value.toISOString().split(".")[0];
+      }
 
-      const [day, month, year] = datePart.split("/");
-      const [hour, minute] = timePart.split(":");
+      // Si es string tipo "06/06/2025 12:45"
+      if (typeof value === "string") {
+        const regex = /^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/;
+        const match = value.match(regex);
 
-      const date = new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hour),
-        Number(minute)
-      );
+        if (match) {
+          const [, day, month, year, hour, minute] = match;
+          const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+          if (!isNaN(date.getTime())) {
+            return date.toISOString().split(".")[0];
+          }
+        }
+      }
 
-      if (isNaN(date.getTime())) return null;
-
-      // Devuelve formato ISO sin zona horaria: 2025-06-06T10:15:00
-      return date.toISOString().split(".")[0]; // quita los milisegundos y zona horaria
+      return null;
     }
-      
 
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -131,16 +132,20 @@ export default function ServidoresVirtuales() {
         strategic_ally: String(row.strategic_ally || ""),
         id_vm: String(row.id_vm || ""),
         server: String(row.server || ""),
-        memory: Number.isFinite(Number(row.memory)) ? Number(row.memory) : 0,
+        memory: Number(row.memory) || 0,
         so: String(row.so || ""),
         status: String(row.status || ""),
         cluster: String(row.cluster || ""),
         hdd: String(row.hdd || ""),
-        cores: Number.isFinite(Number(row.cores)) ? Number(row.cores) : 0,
+        cores: Number(row.cores) || 0,
         ip: String(row.ip || ""),
-        modified: parseExcelDateToSQL(row.modified),
+        modified: parseExcelDateToISO(row.modified),
       }));
-      
+
+      console.log(
+        "Fecha convertida:",
+        formattedData.map((d) => d.modified)
+      );
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
@@ -184,7 +189,6 @@ export default function ServidoresVirtuales() {
       });
     }
   };
-  
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
