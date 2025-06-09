@@ -97,7 +97,6 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToSQL(dateStr) {
-      // Verificamos que la cadena no esté vacía o inválida
       if (!dateStr || typeof dateStr !== "string") return null;
 
       const [datePart, timePart] = dateStr.split(" ");
@@ -106,7 +105,6 @@ export default function ServidoresVirtuales() {
       const [day, month, year] = datePart.split("/");
       const [hour, minute] = timePart.split(":");
 
-      // Creamos un objeto Date con los valores correctos
       const date = new Date(
         Number(year),
         Number(month) - 1,
@@ -115,33 +113,9 @@ export default function ServidoresVirtuales() {
         Number(minute)
       );
 
-      // Validamos que la fecha sea válida
       if (isNaN(date.getTime())) return null;
 
-      // Devolvemos en formato ISO 8601
       return date.toISOString();
-    }
-
-    function parseExcelDateToSQL(dateStr) {
-      if (!dateStr || typeof dateStr !== "string") return null;
-
-      const [datePart, timePart] = dateStr.split(" ");
-      if (!datePart || !timePart) return null;
-
-      const [day, month, year] = datePart.split("/");
-      const [hour, minute] = timePart.split(":");
-
-      const date = new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hour),
-        Number(minute)
-      );
-
-      if (isNaN(date.getTime())) return null;
-
-      return date.toISOString(); // ✅ ESTE RETURN ES FUNDAMENTAL
     }
 
     try {
@@ -162,14 +136,14 @@ export default function ServidoresVirtuales() {
         hdd: String(row.hdd || ""),
         cores: Number.isFinite(Number(row.cores)) ? Number(row.cores) : 0,
         ip: String(row.ip || ""),
-        modified: parseExcelDateToSQL(row.modified),
+        modified: parseExcelDateToSQL(row.modified) || new Date().toISOString(),
       }));
 
-      // Validación adicional
-      const validatedData = validateDataBeforeSend(formattedData);
+      // 🔁 Si tu backend espera una lista directamente:
+      const bodyToSend = JSON.stringify({ data: formattedData });
 
-      // Log para depuración (quitar en producción)
-      console.log("Datos a enviar:", validatedData);
+      // ❗ Si tu backend espera un objeto tipo { data: [...] }:
+      // const bodyToSend = JSON.stringify({ data: formattedData });
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
@@ -179,7 +153,7 @@ export default function ServidoresVirtuales() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formattedData),
+          body: bodyToSend,
         }
       );
 
@@ -207,6 +181,7 @@ export default function ServidoresVirtuales() {
       });
     }
   };
+  
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
