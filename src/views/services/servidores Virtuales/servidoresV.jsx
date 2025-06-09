@@ -145,12 +145,12 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
-        console.log(
-          "Antes:",
-          row.modified,
-          "| Después:",
-          parseExcelDateToISO(row.modified)
-        );
+        console.log("Antes:", fechaAntes); // Aquí imprime la fecha antes de cambiarla
+
+        // Código que actualiza fechaDespués
+        fechaDespués = actualizarFecha();
+
+        console.log("Después:", fechaDespués); // Aquí verificas si se actualizó o sigue siendo null
 
         return {
           platform: String(row.platform || ""),
