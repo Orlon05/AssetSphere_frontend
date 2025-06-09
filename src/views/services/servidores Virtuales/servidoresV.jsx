@@ -97,28 +97,31 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToSQL(dateStr) {
-      // 1. Validación de entrada
-      if (!dateStr) return "1970-01-01 00:00:00"; // Valor por defecto en lugar de null
+      // 1. Manejo de valores vacíos o nulos
+      if (!dateStr) return null;
 
-      // 2. Limpieza del string
-      dateStr = String(dateStr).trim().replace(/\s+/g, " ");
+      // 2. Si ya está en el formato correcto, retornarlo directamente
+      if (
+        typeof dateStr === "string" &&
+        /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateStr)
+      ) {
+        return dateStr;
+      }
 
+      // 3. Conversión desde formato Excel "DD/MM/YYYY HH:mm"
       try {
-        // 3. Manejo de fechas Excel numéricas
-        if (typeof dateStr === "number") {
-          const date = new Date(Math.round((dateStr - 25569) * 86400 * 1000));
-          return date.toISOString().replace("T", " ").substring(0, 19);
-        }
+        // Limpieza del string
+        const cleanStr = String(dateStr)
+          .trim()
+          .replace(/\s+/g, " ") // Normaliza espacios múltiples
+          .replace(/[^0-9\/: ]/g, ""); // Elimina caracteres no numéricos
 
-        // 4. Procesamiento del formato "DD/MM/YYYY HH:mm"
-        const [datePart, timePart] = dateStr.split(" ");
-
-        if (!datePart) return "1970-01-01 00:00:00";
-
+        // Extrae fecha y hora
+        const [datePart, timePart = "0:0"] = cleanStr.split(" ");
         const [day, month, year] = datePart.split("/").map(Number);
-        const [hour = 0, minute = 0] = (timePart || "").split(":").map(Number);
+        const [hour, minute] = timePart.split(":").map(Number);
 
-        // 5. Validación de componentes
+        // Validación de componentes
         if (
           isNaN(day) ||
           isNaN(month) ||
@@ -129,17 +132,18 @@ export default function ServidoresVirtuales() {
           month > 12 ||
           year < 1900
         ) {
-          return "1970-01-01 00:00:00";
+          console.warn("Fecha inválida:", dateStr);
+          return null;
         }
 
-        // 6. Creación y formateo de fecha
+        // Formateo a YYYY-MM-DD HH:mm:ss
         const pad = (n) => String(n).padStart(2, "0");
         return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(
           minute
         )}:00`;
       } catch (error) {
-        console.error("Error al parsear fecha:", dateStr, error);
-        return "1970-01-01 00:00:00";
+        console.error("Error al convertir fecha:", dateStr, error);
+        return null;
       }
     }
 
