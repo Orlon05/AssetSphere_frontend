@@ -97,11 +97,34 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToSQL(fechaStr) {
-      if (!fechaStr || typeof fechaStr !== "string") return null;
+      if (!fechaStr) return null;
+
       try {
+        // Si es un número (fecha de Excel)
+        if (typeof fechaStr === "number") {
+          // Excel cuenta días desde 1900-01-01 (con ajuste por bug de año bisiesto)
+          const excelEpoch = new Date(1900, 0, 1);
+          const date = new Date(
+            excelEpoch.getTime() + (fechaStr - 2) * 24 * 60 * 60 * 1000
+          );
+          return date.toISOString().slice(0, 19).replace("T", " ");
+        }
+
+        // Si es string, procesarlo como antes
+        if (typeof fechaStr !== "string") return null;
+
         fechaStr = fechaStr.trim().replace(/\s+/g, " ");
         const [fechaParte, horaParte] = fechaStr.split(" ");
+
+        if (!fechaParte) return null;
+
         const [dia, mes, anio] = fechaParte.split("/").map(Number);
+
+        // Validar que los componentes de fecha sean válidos
+        if (!dia || !mes || !anio || dia > 31 || mes > 12 || anio < 1900) {
+          return null;
+        }
+
         let hora = 0,
           minuto = 0;
 
