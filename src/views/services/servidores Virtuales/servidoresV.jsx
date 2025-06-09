@@ -99,21 +99,30 @@ export default function ServidoresVirtuales() {
     function parseExcelDateToISO(value) {
       if (!value) return null;
 
-      // Si es un objeto Date
+      // Si ya es objeto tipo Date
       if (value instanceof Date && !isNaN(value)) {
         return value.toISOString().split(".")[0];
       }
 
-      // Si es string tipo "06/06/2025 12:45"
       if (typeof value === "string") {
-        const regex = /^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/;
+        // Soportar formatos como 4/6/2025 4:46
+        const regex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/;
         const match = value.match(regex);
 
         if (match) {
           const [, day, month, year, hour, minute] = match;
-          const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+
+          // Añadir ceros si hace falta
+          const dd = day.padStart(2, "0");
+          const mm = month.padStart(2, "0");
+          const hh = hour.padStart(2, "0");
+          const min = minute.padStart(2, "0");
+
+          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00`;
+          const date = new Date(isoString);
+
           if (!isNaN(date.getTime())) {
-            return date.toISOString().split(".")[0];
+            return isoString;
           }
         }
       }
