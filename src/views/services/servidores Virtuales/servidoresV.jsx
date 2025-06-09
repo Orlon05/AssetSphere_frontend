@@ -152,8 +152,8 @@ export default function ServidoresVirtuales() {
       }));
 
       console.log(
-        "Fecha convertida:",
-        formattedData.map((d) => d.modified)
+        "Fechas transformadas:",
+        formattedData.map((r) => r.modified)
       );
 
       // 🔁 Si tu backend espera una lista directamente:
