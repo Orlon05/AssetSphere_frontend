@@ -100,55 +100,76 @@ export default function ServidoresVirtuales() {
       if (!fechaStr) return null;
 
       try {
-        // Si es un número (fecha de Excel)
+        // Si es fecha de Excel (número)
         if (typeof fechaStr === "number") {
-          // Excel cuenta días desde 1900-01-01 (con ajuste por bug de año bisiesto)
+          // Validar que sea un número de fecha de Excel razonable
+          if (fechaStr < 0 || fechaStr > 100000) return null;
+
           const excelEpoch = new Date(1900, 0, 1);
           const date = new Date(
-            excelEpoch.getTime() + (fechaStr - 2) * 24 * 60 * 60 * 1000
+            excelEpoch.getTime() + (fechaStr - 2) * 86400000
           );
           return date.toISOString().slice(0, 19).replace("T", " ");
         }
 
-        // Si es string, procesarlo como antes
+        // Si es string, validar formato DD/MM/YYYY
         if (typeof fechaStr !== "string") return null;
 
-        fechaStr = fechaStr.trim().replace(/\s+/g, " ");
-        const [fechaParte, horaParte] = fechaStr.split(" ");
+        const cleanStr = fechaStr.trim().replace(/\s+/g, " ");
+        const [datePart, timePart] = cleanStr.split(" ");
 
-        if (!fechaParte) return null;
+        const [day, month, year] = datePart.split("/").map(Number);
 
-        const [dia, mes, anio] = fechaParte.split("/").map(Number);
-
-        // Validar que los componentes de fecha sean válidos
-        if (!dia || !mes || !anio || dia > 31 || mes > 12 || anio < 1900) {
+        // Validación estricta de fecha
+        if (
+          isNaN(day) ||
+          isNaN(month) ||
+          isNaN(year) ||
+          day < 1 ||
+          day > 31 ||
+          month < 1 ||
+          month > 12 ||
+          year < 1900
+        ) {
           return null;
         }
 
-        let hora = 0,
-          minuto = 0;
-
-        if (horaParte) {
-          const partesHora = horaParte.split(":").map(Number);
-          hora = partesHora[0] || 0;
-          minuto = partesHora[1] || 0;
+        // Validación de hora si existe
+        let hours = 0,
+          minutes = 0;
+        if (timePart) {
+          const [h, m] = timePart.split(":").map(Number);
+          if (!isNaN(h) && h >= 0 && h < 24) hours = h;
+          if (!isNaN(m) && m >= 0 && m < 60) minutes = m;
         }
 
-        const fecha = new Date(anio, mes - 1, dia, hora, minuto);
-        if (isNaN(fecha.getTime())) return null;
+        const date = new Date(year, month - 1, day, hours, minutes);
+        if (isNaN(date.getTime())) return null;
 
-        const year = fecha.getFullYear();
-        const month = String(fecha.getMonth() + 1).padStart(2, "0");
-        const day = String(fecha.getDate()).padStart(2, "0");
-        const hours = String(fecha.getHours()).padStart(2, "0");
-        const minutes = String(fecha.getMinutes()).padStart(2, "0");
-        const seconds = String(fecha.getSeconds()).padStart(2, "0");
-
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        return date.toISOString().slice(0, 19).replace("T", " ");
       } catch (error) {
-        console.warn("Error al parsear fecha:", fechaStr, error);
+        console.error("Error parsing date:", fechaStr, error);
         return null;
       }
+    }
+
+    function validateDataBeforeSend(data) {
+      return data.map((item) => {
+        // Validar campos numéricos
+        if (!Number.isInteger(item.cores) || item.cores < 0) {
+          item.cores = 0;
+        }
+        if (!Number.isInteger(item.memory) || item.memory < 0) {
+          item.memory = 0;
+        }
+
+        // Validar que las fechas sean strings válidos o null
+        if (item.modified && typeof item.modified !== "string") {
+          item.modified = null;
+        }
+
+        return item;
+      });
     }
 
     try {
@@ -171,6 +192,12 @@ export default function ServidoresVirtuales() {
         ip: String(row.ip || ""),
         modified: parseExcelDateToSQL(row.modified),
       }));
+
+      // Validación adicional
+      const validatedData = validateDataBeforeSend(formattedData);
+
+      // Log para depuración (quitar en producción)
+      console.log("Datos a enviar:", validatedData);
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
