@@ -115,17 +115,10 @@ export default function ServidoresVirtuales() {
 
       if (isNaN(date.getTime())) return null;
 
-      // ✅ Formato YYYY-MM-DD HH:mm:ss
-      const pad = (n) => n.toString().padStart(2, "0");
-
-      const formattedDate = `${date.getFullYear()}-${pad(
-        date.getMonth() + 1
-      )}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(
-        date.getMinutes()
-      )}:00`;
-
-      return formattedDate;
-    }    
+      // Devuelve formato ISO sin zona horaria: 2025-06-06T10:15:00
+      return date.toISOString().split(".")[0]; // quita los milisegundos y zona horaria
+    }
+      
 
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -145,8 +138,9 @@ export default function ServidoresVirtuales() {
         hdd: String(row.hdd || ""),
         cores: Number.isFinite(Number(row.cores)) ? Number(row.cores) : 0,
         ip: String(row.ip || ""),
-        modified: parseExcelDateToSQL(row.modified) || new Date().toISOString(),
+        modified: parseExcelDateToSQL(row.modified),
       }));
+      
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
