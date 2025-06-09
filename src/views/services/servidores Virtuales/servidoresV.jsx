@@ -96,61 +96,30 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToSQL(fechaStr) {
-      if (!fechaStr) return null;
+    function parseExcelDateToSQL(dateStr) {
+      if (!dateStr) return null;
 
-      try {
-        // Si es fecha de Excel (número)
-        if (typeof fechaStr === "number") {
-          // Validar que sea un número de fecha de Excel razonable
-          if (fechaStr < 0 || fechaStr > 100000) return null;
+      // Si viene como Date (formato automático de Excel), lo convertimos directamente
+      if (dateStr instanceof Date) {
+        return dateStr.toISOString().slice(0, 19).replace("T", " ");
+      }
 
-          const excelEpoch = new Date(1900, 0, 1);
-          const date = new Date(
-            excelEpoch.getTime() + (fechaStr - 2) * 86400000
-          );
-          return date.toISOString();
-        }
+      // Si viene como string, lo parseamos
+      const regex = /^(\d{2})\/(\d{2})\/(\d{4}) (\d{1,2}):(\d{2})$/;
+      const match = dateStr.match(regex);
 
-        // Si es string, validar formato DD/MM/YYYY
-        if (typeof fechaStr !== "string") return null;
-
-        const cleanStr = fechaStr.trim().replace(/\s+/g, " ");
-        const [datePart, timePart] = cleanStr.split(" ");
-
-        const [day, month, year] = datePart.split("/").map(Number);
-
-        // Validación estricta de fecha
-        if (
-          isNaN(day) ||
-          isNaN(month) ||
-          isNaN(year) ||
-          day < 1 ||
-          day > 31 ||
-          month < 1 ||
-          month > 12 ||
-          year < 1900
-        ) {
-          return null;
-        }
-
-        // Validación de hora si existe
-        let hours = 0,
-          minutes = 0;
-        if (timePart) {
-          const [h, m] = timePart.split(":").map(Number);
-          if (!isNaN(h) && h >= 0 && h < 24) hours = h;
-          if (!isNaN(m) && m >= 0 && m < 60) minutes = m;
-        }
-
-        const date = new Date(year, month - 1, day, hours, minutes);
-        if (isNaN(date.getTime())) return null;
-
-        return date.toISOString().slice(0, 19).replace("T", " ");
-      } catch (error) {
-        console.error("Error parsing date:", fechaStr, error);
+      if (!match) {
+        console.warn("Fecha con formato inválido:", dateStr);
         return null;
       }
+
+      const [, day, month, year, hour, minute] = match;
+
+      const formatted = `${year}-${month.padStart(2, "0")}-${day.padStart(
+        2,
+        "0"
+      )} ${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
+      return formatted;
     }
 
     function validateDataBeforeSend(data) {
