@@ -109,7 +109,7 @@ export default function ServidoresVirtuales() {
           const date = new Date(
             excelEpoch.getTime() + (fechaStr - 2) * 86400000
           );
-          return date.toISOString().slice(0, 19).replace("T", " ");
+          return date.toISOString();
         }
 
         // Si es string, validar formato DD/MM/YYYY
