@@ -19,11 +19,6 @@ import {
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
-const V = (item) => {
-  // Algunas operaciones con item
-  return item;
-};
-
 export default function ServidoresVirtuales() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -156,10 +151,6 @@ export default function ServidoresVirtuales() {
           "| Después:",
           parseExcelDateToISO(row.modified)
         );
-        console.log(
-          "Body final:",
-          JSON.stringify({ data: formattedData }, null, 2)
-        );
 
         return {
           platform: String(row.platform || ""),
@@ -168,14 +159,21 @@ export default function ServidoresVirtuales() {
           server: String(row.server || ""),
           memory: Number(row.memory) || 0,
           so: String(row.so || ""),
-          status: String(row.status || ""),
-          cluster: String(row.cluster || ""),
-          hdd: String(row.hdd || ""),
+          status: String(row.status) || "",
+          cluster: String(row.cluster) || "",
+          hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
-          ip: String(row.ip || ""),
+          ip: String(row.ip) || "",
           modified: parseExcelDateToISO(row.modified),
         };
       });
+
+      // Ahora sí puedes loguear formattedData sin problema:
+      console.log(
+        "Body final:",
+        JSON.stringify({ data: formattedData }, null, 2)
+      );
+      
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
