@@ -106,7 +106,6 @@ export default function ServidoresVirtuales() {
 
       // ✅ 2. Si es número serial de Excel
       if (typeof value === "number") {
-        // Excel usa 1900 como base y considera 1900-01-01 como día 1 (en realidad es 0)
         const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // 1899-12-30
         const msPerDay = 24 * 60 * 60 * 1000;
         const date = new Date(excelEpoch.getTime() + value * msPerDay);
@@ -125,7 +124,7 @@ export default function ServidoresVirtuales() {
           const hh = hour.padStart(2, "0");
           const min = minute.padStart(2, "0");
 
-          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00Z`; // Formato ISO con 'T' y 'Z'
+          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00Z`;
           const date = new Date(isoString);
 
           if (!isNaN(date.getTime())) {
@@ -134,8 +133,16 @@ export default function ServidoresVirtuales() {
         }
       }
 
-      // Si no se pudo convertir, devuelve null
       return null;
+    }
+
+    // Declaración inicial de fechas
+    let fechaAntes = null;
+    let fechaDespués = null;
+
+    // Función ejemplo para actualizar la fecha (puedes cambiar la lógica aquí)
+    function actualizarFecha() {
+      return new Date().toISOString();
     }
 
     try {
@@ -145,12 +152,12 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
-        console.log("Antes:", fechaAntes); // Aquí imprime la fecha antes de cambiarla
+        console.log("Antes:", fechaAntes);
 
-        // Código que actualiza fechaDespués
         fechaDespués = actualizarFecha();
+        fechaAntes = fechaDespués;
 
-        console.log("Después:", fechaDespués); // Aquí verificas si se actualizó o sigue siendo null
+        console.log("Después:", fechaDespués);
 
         return {
           platform: String(row.platform || ""),
@@ -167,15 +174,10 @@ export default function ServidoresVirtuales() {
           modified: parseExcelDateToISO(row.modified),
         };
       });
-      
 
-      // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
 
       console.log("JSON enviado al backend:", bodyToSend);
-
-      // ❗ Si tu backend espera un objeto tipo { data: [...] }:
-      // const bodyToSend = JSON.stringify({ data: formattedData });
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
@@ -213,6 +215,7 @@ export default function ServidoresVirtuales() {
       });
     }
   };
+  
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
