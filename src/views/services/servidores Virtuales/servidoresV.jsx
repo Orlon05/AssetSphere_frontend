@@ -125,7 +125,7 @@ export default function ServidoresVirtuales() {
           const hh = hour.padStart(2, "0");
           const min = minute.padStart(2, "0");
 
-          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00`;
+          const isoString = `${year}-${mm}-${dd} ${hh}:${min}:00`;
           const date = new Date(isoString);
 
           if (!isNaN(date.getTime())) {
@@ -144,7 +144,16 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
-        console.log("Tipo de 'modified':", typeof row.modified, row.modified);
+        console.log(
+          "Antes:",
+          row.modified,
+          "| Después:",
+          parseExcelDateToISO(row.modified)
+        );
+        console.log(
+          "Body final:",
+          JSON.stringify({ data: formattedData }, null, 2)
+        );
 
         return {
           platform: String(row.platform || ""),
