@@ -97,26 +97,17 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToSQL(dateStr) {
-      // Verificamos que la cadena no esté vacía o inválida
       if (!dateStr || typeof dateStr !== "string") return null;
 
-      const [datePart, timePart] = dateStr.split(" ");
+      const [datePart, timePart] = dateStr.trim().split(" ");
       if (!datePart || !timePart) return null;
 
       const [day, month, year] = datePart.split("/");
       const [hour, minute] = timePart.split(":");
 
-      // Creamos un objeto Date con los valores correctos
-      const date = new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hour),
-        Number(minute)
-      );
+      const pad = (n) => String(n).padStart(2, "0");
 
-      // Convertimos a formato ISO con precisión hasta los segundos
-      return date.toISOString().slice(0, 19); // "YYYY-MM-DDTHH:mm:ss"
+      return `${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:00`;
     }
 
     function validateDataBeforeSend(data) {
