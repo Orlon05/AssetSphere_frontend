@@ -87,12 +87,6 @@ export default function ServidoresVirtuales() {
   };
 
   const handleImportComplete = async (importedData) => {
-    console.log("=== DEBUG: Datos recibidos del importador ===");
-    console.log("Tipo:", typeof importedData);
-    console.log("Es array:", Array.isArray(importedData));
-    console.log("Longitud:", importedData?.length);
-    console.log("Primeros 3 elementos:", importedData?.slice(0, 3));
-
     Swal.fire({
       title: "Procesando datos...",
       text: "Estamos guardando los servidores virtuales importados",
@@ -102,242 +96,74 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    // Función para parsear fechas de Excel a formato SQL
-    function parseExcelDateToSQL(dateStr) {
-      // 1. Manejo de valores vacíos o nulos
-      if (!dateStr) return null;
+    function parseExcelDateToSQL(fechaStr) {
+      if (!fechaStr) return "01-01-1979 00:00:00"; // Valor por defecto
 
-      // 2. Si ya está en el formato correcto, retornarlo directamente
-      if (
-        typeof dateStr === "string" &&
-        /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateStr)
-      ) {
-        return dateStr;
-      }
-
-      // 3. Conversión desde múltiples formatos posibles
       try {
-        // Limpieza del string
-        const cleanStr = String(dateStr)
-          .trim()
-          .replace(/\s+/g, " ") // Normaliza espacios múltiples
-          .replace(/[^0-9\/: ]/g, ""); // Elimina caracteres no numéricos
-
-        // Extrae fecha y hora
-        const [datePart, timePart = "0:0"] = cleanStr.split(" ");
-
-        // Detectar formato de fecha (DD/MM/YYYY vs MM/DD/YYYY)
-        const dateParts = datePart.split("/").map(Number);
-        let day, month, year;
-
-        if (dateParts.length !== 3) {
-          console.warn("Formato de fecha inválido:", dateStr);
-          return null;
-        }
-
-        // Determinar el formato basado en los valores
-        if (dateParts[0] > 12) {
-          // DD/MM/YYYY
-          [day, month, year] = dateParts;
-        } else if (dateParts[1] > 12) {
-          // MM/DD/YYYY
-          [month, day, year] = dateParts;
-        } else {
-          // Ambiguos - usar DD/MM/YYYY por defecto
-          [day, month, year] = dateParts;
-        }
-
-        // Manejo de años de 2 dígitos
-        if (year < 100) {
-          year = year < 30 ? 2000 + year : 1900 + year;
-        }
-
-        // Procesar hora
-        const timeParts = timePart.split(":").map(Number);
-        const hour = timeParts[0] || 0;
-        const minute = timeParts[1] || 0;
-        const second = timeParts[2] || 0;
-
-        // Validación de componentes
+        // 1. Si ya es un string en formato SQL (caso raro)
         if (
-          isNaN(day) ||
-          isNaN(month) ||
-          isNaN(year) ||
-          isNaN(hour) ||
-          isNaN(minute) ||
-          day < 1 ||
-          day > 31 ||
-          month < 1 ||
-          month > 12 ||
-          year < 1900 ||
-          year > 2100 ||
-          hour < 0 ||
-          hour > 23 ||
-          minute < 0 ||
-          minute > 59 ||
-          second < 0 ||
-          second > 59
+          typeof fechaStr === "string" &&
+          /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(fechaStr)
         ) {
-          console.warn(
-            "Componentes de fecha inválidos:",
-            { day, month, year, hour, minute, second },
-            "desde:",
-            dateStr
-          );
-          return null;
+          return fechaStr;
         }
 
-        // Validación adicional: crear objeto Date para verificar
-        const testDate = new Date(year, month - 1, day, hour, minute, second);
-        if (
-          testDate.getFullYear() !== year ||
-          testDate.getMonth() !== month - 1 ||
-          testDate.getDate() !== day
-        ) {
-          console.warn("Fecha no existe en el calendario:", dateStr);
-          return null;
+        // 2. Si es número (fecha serial de Excel)
+        if (typeof fechaStr === "number") {
+          const date = new Date(Math.round((fechaStr - 25569) * 86400 * 1000));
+          return date.toISOString().split("T").join(" ").substring(0, 19);
         }
 
-        // Formateo a YYYY-MM-DD HH:mm:ss
-        const pad = (n) => String(n).padStart(2, "0");
-        return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(
-          minute
-        )}:${pad(second)}`;
-      } catch (error) {
-        console.error("Error al convertir fecha:", dateStr, error);
-        return null;
-      }
-    }
+        // 3. Para tu formato específico "DD/MM/YYYY HH:mm"
+        if (typeof fechaStr === "string") {
+          // Extrae fecha y hora
+          const [datePart, timePart] = fechaStr.split(" ");
+          const [day, month, year] = datePart.split("/").map(Number);
 
-    // Función mejorada para validar y procesar datos
-    function processAndValidateData(data) {
-      console.log("=== Procesando datos ===");
-
-      if (!Array.isArray(data)) {
-        console.error("Los datos no son un array:", data);
-        return [];
-      }
-
-      const processedData = data
-        .map((item, index) => {
-          try {
-            // Crear objeto procesado
-            const processedItem = {};
-
-            // Procesar cada campo según su tipo
-            const expectedFields = [
-              "platform",
-              "strategic_ally",
-              "id_vm",
-              "server",
-              "memory",
-              "so",
-              "status",
-              "cluster",
-              "hdd",
-              "cores",
-              "ip",
-              "modified",
-            ];
-
-            expectedFields.forEach((field) => {
-              let value = item[field];
-
-              // Procesar según el tipo de campo
-              switch (field) {
-                case "memory":
-                case "cores":
-                  // Convertir a entero, usar 0 como default
-                  processedItem[field] = parseInt(value) || 0;
-                  break;
-
-                case "modified":
-                  // Procesar fecha
-                  processedItem[field] = parseExcelDateToSQL(value);
-                  break;
-
-                default:
-                  // Campos de texto - convertir a string o null
-                  processedItem[field] = value ? String(value).trim() : null;
-              }
-            });
-
-            console.log(`Item ${index + 1} procesado:`, processedItem);
-            return processedItem;
-          } catch (error) {
-            console.error(`Error procesando item ${index + 1}:`, error, item);
-            return null;
+          // Extrae horas y minutos (si existe)
+          let hours = 0,
+            minutes = 0;
+          if (timePart) {
+            [hours, minutes] = timePart.split(":").map(Number);
           }
-        })
-        .filter((item) => item !== null); // Filtrar items nulos
 
-      console.log(
-        `Datos procesados: ${processedData.length} de ${data.length} items`
-      );
-      return processedData;
+          // Crea la fecha y formatea
+          const date = new Date(year, month - 1, day, hours, minutes);
+          return (
+            `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
+              2,
+              "0"
+            )} ` +
+            `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+              2,
+              "0"
+            )}:00`
+          );
+        }
+
+        return "1970-01-01 00:00:00"; // Fallback
+      } catch (error) {
+        console.error("Error parsing date:", fechaStr, error);
+        return "1970-01-01 00:00:00";
+      }
     }
 
-    try {
-      // 1. Validar que recibimos datos
-      if (
-        !importedData ||
-        !Array.isArray(importedData) ||
-        importedData.length === 0
-      ) {
-        throw new Error("No se recibieron datos válidos para importar");
-      }
+    function validateDataBeforeSend(data) {
+      return data.map((item) => {
+        // Validar campos numéricos
+        if (!Number.isInteger(item.cores) || item.cores < 0) {
+          item.cores = 0;
+        }
+        if (!Number.isInteger(item.memory) || item.memory < 0) {
+          item.memory = 0;
+        }
 
-      // 2. Procesar y validar datos
-      const processedData = processAndValidateData(importedData);
+        // Validar que las fechas sean strings válidos o null
+        if (item.modified && typeof item.modified !== "string") {
+          item.modified = null;
+        }
 
-      if (processedData.length === 0) {
-        throw new Error("No se pudieron procesar los datos importados");
-      }
-
-      // 3. Log de datos finales antes de enviar
-      console.log("=== Datos finales para enviar ===");
-      console.log("Total de registros:", processedData.length);
-      console.log("Primeros 2 registros:", processedData.slice(0, 2));
-
-      // 4. Enviar datos al servidor
-      const response = await fetch("/api/virtual-servers/import", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(processedData),
-      });
-
-      // 5. Manejar respuesta del servidor
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error del servidor:", errorText);
-        throw new Error(
-          `Error del servidor (${response.status}): ${errorText}`
-        );
-      }
-
-      const result = await response.json();
-      console.log("Respuesta del servidor:", result);
-
-      // 6. Mostrar éxito
-      Swal.fire({
-        title: "¡Importación exitosa!",
-        text: `Se importaron ${processedData.length} servidores virtuales correctamente`,
-        icon: "success",
-        confirmButtonText: "Aceptar",
-      }).then(() => {
-        // Recargar datos o actualizar la vista
-        window.location.reload(); // O llamar a una función para actualizar la tabla
-      });
-    } catch (error) {
-      console.error("Error en la importación:", error);
-
-      Swal.fire({
-        title: "Error en la importación",
-        text: error.message || "Ocurrió un error al procesar los datos",
-        icon: "error",
-        confirmButtonText: "Aceptar",
+        return item;
       });
     }
 
