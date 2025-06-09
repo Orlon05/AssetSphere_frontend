@@ -96,30 +96,56 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToSQL(dateStr) {
-      if (!dateStr) return null;
+    function parseExcelDateToSQL(fechaStr) {
+      if (!fechaStr) return "1970-01-01 00:00:00"; // Valor por defecto
 
-      // Si viene como Date (formato automático de Excel), lo convertimos directamente
-      if (dateStr instanceof Date) {
-        return dateStr.toISOString().slice(0, 19).replace("T", " ");
+      try {
+        // 1. Si ya es un string en formato SQL (caso raro)
+        if (
+          typeof fechaStr === "string" &&
+          /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(fechaStr)
+        ) {
+          return fechaStr;
+        }
+
+        // 2. Si es número (fecha serial de Excel)
+        if (typeof fechaStr === "number") {
+          const date = new Date(Math.round((fechaStr - 25569) * 86400 * 1000));
+          return date.toISOString().split("T").join(" ").substring(0, 19);
+        }
+
+        // 3. Para tu formato específico "DD/MM/YYYY HH:mm"
+        if (typeof fechaStr === "string") {
+          // Extrae fecha y hora
+          const [datePart, timePart] = fechaStr.split(" ");
+          const [day, month, year] = datePart.split("/").map(Number);
+
+          // Extrae horas y minutos (si existe)
+          let hours = 0,
+            minutes = 0;
+          if (timePart) {
+            [hours, minutes] = timePart.split(":").map(Number);
+          }
+
+          // Crea la fecha y formatea
+          const date = new Date(year, month - 1, day, hours, minutes);
+          return (
+            `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
+              2,
+              "0"
+            )} ` +
+            `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+              2,
+              "0"
+            )}:00`
+          );
+        }
+
+        return "1970-01-01 00:00:00"; // Fallback
+      } catch (error) {
+        console.error("Error parsing date:", fechaStr, error);
+        return "1970-01-01 00:00:00";
       }
-
-      // Si viene como string, lo parseamos
-      const regex = /^(\d{2})\/(\d{2})\/(\d{4}) (\d{1,2}):(\d{2})$/;
-      const match = dateStr.match(regex);
-
-      if (!match) {
-        console.warn("Fecha con formato inválido:", dateStr);
-        return null;
-      }
-
-      const [, day, month, year, hour, minute] = match;
-
-      const formatted = `${year}-${month.padStart(2, "0")}-${day.padStart(
-        2,
-        "0"
-      )} ${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
-      return formatted;
     }
 
     function validateDataBeforeSend(data) {
