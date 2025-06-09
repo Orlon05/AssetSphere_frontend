@@ -97,7 +97,7 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToISO(value) {
-      if (!value) return null;
+      if (value === null || value === undefined) return null;
 
       // ✅ 1. Si es Date válido
       if (value instanceof Date && !isNaN(value)) {
@@ -125,7 +125,7 @@ export default function ServidoresVirtuales() {
           const hh = hour.padStart(2, "0");
           const min = minute.padStart(2, "0");
 
-          const isoString = `${year}-${mm}-${dd} ${hh}:${min}:00`;
+          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00Z`; // Formato ISO con 'T' y 'Z'
           const date = new Date(isoString);
 
           if (!isNaN(date.getTime())) {
@@ -134,6 +134,7 @@ export default function ServidoresVirtuales() {
         }
       }
 
+      // Si no se pudo convertir, devuelve null
       return null;
     }
 
