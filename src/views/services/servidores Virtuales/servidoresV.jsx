@@ -114,6 +114,12 @@ export default function ServidoresVirtuales() {
         Number(hour),
         Number(minute)
       );
+
+      // Validamos que la fecha sea válida
+      if (isNaN(date.getTime())) return null;
+
+      // Devolvemos en formato ISO 8601
+      return date.toISOString();
     }
 
     function validateDataBeforeSend(data) {
