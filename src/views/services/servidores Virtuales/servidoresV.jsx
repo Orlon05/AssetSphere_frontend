@@ -167,16 +167,12 @@ export default function ServidoresVirtuales() {
           modified: parseExcelDateToISO(row.modified),
         };
       });
-
-      // Ahora sí puedes loguear formattedData sin problema:
-      console.log(
-        "Body final:",
-        JSON.stringify({ data: formattedData }, null, 2)
-      );
       
 
       // 🔁 Si tu backend espera una lista directamente:
       const bodyToSend = JSON.stringify({ data: formattedData });
+
+      console.log("JSON enviado al backend:", bodyToSend);
 
       // ❗ Si tu backend espera un objeto tipo { data: [...] }:
       // const bodyToSend = JSON.stringify({ data: formattedData });
