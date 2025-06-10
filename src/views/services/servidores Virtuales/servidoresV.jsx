@@ -102,42 +102,37 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      const formattedData = importedData.map((row) => {
-        // Función para convertir a formato compatible con el backend
-        const parseModifiedDate = (dateString) => {
-          if (!dateString) return null;
+      function normalizeDate(dateStr) {
+        if (!dateStr) return null;
+        // Si ya es formato YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.split("T")[0];
+        // Si es formato DD/MM/YYYY o DD/MM/YYYY HH:mm
+        if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr)) {
+          const [datePart] = dateStr.split(" ");
+          const [day, month, year] = datePart.split("/");
+          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        }
+        // Si es un objeto Date
+        if (dateStr instanceof Date && !isNaN(dateStr)) {
+          return dateStr.toISOString().split("T")[0];
+        }
+        return null;
+      }
 
-          // Si ya es un formato ISO válido (2025-06-04 o similar)
-          if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
-            return dateString.split("T")[0]; // Tomar solo la parte de la fecha
-          }
-
-          // Convertir desde formato "04/06/2025 4:46" (DD/MM/YYYY)
-          if (dateString.match(/^\d{2}\/\d{2}\/\d{4}/)) {
-            const [datePart] = dateString.split(" ");
-            const [day, month, year] = datePart.split("/");
-            // Formatear como YYYY-MM-DD (ISO)
-            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-          }
-
-          return null; // Si no podemos parsearlo, devolvemos null
-        };
-
-        return {
-          platform: String(row.platform || ""),
-          strategic_ally: String(row.strategic_ally || ""),
-          id_vm: String(row.id_vm || ""),
-          server: String(row.server || ""),
-          memory: Number(row.memory) || 0,
-          so: String(row.so || ""),
-          status: String(row.status) || "",
-          cluster: String(row.cluster || ""),
-          hdd: String(row.hdd || ""),
-          cores: Number(row.cores) || 0,
-          ip: String(row.ip || ""),
-          modified: parseModifiedDate(row.modified),
-        };
-      });
+      const formattedData = importedData.map((row) => ({
+        platform: String(row.platform || ""),
+        strategic_ally: String(row.strategic_ally || ""),
+        id_vm: String(row.id_vm || ""),
+        server: String(row.server || ""),
+        memory: Number(row.memory) || 0,
+        so: String(row.so || ""),
+        status: String(row.status) || "",
+        cluster: String(row.cluster || ""),
+        hdd: String(row.hdd || ""),
+        cores: Number(row.cores) || 0,
+        ip: String(row.ip || ""),
+        modified: normalizeDate(row.modified),
+      }));
 
       // Verificación antes de enviar
       console.log("Datos a enviar:", formattedData);
