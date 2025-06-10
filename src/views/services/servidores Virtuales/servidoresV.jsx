@@ -103,16 +103,25 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
-        // Convertir la fecha al formato correcto
-        let modifiedDate = null;
-        if (row.modified) {
-          // Asumiendo que la fecha viene como "04/06/2025 4:46" (DD/MM/YYYY)
-          const dateParts = row.modified.split(" ")[0].split("/");
-          if (dateParts.length === 3) {
-            // Formatear a YYYY-MM-DD que es el formato estándar para APIs
-            modifiedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        // Función para convertir a formato compatible con el backend
+        const parseModifiedDate = (dateString) => {
+          if (!dateString) return null;
+
+          // Si ya es un formato ISO válido (2025-06-04 o similar)
+          if (dateString.match(/^\d{4}-\d{2}-\d{2}/)) {
+            return dateString.split("T")[0]; // Tomar solo la parte de la fecha
           }
-        }
+
+          // Convertir desde formato "04/06/2025 4:46" (DD/MM/YYYY)
+          if (dateString.match(/^\d{2}\/\d{2}\/\d{4}/)) {
+            const [datePart] = dateString.split(" ");
+            const [day, month, year] = datePart.split("/");
+            // Formatear como YYYY-MM-DD (ISO)
+            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          }
+
+          return null; // Si no podemos parsearlo, devolvemos null
+        };
 
         return {
           platform: String(row.platform || ""),
@@ -122,17 +131,16 @@ export default function ServidoresVirtuales() {
           memory: Number(row.memory) || 0,
           so: String(row.so || ""),
           status: String(row.status) || "",
-          cluster: String(row.cluster) || "",
-          hdd: String(row.hdd) || "",
+          cluster: String(row.cluster || ""),
+          hdd: String(row.hdd || ""),
           cores: Number(row.cores) || 0,
-          ip: String(row.ip) || "",
-          modified: modifiedDate, // Usamos la fecha formateada
+          ip: String(row.ip || ""),
+          modified: parseModifiedDate(row.modified),
         };
       });
 
-      const bodyToSend = JSON.stringify({ data: formattedData });
-
-      console.log("JSON enviado al backend:", bodyToSend);
+      // Verificación antes de enviar
+      console.log("Datos a enviar:", formattedData);
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
@@ -142,31 +150,30 @@ export default function ServidoresVirtuales() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: bodyToSend,
+          body: JSON.stringify({ data: formattedData }),
         }
       );
 
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
+        const errorData = await response.json();
+        console.error("Error detallado:", errorData);
+        throw new Error(errorData.detail || `Error HTTP ${response.status}`);
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       Swal.fire({
         icon: "success",
         title: "Importación exitosa",
-        text: `Se han importado ${importedData.length} servidores virtuales correctamente.`,
+        text: `Se importaron ${importedData.length} servidores correctamente.`,
       });
 
       fetchServers(currentPage, rowsPerPage);
     } catch (error) {
-      console.error("Error al procesar los datos importados:", error);
+      console.error("Error completo:", error);
       Swal.fire({
         icon: "error",
         title: "Error en la importación",
-        text:
-          error.message ||
-          "Ha ocurrido un error al procesar los datos importados.",
+        html: `<div>${error.message}</div>
+               <small>Verifica el formato de las fechas en los datos</small>`,
       });
     }
   };
