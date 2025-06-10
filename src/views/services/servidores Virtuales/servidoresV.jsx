@@ -144,7 +144,7 @@ export default function ServidoresVirtuales() {
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
           ip: String(row.ip) || "",
-          modified: parseExcelDateToISO(row.modified),
+          modified: convertExcelStringToMySQLDate(row.modified),
         };
       });
 
