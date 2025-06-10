@@ -97,52 +97,41 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToISO(value) {
-  if (value === null || value === undefined) return null;
+      if (value === null || value === undefined) return null;
 
-  // 1. Si ya es un objeto Date válido
-  if (value instanceof Date && !isNaN(value)) {
-    return value.toISOString().split("T")[0];
-  }
+      // 1. Si ya es un objeto Date válido
+      if (value instanceof Date && !isNaN(value)) {
+        return value.toISOString().split("T")[0];
+      }
 
-  // 2. Si es un número serial de Excel
-  if (typeof value === "number") {
-    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const date = new Date(excelEpoch.getTime() + value * msPerDay);
-    return date.toISOString().split("T")[0];
-  }
+      // 2. Si es un número serial de Excel
+      if (typeof value === "number") {
+        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const date = new Date(excelEpoch.getTime() + value * msPerDay);
+        return date.toISOString().split("T")[0];
+      }
 
-  // 3. Si es un string tipo "4/06/2025  4:46:00 a. m."
-  if (typeof value === "string") {
-    const normalized = value
-      .replace(/a\.\s*m\./i, "AM")
-      .replace(/p\.\s*m\./i, "PM")
-      .replace(/\s+/g, " ")
-      .trim();
+      // 3. Si es un string tipo "4/06/2025  4:46:00 a. m."
+      if (typeof value === "string") {
+        const normalized = value
+          .replace(/a\.\s*m\./i, "AM")
+          .replace(/p\.\s*m\./i, "PM")
+          .replace(/\s+/g, " ")
+          .trim();
 
-    // Intentar parsear manualmente con split
-    const parts = normalized.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (parts) {
-      const day = parts[1].padStart(2, '0');
-      const month = parts[2].padStart(2, '0');
-      const year = parts[3];
-      return `${year}-${month}-${day}`;
+        // Intentar parsear manualmente con split
+        const parts = normalized.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (parts) {
+          const day = parts[1].padStart(2, "0");
+          const month = parts[2].padStart(2, "0");
+          const year = parts[3];
+          return `${year}-${month}-${day}`;
+        }
+      }
+
+      return null;
     }
-  }
-
-  return null;
-}
-
-
-    // Declaración inicial de fechas
-    let fechaAntes = null;
-    let fechaDespués = null;
-
-    // Función ejemplo para actualizar la fecha (puedes cambiar la lógica aquí)
-    function actualizarFecha() {
-      return new Date().toISOString();
-    }
-
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
