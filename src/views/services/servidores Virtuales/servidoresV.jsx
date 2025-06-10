@@ -96,40 +96,6 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToISO(value) {
-      if (!value) return null;
-
-      // Si ya es objeto Date válido
-      if (value instanceof Date && !isNaN(value)) {
-        const year = value.getFullYear();
-        const month = String(value.getMonth() + 1).padStart(2, "0");
-        const day = String(value.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      }
-
-      // Si es string tipo "04/06/2025 4:46"
-      if (typeof value === "string") {
-        const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-        if (match) {
-          const [, day, month, year] = match;
-          return `${year}-${month}-${day}`;
-        }
-      }
-
-      // Si es número serial de Excel
-      if (typeof value === "number") {
-        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
-        const msPerDay = 24 * 60 * 60 * 1000;
-        const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        const year = date.getUTCFullYear();
-        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(date.getUTCDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      }
-
-      return null;
-    }
-
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
@@ -137,6 +103,17 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
+        // Convertir la fecha al formato correcto
+        let modifiedDate = null;
+        if (row.modified) {
+          // Asumiendo que la fecha viene como "04/06/2025 4:46" (DD/MM/YYYY)
+          const dateParts = row.modified.split(" ")[0].split("/");
+          if (dateParts.length === 3) {
+            // Formatear a YYYY-MM-DD que es el formato estándar para APIs
+            modifiedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+          }
+        }
+
         return {
           platform: String(row.platform || ""),
           strategic_ally: String(row.strategic_ally || ""),
@@ -149,7 +126,7 @@ export default function ServidoresVirtuales() {
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
           ip: String(row.ip) || "",
-          modified: parseExcelDateToISO(row.modified),
+          modified: modifiedDate, // Usamos la fecha formateada
         };
       });
 
