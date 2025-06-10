@@ -96,47 +96,32 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function parseExcelDateToISO(value) {
-      if (!value) return null;
+    function convertExcelStringToMySQLDate(dateString) {
+      // Si no hay valor, retornar null
+      if (!dateString || dateString === "") return null;
 
-      // Ya es Date
-      if (value instanceof Date && !isNaN(value)) {
-        return value.toISOString().split("T")[0];
+      // Convertir a string por si acaso
+      const str = String(dateString).trim();
+
+      // Patrón para capturar el formato "04/06/2025 4:46" o "04/06/2025"
+      const pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+\d{1,2}:\d{1,2})?/;
+      const match = str.match(pattern);
+
+      if (match) {
+        const [_, day, month, year] = match;
+
+        // Convertir a formato MySQL DATE: 'YYYY-MM-DD'
+        const mysqlDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+          2,
+          "0"
+        )}`;
+
+        console.log(`Conversión: "${str}" → "${mysqlDate}"`);
+        return mysqlDate;
       }
 
-      // Es número serial de Excel
-      if (typeof value === "number") {
-        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
-        const msPerDay = 24 * 60 * 60 * 1000;
-        const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return date.toISOString().split("T")[0];
-      }
-
-      // Es string - manejo más completo
-      if (typeof value === "string") {
-        // Primero intentar con el formato: "04/06/2025 4:46"
-        const dateTimeMatch = value.match(
-          /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+\d{1,2}:\d{1,2}/
-        );
-        if (dateTimeMatch) {
-          const [_, day, month, year] = dateTimeMatch;
-          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-        }
-
-        // Formato solo fecha: "04/06/2025"
-        const dateMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (dateMatch) {
-          const [_, day, month, year] = dateMatch;
-          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-        }
-
-        // Intentar parsear directamente como fecha
-        const parsedDate = new Date(value);
-        if (!isNaN(parsedDate)) {
-          return parsedDate.toISOString().split("T")[0];
-        }
-      }
-
+      // Si no coincide con el patrón esperado
+      console.warn(`Formato de fecha no reconocido: "${str}"`);
       return null;
     }
 
