@@ -96,32 +96,31 @@ export default function ServidoresVirtuales() {
       },
     });
 
-    function convertExcelStringToMySQLDate(dateString) {
-      // Si no hay valor, retornar null
-      if (!dateString || dateString === "") return null;
+    function parseExcelDateToISO(value) {
+      if (!value) return null;
 
-      // Convertir a string por si acaso
-      const str = String(dateString).trim();
-
-      // Patrón para capturar el formato "04/06/2025 4:46" o "04/06/2025"
-      const pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+\d{1,2}:\d{1,2})?/;
-      const match = str.match(pattern);
-
-      if (match) {
-        const [_, day, month, year] = match;
-
-        // Convertir a formato MySQL DATE: 'YYYY-MM-DD'
-        const mysqlDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
-          2,
-          "0"
-        )}`;
-
-        console.log(`Conversión: "${str}" → "${mysqlDate}"`);
-        return mysqlDate;
+      // Si ya es un objeto Date
+      if (value instanceof Date && !isNaN(value)) {
+        return String(value.getFullYear());
       }
 
-      // Si no coincide con el patrón esperado
-      console.warn(`Formato de fecha no reconocido: "${str}"`);
+      // Si es un número serial de Excel
+      if (typeof value === "number") {
+        const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const date = new Date(excelEpoch.getTime() + value * msPerDay);
+        return String(date.getFullYear());
+      }
+
+      // Si es un string tipo "04/06/2025 4:46"
+      if (typeof value === "string") {
+        const parts = value.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if (parts) {
+          const [_, day, month, year] = parts;
+          return year;
+        }
+      }
+
       return null;
     }
 
@@ -144,7 +143,7 @@ export default function ServidoresVirtuales() {
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
           ip: String(row.ip) || "",
-          modified: convertExcelStringToMySQLDate(row.modified),
+          modified: parseExcelDateToISO(row.modified),
         };
       });
 
