@@ -112,12 +112,28 @@ export default function ServidoresVirtuales() {
         return date.toISOString().split("T")[0];
       }
 
-      // Es string tipo "04/06/2025 4:46"
+      // Es string - manejo más completo
       if (typeof value === "string") {
-        const parts = value.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
-        if (parts) {
-          const [_, day, month, year] = parts;
-          return `${year}-${month}-${day}`;
+        // Primero intentar con el formato: "04/06/2025 4:46"
+        const dateTimeMatch = value.match(
+          /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+\d{1,2}:\d{1,2}/
+        );
+        if (dateTimeMatch) {
+          const [_, day, month, year] = dateTimeMatch;
+          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        }
+
+        // Formato solo fecha: "04/06/2025"
+        const dateMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (dateMatch) {
+          const [_, day, month, year] = dateMatch;
+          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        }
+
+        // Intentar parsear directamente como fecha
+        const parsedDate = new Date(value);
+        if (!isNaN(parsedDate)) {
+          return parsedDate.toISOString().split("T")[0];
         }
       }
 
