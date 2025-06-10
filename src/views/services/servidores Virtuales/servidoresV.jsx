@@ -97,46 +97,42 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToISO(value) {
-      if (value === null || value === undefined) return null;
+  if (value === null || value === undefined) return null;
 
-      // 1. Si ya es un objeto Date válido
-      if (value instanceof Date && !isNaN(value)) {
-        return value.toISOString().split("T")[0]; // Solo la parte de la fecha
-      }
+  // 1. Si ya es un objeto Date válido
+  if (value instanceof Date && !isNaN(value)) {
+    return value.toISOString().split("T")[0];
+  }
 
-      // 2. Si es un número serial de Excel (fechas numéricas)
-      if (typeof value === "number") {
-        const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // 1899-12-30
-        const msPerDay = 24 * 60 * 60 * 1000;
-        const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return date.toISOString().split("T")[0]; // Solo la parte de la fecha
-      }
+  // 2. Si es un número serial de Excel
+  if (typeof value === "number") {
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const date = new Date(excelEpoch.getTime() + value * msPerDay);
+    return date.toISOString().split("T")[0];
+  }
 
-      // 3. Si es un string con formato datetime (ej. "4/06/2025 4:46:00 a. m.")
-      if (typeof value === "string") {
-        // Primero, normalizamos el string (eliminamos "a. m."/"p. m.")
-        const normalized = value
-          .replace(/a\.\s*m\./i, "AM")
-          .replace(/p\.\s*m\./i, "PM")
-          .trim();
+  // 3. Si es un string tipo "4/06/2025  4:46:00 a. m."
+  if (typeof value === "string") {
+    const normalized = value
+      .replace(/a\.\s*m\./i, "AM")
+      .replace(/p\.\s*m\./i, "PM")
+      .replace(/\s+/g, " ")
+      .trim();
 
-        try {
-          // Intentamos parsear la fecha
-          const date = new Date(normalized);
-          if (!isNaN(date.getTime())) {
-            // Formateamos como YYYY-MM-DD
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day}`;
-          }
-        } catch (e) {
-          console.warn("No se pudo parsear la fecha:", value);
-        }
-      }
-
-      return null; // o puedes devolver un valor por defecto como new Date().toISOString().split('T')[0]
+    // Intentar parsear manualmente con split
+    const parts = normalized.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (parts) {
+      const day = parts[1].padStart(2, '0');
+      const month = parts[2].padStart(2, '0');
+      const year = parts[3];
+      return `${year}-${month}-${day}`;
     }
+  }
+
+  return null;
+}
+
 
     // Declaración inicial de fechas
     let fechaAntes = null;
