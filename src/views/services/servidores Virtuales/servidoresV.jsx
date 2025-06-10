@@ -99,9 +99,21 @@ export default function ServidoresVirtuales() {
     function parseExcelDateToISO(value) {
       if (!value) return null;
 
-      // Si ya es objeto Date
+      // Si ya es objeto Date válido
       if (value instanceof Date && !isNaN(value)) {
-        return String(value.getFullYear());
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, "0");
+        const day = String(value.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      // Si es string tipo "04/06/2025 4:46"
+      if (typeof value === "string") {
+        const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if (match) {
+          const [, day, month, year] = match;
+          return `${year}-${month}-${day}`;
+        }
       }
 
       // Si es número serial de Excel
@@ -109,16 +121,10 @@ export default function ServidoresVirtuales() {
         const excelEpoch = new Date(Date.UTC(1899, 11, 30));
         const msPerDay = 24 * 60 * 60 * 1000;
         const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return String(date.getUTCFullYear());
-      }
-
-      // Si es string tipo "04/06/2025 4:46" o similar
-      if (typeof value === "string") {
-        const parts = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-        if (parts) {
-          const year = parts[3];
-          return year;
-        }
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(date.getUTCDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
       }
 
       return null;
