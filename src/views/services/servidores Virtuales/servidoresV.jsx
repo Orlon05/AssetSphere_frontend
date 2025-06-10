@@ -62,7 +62,7 @@ export default function ServidoresVirtuales() {
             { name: "hdd", required: false, type: "string" },
             { name: "cores", required: false, type: "int" },
             { name: "ip", required: false, type: "string" },
-            { name: "modified", required: false, type: "datetime" },
+            { name: "modified", required: false, type: "date" },
           ],
         ];
         const importer = (
@@ -99,41 +99,43 @@ export default function ServidoresVirtuales() {
     function parseExcelDateToISO(value) {
       if (value === null || value === undefined) return null;
 
-      // ✅ 1. Si es Date válido
+      // 1. Si ya es un objeto Date válido
       if (value instanceof Date && !isNaN(value)) {
-        return value.toISOString().split(".")[0];
+        return value.toISOString().split("T")[0]; // Solo la parte de la fecha
       }
 
-      // ✅ 2. Si es número serial de Excel
+      // 2. Si es un número serial de Excel (fechas numéricas)
       if (typeof value === "number") {
         const excelEpoch = new Date(Date.UTC(1899, 11, 30)); // 1899-12-30
         const msPerDay = 24 * 60 * 60 * 1000;
         const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return date.toISOString().split(".")[0];
+        return date.toISOString().split("T")[0]; // Solo la parte de la fecha
       }
 
-      // ✅ 3. Si es string con formato dd/mm/yyyy h:mm
+      // 3. Si es un string con formato datetime (ej. "4/06/2025 4:46:00 a. m.")
       if (typeof value === "string") {
-        const regex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/;
-        const match = value.match(regex);
-        if (match) {
-          const [, day, month, year, hour, minute] = match;
+        // Primero, normalizamos el string (eliminamos "a. m."/"p. m.")
+        const normalized = value
+          .replace(/a\.\s*m\./i, "AM")
+          .replace(/p\.\s*m\./i, "PM")
+          .trim();
 
-          const dd = day.padStart(2, "0");
-          const mm = month.padStart(2, "0");
-          const hh = hour.padStart(2, "0");
-          const min = minute.padStart(2, "0");
-
-          const isoString = `${year}-${mm}-${dd}T${hh}:${min}:00Z`;
-          const date = new Date(isoString);
-
+        try {
+          // Intentamos parsear la fecha
+          const date = new Date(normalized);
           if (!isNaN(date.getTime())) {
-            return isoString;
+            // Formateamos como YYYY-MM-DD
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
           }
+        } catch (e) {
+          console.warn("No se pudo parsear la fecha:", value);
         }
       }
 
-      return null;
+      return null; // o puedes devolver un valor por defecto como new Date().toISOString().split('T')[0]
     }
 
     // Declaración inicial de fechas
@@ -215,7 +217,6 @@ export default function ServidoresVirtuales() {
       });
     }
   };
-  
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
