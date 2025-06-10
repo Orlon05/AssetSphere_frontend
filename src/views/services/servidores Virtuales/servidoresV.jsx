@@ -97,41 +97,33 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToISO(value) {
-      if (value === null || value === undefined) return null;
+      if (!value) return null;
 
-      // 1. Si ya es un objeto Date válido
+      // Si es un objeto Date válido
       if (value instanceof Date && !isNaN(value)) {
-        return value.toISOString().split("T")[0];
+        return value.toISOString().split("T")[0]; // YYYY-MM-DD
       }
 
-      // 2. Si es un número serial de Excel
+      // Si es un número (posible serial de Excel)
       if (typeof value === "number") {
         const excelEpoch = new Date(Date.UTC(1899, 11, 30));
         const msPerDay = 24 * 60 * 60 * 1000;
         const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return date.toISOString().split("T")[0];
+        return date.toISOString().split("T")[0]; // YYYY-MM-DD
       }
 
-      // 3. Si es un string tipo "4/06/2025  4:46:00 a. m."
+      // Si es un string tipo "04/06/2025 4:46"
       if (typeof value === "string") {
-        const normalized = value
-          .replace(/a\.\s*m\./i, "AM")
-          .replace(/p\.\s*m\./i, "PM")
-          .replace(/\s+/g, " ")
-          .trim();
-
-        // Intentar parsear manualmente con split
-        const parts = normalized.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-        if (parts) {
-          const day = parts[1].padStart(2, "0");
-          const month = parts[2].padStart(2, "0");
-          const year = parts[3];
-          return `${year}-${month}-${day}`;
+        const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if (match) {
+          const [_, day, month, year] = match;
+          return `${year}-${month}-${day}`; // YYYY-MM-DD
         }
       }
 
-      return null;
+      return null; // No se pudo parsear
     }
+
     try {
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
