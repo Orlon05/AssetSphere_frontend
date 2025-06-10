@@ -124,6 +124,7 @@ export default function ServidoresVirtuales() {
         return "";
       }
 
+      // ...en tu handleImportComplete:
       const formattedData = importedData.map((row) => ({
         platform: String(row.platform || ""),
         strategic_ally: String(row.strategic_ally || ""),
@@ -138,9 +139,6 @@ export default function ServidoresVirtuales() {
         ip: String(row.ip || ""),
         modified: normalizeDate(row.modified),
       }));
-
-      // Verificación antes de enviar
-      console.log("Datos a enviar:", formattedData);
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
