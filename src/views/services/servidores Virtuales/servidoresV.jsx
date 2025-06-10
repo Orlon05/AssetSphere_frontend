@@ -97,16 +97,14 @@ export default function ServidoresVirtuales() {
     });
 
     function parseExcelDateToISO(value) {
-      console.log("Valor recibido para modified:", value);
-
       if (!value) return null;
 
-      // Caso 1: Date válido
+      // Ya es Date
       if (value instanceof Date && !isNaN(value)) {
         return value.toISOString().split("T")[0];
       }
 
-      // Caso 2: Número serial de Excel
+      // Es número serial de Excel
       if (typeof value === "number") {
         const excelEpoch = new Date(Date.UTC(1899, 11, 30));
         const msPerDay = 24 * 60 * 60 * 1000;
@@ -114,24 +112,16 @@ export default function ServidoresVirtuales() {
         return date.toISOString().split("T")[0];
       }
 
-      // Caso 3: String tipo "04/06/2025 4:46" o similar
+      // Es string tipo "04/06/2025 4:46"
       if (typeof value === "string") {
-        const cleaned = value
-          .replace(/a\.\s*m\.?/i, "AM")
-          .replace(/p\.\s*m\.?/i, "PM")
-          .replace(/\s+/g, " ")
-          .trim();
-
-        const match = cleaned.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-        if (match) {
-          const [_, day, month, year] = match;
-          const d = day.padStart(2, "0");
-          const m = month.padStart(2, "0");
-          return `${year}-${m}-${d}`;
+        const parts = value.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if (parts) {
+          const [_, day, month, year] = parts;
+          return `${year}-${month}-${day}`;
         }
       }
 
-      return null; // No se pudo interpretar
+      return null;
     }
 
     try {
