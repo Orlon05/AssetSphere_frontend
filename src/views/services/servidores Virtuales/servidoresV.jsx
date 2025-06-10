@@ -103,11 +103,11 @@ export default function ServidoresVirtuales() {
       }
 
       function normalizeDate(dateStr) {
-        if (!dateStr) return null;
+        if (!dateStr) return "";
         // Si ya es formato YYYY-MM-DD
         if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.split("T")[0];
-        // Si es formato DD/MM/YYYY o DD/MM/YYYY HH:mm
-        if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr)) {
+        // Si es formato DD/MM/YYYY o DD/MM/YYYY H:mm
+        if (/^\d{2}\/\d{2}\/\d{4}( \d{1,2}:\d{2})?$/.test(dateStr)) {
           const [datePart] = dateStr.split(" ");
           const [day, month, year] = datePart.split("/");
           return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
@@ -116,7 +116,12 @@ export default function ServidoresVirtuales() {
         if (dateStr instanceof Date && !isNaN(dateStr)) {
           return dateStr.toISOString().split("T")[0];
         }
-        return null;
+        // Intentar parsear con Date.parse
+        const parsed = Date.parse(dateStr);
+        if (!isNaN(parsed)) {
+          return new Date(parsed).toISOString().split("T")[0];
+        }
+        return "";
       }
 
       const formattedData = importedData.map((row) => ({
