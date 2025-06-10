@@ -99,24 +99,24 @@ export default function ServidoresVirtuales() {
     function parseExcelDateToISO(value) {
       if (!value) return null;
 
-      // Si ya es un objeto Date
+      // Si ya es objeto Date
       if (value instanceof Date && !isNaN(value)) {
         return String(value.getFullYear());
       }
 
-      // Si es un número serial de Excel
+      // Si es número serial de Excel
       if (typeof value === "number") {
         const excelEpoch = new Date(Date.UTC(1899, 11, 30));
         const msPerDay = 24 * 60 * 60 * 1000;
         const date = new Date(excelEpoch.getTime() + value * msPerDay);
-        return String(date.getFullYear());
+        return String(date.getUTCFullYear());
       }
 
-      // Si es un string tipo "04/06/2025 4:46"
+      // Si es string tipo "04/06/2025 4:46" o similar
       if (typeof value === "string") {
-        const parts = value.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        const parts = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
         if (parts) {
-          const [_, day, month, year] = parts;
+          const year = parts[3];
           return year;
         }
       }
