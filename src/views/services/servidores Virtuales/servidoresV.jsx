@@ -131,13 +131,6 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
-        console.log("Antes:", fechaAntes);
-
-        fechaDespués = actualizarFecha();
-        fechaAntes = fechaDespués;
-
-        console.log("Después:", fechaDespués);
-
         return {
           platform: String(row.platform || ""),
           strategic_ally: String(row.strategic_ally || ""),
