@@ -62,7 +62,7 @@ export default function ServidoresVirtuales() {
             { name: "hdd", required: false, type: "string" },
             { name: "cores", required: false, type: "int" },
             { name: "ip", required: false, type: "string" },
-            { name: "modified", required: false, type: "date" },
+            { name: "modified", required: false, type: "string" },
           ],
         ];
         const importer = (
@@ -102,26 +102,20 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      function normalizeDate(dateStr) {
-        if (!dateStr) return "";
-        // Si ya es formato YYYY-MM-DD
-        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.split("T")[0];
-        // Si es formato DD/MM/YYYY o DD/MM/YYYY H:mm
-        if (/^\d{2}\/\d{2}\/\d{4}( \d{1,2}:\d{2})?$/.test(dateStr)) {
-          const [datePart] = dateStr.split(" ");
-          const [day, month, year] = datePart.split("/");
-          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      function processModifiedField(value) {
+        // Si no hay valor, retornar string vacío
+        if (!value) return "";
+
+        // Si ya es string, retornarlo tal como está
+        if (typeof value === "string") return value;
+
+        // Si es un objeto Date, convertirlo a string ISO
+        if (value instanceof Date && !isNaN(value)) {
+          return value.toISOString();
         }
-        // Si es un objeto Date
-        if (dateStr instanceof Date && !isNaN(dateStr)) {
-          return dateStr.toISOString().split("T")[0];
-        }
-        // Intentar parsear con Date.parse
-        const parsed = Date.parse(dateStr);
-        if (!isNaN(parsed)) {
-          return new Date(parsed).toISOString().split("T")[0];
-        }
-        return "";
+
+        // Para cualquier otro tipo, convertir a string
+        return String(value);
       }
 
       // ...en tu handleImportComplete:
@@ -137,7 +131,7 @@ export default function ServidoresVirtuales() {
         hdd: String(row.hdd || ""),
         cores: Number(row.cores) || 0,
         ip: String(row.ip || ""),
-        modified: normalizeDate(row.modified),
+        modified: processModifiedField(row.modified),
       }));
 
       const response = await fetch(
