@@ -102,43 +102,37 @@ export default function ServidoresVirtuales() {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      function normalizeDate(dateStr) {
-        if (!dateStr) return "";
-        // Si ya es formato YYYY-MM-DD
-        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.split("T")[0];
-        // Si es formato DD/MM/YYYY o DD/MM/YYYY H:mm
-        if (/^\d{2}\/\d{2}\/\d{4}( \d{1,2}:\d{2})?$/.test(dateStr)) {
-          const [datePart] = dateStr.split(" ");
-          const [day, month, year] = datePart.split("/");
-          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      const formattedData = importedData.map((row) => {
+        // Convertir la fecha al formato correcto
+        let modifiedDate = null;
+        if (row.modified) {
+          // Asumiendo que la fecha viene como "04/06/2025 4:46" (DD/MM/YYYY)
+          const dateParts = row.modified.split(" ")[0].split("/");
+          if (dateParts.length === 3) {
+            // Formatear a YYYY-MM-DD que es el formato estándar para APIs
+            modifiedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+          }
         }
-        // Si es un objeto Date
-        if (dateStr instanceof Date && !isNaN(dateStr)) {
-          return dateStr.toISOString().split("T")[0];
-        }
-        // Intentar parsear con Date.parse
-        const parsed = Date.parse(dateStr);
-        if (!isNaN(parsed)) {
-          return new Date(parsed).toISOString().split("T")[0];
-        }
-        return "";
-      }
 
-      // ...en tu handleImportComplete:
-      const formattedData = importedData.map((row) => ({
-        platform: String(row.platform || ""),
-        strategic_ally: String(row.strategic_ally || ""),
-        id_vm: String(row.id_vm || ""),
-        server: String(row.server || ""),
-        memory: Number(row.memory) || 0,
-        so: String(row.so || ""),
-        status: String(row.status) || "",
-        cluster: String(row.cluster || ""),
-        hdd: String(row.hdd || ""),
-        cores: Number(row.cores) || 0,
-        ip: String(row.ip || ""),
-        modified: normalizeDate(row.modified),
-      }));
+        return {
+          platform: String(row.platform || ""),
+          strategic_ally: String(row.strategic_ally || ""),
+          id_vm: String(row.id_vm || ""),
+          server: String(row.server || ""),
+          memory: Number(row.memory) || 0,
+          so: String(row.so || ""),
+          status: String(row.status) || "",
+          cluster: String(row.cluster) || "",
+          hdd: String(row.hdd) || "",
+          cores: Number(row.cores) || 0,
+          ip: String(row.ip) || "",
+          modified: modifiedDate, // Usamos la fecha formateada
+        };
+      });
+
+      const bodyToSend = JSON.stringify({ data: formattedData });
+
+      console.log("JSON enviado al backend:", bodyToSend);
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
@@ -148,30 +142,31 @@ export default function ServidoresVirtuales() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ data: formattedData }),
+          body: bodyToSend,
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error detallado:", errorData);
-        throw new Error(errorData.detail || `Error HTTP ${response.status}`);
+        throw new Error(`Error HTTP ${response.status}`);
       }
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       Swal.fire({
         icon: "success",
         title: "Importación exitosa",
-        text: `Se importaron ${importedData.length} servidores correctamente.`,
+        text: `Se han importado ${importedData.length} servidores virtuales correctamente.`,
       });
 
       fetchServers(currentPage, rowsPerPage);
     } catch (error) {
-      console.error("Error completo:", error);
+      console.error("Error al procesar los datos importados:", error);
       Swal.fire({
         icon: "error",
         title: "Error en la importación",
-        html: `<div>${error.message}</div>
-               <small>Verifica el formato de las fechas en los datos</small>`,
+        text:
+          error.message ||
+          "Ha ocurrido un error al procesar los datos importados.",
       });
     }
   };
