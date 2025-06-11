@@ -103,11 +103,17 @@ export default function ServidoresVirtuales() {
       }
 
       const formattedData = importedData.map((row) => {
+        // Convertir la fecha al formato D-M-Y como string (sin ceros a la izquierda)
         let modifiedDate = "";
         if (row.modified) {
+          // Asumiendo que la fecha viene como "04/06/2025 4:46" (DD/MM/YYYY)
           const dateParts = row.modified.split(" ")[0].split("/");
           if (dateParts.length === 3) {
-            modifiedDate = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+            // Remover ceros a la izquierda y formatear como D-M-Y
+            const day = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10);
+            const year = parseInt(dateParts[2], 10);
+            modifiedDate = `${day}-${month}-${year}`;
           }
         }
 
@@ -123,7 +129,7 @@ export default function ServidoresVirtuales() {
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
           ip: String(row.ip) || "",
-          modified: modifiedDate,
+          modified: modifiedDate, // Fecha como string en formato D-M-Y (sin ceros a la izquierda)
         };
       });
 
