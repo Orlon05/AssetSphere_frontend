@@ -19,157 +19,162 @@ import {
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
-export default function ServidoresVirtuales() {}
-const navigate = useNavigate();
-const [searchValue, setSearchValue] = useState("");
-const [servers, setServers] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
-const [currentPage, setCurrentPage] = useState(1);
-const [rowsPerPage, setRowsPerPage] = useState(10);
-const [totalPages, setTotalPages] = useState(0);
-const [selectAll, setSelectAll] = useState(false);
-const [selectedServers, setSelectedServers] = useState(new Set());
-const [showSearch, setShowSearch] = useState(true);
-const [unfilteredServers, setUnfilteredServers] = useState([]);
-const [isSearching, setIsSearching] = useState(false);
-const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
-const searchInputRef = useRef(null);
+export default function ServidoresVirtuales() {
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
+  const [servers, setServers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedServers, setSelectedServers] = useState(new Set());
+  const [showSearch, setShowSearch] = useState(true);
+  const [unfilteredServers, setUnfilteredServers] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
+  const searchInputRef = useRef(null);
 
-const selectedCount = selectedServers.size;
+  const selectedCount = selectedServers.size;
 
-const handleImport = () => {
-  Swal.fire({
-    title: "Importar desde Excel",
-    html: '<div id="excel-importer-container"></div>',
-    showConfirmButton: false,
-    showCancelButton: true,
-    cancelButtonText: "Cancelar",
-    width: "80%",
-    height: "80%",
-    didOpen: () => {
-      const container = document.getElementById("excel-importer-container");
-      const tableMetadata = [
-        [
-          { name: "platform", required: false, type: "string" },
-          { name: "strategic_ally", required: false, type: "string" },
-          { name: "id_vm", required: false, type: "string" },
-          { name: "server", required: false, type: "string" },
-          { name: "memory", required: false, type: "int" },
-          { name: "so", required: false, type: "string" },
-          { name: "status", required: false, type: "string" },
-          { name: "cluster", required: false, type: "string" },
-          { name: "hdd", required: false, type: "string" },
-          { name: "cores", required: false, type: "int" },
-          { name: "ip", required: false, type: "string" },
-          { name: "modified", required: false, type: "string" }, // Cambiado de "date" a "string"
-        ],
-      ];
-      const importer = (
-        <ExcelImporter
-          onImportComplete={handleImportComplete}
-          tableMetadata={tableMetadata}
-        />
-      );
-      if (container) {
-        const root = createRoot(container);
-        root.render(importer);
-      }
-    },
-    willClose: () => {
-      const container = document.getElementById("excel-importer-container");
-      if (container) {
-        const root = createRoot(container);
-        root.unmount();
-      }
-    },
-  });
-};
-
-const handleImportComplete = async (importedData) => {
-  Swal.fire({
-    title: "Procesando datos...",
-    text: "Estamos guardando los servidores virtuales importados",
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-
-  try {
-    const token = localStorage.getItem("authenticationToken");
-    if (!token) {
-      throw new Error("Token de autorización no encontrado.");
-    }
-
-    // Función mejorada para convertir cualquier valor a string
-    function safeStringConversion(value) {
-      if (value === null || value === undefined) return "";
-      if (typeof value === "string") return value;
-      if (typeof value === "number") return value.toString();
-      if (typeof value === "boolean") return value.toString();
-      if (value instanceof Date && !isNaN(value)) return value.toISOString();
-      if (typeof value === "object") {
-        // Si es un objeto, intentar extraer un valor útil
-        if (value.toString && value.toString !== Object.prototype.toString) {
-          return value.toString();
+  const handleImport = () => {
+    Swal.fire({
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      didOpen: () => {
+        const container = document.getElementById("excel-importer-container");
+        const tableMetadata = [
+          [
+            { name: "platform", required: false, type: "string" },
+            { name: "strategic_ally", required: false, type: "string" },
+            { name: "id_vm", required: false, type: "string" },
+            { name: "server", required: false, type: "string" },
+            { name: "memory", required: false, type: "int" },
+            { name: "so", required: false, type: "string" },
+            { name: "status", required: false, type: "string" },
+            { name: "cluster", required: false, type: "string" },
+            { name: "hdd", required: false, type: "string" },
+            { name: "cores", required: false, type: "int" },
+            { name: "ip", required: false, type: "string" },
+            { name: "modified", required: false, type: "date" },
+          ],
+        ];
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleImportComplete}
+            tableMetadata={tableMetadata}
+          />
+        );
+        if (container) {
+          const root = createRoot(container);
+          root.render(importer);
         }
-        return JSON.stringify(value);
-      }
-      return String(value);
-    }
-
-    const formattedData = importedData.map((row) => ({
-      platform: safeStringConversion(row.platform),
-      strategic_ally: safeStringConversion(row.strategic_ally),
-      id_vm: safeStringConversion(row.id_vm),
-      server: safeStringConversion(row.server),
-      memory: Number(row.memory) || 0,
-      so: safeStringConversion(row.so),
-      status: safeStringConversion(row.status),
-      cluster: safeStringConversion(row.cluster),
-      hdd: safeStringConversion(row.hdd),
-      cores: Number(row.cores) || 0,
-      ip: safeStringConversion(row.ip),
-      modified: safeStringConversion(row.modified),
-    }));
-
-    // Agregar log para debug
-    console.log("Datos formateados:", formattedData);
-
-    const response = await fetch(
-      "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data: formattedData }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Error del servidor:", errorText);
-      throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
-    }
-
-    const result = await response.json();
-
-    Swal.fire({
-      icon: "success",
-      title: "Importación exitosa",
-      text: `Se importaron ${formattedData.length} registros correctamente`,
+      },
+      willClose: () => {
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
     });
-  } catch (error) {
-    console.error("Error detallado:", error);
+  };
+
+  const handleImportComplete = async (importedData) => {
     Swal.fire({
-      icon: "error",
-      title: "Error en la importación",
-      text: error.message || "Verifica el formato de los datos",
+      title: "Procesando datos...",
+      text: "Estamos guardando los servidores virtuales importados",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
     });
-  }
+
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        throw new Error("Token de autorización no encontrado.");
+      }
+
+      function normalizeDate(dateStr) {
+        if (!dateStr) return "";
+        // Si ya es formato YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr.split("T")[0];
+        // Si es formato DD/MM/YYYY o DD/MM/YYYY H:mm
+        if (/^\d{2}\/\d{2}\/\d{4}( \d{1,2}:\d{2})?$/.test(dateStr)) {
+          const [datePart] = dateStr.split(" ");
+          const [day, month, year] = datePart.split("/");
+          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        }
+        // Si es un objeto Date
+        if (dateStr instanceof Date && !isNaN(dateStr)) {
+          return dateStr.toISOString().split("T")[0];
+        }
+        // Intentar parsear con Date.parse
+        const parsed = Date.parse(dateStr);
+        if (!isNaN(parsed)) {
+          return new Date(parsed).toISOString().split("T")[0];
+        }
+        return "";
+      }
+
+      // ...en tu handleImportComplete:
+      const formattedData = importedData.map((row) => ({
+        platform: String(row.platform || ""),
+        strategic_ally: String(row.strategic_ally || ""),
+        id_vm: String(row.id_vm || ""),
+        server: String(row.server || ""),
+        memory: Number(row.memory) || 0,
+        so: String(row.so || ""),
+        status: String(row.status) || "",
+        cluster: String(row.cluster || ""),
+        hdd: String(row.hdd || ""),
+        cores: Number(row.cores) || 0,
+        ip: String(row.ip || ""),
+        modified: normalizeDate(row.modified),
+      }));
+
+      const response = await fetch(
+        "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: formattedData }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error detallado:", errorData);
+        throw new Error(errorData.detail || `Error HTTP ${response.status}`);
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Importación exitosa",
+        text: `Se importaron ${importedData.length} servidores correctamente.`,
+      });
+
+      fetchServers(currentPage, rowsPerPage);
+    } catch (error) {
+      console.error("Error completo:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error en la importación",
+        html: `<div>${error.message}</div>
+               <small>Verifica el formato de las fechas en los datos</small>`,
+      });
+    }
+  };
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
@@ -773,4 +778,4 @@ const handleImportComplete = async (importedData) => {
       </main>
     </div>
   );
-};
+}
