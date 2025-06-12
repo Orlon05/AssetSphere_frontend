@@ -62,7 +62,7 @@ export default function ServidoresVirtuales() {
             { name: "hdd", required: false, type: "string" },
             { name: "cores", required: false, type: "int" },
             { name: "ip", required: false, type: "string" },
-            { name: "modified", required: false, type: "date" },
+            { name: "modified", required: false, type: "string" },
           ],
         ];
         const importer = (
@@ -105,7 +105,7 @@ export default function ServidoresVirtuales() {
       const formattedData = importedData.map((row) => {
         // Convertir modified a string sin formatear
         const modifiedDate = String(row.modified || "");
-      
+
         return {
           platform: String(row.platform || ""),
           strategic_ally: String(row.strategic_ally || ""),
