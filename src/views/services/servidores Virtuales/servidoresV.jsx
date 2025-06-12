@@ -118,7 +118,7 @@ export default function ServidoresVirtuales() {
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
           ip: String(row.ip) || "",
-          modified: modifiedDate, // Campo modified como string sin formatear
+          modified: String(row.modified) || ""
         };
       });
 
