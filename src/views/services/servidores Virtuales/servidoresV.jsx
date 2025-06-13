@@ -122,7 +122,7 @@ export default function ServidoresVirtuales() {
         };
       });
 
-      const bodyToSend = JSON.stringify({ data: formattedData });
+      const bodyToSend = JSON.stringify(formattedData );
 
       console.log("JSON enviado al backend:", bodyToSend);
 
