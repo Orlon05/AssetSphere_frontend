@@ -453,8 +453,8 @@ export default function ServidoresVirtuales() {
 
     if (
       statusLower === "Encendido" ||
-      statusLower === "Encendido" ||
-      statusLower === "Encendido"
+      statusLower === "encendido" ||
+      statusLower === "encendido"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -464,8 +464,8 @@ export default function ServidoresVirtuales() {
       );
     } else if (
       statusLower === "Apagado" ||
-      statusLower === "Apagado" ||
-      statusLower === "Apagado"
+      statusLower === "apagado" ||
+      statusLower === "apagado"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
