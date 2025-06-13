@@ -142,8 +142,6 @@ const BaseDeDatos = () => {
       return;
     }
 
-    console.log("Datos válidos encontrados:", validData.length);
-
     const result = await Swal.fire({
       title: `Importar ${validData.length} registros`,
       text: `¿Deseas continuar con la importación de ${validData.length} registros?`,
@@ -225,10 +223,6 @@ const BaseDeDatos = () => {
         }
 
         const result = await response.json();
-        console.log(
-          `Importación exitosa del lote ${i + 1}/${totalBatches}:`,
-          result
-        );
       }
 
       Swal.fire({
@@ -466,9 +460,12 @@ const BaseDeDatos = () => {
     setSelectedBasesDeDatos(newSelectedBasesDeDatos);
   };
 
-  const filteredBasesDeDatos = base_datos.filter((baseDeDatos) =>
-    baseDeDatos.name?.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredBasesDeDatos =
+    searchValue.trim() === ""
+      ? base_datos
+      : base_datos.filter((baseDeDatos) =>
+          baseDeDatos.name?.toLowerCase().includes(searchValue.toLowerCase())
+        );
 
   const indexOfLastBaseDatos = currentPage * rowsPerPage;
   const indexOfFirstBaseDatos = indexOfLastBaseDatos - rowsPerPage;
@@ -797,9 +794,9 @@ const BaseDeDatos = () => {
             </div>
 
             <div className="text-sm text-gray-700">
-              Mostrando {indexOfFirstBaseDatos + 1} a{" "}
-              {Math.min(indexOfLastBaseDatos, filteredBasesDeDatos.length)} de{" "}
-              {filteredBasesDeDatos.length} bases de datos
+              Mostrando {(currentPage - 1) * rowsPerPage + 1} a{" "}
+              {Math.min(currentPage * rowsPerPage, filteredBasesDeDatos.length)}{" "}
+              de {filteredBasesDeDatos.length} bases de datos
             </div>
 
             <div className="flex items-center space-x-2">
