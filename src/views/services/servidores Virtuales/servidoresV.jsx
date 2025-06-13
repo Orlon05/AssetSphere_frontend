@@ -114,15 +114,16 @@ export default function ServidoresVirtuales() {
           memory: Number(row.memory) || 0,
           so: String(row.so || ""),
           status: String(row.status) || "",
-          cluster: String(row.cluster) || "",
+          cluster: String(row.cluster || ""),
           hdd: String(row.hdd) || "",
           cores: Number(row.cores) || 0,
-          ip: String(row.ip) || "",
-          modified: String(row.modified) || ""
+          ip: String(row.ip || ""),
+          modified: String(row.modified) || "",
         };
       });
 
-      const bodyToSend = JSON.stringify(formattedData );
+      // Volvemos a la estructura original con data
+      const bodyToSend = JSON.stringify({ data: formattedData });
 
       console.log("JSON enviado al backend:", bodyToSend);
 
@@ -139,7 +140,16 @@ export default function ServidoresVirtuales() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
+        // Intentar obtener más información sobre el error
+        let errorDetail = "";
+        try {
+          const errorResponse = await response.json();
+          errorDetail = JSON.stringify(errorResponse);
+        } catch (e) {
+          errorDetail = await response.text();
+        }
+
+        throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
