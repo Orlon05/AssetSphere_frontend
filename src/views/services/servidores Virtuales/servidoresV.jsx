@@ -122,10 +122,7 @@ export default function ServidoresVirtuales() {
         };
       });
 
-      // Volvemos a la estructura original con data
       const bodyToSend = JSON.stringify({ data: formattedData });
-
-      console.log("JSON enviado al backend:", bodyToSend);
 
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add_from_excel",
@@ -455,25 +452,25 @@ export default function ServidoresVirtuales() {
     const statusLower = status.toLowerCase();
 
     if (
-      statusLower === "running" ||
-      statusLower === "running" ||
-      statusLower === "running"
+      statusLower === "Encendido" ||
+      statusLower === "Encendido" ||
+      statusLower === "Encendido"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Running
+          Encendido
         </span>
       );
     } else if (
-      statusLower === "stopped" ||
-      statusLower === "stopped" ||
-      statusLower === "stopped"
+      statusLower === "Apagado" ||
+      statusLower === "Apagado" ||
+      statusLower === "Apagado"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <AlertCircle size={12} className="mr-1" />
-          Stopped
+          Apagado
         </span>
       );
     } else if (statusLower === "paused" || statusLower === "paused") {
