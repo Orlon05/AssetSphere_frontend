@@ -1,5 +1,33 @@
+"use client";
+
+/**
+ * COMPONENTE: VerServidorVirtual
+ *
+ * PROPÓSITO:
+ * Componente de solo lectura para visualizar todos los detalles
+ * de un servidor virtual específico de manera organizada.
+ *
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Visualización de datos del servidor en secciones organizadas
+ * - Carga de datos desde la API usando el ID del servidor
+ * - Estados visuales diferenciados para el estado del servidor
+ * - Manejo de estados de carga y error
+ * - Navegación de regreso
+ *
+ * ESTRUCTURA DE DATOS:
+ * - Información Básica: servidor, ID VM, plataforma, aliado, estado
+ * - Configuración Técnica: memoria, núcleos, disco, SO
+ * - Configuración de Red: IP, cluster
+ * - Información Adicional: fecha de modificación
+ *
+ * OPTIMIZACIONES REALIZADAS:
+ * - Configuración declarativa de secciones y campos
+ * - Función utilitaria para colores de estado
+ * - Mejor manejo de diferentes estructuras de respuesta API
+ * - Eliminación de imports no utilizados (MdArrowBack)
+ */
+
 import { useState, useEffect } from "react";
-import { MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
@@ -10,7 +38,8 @@ const VerServidorVirtual = () => {
   const [error, setError] = useState(null);
   const { serverId } = useParams();
 
-  // Definición de las secciones del formulario y sus campos
+  // Configuración declarativa de las secciones del formulario
+  // OPTIMIZACIÓN: Estructura de datos centralizada para fácil mantenimiento
   const formSections = [
     {
       title: "Información Básica",
@@ -30,7 +59,8 @@ const VerServidorVirtual = () => {
     },
   ];
 
-  // Etiquetas para los campos
+  // Mapeo de etiquetas para los campos
+  // OPTIMIZACIÓN: Centralización de labels para consistencia
   const fieldLabels = {
     server: "Nombre del Servidor",
     id_vm: "ID de la VM",
@@ -46,28 +76,45 @@ const VerServidorVirtual = () => {
     modified: "Última Modificación",
   };
 
-  // Colores para los estados
+  /**
+   * Función utilitaria para obtener clases CSS según el estado
+   * OPTIMIZACIÓN: Centralización de lógica de estilos de estado
+   */
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Activo":
-        return "bg-green-100 text-green-800 border-green-300";
-      case "Inactivo":
-        return "bg-red-100 text-red-800 border-red-300";
-      case "Mantenimiento":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
+    if (!status) return "bg-gray-100 text-gray-800 border-gray-300";
+
+    const statusLower = status.toLowerCase();
+    const statusMap = {
+      activo: "bg-green-100 text-green-800 border-green-300",
+      encendido: "bg-green-100 text-green-800 border-green-300",
+      inactivo: "bg-red-100 text-red-800 border-red-300",
+      apagado: "bg-red-100 text-red-800 border-red-300",
+      mantenimiento: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      paused: "bg-yellow-100 text-yellow-800 border-yellow-300",
+    };
+
+    return (
+      statusMap[statusLower] || "bg-gray-100 text-gray-800 border-gray-300"
+    );
   };
 
-  // Obtener datos del servidor
+  /**
+   * Carga los datos del servidor desde la API
+   * OPTIMIZACIÓN: Mejor manejo de diferentes estructuras de respuesta
+   */
   useEffect(() => {
     const fetchServerData = async () => {
+      if (!serverId) return;
+
       try {
         setLoading(true);
         setError(null);
 
         const token = localStorage.getItem("authenticationToken");
+        if (!token) {
+          throw new Error("Token de autorización no encontrado");
+        }
+
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/vservers/virtual/get/${serverId}`,
           {
@@ -84,9 +131,10 @@ const VerServidorVirtual = () => {
 
         const data = await response.json();
 
-        // Intentar diferentes estructuras de respuesta
+        // OPTIMIZACIÓN: Manejo robusto de diferentes estructuras de respuesta
         let serverInfo = null;
 
+        // Intentar diferentes estructuras de respuesta posibles
         if (data?.status === "success" && data.data?.server_info) {
           serverInfo = data.data.server_info;
         } else if (data?.data?.server_info) {
@@ -113,11 +161,10 @@ const VerServidorVirtual = () => {
       }
     };
 
-    if (serverId) {
-      fetchServerData();
-    }
+    fetchServerData();
   }, [serverId]);
 
+  // Estado de carga
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -131,6 +178,7 @@ const VerServidorVirtual = () => {
     );
   }
 
+  // Estado de error
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -138,9 +186,10 @@ const VerServidorVirtual = () => {
           <strong>Error:</strong> {error}
           <button
             onClick={() => navigate("/servidoresv")}
-            className="mt-3 block text-blue-600 hover:text-blue-800"
+            className="mt-3 block text-blue-600 hover:text-blue-800 transition-colors"
           >
-            <MdArrowBack className="inline mr-1" /> Volver a la lista
+            <ArrowLeft className="inline mr-1" size={16} />
+            Volver a la lista
           </button>
         </div>
       </div>
@@ -149,6 +198,7 @@ const VerServidorVirtual = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
+      {/* Header */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
@@ -167,9 +217,11 @@ const VerServidorVirtual = () => {
         </button>
       </header>
 
+      {/* Contenido principal */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <div className="space-y-6">
+            {/* Renderizado dinámico de secciones */}
             {formSections.map((section, index) => (
               <div
                 key={index}
@@ -184,6 +236,8 @@ const VerServidorVirtual = () => {
                       <label className="block text-sm font-medium text-gray-700">
                         {fieldLabels[field]}
                       </label>
+
+                      {/* Renderizado especial para el campo de estado */}
                       {field === "status" ? (
                         <div
                           className={`border rounded-lg block w-full p-2.5 font-medium text-center ${getStatusColor(
@@ -192,11 +246,8 @@ const VerServidorVirtual = () => {
                         >
                           {serverData.status || "N/A"}
                         </div>
-                      ) : field === "modified" ? (
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
-                          {serverData.modified || "N/A"}
-                        </div>
                       ) : (
+                        /* Renderizado estándar para otros campos */
                         <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
                           {serverData[field] || "N/A"}
                         </div>

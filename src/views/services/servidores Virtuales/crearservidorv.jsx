@@ -1,14 +1,42 @@
-import React, { useState } from "react";
+"use client";
+
+/**
+ * COMPONENTE: CrearServidorVirtual
+ *
+ * PROPÓSITO:
+ * Formulario para crear nuevos servidores virtuales en el sistema.
+ * Permite ingresar información básica y configuración técnica del servidor.
+ *
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Formulario con validación de campos requeridos
+ * - Envío de datos a la API para crear servidor
+ * - Manejo de errores con mensajes específicos
+ * - Confirmación antes de cancelar (evita pérdida de datos)
+ * - Navegación automática después del éxito
+ *
+ * ESTRUCTURA DEL FORMULARIO:
+ * - Información Básica: plataforma, aliado estratégico, ID VM, servidor, SO, IP, estado
+ * - Configuración Técnica: cluster, almacenamiento, núcleos, memoria, fecha modificación
+ *
+ * DEPENDENCIAS:
+ * - React Router para navegación
+ * - SweetAlert2 para notificaciones
+ * - Lucide React para iconos
+ */
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
 import Swal from "sweetalert2";
 
+// Constante para rutas base del sistema
 const BASE_PATH = "/inveplus";
 
 const CrearServidorVirtual = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estado del formulario - estructura de datos del servidor virtual
   const [formData, setFormData] = useState({
     platform: "",
     strategic_ally: "",
@@ -24,24 +52,38 @@ const CrearServidorVirtual = () => {
     modified: "",
   });
 
+  /**
+   * Maneja los cambios en los campos del formulario
+   * Actualiza el estado correspondiente al campo modificado
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
+  /**
+   * Procesa el envío del formulario
+   * - Valida token de autorización
+   * - Envía datos a la API
+   * - Maneja diferentes tipos de errores HTTP
+   * - Muestra notificaciones de éxito/error
+   * - Navega de vuelta a la lista en caso de éxito
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // Verificación de token de autorización
       const token = localStorage.getItem("authenticationToken");
       if (!token) {
         throw new Error("Token de autorización no encontrado.");
       }
 
+      // Petición POST a la API
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/vservers/virtual/add",
         {
@@ -54,23 +96,31 @@ const CrearServidorVirtual = () => {
         }
       );
 
+      // Manejo de errores HTTP específicos
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
+
         if (response.status === 422) {
+          // Error de validación - mostrar detalles específicos
           const errorData = await response.json();
           errorMessage = errorData.detail.map((e) => e.msg).join(", ");
         } else if (response.status === 401 || response.status === 403) {
+          // Error de autorización
           errorMessage =
             "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
         } else {
+          // Otros errores - intentar obtener mensaje del servidor
           try {
             const errorData = await response.json();
             if (errorData.message) errorMessage = errorData.message;
-          } catch (e) {}
+          } catch (e) {
+            // Si no se puede parsear el error, usar mensaje genérico
+          }
         }
         throw new Error(errorMessage);
       }
 
+      // Éxito - mostrar notificación y navegar
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
@@ -93,6 +143,10 @@ const CrearServidorVirtual = () => {
     }
   };
 
+  /**
+   * Maneja la cancelación del formulario
+   * Muestra confirmación para evitar pérdida accidental de datos
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -112,7 +166,7 @@ const CrearServidorVirtual = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
-      {/* Header */}
+      {/* Header con título y botón de regreso */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div className="flex items-center">
           <Server className="mr-2 text-blue-600" size={24} />
@@ -129,7 +183,7 @@ const CrearServidorVirtual = () => {
         </button>
       </header>
 
-      {/* Main Content */}
+      {/* Contenido principal del formulario */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -139,6 +193,7 @@ const CrearServidorVirtual = () => {
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Campo: Plataforma */}
                 <div className="space-y-2">
                   <label
                     htmlFor="platform"
@@ -157,6 +212,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Aliado estratégico */}
                 <div className="space-y-2">
                   <label
                     htmlFor="strategic_ally"
@@ -175,6 +231,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: ID VM */}
                 <div className="space-y-2">
                   <label
                     htmlFor="id_vm"
@@ -193,6 +250,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Nombre del Servidor */}
                 <div className="space-y-2">
                   <label
                     htmlFor="server"
@@ -211,6 +269,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Sistema Operativo */}
                 <div className="space-y-2">
                   <label
                     htmlFor="so"
@@ -229,6 +288,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Dirección IP */}
                 <div className="space-y-2">
                   <label
                     htmlFor="ip"
@@ -247,6 +307,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Estado (Select) */}
                 <div className="space-y-2">
                   <label
                     htmlFor="status"
@@ -277,6 +338,7 @@ const CrearServidorVirtual = () => {
                 Configuración Técnica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Campo: Cluster */}
                 <div className="space-y-2">
                   <label
                     htmlFor="cluster"
@@ -294,6 +356,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Almacenamiento */}
                 <div className="space-y-2">
                   <label
                     htmlFor="hdd"
@@ -311,6 +374,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Núcleos */}
                 <div className="space-y-2">
                   <label
                     htmlFor="cores"
@@ -329,6 +393,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Memoria */}
                 <div className="space-y-2">
                   <label
                     htmlFor="memory"
@@ -347,6 +412,7 @@ const CrearServidorVirtual = () => {
                   />
                 </div>
 
+                {/* Campo: Fecha de Modificación */}
                 <div className="space-y-2">
                   <label
                     htmlFor="modified"
@@ -371,7 +437,7 @@ const CrearServidorVirtual = () => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -379,7 +445,7 @@ const CrearServidorVirtual = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
               >
                 <Save size={18} className="mr-2" />
                 {isSubmitting ? "Guardando..." : "Guardar Servidor"}
