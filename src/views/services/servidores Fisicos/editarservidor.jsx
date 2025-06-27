@@ -1,10 +1,41 @@
+"use client";
+
+/**
+ * COMPONENTE: EditarServidorFisico
+ *
+ * PROPÓSITO:
+ * Permite editar la información de un servidor físico existente.
+ * Carga los datos actuales del servidor desde la API y permite modificarlos
+ * a través de un formulario completo con múltiples secciones organizadas.
+ *
+ * FUNCIONALIDADES:
+ * - Carga automática de datos del servidor usando el ID de la URL
+ * - Formulario pre-poblado con la información existente del servidor físico
+ * - Actualización de datos mediante petición PUT a la API
+ * - Estados de carga mientras obtiene y actualiza datos
+ * - Manejo de errores específicos (404, 401, validación)
+ * - Notificaciones toast para mejor experiencia de usuario
+ * - Componente reutilizable InputField para campos del formulario
+ * - Campos de selección con opciones predefinidas
+ * - Validación de campos requeridos
+ *
+ * CARACTERÍSTICAS ESPECIALES:
+ * - Uso de componente InputField reutilizable para reducir código duplicado
+ * - Manejo de múltiples tipos de campos (text, number, date, select, textarea)
+ * - Estructura organizada en 7 secciones temáticas
+ * - Estados de carga y error con pantallas específicas
+ */
+
 import { useState, useEffect } from "react";
 import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft } from "lucide-react";
 
-// Componente reutilizable para los campos del formulario
+/**
+ * Componente reutilizable para los campos del formulario
+ * Reduce la duplicación de código y mantiene consistencia visual
+ */
 const InputField = ({
   label,
   name,
@@ -29,7 +60,8 @@ const InputField = ({
   </div>
 );
 
-const EditarServer = () => {
+const EditarServidorFisico = () => {
+  // Estado consolidado del formulario con todos los campos del servidor físico
   const [formData, setFormData] = useState({
     serial_number: "",
     hostname: "",
@@ -57,7 +89,7 @@ const EditarServer = () => {
     po_number: "",
   });
 
-  // Opciones para campos de selección
+  // Opciones predefinidas para campos de selección
   const serviceStatusOptions = [
     "active",
     "inactive",
@@ -80,12 +112,14 @@ const EditarServer = () => {
     "Supermicro",
   ];
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Estados de control del componente
+  const [loading, setLoading] = useState(true); // Estado de carga inicial
+  const [error, setError] = useState(null); // Estado de error
   const navigate = useNavigate();
-  const { serverId } = useParams();
+  const { serverId } = useParams(); // ID del servidor desde la URL
   const token = localStorage.getItem("authenticationToken");
 
+  // Configuración de notificaciones toast
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -98,10 +132,15 @@ const EditarServer = () => {
     },
   });
 
+  // Función para mostrar notificación de éxito
   const showSuccessToast = () => {
     Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
   };
 
+  /**
+   * Maneja cambios en todos los campos del formulario
+   * Actualiza el estado formData con el nuevo valor
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -110,11 +149,19 @@ const EditarServer = () => {
     }));
   };
 
+  /**
+   * Efecto para cargar los datos del servidor al montar el componente
+   * Se ejecuta cuando cambia el serverId o el token
+   */
   useEffect(() => {
     const fetchServerData = async () => {
+      if (!serverId) return;
+
       setLoading(true);
       setError(null);
+
       try {
+        // Petición GET para obtener los datos del servidor específico
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
           {
@@ -124,12 +171,14 @@ const EditarServer = () => {
           }
         );
 
+        // Manejo de errores HTTP
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Error al cargar los datos");
         }
 
         const data = await response.json();
+        // Verificar que la respuesta tenga la estructura esperada
         if (data.status === "success" && data.data && data.data.server_info) {
           setFormData(data.data.server_info);
         } else {
@@ -143,15 +192,19 @@ const EditarServer = () => {
       }
     };
 
-    if (serverId) {
-      fetchServerData();
-    }
+    fetchServerData();
   }, [serverId, token]);
 
+  /**
+   * Maneja el envío del formulario para actualizar el servidor
+   * - Envía petición PUT a la API
+   * - Maneja errores y muestra notificaciones apropiadas
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
+      // Petición PUT para actualizar el servidor
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
         {
@@ -164,6 +217,7 @@ const EditarServer = () => {
         }
       );
 
+      // Manejo detallado de errores HTTP
       if (!response.ok) {
         const errorData = await response.json();
         const errorMessage = errorData.detail
@@ -172,6 +226,7 @@ const EditarServer = () => {
         throw new Error(errorMessage);
       }
 
+      // Éxito: mostrar toast y navegar de vuelta
       showSuccessToast();
       navigate("/inveplus/servidoresf");
     } catch (error) {
@@ -184,6 +239,7 @@ const EditarServer = () => {
     }
   };
 
+  // Pantalla de carga mientras se obtienen los datos del servidor
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -194,6 +250,7 @@ const EditarServer = () => {
     );
   }
 
+  // Pantalla de error si no se pudieron cargar los datos
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -204,7 +261,7 @@ const EditarServer = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
-      {/* Header */}
+      {/* Header con información del servidor que se está editando */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
@@ -223,7 +280,7 @@ const EditarServer = () => {
         </button>
       </header>
 
-      {/* Main Content */}
+      {/* Formulario de edición */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -247,6 +304,7 @@ const EditarServer = () => {
                   onChange={handleInputChange}
                   required
                 />
+                {/* Campo: Fabricante (select) */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Fabricante
@@ -271,6 +329,7 @@ const EditarServer = () => {
                   value={formData.server_model}
                   onChange={handleInputChange}
                 />
+                {/* Campo: Tipo de servidor (select) */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Tipo de Servidor
@@ -289,6 +348,7 @@ const EditarServer = () => {
                     ))}
                   </select>
                 </div>
+                {/* Campo: Estado del servicio (select requerido) */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Estado del Servicio <span className="text-red-500">*</span>
@@ -399,6 +459,7 @@ const EditarServer = () => {
                 Información de Servicio
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Campo: Tipo de servicio (select) */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Tipo de Servicio
@@ -479,6 +540,7 @@ const EditarServer = () => {
                 Información Adicional
               </h2>
               <div className="grid grid-cols-1 gap-4">
+                {/* Campo: Comentarios (textarea) */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
                     Comentarios
@@ -496,17 +558,19 @@ const EditarServer = () => {
 
             {/* Botones de acción */}
             <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+              {/* Botón Cancelar */}
               <button
                 type="button"
                 onClick={() => navigate("/inveplus/servidoresf")}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 <MdArrowBack size={18} className="mr-2" />
                 Cancelar
               </button>
+              {/* Botón Guardar */}
               <button
                 type="submit"
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <MdEdit size={18} className="mr-2" />
                 Guardar Cambios
@@ -519,4 +583,4 @@ const EditarServer = () => {
   );
 };
 
-export default EditarServer;
+export default EditarServidorFisico;

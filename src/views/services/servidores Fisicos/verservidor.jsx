@@ -1,16 +1,46 @@
+"use client";
+
+/**
+ * COMPONENTE: VerServidorFisico
+ *
+ * PROPÓSITO:
+ * Componente de solo lectura para visualizar todos los detalles
+ * de un servidor físico específico de manera organizada y clara.
+ * Muestra información completa en secciones temáticas bien estructuradas.
+ *
+ * FUNCIONALIDADES:
+ * - Visualización de datos del servidor físico organizados en 7 secciones temáticas
+ * - Carga de datos desde la API usando el ID del servidor de la URL
+ * - Estados visuales diferenciados para el estado del servidor (colores específicos)
+ * - Manejo de estados de carga y error con pantallas específicas
+ * - Navegación de regreso a la lista o página anterior
+ * - Manejo robusto de la estructura de respuesta de la API
+ * - Formateo especial para campos de estado con colores distintivos
+ *
+ * ESTRUCTURA DE VISUALIZACIÓN:
+ * 1. Información Básica: hostname, serial, fabricante, modelo, tipo, estado
+ * 2. Configuración de Red: IP servidor, IP iLO/IPMI
+ * 3. Especificaciones Técnicas: núcleos, memoria, capacidad disco
+ * 4. Ubicación Física: ubicación, ubicación específica, rack, gabinete
+ * 5. Información de Servicio: tipo servicio, aplicación, propietario, acción
+ * 6. Garantía y Soporte: fechas garantía, EOS, número PO
+ * 7. Observaciones: comentarios adicionales
+ */
+
 import { useState, useEffect } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 
-const VerServers = () => {
-  const { serverId } = useParams();
+const VerServidorFisico = () => {
+  const { serverId } = useParams(); // ID del servidor desde la URL
   const navigate = useNavigate();
-  const [serverData, setServerData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [serverData, setServerData] = useState({}); // Datos del servidor
+  const [loading, setLoading] = useState(true); // Estado de carga
+  const [error, setError] = useState(null); // Estado de error
 
+  // Configuración de las secciones del formulario y sus campos correspondientes
+  // Esta estructura permite organizar la información de manera lógica y mantenible
   const formSections = [
     {
       title: "Información Básica",
@@ -49,6 +79,7 @@ const VerServers = () => {
     },
   ];
 
+  // Mapeo de nombres de campos a etiquetas legibles para el usuario
   const fieldLabels = {
     hostname: "Hostname",
     serial_number: "Número de Serie",
@@ -76,6 +107,10 @@ const VerServers = () => {
     comments: "Observaciones",
   };
 
+  /**
+   * Función para obtener las clases CSS apropiadas según el estado del servidor
+   * Proporciona colores diferenciados para cada tipo de estado de servidor físico
+   */
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
@@ -91,6 +126,10 @@ const VerServers = () => {
     }
   };
 
+  /**
+   * Función para obtener el texto legible del estado
+   * Convierte los valores técnicos en texto amigable para el usuario
+   */
   const getStatusText = (status) => {
     switch (status) {
       case "active":
@@ -106,12 +145,19 @@ const VerServers = () => {
     }
   };
 
+  /**
+   * Efecto para obtener los datos del servidor al montar el componente
+   * Se ejecuta cuando cambia el serverId
+   */
   useEffect(() => {
     const fetchServerData = async () => {
+      if (!serverId) return;
+
       try {
         setLoading(true);
         setError(null);
 
+        // Verificar que existe el token de autorización
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
@@ -128,6 +174,7 @@ const VerServers = () => {
         }
 
         const data = await response.json();
+        // Verificar que la respuesta tenga la estructura esperada
         if (data?.status === "success" && data.data?.server_info) {
           setServerData(data.data.server_info);
         } else {
@@ -142,11 +189,10 @@ const VerServers = () => {
       }
     };
 
-    if (serverId) {
-      fetchServerData();
-    }
+    fetchServerData();
   }, [serverId]);
 
+  // Pantalla de carga con spinner animado
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -160,6 +206,7 @@ const VerServers = () => {
     );
   }
 
+  // Pantalla de error con opción de volver
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -167,7 +214,7 @@ const VerServers = () => {
           <strong>Error:</strong> {error}
           <button
             onClick={() => navigate("/inveplus/servidoresf")}
-            className="mt-3 block text-blue-600 hover:text-blue-800"
+            className="mt-3 block text-blue-600 hover:text-blue-800 transition-colors"
           >
             <MdArrowBack className="inline mr-1" /> Volver a la lista
           </button>
@@ -178,6 +225,7 @@ const VerServers = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
+      {/* Header con título y botón de regreso */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
@@ -196,9 +244,11 @@ const VerServers = () => {
         </button>
       </header>
 
+      {/* Contenido principal con los datos del servidor */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <div className="space-y-6">
+            {/* Renderizado dinámico de todas las secciones */}
             {formSections.map((section, index) => (
               <div
                 key={index}
@@ -208,33 +258,37 @@ const VerServers = () => {
                   {section.title}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Renderizado de cada campo en la sección */}
                   {section.fields.map((field) => (
                     <div key={field} className="space-y-2">
                       <label className="block text-sm font-medium text-gray-700">
                         {fieldLabels[field]}
                       </label>
+                      {/* Renderizado especial para el campo de estado con colores */}
                       {field === "service_status" ? (
                         <div
                           className={`
-                        border rounded-lg block w-full p-2.5 font-medium text-center
-                        ${
-                          serverData.service_status?.toLowerCase() === "active"
-                            ? "bg-green-100 border-green-300 text-green-800"
-                            : serverData.service_status?.toLowerCase() ===
-                              "maintenance"
-                            ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                            : serverData.service_status?.toLowerCase() ===
-                              "decommissioned"
-                            ? "bg-gray-100 border-gray-300 text-gray-800"
-                            : "bg-red-100 border-red-300 text-red-800"
-                        }
-                      `}
+                            border rounded-lg block w-full p-2.5 font-medium text-center
+                            ${
+                              serverData.service_status?.toLowerCase() ===
+                              "active"
+                                ? "bg-green-100 border-green-300 text-green-800"
+                                : serverData.service_status?.toLowerCase() ===
+                                  "maintenance"
+                                ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                                : serverData.service_status?.toLowerCase() ===
+                                  "decommissioned"
+                                ? "bg-gray-100 border-gray-300 text-gray-800"
+                                : "bg-red-100 border-red-300 text-red-800"
+                            }
+                          `}
                         >
                           {getStatusText(serverData.service_status)}
                         </div>
                       ) : (
+                        /* Renderizado estándar para otros campos */
                         <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
-                          {serverData[field]}
+                          {serverData[field] || "N/A"}
                         </div>
                       )}
                     </div>
@@ -249,4 +303,4 @@ const VerServers = () => {
   );
 };
 
-export default VerServers;
+export default VerServidorFisico;
