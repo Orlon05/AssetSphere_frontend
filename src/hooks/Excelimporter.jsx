@@ -3,33 +3,138 @@ import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
 
+/**
+ * Componente para importar y procesar archivos Excel con funcionalidades avanzadas
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {Function} props.onImportComplete - Callback ejecutado cuando la importación se completa exitosamente
+ * @param {Array} props.tableMetadata - Metadatos de la tabla que definen la estructura y validaciones de las columnas
+ *
+ * @example
+ * // Uso básico del componente
+ * const tableMetadata = [
+ *   { name: 'nombre', type: 'string', required: true },
+ *   { name: 'edad', type: 'number', required: false },
+ *   { name: 'email', type: 'string', required: true }
+ * ];
+ *
+ * const handleImportComplete = (data) => {
+ *   console.log('Datos importados:', data);
+ *   // Procesar los datos importados
+ * };
+ *
+ * <ExcelImporter
+ *   onImportComplete={handleImportComplete}
+ *   tableMetadata={tableMetadata}
+ * />
+ *
+ * @returns {JSX.Element} Componente de importación de Excel
+ */
 const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
+  // ==================== ESTADO DEL COMPONENTE ====================
+
+  /**
+   * Datos extraídos del archivo Excel
+   * @type {Array<Array>} Array bidimensional con los datos de las celdas
+   */
   const [excelData, setExcelData] = useState([]);
+
+  /**
+   * Nombres de las columnas del archivo Excel
+   * @type {Array<string>} Array con los nombres de las columnas
+   */
   const [columns, setColumns] = useState([]);
+
+  /**
+   * Mensaje de error relacionado con el archivo
+   * @type {string} Mensaje de error o cadena vacía
+   */
   const [fileError, setFileError] = useState("");
+
+  /**
+   * Controla la visibilidad de la tabla de datos
+   * @type {boolean} true si la tabla debe mostrarse
+   */
   const [showTable, setShowTable] = useState(false);
+
+  /**
+   * Estado de guardado de datos
+   * @type {boolean} true si se está guardando
+   */
   const [isSaving, setIsSaving] = useState(false);
+
+  /**
+   * Nombres de las hojas del archivo Excel
+   * @type {Array<string>} Array con los nombres de las hojas
+   */
   const [sheetNames, setSheetNames] = useState([]);
+
+  /**
+   * Hoja seleccionada actualmente
+   * @type {string} Nombre de la hoja seleccionada
+   */
   const [selectedSheet, setSelectedSheet] = useState("");
+
+  /**
+   * Datos completos del libro de Excel
+   * @type {Object} Objeto workbook de XLSX
+   */
   const [workbookData, setWorkbookData] = useState({});
+
+  /**
+   * Anchos personalizados de las columnas
+   * @type {Object} Objeto con índices de columna como claves y anchos como valores
+   */
   const [columnWidths, setColumnWidths] = useState({});
+
+  /**
+   * Columna que se está redimensionando
+   * @type {number|null} Índice de la columna o null
+   */
   const [resizingColumn, setResizingColumn] = useState(null);
+
+  /**
+   * Posición X inicial para el redimensionamiento
+   * @type {React.RefObject<number>} Referencia a la posición X
+   */
   const startX = useRef(0);
 
-  // Paginación
+  // ==================== ESTADO DE PAGINACIÓN ====================
+
+  /**
+   * Número de filas por página
+   * @type {number} Cantidad de filas a mostrar por página
+   */
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  /**
+   * Página actual
+   * @type {number} Número de página actual (base 1)
+   */
   const [currentPage, setCurrentPage] = useState(1);
 
+  // ==================== MANEJADORES DE EVENTOS ====================
+
+  /**
+   * Maneja el cambio de archivo Excel seleccionado
+   * Valida el tipo de archivo y lee su contenido
+   *
+   * @param {Event} e - Evento de cambio del input file
+   */
   const handleFileChange = (e) => {
+    // Limpiar estados previos
     setFileError("");
     setSheetNames([]);
     setSelectedSheet("");
     setExcelData([]);
     setShowTable(false);
+
     const file = e.target.files[0];
     if (!file) return;
-    const fileType = file.type;
 
+    // Validar tipo de archivo
+    const fileType = file.type;
     if (
       fileType !==
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -41,6 +146,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       return;
     }
 
+    // Leer archivo
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
@@ -56,12 +162,20 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         setSheetNames([]);
       }
     };
+
     reader.readAsArrayBuffer(file);
   };
 
+  /**
+   * Maneja el cambio de hoja seleccionada
+   * Procesa los datos de la hoja seleccionada y los prepara para visualización
+   *
+   * @param {Event} e - Evento de cambio del select
+   */
   const handleSheetChange = (e) => {
     const selectedSheet = e.target.value;
     setSelectedSheet(selectedSheet);
+
     try {
       const worksheet = workbookData.Sheets[selectedSheet];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
@@ -83,10 +197,12 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           return;
         }
 
+        // Procesar encabezados y datos
         const headers = filteredData[0].map(
           (header, idx) => header || `Column ${idx + 1}`
         );
         const dataRows = filteredData.slice(1);
+
         setColumns(headers);
         setExcelData(dataRows);
         setShowTable(true);
@@ -103,17 +219,42 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     }
   };
 
+  /**
+   * Maneja el cambio de valor en una celda específica
+   * Actualiza los datos del Excel en memoria
+   *
+   * @param {number} rowIndex - Índice de la fila
+   * @param {number} colIndex - Índice de la columna
+   * @param {string} value - Nuevo valor de la celda
+   */
   const handleCellValueChange = useCallback((rowIndex, colIndex, value) => {
     setExcelData((prevData) => {
       const newData = [...prevData];
       if (!newData[rowIndex]) {
-        newData[rowIndex] = []; // Ensure the row exists
+        newData[rowIndex] = []; // Asegurar que la fila existe
       }
       newData[rowIndex][colIndex] = value;
       return newData;
     });
   }, []);
 
+  // ==================== FUNCIONES DE UTILIDAD ====================
+
+  /**
+   * Mapea los datos del Excel según los metadatos de la tabla
+   * Convierte el array bidimensional en objetos con propiedades nombradas
+   *
+   * @param {Array<Array>} excelData - Datos del Excel en formato array bidimensional
+   * @param {Array} tableMetadata - Metadatos que definen la estructura de la tabla
+   * @returns {Array<Object>} Array de objetos con propiedades nombradas
+   *
+   * @example
+   * // Entrada:
+   * // excelData = [["Juan", 25], ["María", 30]]
+   * // tableMetadata = [{name: "nombre"}, {name: "edad"}]
+   * // Salida:
+   * // [{nombre: "Juan", edad: 25}, {nombre: "María", edad: 30}]
+   */
   const mapExcelData = (excelData, tableMetadata) => {
     // Verificar que tableMetadata sea un array
     if (!Array.isArray(tableMetadata)) {
@@ -124,7 +265,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     return excelData.map((row) => {
       const mappedRow = {};
 
-      // Verificar si estamos usando el formato correcto de tableMetadata
+      // Verificar formato de tableMetadata
       if (
         tableMetadata.length > 0 &&
         typeof tableMetadata[0] === "object" &&
@@ -155,27 +296,103 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         });
       }
 
-
       return mappedRow;
     });
   };
 
-  // Paginación: Cambiar página
+  /**
+   * Valida los datos según los metadatos de la tabla
+   * Verifica campos requeridos, tipos de datos y otras validaciones
+   *
+   * @param {Array} tableMetadata - Metadatos con las reglas de validación
+   * @returns {Array<string>} Array de mensajes de error encontrados
+   */
+  const validateData = (tableMetadata) => {
+    const errors = [];
+
+    excelData.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const columnMetadata = tableMetadata?.[colIndex];
+
+        // Validar campos requeridos
+        if (
+          columnMetadata?.required &&
+          (cell === null || cell === undefined || cell === "")
+        ) {
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo no puede estar vacío.`
+          );
+        }
+
+        // Validar tipo número
+        if (
+          columnMetadata?.type === "number" &&
+          cell !== null &&
+          cell !== undefined &&
+          cell !== "" &&
+          isNaN(Number(cell))
+        ) {
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo debe ser un número.`
+          );
+        }
+
+        // Validar tipo entero
+        if (
+          columnMetadata?.type === "integer" &&
+          cell !== null &&
+          cell !== undefined &&
+          cell !== "" &&
+          !Number.isInteger(Number(cell))
+        ) {
+          errors.push(
+            `Fila ${rowIndex + 1}, columna ${
+              colIndex + 1
+            }: el campo debe ser un entero.`
+          );
+        }
+      });
+    });
+
+    return errors;
+  };
+
+  // ==================== MANEJADORES DE PAGINACIÓN ====================
+
+  /**
+   * Cambia la página actual
+   * @param {number} newPage - Nueva página a mostrar
+   */
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
+  /**
+   * Cambia el número de filas por página
+   * @param {Event} event - Evento de cambio del select
+   */
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(Number.parseInt(event.target.value, 10));
-    setCurrentPage(1); // Resetear a la primera página cuando cambie el número de filas por página
+    setCurrentPage(1); // Resetear a la primera página
   };
 
-  // Calcular las filas que se mostrarán según la página actual y la cantidad de filas por página
+  // Calcular las filas que se mostrarán según la página actual
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = excelData.slice(indexOfFirstRow, indexOfLastRow);
 
+  // ==================== FUNCIÓN PRINCIPAL DE GUARDADO ====================
+
+  /**
+   * Guarda los datos importados después de validarlos
+   * Ejecuta el callback onImportComplete con los datos mapeados
+   */
   const handleSaveData = useCallback(async () => {
+    // Validar datos
     const validationErrors = validateData(tableMetadata);
     if (validationErrors.length > 0) {
       Swal.fire({
@@ -199,6 +416,8 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     }
 
     setIsSaving(true);
+
+    // Mostrar loading
     Swal.fire({
       title: "Guardando Datos...",
       html: "Por favor, espera mientras guardamos los datos.",
@@ -218,20 +437,22 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         throw new Error("No se pudieron mapear los datos correctamente");
       }
 
-
-      // Simulación de guardado
+      // Simulación de guardado (reemplazar con llamada real a la API)
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Mostrar éxito
       Swal.fire({
         icon: "success",
         title: "Datos Guardados",
         text: `Se han procesado ${mappedData.length} registros correctamente.`,
       });
 
+      // Ejecutar callback si existe
       if (typeof onImportComplete === "function") {
         onImportComplete(mappedData);
       }
 
+      // Limpiar estados
       setExcelData([]);
       setColumns([]);
       setShowTable(false);
@@ -250,54 +471,11 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     }
   }, [excelData, onImportComplete, tableMetadata]);
 
-  const validateData = (tableMetadata) => {
-    const errors = [];
-    excelData.forEach((row, rowIndex) => {
-      row.forEach((cell, colIndex) => {
-        const columnMetadata = tableMetadata?.[colIndex];
-        if (
-          columnMetadata?.required &&
-          (cell === null || cell === undefined || cell === "")
-        ) {
-          errors.push(
-            `Fila ${rowIndex + 1}, columna ${
-              colIndex + 1
-            }: el campo no puede estar vacío.`
-          );
-        }
-        if (
-          columnMetadata?.type === "number" &&
-          cell !== null &&
-          cell !== undefined &&
-          cell !== "" &&
-          isNaN(Number(cell))
-        ) {
-          errors.push(
-            `Fila ${rowIndex + 1}, columna ${
-              colIndex + 1
-            }: el campo debe ser un número.`
-          );
-        }
-        if (
-          columnMetadata?.type === "integer" &&
-          cell !== null &&
-          cell !== undefined &&
-          cell !== "" &&
-          !Number.isInteger(Number(cell))
-        ) {
-          errors.push(
-            `Fila ${rowIndex + 1}, columna ${
-              colIndex + 1
-            }: el campo debe ser un entero.`
-          );
-        }
-      });
-    });
-    return errors;
-  };
+  // ==================== RENDERIZADO DEL COMPONENTE ====================
 
   return (
     <div className="w-full max-w-full">
+      {/* Área de carga de archivos */}
       <div className="mb-4">
         <label
           htmlFor="excel-file"
@@ -334,6 +512,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         </label>
       </div>
 
+      {/* Mensaje de error */}
       {fileError && (
         <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
           <div className="flex">
@@ -356,6 +535,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         </div>
       )}
 
+      {/* Selector de hojas */}
       {sheetNames.length > 0 && (
         <div className="mb-4">
           <label
@@ -380,6 +560,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         </div>
       )}
 
+      {/* Tabla de datos */}
       {showTable && (
         <div className="space-y-4">
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
@@ -441,6 +622,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             </table>
           </div>
 
+          {/* Controles de paginación */}
           <div className="flex flex-col items-center justify-between space-y-3 sm:flex-row sm:space-y-0">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-700">Filas por página:</span>
@@ -483,6 +665,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             </div>
           </div>
 
+          {/* Botón de guardar */}
           <div className="flex justify-end">
             <button
               onClick={handleSaveData}
@@ -524,9 +707,40 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
   );
 };
 
+// ==================== VALIDACIÓN DE PROPS ====================
+
+/**
+ * Definición de tipos de props para validación en tiempo de desarrollo
+ */
 ExcelImporter.propTypes = {
+  /**
+   * Función callback ejecutada cuando la importación se completa
+   * Recibe como parámetro un array de objetos con los datos importados
+   */
   onImportComplete: PropTypes.func,
-  tableMetadata: PropTypes.array.isRequired,
+
+  /**
+   * Array de metadatos que define la estructura de la tabla
+   * Cada elemento debe tener al menos la propiedad 'name'
+   * Propiedades opcionales: 'type', 'required', 'validation'
+   */
+  tableMetadata: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(["string", "number", "integer", "boolean", "date"]),
+      required: PropTypes.bool,
+      validation: PropTypes.func,
+    })
+  ).isRequired,
+};
+
+/**
+ * Valores por defecto de las props
+ */
+ExcelImporter.defaultProps = {
+  onImportComplete: () => {
+    console.log("Importación completada - No se proporcionó callback");
+  },
 };
 
 export default ExcelImporter;

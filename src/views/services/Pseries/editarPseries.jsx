@@ -1,3 +1,18 @@
+/**
+ * Componente para editar servidores PSeries existentes
+ *
+ * Funcionalidades:
+ * - Carga datos existentes del servidor
+ * - Formulario pre-poblado con información actual
+ * - Validación de campos obligatorios
+ * - Manejo de estados de carga y errores
+ * - Confirmación antes de cancelar cambios
+ *
+ * @component
+ * @example
+ * return <EditarPseries />
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -10,6 +25,8 @@ const EditarPseries = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_PATH = "/inveplus";
+
+  // Estados individuales para cada campo del formulario
   const [name, setName] = useState("");
   const [application, setApplication] = useState("");
   const [hostname, setHostName] = useState("");
@@ -34,6 +51,9 @@ const EditarPseries = () => {
   const [memory_per_factor, setMemoryPerFactor] = useState("");
   const [processor_compatibility, setProcessorCompatibility] = useState("");
 
+  /**
+   * Configuración de notificaciones toast
+   */
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -46,11 +66,17 @@ const EditarPseries = () => {
     },
   });
 
+  /**
+   * Muestra notificación de éxito
+   */
   const showSuccessToast = () => {
-    Toast.fire({ icon: "success", title: "Servidor actualizado exitosamente" });
+    Toast.fire({
+      icon: "success",
+      title: "Servidor actualizado exitosamente",
+    });
   };
 
-  // Opciones para los campos de selección
+  // Opciones para campos de selección
   const environmentOptions = [
     "Certificación",
     "Desarrollo",
@@ -58,6 +84,7 @@ const EditarPseries = () => {
     "Pruebas",
     "VIOS-Producción",
   ];
+
   const statusOptions = ["Running", "Not Activated"];
   const osOptions = ["Aixlinux", "Vioserver"];
   const subsidiaryOptions = [
@@ -66,6 +93,7 @@ const EditarPseries = () => {
     "Filiales OffShore",
     "Nequi",
   ];
+
   const processorCompatibilityOptions = [
     "Default",
     "POWER7",
@@ -76,18 +104,20 @@ const EditarPseries = () => {
 
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Carga los datos del servidor desde la API
+   */
   useEffect(() => {
     const fetchPseriesData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem(
-                "authenticationToken"
-              )}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -95,6 +125,7 @@ const EditarPseries = () => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Error al obtener datos del servidor:", errorData);
+
           if (response.status === 404) {
             throw new Error("Servidor no encontrado");
           } else if (response.status === 401) {
@@ -107,8 +138,11 @@ const EditarPseries = () => {
             );
           }
         }
+
         const data = await response.json();
+
         if (data.status === "success" && data.data) {
+          // Poblar todos los campos con los datos obtenidos
           setName(data.data.name || "");
           setApplication(data.data.application || "");
           setHostName(data.data.hostname || "");
@@ -125,7 +159,7 @@ const EditarPseries = () => {
           setMaxCpu(data.data.max_cpu || "");
           setMinVCpu(data.data.min_v_cpu || "");
           setActVCpu(data.data.act_v_cpu || "");
-          setMaxVCpu(data.data.max_cpu || "");
+          setMaxVCpu(data.data.max_v_cpu || "");
           setMinMemory(data.data.min_memory || "");
           setActMemory(data.data.act_memory || "");
           setMaxMemory(data.data.max_memory || "");
@@ -136,7 +170,9 @@ const EditarPseries = () => {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");
         }
+      } catch (error) {
         console.error("Error en fetchPseriesData:", error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -145,15 +181,17 @@ const EditarPseries = () => {
     if (pserieId) {
       fetchPseriesData();
     }
-  }, [pserieId]);
+  }, [pserieId, token]);
 
-  useEffect(() => {}, [name, application]);
-
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} event - Evento del formulario
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate(`${BASE_PATH}/pseries`);
 
-    if (!application || !name || !ip_address || !hostname) {
+    // Validación de campos obligatorios
+    if (!application || !name || !hostname) {
       Swal.fire({
         icon: "warning",
         title: "Campos obligatorios",
@@ -162,33 +200,36 @@ const EditarPseries = () => {
       return;
     }
 
+    // Preparar datos para envío
     const pserieData = {
-      name: name,
-      application: application,
-      hostname: hostname,
-      ip_address: ip_address,
-      environment: environment,
-      slot: slot,
-      lpar_id: lpar_id,
-      status: status,
-      os: os,
-      version: version,
-      subsidiary: subsidiary,
-      min_cpu: min_cpu,
-      act_cpu: act_cpu,
-      max_cpu: max_cpu,
-      min_v_cpu: min_v_cpu,
-      act_v_cpu: act_v_cpu,
-      max_v_cpu: max_v_cpu,
-      min_memory: min_memory,
-      act_memory: act_memory,
-      max_memory: max_memory,
-      expansion_factor: expansion_factor,
-      memory_per_factor: memory_per_factor,
-      processor_compatibility: processor_compatibility,
+      name,
+      application,
+      hostname,
+      ip_address,
+      environment,
+      slot,
+      lpar_id,
+      status,
+      os,
+      version,
+      subsidiary,
+      min_cpu,
+      act_cpu,
+      max_cpu,
+      min_v_cpu,
+      act_v_cpu,
+      max_v_cpu,
+      min_memory,
+      act_memory,
+      max_memory,
+      expansion_factor,
+      memory_per_factor,
+      processor_compatibility,
     };
 
     try {
+      setIsSubmitting(true);
+
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/pseries/edit/${pserieId}`,
         {
@@ -203,9 +244,11 @@ const EditarPseries = () => {
 
       if (!response.ok) {
         let errorMessage = `Error HTTP ${response.status}`;
+
         try {
           const errorData = await response.json();
           console.error("Detalles del error (JSON):", errorData);
+
           if (errorData && Array.isArray(errorData.detail)) {
             errorMessage = errorData.detail.map((e) => e.msg).join(", ");
           } else if (errorData && errorData.message) {
@@ -213,13 +256,18 @@ const EditarPseries = () => {
           } else if (errorData) {
             errorMessage = JSON.stringify(errorData);
           }
-          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
         } catch (jsonError) {
           console.error("Error al parsear JSON:", jsonError);
-          Swal.fire({ icon: "error", title: "Error", text: errorMessage });
         }
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+        });
       } else {
         showSuccessToast();
+        navigate(`${BASE_PATH}/pseries`);
       }
     } catch (error) {
       console.error("Error inesperado:", error);
@@ -228,9 +276,14 @@ const EditarPseries = () => {
         title: "Error",
         text: "Ocurrió un error inesperado.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  /**
+   * Maneja la cancelación con confirmación
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -248,6 +301,7 @@ const EditarPseries = () => {
     });
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
@@ -283,10 +337,10 @@ const EditarPseries = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
-            Editar Pserie
+            Editar PSeries
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Modifica la información del pserie{" "}
+            Modifica la información del servidor{" "}
             <span className="font-bold">{name}</span>
           </p>
         </div>
@@ -314,7 +368,7 @@ const EditarPseries = () => {
                     htmlFor="name"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Nombre Lpar en la HMC{" "}
+                    Nombre LPAR en la HMC{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -369,7 +423,7 @@ const EditarPseries = () => {
                     htmlFor="ip_address"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    IP
+                    Dirección IP
                   </label>
                   <input
                     type="text"
@@ -481,7 +535,7 @@ const EditarPseries = () => {
                     htmlFor="lpar_id"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    ID Lpar
+                    ID LPAR
                   </label>
                   <input
                     type="text"
@@ -506,7 +560,7 @@ const EditarPseries = () => {
                     htmlFor="os"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    S.O <span className="text-red-500">*</span>
+                    Sistema Operativo <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="os"
@@ -763,7 +817,7 @@ const EditarPseries = () => {
                     htmlFor="processor_compatibility"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Proc Compat
+                    Compatibilidad de procesador
                   </label>
                   <select
                     id="processor_compatibility"

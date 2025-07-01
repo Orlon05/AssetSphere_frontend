@@ -1,3 +1,18 @@
+/**
+ * Componente para crear nuevos servidores PSeries
+ *
+ * Funcionalidades:
+ * - Formulario organizado en secciones lógicas
+ * - Validación de campos obligatorios
+ * - Campos específicos para servidores IBM Power Systems
+ * - Manejo de estados de carga y errores
+ * - Confirmación antes de cancelar cambios
+ *
+ * @component
+ * @example
+ * return <CrearPseries />
+ */
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
@@ -7,7 +22,7 @@ const CrearPseries = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estado inicial del formulario con todos los campos necesarios
+  // Estado del formulario con todos los campos necesarios para PSeries
   const [formData, setFormData] = useState({
     name: "",
     application: "",
@@ -34,7 +49,7 @@ const CrearPseries = () => {
     processor_compatibility: "",
   });
 
-  // Opciones para los campos de selección
+  // Opciones predefinidas para campos de selección
   const environmentOptions = [
     "Certificación",
     "Desarrollo",
@@ -42,6 +57,7 @@ const CrearPseries = () => {
     "Pruebas",
     "VIOS-Producción",
   ];
+
   const statusOptions = ["Running", "Not Activated"];
   const osOptions = ["Aixlinux", "Vioserver"];
   const subsidiaryOptions = [
@@ -50,6 +66,7 @@ const CrearPseries = () => {
     "Filiales OffShore",
     "Nequi",
   ];
+
   const processorCompatibilityOptions = [
     "Default",
     "POWER7",
@@ -60,7 +77,10 @@ const CrearPseries = () => {
 
   const BASE_PATH = "/inveplus";
 
-  // Definición de secciones y campos para PSeries
+  /**
+   * Configuración de secciones del formulario
+   * Organiza los campos en grupos lógicos para mejor UX
+   */
   const formSections = [
     {
       title: "Información Básica",
@@ -187,7 +207,10 @@ const CrearPseries = () => {
     },
   ];
 
-  // Manejar cambios en los inputs
+  /**
+   * Maneja cambios en los campos del formulario
+   * @param {Event} e - Evento del input
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -196,7 +219,10 @@ const CrearPseries = () => {
     }));
   };
 
-  // Manejar envío del formulario
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} e - Evento del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -242,7 +268,9 @@ const CrearPseries = () => {
     }
   };
 
-  // Cancelar y volver a la lista
+  /**
+   * Maneja la cancelación del formulario con confirmación
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -260,7 +288,11 @@ const CrearPseries = () => {
     });
   };
 
-  // Renderizar campo según su tipo
+  /**
+   * Renderiza un campo según su tipo
+   * @param {Object} field - Configuración del campo
+   * @returns {JSX.Element} Campo renderizado
+   */
   const renderField = (field) => {
     switch (field.type) {
       case "select":
@@ -301,7 +333,7 @@ const CrearPseries = () => {
       {/* Header */}
       <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
         <button
-          onClick={() => navigate("/pseries")}
+          onClick={() => navigate(`${BASE_PATH}/pseries`)}
           className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
         >
           <ArrowLeft size={20} className="text-gray-600" />

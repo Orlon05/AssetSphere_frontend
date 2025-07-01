@@ -1,4 +1,19 @@
-"use client";
+/**
+ * Componente para crear nuevos dispositivos de Storage
+ *
+ * Este formulario permite crear dispositivos de almacenamiento con campos específicos:
+ * - Información básica (nombre, código, serial, host, estado)
+ * - Configuración de red (dirección IP)
+ * - Especificaciones técnicas (fabricante, modelo, tipo, capacidad)
+ * - Información organizacional (empresa, responsables, ubicación)
+ *
+ * @component
+ * @example
+ * return (
+ *   <CrearStorage />
+ * )
+ */
+
 import { useState } from "react";
 import { ArrowLeft, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +49,7 @@ const CrearStorage = () => {
     location: "",
   });
 
-  // Opciones para campos de selección
+  // Opciones predefinidas para campos de selección
   const statusOptions = ["Aplicado", "No Aplicado"];
   const activeOptions = ["Sí", "No"];
   const typeOptions = ["SAN", "NAS", "DAS", "Local Storage", "Cloud Storage"];
@@ -48,6 +63,10 @@ const CrearStorage = () => {
     "Pure Storage",
   ];
 
+  /**
+   * Maneja cambios en los campos del formulario
+   * @param {Event} e - Evento del input
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -56,6 +75,10 @@ const CrearStorage = () => {
     }));
   };
 
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} e - Evento del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -80,6 +103,7 @@ const CrearStorage = () => {
         throw new Error(errorData.message || `Error HTTP ${response.status}`);
       }
 
+      // Mostrar mensaje de éxito y redirigir
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
@@ -101,6 +125,9 @@ const CrearStorage = () => {
     }
   };
 
+  /**
+   * Maneja la cancelación del formulario con confirmación
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",

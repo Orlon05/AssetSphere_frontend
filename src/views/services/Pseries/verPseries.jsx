@@ -1,3 +1,18 @@
+/**
+ * Componente para visualizar detalles de servidores PSeries
+ *
+ * Funcionalidades:
+ * - Vista de solo lectura de todos los campos del servidor
+ * - Organización en secciones lógicas
+ * - Badges de estado visuales
+ * - Formateo especial para campos de memoria
+ * - Manejo robusto de errores y estados de carga
+ *
+ * @component
+ * @example
+ * return <VerPseries />
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +28,7 @@ const VerPseries = () => {
   const { pserieId } = useParams();
   const BASE_PATH = "/inveplus";
 
-  // Estados para todos los campos
+  // Estados para todos los campos del servidor
   const [name, setName] = useState("");
   const [application, setApplication] = useState("");
   const [hostname, setHostName] = useState("");
@@ -40,7 +55,10 @@ const VerPseries = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Definición de secciones y campos para PSeries
+  /**
+   * Configuración de secciones para organizar la vista
+   * Agrupa campos relacionados para mejor legibilidad
+   */
   const formSections = [
     {
       title: "Información Básica",
@@ -111,25 +129,28 @@ const VerPseries = () => {
 
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Carga los datos del servidor desde la API
+   */
   useEffect(() => {
     const fetchPseriesData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem(
-                "authenticationToken"
-              )}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
         if (!response.ok) {
-          const errorData = await response.json(); // Intenta leer la respuesta en caso de error
-          console.error("Error al obtener datos del servidor:", errorData); // Logs para depuración
+          const errorData = await response.json();
+          console.error("Error al obtener datos del servidor:", errorData);
+
           if (response.status === 404) {
             throw new Error("Servidor no encontrado");
           } else if (response.status === 401) {
@@ -142,9 +163,11 @@ const VerPseries = () => {
             );
           }
         }
+
         const data = await response.json();
 
         if (data.status === "success" && data.data) {
+          // Poblar todos los estados con los datos obtenidos
           setName(data.data.name || "");
           setApplication(data.data.application || "");
           setHostName(data.data.hostname || "");
@@ -161,7 +184,7 @@ const VerPseries = () => {
           setMaxCpu(data.data.max_cpu || "");
           setMinVCpu(data.data.min_v_cpu || "");
           setActVCpu(data.data.act_v_cpu || "");
-          setMaxVCpu(data.data.max_cpu || "");
+          setMaxVCpu(data.data.max_v_cpu || "");
           setMinMemory(data.data.min_memory || "");
           setActMemory(data.data.act_memory || "");
           setMaxMemory(data.data.max_memory || "");
@@ -172,7 +195,9 @@ const VerPseries = () => {
           console.error("Estructura de datos inesperada:", data);
           setError("Estructura de datos inesperada del servidor");
         }
+      } catch (error) {
         console.error("Error en fetchPseriesData:", error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -181,8 +206,13 @@ const VerPseries = () => {
     if (pserieId) {
       fetchPseriesData();
     }
-  }, [pserieId]);
+  }, [pserieId, token]);
 
+  /**
+   * Genera badge de estado visual según el estado del servidor
+   * @param {string} status - Estado del servidor
+   * @returns {JSX.Element|null} Badge de estado
+   */
   const getStatusBadge = (status) => {
     if (!status) return null;
 
@@ -229,11 +259,16 @@ const VerPseries = () => {
     }
   };
 
-  // Función para formatear valores según el tipo de campo
+  /**
+   * Formatea valores de campo según el tipo
+   * @param {string} field - Nombre del campo
+   * @param {string} value - Valor del campo
+   * @returns {string} Valor formateado
+   */
   const formatFieldValue = (field, value) => {
     if (!value) return "-";
 
-    // Campos que podrían necesitar formateo especial
+    // Formateo especial para campos de memoria
     if (field.includes("memory")) {
       return `${value} GB`;
     }
@@ -241,6 +276,7 @@ const VerPseries = () => {
     return value;
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">

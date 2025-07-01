@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft } from "lucide-react";
 
-// Componente reutilizable para los campos del formulario
+/**
+ * Componente reutilizable para campos de formulario
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.label - Etiqueta del campo
+ * @param {string} props.name - Nombre del campo
+ * @param {string} props.value - Valor del campo
+ * @param {Function} props.onChange - Función de cambio
+ * @param {string} props.type - Tipo de input
+ * @param {boolean} props.required - Si el campo es requerido
+ */
 const InputField = ({
   label,
   name,
@@ -29,7 +38,18 @@ const InputField = ({
   </div>
 );
 
+/**
+ * Componente para editar bases de datos existentes
+ *
+ * Funcionalidades:
+ * - Carga datos existentes desde la API
+ * - Formulario pre-poblado con validación
+ * - Formateo automático de fechas
+ * - Manejo de errores de carga y envío
+ * - Navegación automática tras éxito
+ */
 const EditarBaseDatos = () => {
+  // Estado del formulario con todos los campos
   const [formData, setFormData] = useState({
     instance_id: "",
     cost_center: "",
@@ -61,12 +81,18 @@ const EditarBaseDatos = () => {
     modified_date: "",
   });
 
+  // Estados de control
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Hooks de navegación
   const navigate = useNavigate();
   const { baseDatosId } = useParams();
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Configuración de notificaciones toast
+   */
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -79,6 +105,9 @@ const EditarBaseDatos = () => {
     },
   });
 
+  /**
+   * Muestra notificación de éxito
+   */
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
@@ -86,6 +115,10 @@ const EditarBaseDatos = () => {
     });
   };
 
+  /**
+   * Maneja cambios en los campos del formulario
+   * @param {Event} e - Evento del input
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -94,10 +127,15 @@ const EditarBaseDatos = () => {
     }));
   };
 
+  // Efecto para cargar datos al montar el componente
   useEffect(() => {
+    /**
+     * Obtiene los datos de la base de datos desde la API
+     */
     const fetchBaseDatosData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDatosId}`,
@@ -115,12 +153,17 @@ const EditarBaseDatos = () => {
 
         const data = await response.json();
         if (data.status === "success" && data.data) {
-          // Formatear las fechas para los inputs de tipo date
+          /**
+           * Formatea fechas para inputs de tipo date
+           * @param {string} dateString - Fecha en formato string
+           * @returns {string} Fecha formateada YYYY-MM-DD
+           */
           const formatDate = (dateString) => {
             if (!dateString) return "";
             return new Date(dateString).toISOString().split("T")[0];
           };
 
+          // Poblar formulario con datos obtenidos
           setFormData({
             instance_id: data.data.instance_id || "",
             cost_center: data.data.cost_center || "",
@@ -167,6 +210,10 @@ const EditarBaseDatos = () => {
     }
   }, [baseDatosId, token]);
 
+  /**
+   * Maneja el envío del formulario de edición
+   * @param {Event} event - Evento del formulario
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -203,11 +250,15 @@ const EditarBaseDatos = () => {
     }
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-semibold">
-          Cargando datos de la base de datos...
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-xl font-semibold">
+            Cargando datos de la base de datos...
+          </p>
         </div>
       </div>
     );
@@ -216,7 +267,16 @@ const EditarBaseDatos = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-semibold text-red-600">Error: {error}</div>
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-800 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
       </div>
     );
   }
@@ -264,35 +324,30 @@ const EditarBaseDatos = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Nombre de Instancia"
                   name="instance_name"
                   value={formData.instance_name}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Etiqueta CI"
                   name="ci_tag"
                   value={formData.ci_tag}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Serie"
                   name="serial"
                   value={formData.serial}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Puerto"
                   name="port"
                   value={formData.port}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
@@ -308,42 +363,36 @@ const EditarBaseDatos = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Tipo"
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Ítem"
                   name="item"
                   value={formData.item}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Modelo"
                   name="model"
                   value={formData.model}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Código de Aplicación"
                   name="application_code"
                   value={formData.application_code}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Número de Versión"
                   name="version_number"
                   value={formData.version_number}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
@@ -354,47 +403,50 @@ const EditarBaseDatos = () => {
                 Estado y Entorno
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <InputField
-                  label="Inactivo"
-                  name="inactive"
-                  value={formData.inactive}
-                  onChange={handleInputChange}
-                  required
-                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Estado
+                  </label>
+                  <select
+                    name="inactive"
+                    value={formData.inactive}
+                    onChange={handleInputChange}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Seleccionar estado</option>
+                    <option value="active">Activa</option>
+                    <option value="inactive">Inactiva</option>
+                  </select>
+                </div>
                 <InputField
                   label="Estado del Ciclo de Vida del Activo"
                   name="asset_life_cycle_status"
                   value={formData.asset_life_cycle_status}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Entorno del Sistema"
                   name="system_environment"
                   value={formData.system_environment}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Nube"
                   name="cloud"
                   value={formData.cloud}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
-                  label="HA"
+                  label="HA (Alta Disponibilidad)"
                   name="ha"
                   value={formData.ha}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Soporte"
                   name="supported"
                   value={formData.supported}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
@@ -410,28 +462,24 @@ const EditarBaseDatos = () => {
                   name="owner_name"
                   value={formData.owner_name}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Contacto del Propietario"
                   name="owner_contact"
                   value={formData.owner_contact}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Departamento"
                   name="department"
                   value={formData.department}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Compañía"
                   name="company"
                   value={formData.company}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
@@ -447,29 +495,24 @@ const EditarBaseDatos = () => {
                   name="manufacturer_name"
                   value={formData.manufacturer_name}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="Nombre del Proveedor"
                   name="supplier_name"
                   value={formData.supplier_name}
                   onChange={handleInputChange}
-                  required
                 />
-
                 <InputField
                   label="Centro de Costos"
                   name="cost_center"
                   value={formData.cost_center}
                   onChange={handleInputChange}
-                  required
                 />
                 <InputField
                   label="ID de Cuenta"
                   name="account_id"
                   value={formData.account_id}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
             </div>
@@ -486,7 +529,6 @@ const EditarBaseDatos = () => {
                   value={formData.create_date}
                   onChange={handleInputChange}
                   type="date"
-                  required
                 />
                 <InputField
                   label="Fecha de Modificación"
@@ -494,7 +536,6 @@ const EditarBaseDatos = () => {
                   value={formData.modified_date}
                   onChange={handleInputChange}
                   type="date"
-                  required
                 />
               </div>
             </div>

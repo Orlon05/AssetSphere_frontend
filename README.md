@@ -1,251 +1,231 @@
-# Sistema de Inventario de Servidores Físicos y Virtuales - Bancolombia
+# Sistema de Inventarios de Infraestructura - Bancolombia
 
 ## Descripción del Proyecto
 
-Este proyecto es un sistema de inventario para gestionar servidores físicos y virtuales utilizados por **Bancolombia**. El sistema permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) para administrar los servidores, almacenando la información en una base de datos MySQL. El frontend se ha desarrollado utilizando **React**, mientras que las peticiones HTTP se manejan con **Fetch** para interactuar con la API de backend. El backend está implementado con **FastAPI**, y el servidor se ejecuta con **XAMPP** para manejar tanto el backend como la base de datos. El diseño se implementa con **CSS** para asegurar una interfaz de usuario limpia y responsiva.
+Este proyecto es un **sistema integral de inventario de infraestructura tecnológica** desarrollado para **Bancolombia**. El sistema permite gestionar de manera centralizada múltiples tipos de recursos tecnológicos incluyendo servidores físicos, servidores virtuales, bases de datos, sistemas PSeries, dispositivos de almacenamiento (storage) y sucursales.
 
----
-
-## Estructura del Proyecto
-
-El proyecto sigue una arquitectura basada en componentes, con separación clara entre frontend (React) y backend (API con FastAPI conectada a MySQL).
-
-- **Frontend**: React + Fetch + CSS
-- **Backend**: FastAPI
-- **Base de Datos**: MySQL gestionada con XAMPP
-- **Autenticación**: JWT (opcional)
+El sistema proporciona operaciones CRUD completas (Crear, Leer, Actualizar, Eliminar) para cada tipo de recurso, con funcionalidades avanzadas de búsqueda, filtrado, importación/exportación de datos y generación de reportes. La arquitectura está diseñada para ser escalable, mantenible y fácil de usar por los equipos de infraestructura.
 
 ---
 
 ## Tecnologías Utilizadas
 
-- **React**: Para la interfaz de usuario y gestión del estado.
-- **Fetch**: Para realizar peticiones HTTP a la API del backend.
-- **CSS**: Para el diseño responsivo del sistema.
-- **FastAPI**: Para crear la API del backend.
-- **XAMPP**: Para gestionar el servidor y la base de datos MySQL.
-- **MySQL**: Para la gestión de datos del inventario.
-- **JWT**: Para la autenticación de usuarios.
+### Frontend
+
+- **React 18+**: Biblioteca principal para la interfaz de usuario
+- **Tailwind CSS**: Framework de utilidades CSS para diseño responsivo
+- **React Router DOM**: Manejo de rutas y navegación
+- **Lucide React**: Biblioteca de iconos moderna
+- **SweetAlert2**: Modales y alertas interactivas
+- **Fetch API**: Cliente HTTP nativo para comunicación con el backend
+
+### Backend
+
+- **FastAPI**: Framework web moderno y rápido para Python
+- **MySQL**: Base de datos relacional para persistencia de datos
+- **XAMPP**: Entorno de desarrollo local para Apache, MySQL y PHP
 
 ---
 
-## Características
+## Estructura del Proyecto
 
-- **Gestión de servidores físicos y virtuales**: Añadir, visualizar, editar y eliminar registros de servidores.
-- **Búsqueda y filtrado**: Funcionalidad para buscar servidores por tipo, estado, ubicación, etc.
-- **Validación de formularios**: Validaciones en el frontend para evitar datos incompletos o incorrectos.
-- **Interfaz intuitiva**: Diseño centrado en la usabilidad y navegación fácil.
-- **Dashboard de estadísticas**: (opcional) Visualización de datos en gráficos como el uso de servidores, espacio disponible, etc.
+\`\`\`
+📦 inventariodatacenter/
+├── 📂 public/
+│ ├── 📜 chevron-left.png
+│ ├── 📜 logo.png
+│ ├── 📜 logowhite.png
+│ ├── 📜 tcs.png
+│ └── 📜 vite.svg
+├── 📂 src/
+│ ├── 📂 assets/
+│ │ └── 📜 react.svg
+│ ├── 📂 hooks/
+│ │ └── 📜 Excelimporter.jsx
+│ ├── 📂 routes/
+│ │ ├── 📜 AuthContext.jsx
+│ │ ├── 📜 EnrutadorApp.jsx
+│ │ └── 📜 ProtectedRoute.jsx
+│ ├── 📂 views/
+│ │ ├── 📂 auth/
+│ │ │ ├── 📜 Login.jsx
+│ │ │ └── 📜 Perfil.jsx
+│ │ ├── 📂 dashboard/
+│ │ │ └── 📜 dashboard.jsx
+│ │ ├── 📂 layout/
+│ │ │ └── 📜 sidebar.jsx
+│ │ └── 📂 services/
+│ │ ├── 📂 Base de datos/
+│ │ │ ├── 📜 baseDeDatos.jsx
+│ │ │ ├── 📜 CrearBasedeDatos.jsx
+│ │ │ ├── 📜 Editarbasededatos.jsx
+│ │ │ └── 📜 verbasededatos.jsx
+│ │ ├── 📂 Pseries/
+│ │ │ ├── 📜 crearPserie.jsx
+│ │ │ ├── 📜 editarPseries.jsx
+│ │ │ ├── 📜 Pseries.jsx
+│ │ │ └── 📜 verPseries.jsx
+│ │ ├── 📂 servidores Fisicos/
+│ │ │ ├── 📜 CrearServidor.jsx
+│ │ │ ├── 📜 editarservidor.jsx
+│ │ │ ├── 📜 servidoresF.jsx
+│ │ │ └── 📜 verservidor.jsx
+│ │ ├── 📂 servidores Virtuales/
+│ │ │ ├── 📜 crearservidorv.jsx
+│ │ │ ├── 📜 editarservidorv.jsx
+│ │ │ ├── 📜 servidoresV.jsx
+│ │ │ └── 📜 verservidoresv.jsx
+│ │ ├── 📂 storage/
+│ │ │ ├── 📜 crearStorage.jsx
+│ │ │ ├── 📜 editarStorage.jsx
+│ │ │ ├── 📜 Storage.jsx
+│ │ │ └── 📜 verStorage.jsx
+│ │ └── 📂 Sucursales/
+│ │ ├── 📜 crearSucursales.jsx
+│ │ ├── 📜 editarSucursal.jsx
+│ │ ├── 📜 sucursales.jsx
+│ │ └── 📜 verSucursal.jsx
+│ ├── 📜 App.css
+│ ├── 📜 App.jsx
+│ ├── 📜 index.css
+│ ├── 📜 main.jsx
+│ └── 📜 vite-env.d.ts
+├── 📜 .gitignore
+├── 📜 .gitlab-ci.yml
+├── 📜 ejemplo.md
+├── 📜 eslint.config.js
+├── 📜 index.html
+├── 📜 package-lock.json
+├── 📜 package.json
+├── 📜 postcss.config.js
+├── 📜 README.md
+├── 📜 static.json
+├── 📜 tailwind.config.js
+├── 📜 tsconfig.app.json
+└── 📜 vite.config.js
+\`\`\`
 
 ---
 
-## Planificación del Proyecto
+## Módulos del Sistema
 
-### Fase 1: Configuración del Entorno
+### 🖥️ Servidores Virtuales
 
-1. **Instalación de herramientas**:
-   - Instalación de XAMPP para gestionar MySQL y el servidor.
-   - Instalación de FastAPI y creación del proyecto de backend.
-   - Instalación de Node.js y creación del proyecto React.
+- Gestión completa de máquinas virtuales
+- Estados operacionales y monitoreo
+- Asignación de clusters y plataformas
 
-2. **Inicialización del proyecto**:
-   - Crear la estructura del proyecto.
-   - Configurar el sistema de rutas en React y FastAPI.
-   - Configurar la conexión entre el backend y MySQL mediante XAMPP.
+### 🏢 Servidores Físicos
 
-### Fase 2: Desarrollo del Backend (API)
+- Inventario de hardware físico
+- Especificaciones técnicas detalladas
+- Ubicación y responsables
 
-1. **Creación de la base de datos**:
-   - Definir el esquema de la base de datos en MySQL con tablas para servidores, usuarios y otros datos relevantes.
+### 🗄️ Bases de Datos
 
-2. **Desarrollo de la API con FastAPI**:
-   - Implementar rutas para manejar las operaciones CRUD para los servidores.
-   - Conectar las rutas con la base de datos MySQL para añadir, actualizar, eliminar y obtener servidores.
+- Catálogo de instancias de bases de datos
+- Monitoreo y gestión de bases de datos
 
-3. **Autenticación** (opcional):
-   - Implementar autenticación JWT para usuarios que acceden al sistema.
+### ⚡ PSeries (IBM Power Systems)
 
-### Fase 3: Desarrollo del Frontend (React)
+- Gestión especializada de sistemas IBM Power
+- Monitoreo y gestión de PSeries
 
-1. **Estructura de componentes**:
-   - Crear los componentes principales como `ServidorList`, `ServidorForm`, `Navbar`, `Dashboard`.
+### 💾 Storage (Almacenamiento)
 
-2. **Integración con Fetch**:
-   - Usar Fetch para conectar el frontend con el backend FastAPI, permitiendo realizar operaciones como GET, POST, PUT, DELETE.
+- Dispositivos de almacenamiento
+- Capacidades y utilización
 
-3. **Validaciones de formularios**:
-   - Asegurar que los formularios tengan validaciones tanto en el cliente como en el servidor.
+### 🏪 Sucursales
 
-4. **Estilizado**:
-   - Aplicar CSS para crear una interfaz limpia y responsiva, asegurando una buena experiencia de usuario en diferentes dispositivos.
+- Inventario por ubicación geográfica
+- Equipos asignados por sucursal
+- Contactos y responsables locales
+- Estados operacionales por sede
 
-### Fase 4: Pruebas y Despliegue
+---
 
-1. **Pruebas del sistema**:
-   - Probar todas las funcionalidades (CRUD, autenticación, etc.) en un entorno local.
-   - Probar la interfaz y la usabilidad del sistema.
+## Características Principales
 
-2. **Documentación**:
-   - Incluir documentación detallada sobre cómo usar el sistema.
+### ✨ Funcionalidades Core
 
-3. **Despliegue**:
-   - Desplegar el backend y frontend en un servidor.
-   - Configurar la base de datos MySQL en el entorno de producción.
+- [x] 🔒 **Autenticación JWT** - Sistema seguro de login y autorización
+- [x] 🔎 **Búsqueda Avanzada** - Filtros múltiples y búsqueda en tiempo real
+- [x] ➕ **Gestión CRUD** - Crear, leer, actualizar y eliminar registros
+- [x] 📊 **Dashboard Interactivo** - Métricas y estadísticas en tiempo real
+- [x] 📁 **Importación/Exportación** - Soporte para archivos Excel
+- [x] 📱 **Diseño Responsivo** - Interfaz adaptable a todos los dispositivos
 
-## Características principales
-- [x] 🔒 Autenticación JWT
-- [x] 🔎 Consulta de servidores
-- [x] ➕ Agregar nuevos servidores
-- [x] ✏️ Actualizar información
-- [x] ⛔ Eliminar servidores del inventario
-- [x] 👮 Registro de las acciones de los usuarios
+### 🚀 Funcionalidades Avanzadas
 
-## Instalación
+- [x] 🔄 **Sincronización en Tiempo Real** - Actualizaciones automáticas
+- [x] 📈 **Reportes Personalizados** - Generación de informes detallados
+- [x] 📋 **Validación Avanzada** - Formularios con validación en tiempo real
 
- 1. **Clonar el repositorio**
-```bash
+---
+
+## Instalación y Configuración
+
+### Prerrequisitos
+
+- Node.js 18+
+- npm o yarn
+- XAMPP (para desarrollo local)
+- Git
+
+### 1. Clonar el Repositorio
+
+\`\`\`bash
 git clone http://10.8.150.91/virtualizacion-automatizaciones/inventariodatacenter.git
-cd inventariodatacenter-backend
+cd inventariodatacenter
+\`\`\`
 
-2. **Instalar las dependencias**
-```bash
+### 2. Instalar Dependencias
+
+\`\`\`bash
 npm install
-```
-3. **Iniciar la APP**
-```bash
+\`\`\`
+
+### 3. Iniciar la Aplicación
+
+\`\`\`bash
 npm run dev
-```
-## Contribuciones
-Si quieres contribuir en el desarrollo, por favor envia un **Pull Request**. Recuerda antes asegurarte que funcione correctamente en local, para intentar entre todos, tener un repositorio limpio y funcional.
+\`\`\`
 
-[Estructuración-Carpetas]:
-.
-├── public/                     # Archivos estáticos (imágenes, favicon, etc.)
-│   ├── imagenes/             # Aquí van las imágenes para uso general en la app.
-│   │   └── user.png          # Ejemplo de una imagen de usuario
-│   │
-│   └── vite.svg               # Imagen SVG utilizada por Vite (generalmente el logo)
-│
-├── src/                        # Código fuente de la aplicación
-│   ├── assets/                # Recursos generales (imágenes, logos, iconos).
-│   │   ├── react.svg            # Logo de React
-│   │   └── tcs_logo.png         # Logo específico de la app o la empresa
-│   │
-│   ├── components/             # Componentes de la interfaz de usuario.
-│   │   ├── buttons/             # Botones reutilizables y genéricos.
-│   │   │   └── DeleteButton.jsx # Botón específico para eliminar elementos.
-│   │   │
-│   │   ├── cards/              # Componentes de tipo "tarjeta" o "card"
-│   │   │   ├── card.jsx         # Componente genérico de tarjeta.
-│   │   │   ├── card.module.css   # Estilos para el componente Card
-│   │   │   ├── CardStatsServers.jsx # Tarjeta específica que muestra estadísticas de servidores
-│   │   │   ├── UserList.jsx       # Lista de usuarios.
-│   │   │   ├── userList.module.css   # Estilos para la lista de usuarios
-│   │   │   ├── UserListItem.jsx    # Componente individual de un ítem de la lista de usuarios.
-│   │   │   └── userListItem.module.css  # Estilos para el ítem de la lista de usuarios
-│   │   │
-│   │   ├── charts/             # Componentes para mostrar gráficos.
-│   │   │   ├── BarChart.jsx      # Gráfico de barras.
-│   │   │   ├── barChart.module.css   # Estilos para el gráfico de barras
-│   │   │   ├── DonutChart.jsx    # Gráfico de dona.
-│   │   │   └── donutChart.module.css  # Estilos para el gráfico de dona
-│   │   │
-│   │   ├── data/               # Componentes o archivos para manejar datos de prueba.
-│   │   │   │
-│   │   │   └── servidores.jsx    # Datos de ejemplo de servidores. *Considera mover esto a utils/mocks o services*
-│   │   │
-│   │   ├── forms/             # Componentes de formularios.
-│   │   │   ├── CrearUsuario.jsx # Formulario para crear un usuario.
-│   │   │   ├── crearUsuario.module.css  # Estilos para el formulario de crear usuario
-│   │   │   ├── EditarUsuario.jsx  # Formulario para editar un usuario.
-│   │   │   ├── Login.jsx        # Formulario de login.
-│   │   │   └── login.module.css  # Estilos para el formulario de login
-│   │   │
-│   │   ├── layouts/            # Componentes para definir la estructura de la app (header, sidebar, footer, etc)
-│   │   │   ├── ExcelImporter.jsx # Componente para importar datos de Excel
-│   │   │   ├── excelImporter.module.css # Estilos para el importador de Excel
-│   │   │   ├── Loader.jsx            # Componente de carga visual.
-│   │   │   ├── loader.module.css      # Estilos para el componente de carga
-│   │   │   ├── Logo.jsx              # Componente para el logo de la aplicación
-│   │   │   ├── logo.module.css        # Estilos para el componente logo
-│   │   │   ├── Navegacion.jsx        # Barra de navegación principal
-│   │   │   ├── navegacion.module.css   # Estilos para la barra de navegación
-│   │   │   ├── Sidebar.jsx           # Componente de la barra lateral de navegación.
-│   │   │   ├── sidebar.module.css   # Estilos para la barra lateral
-│   │   │   └── Table.jsx             # Tabla genérica reutilizable.
-│   │   │
-│   │   ├── pages/              # Componentes que representan las vistas o páginas de la aplicación
-│   │   │   ├── Analitica.jsx       # Página de análisis/dashboard principal.
-│   │   │   ├── analitica.module.css # Estilos para la página de analítica
-│   │   │   ├── CrearServidor.jsx     # Página para crear un servidor.
-│   │   │   ├── crearServidor.module.css # Estilos para crear un servidor
-│   │   │   ├── Dashboard.jsx         # Componente que orquesta/renderiza la vista de dashboard.
-│   │   │   ├── dashboard.module.css    # Estilos para el componente dashboard
-│   │   │   ├── EditarServidor.jsx    # Página para editar un servidor.
-│   │   │   ├── editarServidor.module.css # Estilos para editar un servidor
-│   │   │   ├── fisicos.module.css       # *Estilos para un componente que debería estar en su propia carpeta, como una "feature" o en pages/
-│   │   │
-│   │   │   ├── Logs.jsx              # Página para ver logs.
-│   │   │   ├── logs.module.css        # Estilos para la página de logs
-│   │   │   ├── ServidoresFisicos.jsx   # Página para listar servidores físicos.
-│   │   │   ├── ServidoresVirtuales.jsx # Página para listar servidores virtuales.
-│   │   │   ├── Storage.jsx            # Página para gestionar el storage.
-│   │   │   ├── Usuarios.jsx           # Página para gestionar usuarios.
-│   │   │   └── usuarios.module.css     # Estilos para la página de usuarios
-│   │   │
-│   │   ├── perfil/             # Componentes específicos de perfil de usuario.
-│   │   │   ├── Perfil.jsx        # Componente para mostrar/editar el perfil de un usuario.
-│   │   │   └── perfil.module.css  # Estilos para el perfil de usuario
-│   │   │
-│   │   ├── popups/             # Componentes de popups y notificaciones
-│   │   │   ├── PopupError.jsx      # Popup para mostrar errores.
-│   │   │   ├── popupError.module.css  # Estilos para el popup de errores.
-│   │   │   ├── SessionTimerNotification.jsx # Notificación de timer de sesión.
-│   │   │   └── sessionTimerNotification.module.css  # Estilos para la noti del timer
-│   │   │
-│   │   └── routes/             # Componentes relacionados con el enrutamiento
-│   │       ├── AuthContext.jsx    # Contexto para la autenticación. *Considera mover a contexts/*
-│   │       ├── EnrutadorApp.jsx    # Componente que define las rutas de la app.
-│   │       └── ProtectedRoute.jsx  # Componente para proteger las rutas.
-│   │
-│   ├── contexts/              # Contextos para manejar el estado global
-│   │   ├── AuthContext.js       # Contexto para la autenticación (debería ser .jsx si es un componente)
-│   │   ├── ThemeContext.js      # Contexto para el tema de la app
-│   │   └── index.js           # Exporta todos los contextos
-│   │
-│   ├── hooks/                 # Hooks personalizados
-│   │   ├── useFetch.js          # Hook para realizar peticiones HTTP
-│   │   ├── useForm.js           # Hook para manejar formularios
-│   │   └── index.js           # Exporta todos los hooks
-│   │
-│   ├── utils/                 # Funciones y utilidades generales
-│   │   ├── helpers.js         # Funciones de utilidad general (formatos, conversiones, etc)
-│   │   ├── constants.js       # Constantes globales.
-│   │   └── validations.js     # Lógica para validar datos.
-│   │
-│   ├── App.jsx               # Componente principal de la aplicación
-│   ├── index.css             # Estilos globales.
-│   └── main.jsx              # Punto de entrada de Vite
-│
-├── .eslintrc.json            # Configuración de ESLint
-├── .gitignore                # Archivos a ignorar en Git
-├── ejemplo.md                # Archivo MD adicional para información o documentación
-├── eslint.config.js          # Configuración de ESLint para un directorio y sus subdirectorios. *Considera usar un solo archivo de configuración 
-│
-├── index.html                # Punto de entrada HTML de la aplicación.
-├── inventario.sql            # Query de la DB (no es un archivo de front-end y debería estar en el backend/documentación).
-├── package-lock.json         # Dependencias adicionales (no tocar).
-├── package.json              # Dependencias del proyecto
-├── README.md                 # Documentación del proyecto.
-├── vite.config.js            # Configuración de Vite
-└── tsconfig.json             # Configuración de TypeScript (si aplica)
+# Modo producción
 
-## Contacto
+npm run build
+npm run preview
+\`\`\`
 
-**Jorge Eduardo Muñoz Quintero**\
-*Desarrollador principal*\
-joedmuno@bancolombia.com.co |  2811750@tcs.com
+### 5. Configurar Backend (XAMPP)
 
-**Soporte en campo TCS**\
-*Equipo del proyecto*\
-Gestion_SupCampo_TCS@bancolombia.com.co
+1. Iniciar Apache y MySQL en XAMPP
+2. Importar el esquema de base de datos
+3. Configurar las credenciales de conexión
+4. Iniciar el servidor FastAPI
+
+---
+
+## Seguridad
+
+### Medidas Implementadas
+
+- [x] **Autenticación JWT** con expiración automática
+- [x] **Autorización basada en roles**
+- [x] **Validación de entrada** en frontend y backend
+- [x] **HTTPS** en todos los entornos
+
+---
+
+## Soporte y Contacto
+
+### Equipo de Desarrollo
+
+**Jorge Eduardo Muñoz Quintero**  
+_Desarrollador Principal_  
+📧 joedmuno@bancolombia.com.co | 2811750@tcs.com
+
+**Equipo de Soporte TCS**  
+_Soporte en Campo_  
+📧 Gestion_SupCampo_TCS@bancolombia.com.co

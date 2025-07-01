@@ -1,3 +1,19 @@
+/**
+ * Componente para visualizar detalles de dispositivos de Storage
+ *
+ * Este componente permite:
+ * - Mostrar todos los detalles de un dispositivo de storage en modo solo lectura
+ * - Organizar la información en secciones lógicas
+ * - Aplicar estilos visuales específicos para estados y campos activos
+ * - Manejar diferentes estructuras de respuesta de la API
+ *
+ * @component
+ * @example
+ * return (
+ *   <VerStorage />
+ * )
+ */
+
 import { useState, useEffect } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +26,9 @@ const VerStorage = () => {
   const [error, setError] = useState(null);
   const { storageId } = useParams();
 
+  /**
+   * Configuración de secciones del formulario para organizar la visualización
+   */
   const formSections = [
     {
       title: "Información Básica",
@@ -51,6 +70,9 @@ const VerStorage = () => {
     },
   ];
 
+  /**
+   * Mapeo de nombres de campos a etiquetas legibles
+   */
   const fieldLabels = {
     name: "Nombre",
     cod_item_configuracion: "Código Item Configuración",
@@ -74,6 +96,11 @@ const VerStorage = () => {
     location: "Ubicación",
   };
 
+  /**
+   * Obtiene las clases CSS para el badge de estado
+   * @param {string} status - Estado del dispositivo
+   * @returns {string} Clases CSS para el estado
+   */
   const getStatusColor = (status) => {
     switch (status) {
       case "Aplicado":
@@ -85,6 +112,11 @@ const VerStorage = () => {
     }
   };
 
+  /**
+   * Obtiene las clases CSS para el badge de activo
+   * @param {string} active - Estado activo del dispositivo
+   * @returns {string} Clases CSS para el estado activo
+   */
   const getActiveColor = (active) => {
     switch (active) {
       case "Sí":
@@ -96,6 +128,9 @@ const VerStorage = () => {
     }
   };
 
+  /**
+   * Carga los datos del storage desde la API
+   */
   useEffect(() => {
     const fetchStorageData = async () => {
       try {
@@ -121,6 +156,7 @@ const VerStorage = () => {
 
         let storageInfo = null;
 
+        // Manejo flexible de diferentes estructuras de respuesta
         if (data?.status === "success" && data.data?.storage_info) {
           storageInfo = data.data.storage_info;
         } else if (data?.data?.storage_info) {
@@ -152,6 +188,7 @@ const VerStorage = () => {
     }
   }, [storageId]);
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -183,6 +220,7 @@ const VerStorage = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
+      {/* Header */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
@@ -201,6 +239,7 @@ const VerStorage = () => {
         </button>
       </header>
 
+      {/* Main Content */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <div className="space-y-6">

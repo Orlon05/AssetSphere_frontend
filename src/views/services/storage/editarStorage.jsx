@@ -1,10 +1,35 @@
+/**
+ * Componente para editar dispositivos de Storage existentes
+ *
+ * Este componente permite:
+ * - Cargar datos existentes del dispositivo desde la API
+ * - Editar todos los campos del dispositivo de storage
+ * - Validar y enviar cambios al servidor
+ * - Manejar errores de carga y actualización
+ *
+ * @component
+ * @example
+ * return (
+ *   <EditarStorage />
+ * )
+ */
+
 import { useState, useEffect } from "react";
 import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft } from "lucide-react";
 
-// Componente reutilizable para los campos del formulario
+/**
+ * Componente reutilizable para campos de entrada
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.label - Etiqueta del campo
+ * @param {string} props.name - Nombre del campo
+ * @param {string} props.value - Valor actual del campo
+ * @param {Function} props.onChange - Función para manejar cambios
+ * @param {string} props.type - Tipo de input
+ * @param {boolean} props.required - Si el campo es requerido
+ */
 const InputField = ({
   label,
   name,
@@ -30,6 +55,7 @@ const InputField = ({
 );
 
 const EditarStorage = () => {
+  // Estado del formulario con todos los campos de storage
   const [formData, setFormData] = useState({
     cod_item_configuracion: "",
     name: "",
@@ -53,7 +79,7 @@ const EditarStorage = () => {
     location: "",
   });
 
-  // Opciones para campos de selección
+  // Opciones predefinidas para campos de selección
   const statusOptions = ["Aplicado", "No Aplicado"];
   const activeOptions = ["Sí", "No"];
   const typeOptions = ["SAN", "NAS", "DAS", "Local Storage", "Cloud Storage"];
@@ -67,6 +93,7 @@ const EditarStorage = () => {
     "Pure Storage",
   ];
 
+  // Estados del componente
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -74,6 +101,7 @@ const EditarStorage = () => {
   const BASE_PATH = "/inveplus";
   const { storageId } = useParams();
 
+  // Configuración de notificaciones toast
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -86,10 +114,17 @@ const EditarStorage = () => {
     },
   });
 
+  /**
+   * Muestra notificación de éxito
+   */
   const showSuccessToast = () => {
     Toast.fire({ icon: "success", title: "Storage actualizado exitosamente" });
   };
 
+  /**
+   * Maneja cambios en los campos del formulario
+   * @param {Event} e - Evento del input
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -98,10 +133,14 @@ const EditarStorage = () => {
     }));
   };
 
+  /**
+   * Carga los datos del storage desde la API
+   */
   useEffect(() => {
     const fetchStorageData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await fetch(
           `https://10.8.150.90/api/inveplus/storage/get_by_id/${storageId}`,
@@ -120,6 +159,7 @@ const EditarStorage = () => {
 
         const data = await response.json();
 
+        // Manejo flexible de diferentes estructuras de respuesta
         if (data && data.data && data.data.storage_info) {
           setFormData(data.data.storage_info);
         } else if (data && data.storage_info) {
@@ -145,6 +185,10 @@ const EditarStorage = () => {
     }
   }, [storageId, token]);
 
+  /**
+   * Maneja el envío del formulario de edición
+   * @param {Event} event - Evento del formulario
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -181,6 +225,7 @@ const EditarStorage = () => {
     }
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">

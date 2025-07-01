@@ -5,10 +5,21 @@ import Swal from "sweetalert2";
 
 const BASE_PATH = "/inveplus";
 
+/**
+ * Componente para crear nuevas bases de datos
+ *
+ * Funcionalidades:
+ * - Formulario completo con validación
+ * - Campos organizados en secciones lógicas
+ * - Manejo de estados de envío
+ * - Confirmación de cancelación
+ * - Navegación automática tras éxito
+ */
 const CrearBasedeDatos = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estado del formulario con todos los campos de la base de datos
   const [formData, setFormData] = useState({
     instance_id: "",
     cost_center: "",
@@ -40,6 +51,10 @@ const CrearBasedeDatos = () => {
     modified_date: "",
   });
 
+  /**
+   * Maneja cambios en los campos del formulario
+   * @param {Event} e - Evento del input
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -48,6 +63,10 @@ const CrearBasedeDatos = () => {
     });
   };
 
+  /**
+   * Maneja el envío del formulario
+   * @param {Event} e - Evento del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -66,11 +85,13 @@ const CrearBasedeDatos = () => {
           body: JSON.stringify(formData),
         }
       );
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || `Error HTTP ${response.status}`);
       }
 
+      // Mostrar éxito y navegar
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",
@@ -92,6 +113,9 @@ const CrearBasedeDatos = () => {
     }
   };
 
+  /**
+   * Maneja la cancelación del formulario
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -117,6 +141,9 @@ const CrearBasedeDatos = () => {
           <h1 className="text-2xl font-bold text-gray-900">
             Crear Base de Datos
           </h1>
+          <p className="text-sm font-semibold text-gray-900">
+            Ingresa la información de la nueva base de datos
+          </p>
         </div>
         <button
           onClick={() => window.history.back()}
@@ -224,7 +251,7 @@ const CrearBasedeDatos = () => {
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="Objeto"
+                    htmlFor="item"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Objeto
@@ -269,7 +296,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="application_code"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Codigo de Aplicación
+                    Código de Aplicación
                   </label>
                   <input
                     type="text"
@@ -296,6 +323,7 @@ const CrearBasedeDatos = () => {
                     onChange={handleChange}
                     className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
+                    <option value="">Seleccionar estado</option>
                     <option value="active">Activa</option>
                     <option value="inactive">Inactiva</option>
                   </select>
@@ -357,7 +385,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="version_number"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Numero de versión
+                    Número de versión
                   </label>
                   <input
                     type="text"
@@ -437,7 +465,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="ha"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Ha
+                    HA (Alta Disponibilidad)
                   </label>
                   <input
                     type="text"
@@ -456,7 +484,7 @@ const CrearBasedeDatos = () => {
                     Puerto
                   </label>
                   <input
-                    type="port"
+                    type="text"
                     id="port"
                     name="port"
                     value={formData.port}
@@ -478,7 +506,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="owner_name"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Nombre del dueño
+                    Nombre del propietario
                   </label>
                   <input
                     type="text"
@@ -563,7 +591,7 @@ const CrearBasedeDatos = () => {
                     htmlFor="supported"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Apoyado Por
+                    Soporte
                   </label>
                   <input
                     type="text"
@@ -641,7 +669,7 @@ const CrearBasedeDatos = () => {
                 className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <Save size={18} className="mr-2" />
-                {isSubmitting ? "Guardando..." : "Guardar Servidor"}
+                {isSubmitting ? "Guardando..." : "Guardar Base de Datos"}
               </button>
             </div>
           </form>

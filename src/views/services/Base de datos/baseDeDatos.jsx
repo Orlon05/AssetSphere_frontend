@@ -16,30 +16,57 @@ import {
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 
+/**
+ * Componente principal para la gestión de bases de datos
+ *
+ * Funcionalidades principales:
+ * - Listado paginado de bases de datos
+ * - Búsqueda por nombre
+ * - Selección múltiple de registros
+ * - Operaciones CRUD (Crear, Ver, Editar, Eliminar)
+ * - Importación masiva desde Excel con validación
+ * - Exportación a Excel
+ * - Manejo de estados de carga y error
+ */
 const BaseDeDatos = () => {
   const navigate = useNavigate();
+
+  // Estados para la gestión de datos
   const [searchValue, setSearchValue] = useState("");
   const [base_datos, setBasesDeDatos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Estados para selección múltiple
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBasesDeDatos, setSelectedBasesDeDatos] = useState(new Set());
+
+  // Estados para búsqueda
   const [showSearch, setShowSearch] = useState(true);
   const [unfilteredBasesDeDatos, setUnfilteredBasesDeDatos] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
-  const searchInputRef = useRef(null);
-  const selectedCount = selectedBasesDeDatos.size;
 
+  // Referencias
+  const searchInputRef = useRef(null);
+
+  // Constantes
+  const selectedCount = selectedBasesDeDatos.size;
   const BASE_PATH = "/inveplus";
 
+  // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
 
+  /**
+   * Configuración de notificaciones toast
+   */
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -52,6 +79,9 @@ const BaseDeDatos = () => {
     },
   });
 
+  /**
+   * Muestra notificación de éxito al eliminar
+   */
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
@@ -59,7 +89,10 @@ const BaseDeDatos = () => {
     });
   };
 
-  // IMPORTAR
+  /**
+   * Maneja la importación desde Excel
+   * Abre un modal con el componente ExcelImporter
+   */
   const handleImport = () => {
     Swal.fire({
       title: "Importar desde Excel",
@@ -71,6 +104,8 @@ const BaseDeDatos = () => {
       height: "80%",
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
+
+        // Definición de metadatos para mapeo de columnas Excel
         const tableMetadata = [
           { name: "instance_id", required: false, type: "string" },
           { name: "cost_center", required: false, type: "string" },
@@ -101,12 +136,14 @@ const BaseDeDatos = () => {
           { name: "create_date", required: false, type: "Date" },
           { name: "modified_date", required: false, type: "Date" },
         ];
+
         const importer = (
           <ExcelImporter
             onImportComplete={handleImportComplete}
             tableMetadata={tableMetadata}
           />
         );
+
         if (container) {
           const root = createRoot(container);
           root.render(importer);
@@ -122,7 +159,12 @@ const BaseDeDatos = () => {
     });
   };
 
+  /**
+   * Procesa los datos importados desde Excel
+   * @param {Array} importedData - Datos importados desde Excel
+   */
   const handleImportComplete = async (importedData) => {
+    // Validación inicial de datos
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
         "Error",
@@ -132,6 +174,7 @@ const BaseDeDatos = () => {
       return;
     }
 
+    // Filtrar registros válidos (que tengan nombre o ID de instancia)
     const validData = importedData.filter((row) => row.name || row.instance_id);
     if (validData.length === 0) {
       Swal.fire(
@@ -142,6 +185,7 @@ const BaseDeDatos = () => {
       return;
     }
 
+    // Confirmación del usuario
     const result = await Swal.fire({
       title: `Importar ${validData.length} registros`,
       text: `¿Deseas continuar con la importación de ${validData.length} registros?`,
@@ -161,6 +205,7 @@ const BaseDeDatos = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
+      // Mostrar indicador de carga
       Swal.fire({
         title: "Importando datos",
         text: "Por favor espera...",
@@ -171,8 +216,10 @@ const BaseDeDatos = () => {
         },
       });
 
+      // Formatear datos para la API
       const formattedData = formatDataForAPI(validData);
 
+      // Procesar en lotes para evitar sobrecarga del servidor
       const batchSize = 500;
       const totalBatches = Math.ceil(formattedData.length / batchSize);
 
@@ -222,15 +269,17 @@ const BaseDeDatos = () => {
           throw new Error(errorMessage);
         }
 
-        const result = await response.json();
+        await response.json();
       }
 
+      // Mostrar éxito
       Swal.fire({
         title: "¡Importación completada exitosamente!",
         text: `Se importaron correctamente ${validData.length} registros.`,
         icon: "success",
       });
 
+      // Recargar datos
       fetchBasesDeDatos(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al importar:", error);
@@ -238,12 +287,22 @@ const BaseDeDatos = () => {
     }
   };
 
+  /**
+   * Formatea los datos importados para envío a la API
+   * @param {Array} data - Datos sin formatear
+   * @returns {Array} Datos formateados
+   */
   const formatDataForAPI = (data) => {
     return data.map((row) => {
+      /**
+       * Formatea fechas al formato YYYY-MM-DD
+       * @param {string} date - Fecha en formato string
+       * @returns {string|null} Fecha formateada o null
+       */
       const formatDate = (date) => {
-        if (!date) return null; // Si la fecha no está definida, devuelve null
+        if (!date) return null;
         const dateParts = date.split("-").map((part) => part.trim());
-        if (dateParts.length !== 3) return null; // Si no hay 3 partes, devuelve null
+        if (dateParts.length !== 3) return null;
         const [year, month, day] = dateParts;
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       };
@@ -281,6 +340,10 @@ const BaseDeDatos = () => {
     });
   };
 
+  /**
+   * Maneja errores de la aplicación
+   * @param {Error} error - Error a manejar
+   */
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener las bases de datos:", error);
@@ -288,10 +351,17 @@ const BaseDeDatos = () => {
 
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Obtiene la lista de bases de datos desde la API
+   * @param {number} page - Página actual
+   * @param {number} limit - Registros por página
+   * @param {string} search - Término de búsqueda
+   */
   const fetchBasesDeDatos = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
@@ -328,11 +398,16 @@ const BaseDeDatos = () => {
     }
   };
 
+  /**
+   * Realiza búsqueda específica por nombre
+   * @param {string} search - Término de búsqueda
+   */
   const fetchSearch = async (search) => {
     if (isSearching) return;
     setIsSearching(true);
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
@@ -368,10 +443,12 @@ const BaseDeDatos = () => {
     }
   };
 
+  // Efecto para cargar datos iniciales y al cambiar paginación
   useEffect(() => {
     fetchBasesDeDatos(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
+  // Efecto para manejar búsquedas
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
@@ -389,6 +466,9 @@ const BaseDeDatos = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredBasesDeDatos, rowsPerPage]);
 
+  /**
+   * Maneja la exportación a Excel
+   */
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -411,6 +491,7 @@ const BaseDeDatos = () => {
         throw new Error(`Error al exportar las bases de datos: ${errorDetail}`);
       }
 
+      // Crear y descargar archivo
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -428,6 +509,10 @@ const BaseDeDatos = () => {
     }
   };
 
+  /**
+   * Maneja cambios en el campo de búsqueda
+   * @param {Event} e - Evento del input
+   */
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     if (searchInputRef.current) {
@@ -435,10 +520,16 @@ const BaseDeDatos = () => {
     }
   };
 
+  /**
+   * Maneja el clic del botón de búsqueda
+   */
   const handleSearchButtonClick = () => {
     setIsSearchButtonClicked(true);
   };
 
+  /**
+   * Alterna la selección de todos los registros
+   */
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
@@ -450,6 +541,10 @@ const BaseDeDatos = () => {
     }
   };
 
+  /**
+   * Alterna la selección de un registro específico
+   * @param {string} baseDeDatosId - ID de la base de datos
+   */
   const toggleSelectBasesDeDatos = (baseDeDatosId) => {
     const newSelectedBasesDeDatos = new Set(selectedBasesDeDatos);
     if (newSelectedBasesDeDatos.has(baseDeDatosId)) {
@@ -460,6 +555,7 @@ const BaseDeDatos = () => {
     setSelectedBasesDeDatos(newSelectedBasesDeDatos);
   };
 
+  // Filtrado local de datos
   const filteredBasesDeDatos =
     searchValue.trim() === ""
       ? base_datos
@@ -467,13 +563,21 @@ const BaseDeDatos = () => {
           baseDeDatos.name?.toLowerCase().includes(searchValue.toLowerCase())
         );
 
+  // Cálculos de paginación
   const indexOfLastBaseDatos = currentPage * rowsPerPage;
   const indexOfFirstBaseDatos = indexOfLastBaseDatos - rowsPerPage;
 
+  /**
+   * Navega al formulario de creación
+   */
   const irCrear = () => {
     navigate(`${BASE_PATH}/crear-base-de-datos`);
   };
 
+  /**
+   * Maneja la eliminación de una base de datos
+   * @param {string} baseDeDatosId - ID de la base de datos a eliminar
+   */
   const handleDeleteStorage = async (baseDeDatosId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -525,6 +629,7 @@ const BaseDeDatos = () => {
               text: errorMessage,
             });
           } else {
+            // Actualizar estado local
             setBasesDeDatos(
               base_datos.filter(
                 (baseDeDatos) => baseDeDatos.id !== baseDeDatosId
@@ -545,6 +650,7 @@ const BaseDeDatos = () => {
     });
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 text-gray-900 flex items-center justify-center">

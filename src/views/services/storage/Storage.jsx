@@ -1,3 +1,21 @@
+/**
+ * Componente principal para la gestión de dispositivos de Storage
+ *
+ * Este componente proporciona una interfaz completa para:
+ * - Listar dispositivos de storage con paginación
+ * - Buscar dispositivos por nombre
+ * - Selección múltiple de dispositivos
+ * - Operaciones CRUD (Crear, Ver, Editar, Eliminar)
+ * - Importación/Exportación desde/hacia Excel
+ * - Visualización de estados con badges
+ *
+ * @component
+ * @example
+ * return (
+ *   <Storage />
+ * )
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -21,15 +39,23 @@ import { createRoot } from "react-dom/client";
 
 export default function Storage() {
   const navigate = useNavigate();
+
+  // Estados principales del componente
   const [searchValue, setSearchValue] = useState("");
   const [storageList, setStorageList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Estados para selección múltiple
   const [selectAll, setSelectAll] = useState(false);
   const [selectedStorage, setSelectedStorage] = useState(new Set());
+
+  // Estados para búsqueda
   const [showSearch, setShowSearch] = useState(true);
   const [unfilteredStorage, setUnfilteredStorage] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -37,7 +63,45 @@ export default function Storage() {
   const searchInputRef = useRef(null);
 
   const selectedCount = selectedStorage.size;
+  const BASE_PATH = "/inveplus";
 
+  // Configuración de notificaciones toast
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
+  /**
+   * Muestra una notificación de éxito
+   */
+  const showSuccessToast = () => {
+    Toast.fire({
+      icon: "success",
+      title: "Storage eliminado exitosamente",
+    });
+  };
+
+  /**
+   * Maneja errores y los registra en consola
+   * @param {Error} error - Error a manejar
+   */
+  const handleError = (error) => {
+    setError(error);
+    console.error("Error al obtener storage:", error);
+  };
+
+  const token = localStorage.getItem("authenticationToken");
+
+  /**
+   * Maneja la importación de datos desde Excel
+   */
   const handleImport = () => {
     Swal.fire({
       title: "Importar desde Excel",
@@ -49,6 +113,8 @@ export default function Storage() {
       height: "80%",
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
+
+        // Metadatos específicos para Storage
         const tableMetadata = [
           { name: "cod_item_configuracion", required: false, type: "string" },
           { name: "name", required: true, type: "string" },
@@ -71,12 +137,14 @@ export default function Storage() {
           { name: "disk_size", required: false, type: "string" },
           { name: "location", required: false, type: "string" },
         ];
+
         const importer = (
           <ExcelImporter
             onImportComplete={handleImportComplete}
             tableMetadata={tableMetadata}
           />
         );
+
         if (container) {
           const root = createRoot(container);
           root.render(importer);
@@ -92,8 +160,11 @@ export default function Storage() {
     });
   };
 
+  /**
+   * Procesa los datos importados desde Excel
+   * @param {Array} importedData - Datos importados
+   */
   const handleImportComplete = async (importedData) => {
-
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
         "Error",
@@ -103,7 +174,7 @@ export default function Storage() {
       return;
     }
 
-    // Mostrar un mensaje de carga
+    // Mostrar mensaje de carga
     Swal.fire({
       title: "Procesando datos...",
       text: `Estamos guardando ${importedData.length} dispositivos de storage importados`,
@@ -119,9 +190,11 @@ export default function Storage() {
         throw new Error("Token de autorización no encontrado.");
       }
 
+      // Formatear datos para envío
       const formattedData = importedData.map((row) => {
         const formattedRow = {};
 
+        // Asegurar que todos los campos sean strings
         formattedRow.cod_item_configuracion = String(
           row.cod_item_configuracion || ""
         );
@@ -150,6 +223,7 @@ export default function Storage() {
         return formattedRow;
       });
 
+      // Enviar datos al servidor
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/storage/add_from_excel",
         {
@@ -167,11 +241,15 @@ export default function Storage() {
         throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
       }
 
+      // Mostrar mensaje de éxito
       Swal.fire({
         icon: "success",
         title: "Importación exitosa",
         text: `Se han importado ${importedData.length} dispositivos de storage correctamente.`,
       });
+
+      // Actualizar la lista
+      fetchStorage(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al procesar los datos importados:", error);
       Swal.fire({
@@ -183,36 +261,10 @@ export default function Storage() {
       });
     }
   };
-  useEffect(() => {
-    setShowSearch(selectedCount === 0);
-  }, [selectedCount]);
 
-  const BASE_PATH = "/inveplus";
-
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.onmouseenter = Swal.stopTimer;
-      toast.onmouseleave = Swal.resumeTimer;
-    },
-  });
-
-  const showSuccessToast = () => {
-    Toast.fire({
-      icon: "success",
-      title: "Storage eliminado exitosamente",
-    });
-  };
-
-  const handleError = (error) => {
-    setError(error);
-    console.error("Error al obtener storage:", error);
-  };
-
+  /**
+   * Maneja la exportación de datos a Excel
+   */
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -248,12 +300,17 @@ export default function Storage() {
     }
   };
 
-  const token = localStorage.getItem("authenticationToken");
-
+  /**
+   * Obtiene la lista de dispositivos de storage desde la API
+   * @param {number} page - Página actual
+   * @param {number} limit - Límite de elementos por página
+   * @param {string} search - Término de búsqueda
+   */
   const fetchStorage = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
     setError(null);
+
     try {
       let url = `https://10.8.150.90/api/inveplus/storage/get_all?page=${page}&limit=${limit}`;
 
@@ -296,11 +353,16 @@ export default function Storage() {
     }
   };
 
+  /**
+   * Realiza búsqueda específica de dispositivos
+   * @param {string} search - Término de búsqueda
+   */
   const fetchSearch = async (search) => {
     if (isSearching) return;
     setIsSearching(true);
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/storage/search_by_name?name=${encodeURIComponent(
@@ -338,9 +400,14 @@ export default function Storage() {
     }
   };
 
+  // Efectos para cargar datos y manejar búsquedas
   useEffect(() => {
     fetchStorage(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
+
+  useEffect(() => {
+    setShowSearch(selectedCount === 0);
+  }, [selectedCount]);
 
   useEffect(() => {
     if (isSearchButtonClicked) {
@@ -359,6 +426,10 @@ export default function Storage() {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredStorage, rowsPerPage]);
 
+  /**
+   * Maneja cambios en el campo de búsqueda
+   * @param {Event} e - Evento del input
+   */
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     if (searchInputRef.current) {
@@ -366,10 +437,16 @@ export default function Storage() {
     }
   };
 
+  /**
+   * Maneja el clic en el botón de búsqueda
+   */
   const handleSearchButtonClick = () => {
     setIsSearchButtonClicked(true);
   };
 
+  /**
+   * Alterna la selección de todos los elementos
+   */
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
@@ -379,6 +456,10 @@ export default function Storage() {
     }
   };
 
+  /**
+   * Alterna la selección de un dispositivo específico
+   * @param {string} storageId - ID del dispositivo
+   */
   const toggleSelectStorage = (storageId) => {
     const newSelectedStorage = new Set(selectedStorage);
     if (newSelectedStorage.has(storageId)) {
@@ -389,6 +470,7 @@ export default function Storage() {
     setSelectedStorage(newSelectedStorage);
   };
 
+  // Filtrado de dispositivos basado en búsqueda
   const filteredStorage = storageList.filter((storage) =>
     storage.name?.toLowerCase().includes(searchValue.toLowerCase())
   );
@@ -396,6 +478,10 @@ export default function Storage() {
   const indexOfLastStorage = currentPage * rowsPerPage;
   const indexOfFirstStorage = indexOfLastStorage - rowsPerPage;
 
+  /**
+   * Maneja la eliminación de un dispositivo de storage
+   * @param {string} storageId - ID del dispositivo a eliminar
+   */
   const handleDeleteStorage = async (storageId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -465,10 +551,18 @@ export default function Storage() {
     });
   };
 
+  /**
+   * Navega a la página de creación
+   */
   const irCrear = () => {
     navigate(`${BASE_PATH}/crear-storages`);
   };
 
+  /**
+   * Genera un badge visual para el estado del dispositivo
+   * @param {string} status - Estado del dispositivo
+   * @returns {JSX.Element} Badge del estado
+   */
   const getStatusBadge = (status) => {
     if (!status) {
       return (
@@ -514,6 +608,7 @@ export default function Storage() {
     }
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">

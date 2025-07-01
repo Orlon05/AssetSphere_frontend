@@ -1,3 +1,20 @@
+/**
+ * Componente principal para la gestión de servidores PSeries
+ *
+ * Funcionalidades principales:
+ * - Listado paginado de servidores PSeries
+ * - Búsqueda por nombre
+ * - Selección múltiple de servidores
+ * - Operaciones CRUD (Crear, Ver, Editar, Eliminar)
+ * - Importación desde Excel con validación
+ * - Exportación a Excel
+ * - Estados visuales con badges (Running, Not Activated, Maintenance)
+ *
+ * @component
+ * @example
+ * return <Pseries />
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -21,29 +38,40 @@ import ExcelImporter from "../../../hooks/Excelimporter";
 
 const Pseries = () => {
   const navigate = useNavigate();
+
+  // Estados principales del componente
   const [searchValue, setSearchValue] = useState("");
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Estados para selección múltiple
   const [selectAll, setSelectAll] = useState(false);
   const [selectedPseries, setSelectedPseries] = useState(new Set());
+
+  // Estados para búsqueda
   const [showSearch, setShowSearch] = useState(true);
   const [unfilteredPseries, setUnfilteredPseries] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
+
   const searchInputRef = useRef(null);
-
   const selectedCount = selectedPseries.size;
-
   const BASE_PATH = "/inveplus";
 
+  // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
     setShowSearch(selectedCount === 0);
   }, [selectedCount]);
 
+  /**
+   * Configuración de notificaciones toast
+   */
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -56,6 +84,9 @@ const Pseries = () => {
     },
   });
 
+  /**
+   * Muestra notificación de éxito al eliminar servidor
+   */
   const showSuccessToast = () => {
     Toast.fire({
       icon: "success",
@@ -63,6 +94,10 @@ const Pseries = () => {
     });
   };
 
+  /**
+   * Maneja errores de la aplicación
+   * @param {Error} error - Error a manejar
+   */
   const handleError = (error) => {
     setError(error);
     console.error("Error al obtener servidores PSeries:", error);
@@ -70,10 +105,18 @@ const Pseries = () => {
 
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Obtiene la lista de servidores PSeries desde la API
+   * @param {number} page - Página actual
+   * @param {number} limit - Elementos por página
+   * @param {string} search - Término de búsqueda
+   */
   const fetchPseries = async (page, limit, search = "") => {
     if (isSearching) return;
+
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
@@ -110,11 +153,17 @@ const Pseries = () => {
     }
   };
 
+  /**
+   * Realiza búsqueda específica de servidores
+   * @param {string} search - Término de búsqueda
+   */
   const fetchSearch = async (search) => {
     if (isSearching) return;
+
     setIsSearching(true);
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
         `https://10.8.150.90/api/inveplus/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
@@ -150,10 +199,12 @@ const Pseries = () => {
     }
   };
 
+  // Efecto para cargar datos iniciales
   useEffect(() => {
     fetchPseries(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
+  // Efecto para manejar búsquedas
   useEffect(() => {
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
@@ -171,7 +222,10 @@ const Pseries = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
 
-  // Función modificada para manejar la importación sin createRoot
+  /**
+   * Maneja la importación de datos desde Excel
+   * Abre un modal con el componente ExcelImporter
+   */
   const handleImport = () => {
     Swal.fire({
       title: "Importar desde Excel",
@@ -183,6 +237,8 @@ const Pseries = () => {
       height: "80%",
       didOpen: () => {
         const container = document.getElementById("excel-importer-container");
+
+        // Metadatos de la tabla para validación de importación
         const tableMetadata = [
           { name: "name", required: true, type: "string" },
           { name: "application", required: true, type: "string" },
@@ -208,12 +264,14 @@ const Pseries = () => {
           { name: "memory_per_factor", required: false, type: "string" },
           { name: "processor_compatibility", required: false, type: "string" },
         ];
+
         const importer = (
           <ExcelImporter
             onImportComplete={handleImportComplete}
             tableMetadata={tableMetadata}
           />
         );
+
         if (container) {
           const root = createRoot(container);
           root.render(importer);
@@ -228,9 +286,12 @@ const Pseries = () => {
       },
     });
   };
-  // Función para manejar los datos importados
-  const handleImportComplete = async (importedData) => {
 
+  /**
+   * Procesa los datos importados desde Excel
+   * @param {Array} importedData - Datos importados del archivo Excel
+   */
+  const handleImportComplete = async (importedData) => {
     if (!Array.isArray(importedData) || importedData.length === 0) {
       Swal.fire(
         "Error",
@@ -240,7 +301,7 @@ const Pseries = () => {
       return;
     }
 
-    // Mostrar un mensaje de carga
+    // Mostrar indicador de carga
     Swal.fire({
       title: "Procesando datos...",
       text: `Estamos guardando ${importedData.length} servidores importados`,
@@ -256,12 +317,11 @@ const Pseries = () => {
         throw new Error("Token de autorización no encontrado.");
       }
 
-      // Formateamos los datos para enviarlos al servidor
+      // Formatear datos para la API
       const formattedData = importedData.map((row) => {
-        // Crear una copia para no modificar el original
         const formattedRow = {};
 
-        // Asegurarse de que todos los campos existan y sean strings
+        // Asegurar que todos los campos sean strings
         formattedRow.name = String(row.name || "");
         formattedRow.application = String(row.application || "");
         formattedRow.hostname = String(row.hostname || "");
@@ -291,7 +351,7 @@ const Pseries = () => {
         return formattedRow;
       });
 
-      // Enviar los datos al servidor
+      // Enviar datos al servidor
       const response = await fetch(
         "https://10.8.150.90/api/inveplus/pseries/add_from_excel",
         {
@@ -316,7 +376,7 @@ const Pseries = () => {
         text: `Se han importado ${importedData.length} servidores correctamente.`,
       });
 
-      // Actualizar la lista de servidores
+      // Actualizar la lista
       fetchPseries(currentPage, rowsPerPage);
     } catch (error) {
       console.error("Error al procesar los datos importados:", error);
@@ -330,6 +390,9 @@ const Pseries = () => {
     }
   };
 
+  /**
+   * Exporta la lista de servidores a Excel
+   */
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -361,10 +424,18 @@ const Pseries = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error al exportar el archivo Excel:", error);
-      alert(`Error: ${error.message}`);
+      Swal.fire({
+        icon: "error",
+        title: "Error al exportar",
+        text: error.message,
+      });
     }
   };
 
+  /**
+   * Maneja cambios en el campo de búsqueda
+   * @param {Event} e - Evento del input
+   */
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
     if (searchInputRef.current) {
@@ -372,10 +443,16 @@ const Pseries = () => {
     }
   };
 
+  /**
+   * Activa la búsqueda cuando se hace clic en el botón
+   */
   const handleSearchButtonClick = () => {
     setIsSearchButtonClicked(true);
   };
 
+  /**
+   * Alterna la selección de todos los servidores
+   */
   const toggleSelectAll = () => {
     setSelectAll(!selectAll);
     if (selectAll) {
@@ -385,6 +462,10 @@ const Pseries = () => {
     }
   };
 
+  /**
+   * Alterna la selección de un servidor específico
+   * @param {string} pseriesId - ID del servidor
+   */
   const toggleSelectPseries = (pseriesId) => {
     const newSelectedPseries = new Set(selectedPseries);
     if (newSelectedPseries.has(pseriesId)) {
@@ -395,15 +476,21 @@ const Pseries = () => {
     setSelectedPseries(newSelectedPseries);
   };
 
+  // Filtrar servidores por búsqueda local
   const filteredPseries = pseries.filter((server) =>
     server.name?.toLowerCase().includes(searchValue.toLowerCase())
   );
 
+  // Cálculos para paginación
   const indexOfLastPseries = currentPage * rowsPerPage;
   const indexOfFirstPseries = indexOfLastPseries - rowsPerPage;
 
+  /**
+   * Elimina un servidor PSeries
+   * @param {string} pseriesId - ID del servidor a eliminar
+   */
   const handleDeletePseries = async (pseriesId) => {
-    Swal.fire({
+    const result = await Swal.fire({
       title: "¿Estás seguro?",
       text: "¿Deseas eliminar este servidor?",
       icon: "warning",
@@ -412,67 +499,74 @@ const Pseries = () => {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(
-            `https://10.8.150.90/api/inveplus/pseries/pseries/${pseriesId}`,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+    });
 
-          if (!response.ok) {
-            let errorMessage = `Error HTTP ${response.status}`;
-            let errorData;
-
-            try {
-              errorData = await response.json();
-              if (response.status === 422 && errorData && errorData.detail) {
-                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-              } else if (response.status === 401 || response.status === 403) {
-                errorMessage =
-                  "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
-              } else if (response.status === 404) {
-                errorMessage = "El servidor no existe.";
-              } else if (errorData && errorData.message) {
-                errorMessage = errorData.message;
-              }
-            } catch (errorParse) {
-              console.error("Error parsing error response:", errorParse);
-              errorMessage = `Error al procesar la respuesta del servidor.`;
-              handleError(errorParse);
-            }
-
-            Swal.fire({
-              icon: "error",
-              title: "Error al eliminar el servidor",
-              text: errorMessage,
-            });
-          } else {
-            setPseries(pseries.filter((server) => server.id !== pseriesId));
-            showSuccessToast();
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `https://10.8.150.90/api/inveplus/pseries/pseries/${pseriesId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        } catch (error) {
-          console.error("Error al eliminar el servidor:", error);
-          handleError(error);
+        );
+
+        if (!response.ok) {
+          let errorMessage = `Error HTTP ${response.status}`;
+
+          try {
+            const errorData = await response.json();
+            if (response.status === 422 && errorData?.detail) {
+              errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+            } else if (response.status === 401 || response.status === 403) {
+              errorMessage =
+                "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+            } else if (response.status === 404) {
+              errorMessage = "El servidor no existe.";
+            } else if (errorData?.message) {
+              errorMessage = errorData.message;
+            }
+          } catch (errorParse) {
+            console.error("Error parsing error response:", errorParse);
+            errorMessage = "Error al procesar la respuesta del servidor.";
+            handleError(errorParse);
+          }
+
           Swal.fire({
             icon: "error",
-            title: "Error",
-            text: "Ocurrió un error inesperado al eliminar el servidor.",
+            title: "Error al eliminar el servidor",
+            text: errorMessage,
           });
+        } else {
+          setPseries(pseries.filter((server) => server.id !== pseriesId));
+          showSuccessToast();
         }
+      } catch (error) {
+        console.error("Error al eliminar el servidor:", error);
+        handleError(error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Ocurrió un error inesperado al eliminar el servidor.",
+        });
       }
-    });
+    }
   };
 
+  /**
+   * Navega a la página de creación de servidor
+   */
   const irCrear = () => {
     navigate(`${BASE_PATH}/crear-pseries`);
   };
 
+  /**
+   * Genera badge de estado visual según el estado del servidor
+   * @param {string} status - Estado del servidor
+   * @returns {JSX.Element|null} Badge de estado
+   */
   const getStatusBadge = (status) => {
     if (!status) return null;
 
@@ -511,6 +605,7 @@ const Pseries = () => {
     }
   };
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
@@ -703,7 +798,9 @@ const Pseries = () => {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(`${BASE_PATH}/editar/${pserie.id}/pseries`)
+                              navigate(
+                                `${BASE_PATH}/editar/${pserie.id}/pseries`
+                              )
                             }
                             className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
                             title="Editar"

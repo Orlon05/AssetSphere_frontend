@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { MdArrowBack } from "react-icons/md";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
+/**
+ * Componente para visualizar detalles de una base de datos
+ *
+ * Funcionalidades:
+ * - Vista de solo lectura de todos los campos
+ * - Organización en secciones lógicas
+ * - Manejo robusto de errores de API
+ * - Soporte para diferentes estructuras de respuesta
+ * - Estados visuales para campos especiales
+ */
 const VerDatabase = () => {
   const { baseDeDatosId } = useParams();
   const [baseData, setBaseData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /**
+   * Configuración de secciones del formulario para organizar la vista
+   */
   const formSections = [
     {
       title: "Información Básica",
@@ -54,6 +66,10 @@ const VerDatabase = () => {
       ],
     },
   ];
+
+  /**
+   * Mapeo de nombres de campos a etiquetas legibles
+   */
   const fieldLabels = {
     instance_id: "ID de instancia",
     cost_center: "Centro de Costos",
@@ -62,7 +78,7 @@ const VerDatabase = () => {
     item: "Objeto",
     owner_contact: "Contacto del Propietario",
     name: "Nombre",
-    application_code: "Codigo de Aplicación",
+    application_code: "Código de Aplicación",
     inactive: "Estado",
     asset_life_cycle_status: "Estado del ciclo de vida del activo",
     system_environment: "Entorno del Sistema",
@@ -72,19 +88,24 @@ const VerDatabase = () => {
     ci_tag: "CI Tag",
     instance_name: "Nombre de la Instancia",
     model: "Modelo",
-    ha: "Ha",
+    ha: "HA (Alta Disponibilidad)",
     port: "Puerto",
-    owner_name: "Nombre del dueño",
+    owner_name: "Nombre del propietario",
     department: "Departamento",
     company: "Compañía",
     manufacturer_name: "Nombre del Fabricante",
-    supplier_name: "nombre del proveedor",
-    supported: "Apoyado",
+    supplier_name: "Nombre del proveedor",
+    supported: "Soporte",
     account_id: "ID de cuenta",
     create_date: "Fecha de creación",
     modified_date: "Fecha de modificación",
   };
 
+  /**
+   * Obtiene el color CSS para el estado
+   * @param {string} status - Estado de la base de datos
+   * @returns {string} Clases CSS para el estado
+   */
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
@@ -98,18 +119,26 @@ const VerDatabase = () => {
     }
   };
 
+  /**
+   * Convierte el estado a texto legible
+   * @param {string} status - Estado de la base de datos
+   * @returns {string} Texto legible del estado
+   */
   const getStatusText = (status) => {
     switch (status) {
       case "active":
         return "Activo";
       case "inactive":
-        return "Inactive";
+        return "Inactivo";
       default:
         return status;
     }
   };
 
-  // Función para obtener todos los campos disponibles que no están en las secciones predefinidas
+  /**
+   * Obtiene campos adicionales que no están en las secciones predefinidas
+   * @returns {Array} Lista de campos adicionales
+   */
   const getAdditionalFields = () => {
     if (!baseData || typeof baseData !== "object") return [];
 
@@ -129,7 +158,11 @@ const VerDatabase = () => {
 
   const additionalFields = getAdditionalFields();
 
+  // Efecto para cargar datos al montar el componente
   useEffect(() => {
+    /**
+     * Obtiene los datos de la base de datos desde la API
+     */
     const fetchBaseDeDatos = async () => {
       try {
         setLoading(true);
@@ -154,14 +187,12 @@ const VerDatabase = () => {
 
         const data = await response.json();
 
-        // Intentamos ser más flexibles con la estructura de la respuesta
+        // Manejo flexible de diferentes estructuras de respuesta
         if (data?.status === "success") {
-          // Primero intentamos la estructura esperada
+          // Intentar diferentes ubicaciones de los datos
           if (data.data?.basededatos_info) {
             setBaseData(data.data.basededatos_info);
-          }
-          // Si no, intentamos encontrar los datos en otras ubicaciones posibles
-          else if (data.data?.database_info) {
+          } else if (data.data?.database_info) {
             setBaseData(data.data.database_info);
           } else if (data.data?.base_datos) {
             setBaseData(data.data.base_datos);
@@ -193,6 +224,7 @@ const VerDatabase = () => {
     }
   }, [baseDeDatosId]);
 
+  // Estados de carga y error
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -247,13 +279,14 @@ const VerDatabase = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
+      {/* Header */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Visualizar Base de datos
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Detalles completos
+            Detalles completos de la base de datos
           </p>
         </div>
         <button
@@ -265,6 +298,7 @@ const VerDatabase = () => {
         </button>
       </header>
 
+      {/* Main Content */}
       <main className="container mx-auto p-6">
         <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
           <div className="space-y-6">
@@ -290,16 +324,16 @@ const VerDatabase = () => {
                           baseData.inactive?.toLowerCase() === "active"
                             ? "bg-green-100 border-green-300 text-green-800"
                             : baseData.inactive?.toLowerCase() === "inactive"
-                            ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                            : "bg-red-100 border-red-300 text-red-800"
+                            ? "bg-red-100 border-red-300 text-red-800"
+                            : "bg-yellow-100 border-yellow-300 text-yellow-800"
                         }
                       `}
                         >
                           {baseData.inactive?.toLowerCase() === "active"
                             ? "Activo"
                             : baseData.inactive?.toLowerCase() === "inactive"
-                            ? "Desconocido"
-                            : "Inactivo"}
+                            ? "Inactivo"
+                            : "Estado desconocido"}
                         </div>
                       ) : (
                         <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
@@ -316,6 +350,32 @@ const VerDatabase = () => {
                 </div>
               </div>
             ))}
+
+            {/* Sección de campos adicionales si existen */}
+            {additionalFields.length > 0 && (
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                  Información Adicional
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {additionalFields.map((field) => (
+                    <div key={field} className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {fieldLabels[field] || field}
+                      </label>
+                      <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                        {baseData[field] !== undefined &&
+                        baseData[field] !== null
+                          ? typeof baseData[field] === "object"
+                            ? JSON.stringify(baseData[field])
+                            : String(baseData[field])
+                          : "N/A"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
