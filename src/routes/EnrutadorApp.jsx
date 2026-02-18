@@ -71,7 +71,7 @@ const CrearSucursal = lazy(() =>
 // const EditarSucursal = lazy(() => import("../pages/EditarSucursales"));
 // const VerSucursales = lazy(() => import("../pages/VerSucursales"));
 
-const BASE_PATH = "/inveplus";
+const BASE_PATH = "/AssetSphere";
 
 const EnrutadorApp = [
   {
@@ -87,7 +87,7 @@ const EnrutadorApp = [
     ),
   },
 
-  // Rutas protegidas directamente bajo /inveplus/
+  // Rutas protegidas directamente bajo /AssetSphere/
   {
     path: `${BASE_PATH}/servidoresf`,
     element: (

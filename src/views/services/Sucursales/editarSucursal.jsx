@@ -8,7 +8,7 @@ import { Building, Save, ArrowLeft } from "lucide-react";
 export default function EditarSucursal() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [formData, setFormData] = useState({

@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente principal para la gestión de dispositivos de Storage
  *
@@ -63,7 +64,7 @@ export default function Storage() {
   const searchInputRef = useRef(null);
 
   const selectedCount = selectedStorage.size;
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Configuración de notificaciones toast
   const Toast = Swal.mixin({
@@ -225,7 +226,7 @@ export default function Storage() {
 
       // Enviar datos al servidor
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/storage/add_from_excel",
+        `${API_URL}/storage/add_from_excel`,
         {
           method: "POST",
           headers: {
@@ -273,7 +274,7 @@ export default function Storage() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/storage/export",
+        `${API_URL}/storage/export`,
         {
           method: "GET",
           headers: {
@@ -312,10 +313,10 @@ export default function Storage() {
     setError(null);
 
     try {
-      let url = `https://10.8.150.90/api/inveplus/storage/get_all?page=${page}&limit=${limit}`;
+      let url = `${API_URL}/storage/get_all?page=${page}&limit=${limit}`;
 
       if (search.trim()) {
-        url = `https://10.8.150.90/api/inveplus/storage/search_by_name?name=${encodeURIComponent(
+        url = `${API_URL}/storage/search_by_name?name=${encodeURIComponent(
           search
         )}&page=${page}&limit=${limit}`;
       }
@@ -365,7 +366,7 @@ export default function Storage() {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/storage/search_by_name?name=${encodeURIComponent(
+        `${API_URL}/storage/search_by_name?name=${encodeURIComponent(
           search
         )}&page=${currentPage}&limit=${rowsPerPage}`,
         {
@@ -496,7 +497,7 @@ export default function Storage() {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `https://10.8.150.90/api/inveplus/storage/delete/${storageId}`,
+            `${API_URL}/storage/delete/${storageId}`,
             {
               method: "DELETE",
               headers: {

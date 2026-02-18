@@ -1,19 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { API_URL } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { createRoot } from "react-dom/client";
-import {
-  Database,
-  Search,
-  Eye,
-  Edit,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Upload,
-  Plus,
-} from "lucide-react";
+import {Database, Search, Eye, Edit, Trash2, ChevronLeft, ChevronRight, Download, Upload, Plus} from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 
 /**
@@ -57,7 +47,7 @@ const BaseDeDatos = () => {
 
   // Constantes
   const selectedCount = selectedBasesDeDatos.size;
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
@@ -227,7 +217,7 @@ const BaseDeDatos = () => {
         const batch = formattedData.slice(i * batchSize, (i + 1) * batchSize);
 
         const response = await fetch(
-          "https://10.8.150.90/api/inveplus/base_datos/add_from_excel",
+          `${API_URL}/base_datos/add_from_excel`,
           {
             method: "POST",
             headers: {
@@ -364,7 +354,7 @@ const BaseDeDatos = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
+        `${API_URL}/base_datos/get_all?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -410,7 +400,7 @@ const BaseDeDatos = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `${API_URL}/base_datos/search_by_name?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -477,7 +467,7 @@ const BaseDeDatos = () => {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/export",
+        `${API_URL}/base_datos/export`,
         {
           method: "GET",
           headers: {
@@ -592,7 +582,7 @@ const BaseDeDatos = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `https://10.8.150.90/api/inveplus/base_datos/delete/${baseDeDatosId}`,
+            `${API_URL}/base_datos/delete/${baseDeDatosId}`,
             {
               method: "DELETE",
               headers: {

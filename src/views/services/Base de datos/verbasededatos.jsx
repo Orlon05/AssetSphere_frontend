@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../../config/api";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
@@ -171,7 +172,7 @@ const VerDatabase = () => {
         const token = localStorage.getItem("authenticationToken");
 
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDeDatosId}`,
+          `${API_URL}/base_datos/get_by_id/${baseDeDatosId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -258,7 +259,7 @@ const VerDatabase = () => {
               Intentar nuevamente
             </button>
             <Link
-              to="/inveplus/base-de-datos"
+              to="/AssetSphere/base-de-datos"
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors text-center"
             >
               Volver a la lista

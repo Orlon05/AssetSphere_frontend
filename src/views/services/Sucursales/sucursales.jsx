@@ -38,7 +38,7 @@ export default function Sucursales() {
 
   const selectedCount = selectedSucursales.size;
 
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);

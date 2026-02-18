@@ -20,7 +20,7 @@ export default defineConfig({
     // assetsDir: 'assets',
     emptyOutDir: true,
   },
-  base: "/inveplus/",
+  base: "/AssetSphere/",
    server: {
      hmr: {
        port: 443,

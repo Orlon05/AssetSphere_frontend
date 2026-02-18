@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
+import { API_URL } from "../../../config/api";
 
 const EditarPseries = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const EditarPseries = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Estados individuales para cada campo del formulario
   const [name, setName] = useState("");
@@ -114,7 +115,7 @@ const EditarPseries = () => {
 
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
+          `${API_URL}/pseries/get_by_id/${pserieId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -231,7 +232,7 @@ const EditarPseries = () => {
       setIsSubmitting(true);
 
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/pseries/edit/${pserieId}`,
+        `${API_URL}/pseries/edit/${pserieId}`,
         {
           method: "PUT",
           headers: {

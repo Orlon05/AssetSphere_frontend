@@ -29,6 +29,7 @@ import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft } from "lucide-react";
+import { API_URL } from "../../../config/api";
 
 /**
  * Componente reutilizable para los campos del formulario
@@ -161,7 +162,7 @@ const EditarServidorFisico = () => {
       try {
         // Petición GET para obtener los datos del servidor específico
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
+          `${API_URL}/servers/physical/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -204,7 +205,7 @@ const EditarServidorFisico = () => {
     try {
       // Petición PUT para actualizar el servidor
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
+        `${API_URL}/servers/physical/${serverId}`,
         {
           method: "PUT",
           headers: {
@@ -226,7 +227,7 @@ const EditarServidorFisico = () => {
 
       // Éxito: mostrar toast y navegar de vuelta
       showSuccessToast();
-      navigate("/inveplus/servidoresf");
+      navigate("/AssetSphere/servidoresf");
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -559,7 +560,7 @@ const EditarServidorFisico = () => {
               {/* Botón Cancelar */}
               <button
                 type="button"
-                onClick={() => navigate("/inveplus/servidoresf")}
+                onClick={() => navigate("/AssetSphere/servidoresf")}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 <MdArrowBack size={18} className="mr-2" />

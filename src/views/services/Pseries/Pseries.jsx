@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente principal para la gestión de servidores PSeries
  *
@@ -62,7 +63,7 @@ const Pseries = () => {
 
   const searchInputRef = useRef(null);
   const selectedCount = selectedPseries.size;
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
@@ -119,7 +120,7 @@ const Pseries = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
+        `${API_URL}/pseries/pseries?page=${page}&limit=${limit}&name=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -166,7 +167,7 @@ const Pseries = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
+        `${API_URL}/pseries/pseries/search?name=${search}&page=${currentPage}&limit=${rowsPerPage}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -353,7 +354,7 @@ const Pseries = () => {
 
       // Enviar datos al servidor
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/pseries/add_from_excel",
+        `${API_URL}/pseries/add_from_excel`,
         {
           method: "POST",
           headers: {
@@ -401,7 +402,7 @@ const Pseries = () => {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/pseries/export",
+        `${API_URL}/pseries/export`,
         {
           method: "GET",
           headers: {
@@ -504,7 +505,7 @@ const Pseries = () => {
     if (result.isConfirmed) {
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/pseries/pseries/${pseriesId}`,
+          `${API_URL}/pseries/pseries/${pseriesId}`,
           {
             method: "DELETE",
             headers: {

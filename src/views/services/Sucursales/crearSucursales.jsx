@@ -7,7 +7,7 @@ import { Building, Save, ArrowLeft } from "lucide-react";
 
 export default function CrearSucursal() {
   const navigate = useNavigate();
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",

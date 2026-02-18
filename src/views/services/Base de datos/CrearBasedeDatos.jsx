@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { API_URL } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, X } from "lucide-react";
 import Swal from "sweetalert2";
 
-const BASE_PATH = "/inveplus";
+const BASE_PATH = "/AssetSphere";
 
 /**
  * Componente para crear nuevas bases de datos
@@ -75,7 +76,7 @@ const CrearBasedeDatos = () => {
       const token = localStorage.getItem("authenticationToken");
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/add",
+        `${API_URL}/base_datos/add`,
         {
           method: "post",
           headers: {

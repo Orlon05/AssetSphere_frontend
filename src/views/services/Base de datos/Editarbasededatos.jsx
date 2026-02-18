@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../../config/api";
 import { MdEdit, MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -138,7 +139,7 @@ const EditarBaseDatos = () => {
 
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/base_datos/get_by_id/${baseDatosId}`,
+          `${API_URL}/base_datos/get_by_id/${baseDatosId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -219,7 +220,7 @@ const EditarBaseDatos = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/base_datos/edit/${baseDatosId}`,
+        `${API_URL}/base_datos/edit/${baseDatosId}`,
         {
           method: "PUT",
           headers: {
@@ -239,7 +240,7 @@ const EditarBaseDatos = () => {
       }
 
       showSuccessToast();
-      navigate("/inveplus/base-de-datos");
+      navigate("/AssetSphere/base-de-datos");
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -544,7 +545,7 @@ const EditarBaseDatos = () => {
             <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                onClick={() => navigate("/inveplus/base-de-datos")}
+                onClick={() => navigate("/AssetSphere/base-de-datos")}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
               >
                 <MdArrowBack size={18} className="mr-2" />

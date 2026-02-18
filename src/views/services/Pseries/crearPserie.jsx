@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
 import Swal from "sweetalert2";
+import { API_URL } from "../../../config/api";
 
 const CrearPseries = () => {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ const CrearPseries = () => {
     "POWER9_base",
   ];
 
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   /**
    * Configuración de secciones del formulario
@@ -230,8 +231,7 @@ const CrearPseries = () => {
     try {
       const token = localStorage.getItem("authenticationToken");
 
-      const response = await fetch(
-        "https://10.8.150.90/api/inveplus/pseries/pseries/add",
+      const response = await fetch(`${API_URL}/pseries/pseries/add`, 
         {
           method: "POST",
           headers: {

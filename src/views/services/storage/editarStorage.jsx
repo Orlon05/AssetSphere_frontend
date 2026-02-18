@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente para editar dispositivos de Storage existentes
  *
@@ -98,7 +99,7 @@ const EditarStorage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("authenticationToken");
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
   const { storageId } = useParams();
 
   // Configuración de notificaciones toast
@@ -143,7 +144,7 @@ const EditarStorage = () => {
 
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/storage/get_by_id/${storageId}`,
+          `${API_URL}/storage/get_by_id/${storageId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -194,7 +195,7 @@ const EditarStorage = () => {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/storage/edit/${storageId}`,
+        `${API_URL}/storage/edit/${storageId}`,
         {
           method: "PUT",
           headers: {

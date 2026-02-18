@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: CrearServidorFisico
  *
@@ -33,7 +34,7 @@ import { ArrowLeft, Save, X } from "lucide-react";
 import Swal from "sweetalert2";
 
 // Ruta base para la navegación del sistema
-const BASE_PATH = "/inveplus";
+const BASE_PATH = "/AssetSphere";
 
 const CrearServidorFisico = () => {
   const navigate = useNavigate();
@@ -120,7 +121,7 @@ const CrearServidorFisico = () => {
 
       // Realizar petición POST a la API para crear el servidor físico
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/servers/physical/add",
+        `${API_URL}/servers/physical/add`,
         {
           method: "POST",
           headers: {

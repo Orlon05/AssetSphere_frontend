@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: ServidoresVirtuales
  *
@@ -47,8 +48,8 @@ import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
 // Configuraciones centralizadas
-const BASE_PATH = "/inveplus";
-const API_BASE_URL = "https://10.8.150.90/api/inveplus/vservers/virtual";
+const BASE_PATH = "/AssetSphere";
+const API_BASE_URL = `${API_URL}/vservers/virtual`;
 
 // Configuración de metadatos para importación Excel
 const TABLE_METADATA = [

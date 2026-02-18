@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: VerServidorVirtual
  *
@@ -114,7 +115,7 @@ const VerServidorVirtual = () => {
         }
 
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/vservers/virtual/get/${serverId}`,
+          `${API_URL}/vservers/virtual/get/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

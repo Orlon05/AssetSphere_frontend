@@ -40,10 +40,11 @@ import {
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
+import { API_URL } from "../../../config/api";
 
 // Configuraciones centralizadas
-const BASE_PATH = "/inveplus";
-const API_BASE_URL = "https://10.8.150.90/api/inveplus/servers/physical";
+const BASE_PATH = "/AssetSphere";
+const API_BASE_URL = API_URL + "/servers/physical";
 
 export default function ServidoresFisicos() {
   const navigate = useNavigate();
@@ -600,7 +601,7 @@ export default function ServidoresFisicos() {
       const token = getAuthToken();
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/servers/export",
+        `${API_URL}/servers/export`,
         {
           method: "GET",
           headers: {

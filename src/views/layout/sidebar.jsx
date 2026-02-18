@@ -27,33 +27,33 @@ export default function Sidebar() {
       id: 1,
       title: "Panel Principal",
       icon: LayoutGrid,
-      path: "/inveplus/dashboard",
+      path: "/AssetSphere/dashboard",
     },
     {
       id: 2,
       title: "Servidores Fisicos",
       icon: Server,
-      path: "/inveplus/servidoresf",
+      path: "/AssetSphere/servidoresf",
     },
     {
       id: 3,
       title: "Servidores Virtuales",
       icon: Cloud,
-      path: "/inveplus/servidoresv",
+      path: "/AssetSphere/servidoresv",
     },
     {
       id: 4,
       title: "Bases de Datos",
       icon: Database,
-      path: "/inveplus/base-de-datos",
+      path: "/AssetSphere/base-de-datos",
     },
-    { id: 5, title: "Pseries", icon: Server, path: "/inveplus/pseries" },
-    { id: 6, title: "Storage", icon: HardDrive, path: "/inveplus/storage" },
+    { id: 5, title: "Pseries", icon: Server, path: "/AssetSphere/pseries" },
+    { id: 6, title: "Storage", icon: HardDrive, path: "/AssetSphere/storage" },
     // {
     //   id: 6,
     //   title: "Sucursales",
     //   icon: Building,
-    //   path: "/inveplus/sucursales",
+    //   path: "/AssetSphere/sucursales",
     // },
   ];
 
@@ -87,7 +87,7 @@ export default function Sidebar() {
         } bg-zinc-800 h-full p-5 pt-10 relative duration-300 border-r border-gray-700`}
       >
         <img
-          src="/inveplus/chevron-left.png"
+          src="/AssetSphere/chevron-left.png"
           className={`absolute cursor-pointer -right-3 top-9 w-7 border-gray-700 bg-gray-800 border-2 rounded-full ${
             !open && "rotate-180"
           }`}
@@ -104,7 +104,7 @@ export default function Sidebar() {
               !open && "hidden"
             }`}
           >
-            Inveplus
+            AssetSphere
           </h1>
         </div>
         <ul className="pt-6">

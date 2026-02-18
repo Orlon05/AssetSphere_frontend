@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../config/api";
 import {
   ChevronDown,
   LogOut,
@@ -33,7 +34,7 @@ const decodeJWT = (token) => {
 
 export default function Dashboard() {
   const { logout } = useAuth();
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -107,7 +108,7 @@ export default function Dashboard() {
   const fetchUserData = async (userId, token) => {
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/users/get_by_id/${userId}`,
+        `${API_URL}/users/get_by_id/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -188,7 +189,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/servers/physical?page=1&limit=1000",
+        `${API_URL}/servers/physical?page=1&limit=1000`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -245,7 +246,7 @@ export default function Dashboard() {
         return;
       }
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/pseries/pseries?page=1&limit=10000",
+        `${API_URL}/pseries/pseries?page=1&limit=10000`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -310,7 +311,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/storage/get_all?page=1&limit=1000",
+        `${API_URL}/storage/get_all?page=1&limit=1000`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -377,7 +378,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/base_datos/get_all?page=1&limit=1000",
+        `${API_URL}/base_datos/get_all?page=1&limit=1000`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -402,7 +403,7 @@ export default function Dashboard() {
           const totalPages = data.data.total_pages;
 
           const lastPageResponse = await fetch(
-            `https://10.8.150.90/api/inveplus/base_datos/get_all?page=${totalPages}&limit=1000`,
+            `${API_URL}/base_datos/get_all?page=${totalPages}&limit=1000`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -454,7 +455,7 @@ export default function Dashboard() {
       }
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/vservers/virtual?page=1&limit=1000",
+        `${API_URL}/vservers/virtual?page=1&limit=1000`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -554,7 +555,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <ShieldCheck className="text-blue-600" size={40} />
           <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
-            Inveplus
+            AssetSphere
           </h1>
         </div>
 

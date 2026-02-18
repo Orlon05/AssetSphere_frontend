@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: VerServidorFisico
  *
@@ -158,7 +159,7 @@ const VerServidorFisico = () => {
         // Verificar que existe el token de autorización
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/servers/physical/${serverId}`,
+          `${API_URL}/servers/physical/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -211,7 +212,7 @@ const VerServidorFisico = () => {
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
           <strong>Error:</strong> {error}
           <button
-            onClick={() => navigate("/inveplus/servidoresf")}
+            onClick={() => navigate("/AssetSphere/servidoresf")}
             className="mt-3 block text-blue-600 hover:text-blue-800 transition-colors"
           >
             <MdArrowBack className="inline mr-1" /> Volver a la lista

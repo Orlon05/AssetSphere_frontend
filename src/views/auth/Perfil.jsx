@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../config/api";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, UserCircle } from "lucide-react";
@@ -17,7 +18,7 @@ export default function Perfil() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   const token = localStorage.getItem("authenticationToken");
 
@@ -27,7 +28,7 @@ export default function Perfil() {
       setError(null);
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/users/get_by_id/${userId}`,
+          `${API_URL}/users/get_by_id/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -107,7 +108,7 @@ export default function Perfil() {
 
     try {
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/users/edit/${userId}`,
+        `${API_URL}/users/edit/${userId}`,
         {
           method: "PUT",
           headers: {

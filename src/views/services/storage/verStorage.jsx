@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente para visualizar detalles de dispositivos de Storage
  *
@@ -139,7 +140,7 @@ const VerStorage = () => {
 
         const token = localStorage.getItem("authenticationToken");
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/storage/get_by_id/${storageId}`,
+          `${API_URL}/storage/get_by_id/${storageId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

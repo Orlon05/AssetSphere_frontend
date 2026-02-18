@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: CrearServidorVirtual
  *
@@ -28,7 +29,7 @@ import { ArrowLeft, Save, X, Server } from "lucide-react";
 import Swal from "sweetalert2";
 
 // Constante para rutas base del sistema
-const BASE_PATH = "/inveplus";
+const BASE_PATH = "/AssetSphere";
 
 const CrearServidorVirtual = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const CrearServidorVirtual = () => {
 
       // Petición POST a la API
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/vservers/virtual/add",
+        `${API_URL}/vservers/virtual/add`,
         {
           method: "POST",
           headers: {

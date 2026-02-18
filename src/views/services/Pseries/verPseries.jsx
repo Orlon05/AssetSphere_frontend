@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente para visualizar detalles de servidores PSeries
  *
@@ -26,7 +27,7 @@ import {
 const VerPseries = () => {
   const navigate = useNavigate();
   const { pserieId } = useParams();
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Estados para todos los campos del servidor
   const [name, setName] = useState("");
@@ -139,7 +140,7 @@ const VerPseries = () => {
 
       try {
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/pseries/get_by_id/${pserieId}`,
+          `${API_URL}/pseries/get_by_id/${pserieId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

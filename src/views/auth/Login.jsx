@@ -3,6 +3,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../routes/AuthContext";
+import { API_URL } from "../../config/api";
 
 const gradientStyle = {
   background:
@@ -28,8 +29,7 @@ const Login = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/inveplus/auth/login"  , {
-      // const response = await fetch("https://10.8.150.90/api/inveplus/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -62,7 +62,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user.token) navigate("/inveplus/dashboard");
+    if (user.token) navigate("/AssetSphere/dashboard");
   }, [user.token]);
 
   return (
@@ -90,7 +90,7 @@ const Login = () => {
           <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
             <div className="w-full">
               <div className="flex justify-center mb-6">
-                <img src="/inveplus/logo.png" alt="Logo Inveplus" />
+                <img src="/AssetSphere/logo.png" alt="Logo AssetSphere" />
               </div>
               <div className="text-center">
                 <h1 className="text-3xl font-semibold text-gray-900">Iniciar Sesión</h1>

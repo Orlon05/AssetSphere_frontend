@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * COMPONENTE: EditarServidorVirtual
  *
@@ -31,7 +32,7 @@ const EditarServidorVirtual = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
 
   // Estado consolidado del formulario (OPTIMIZACIÓN: antes eran estados separados)
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ const EditarServidorVirtual = () => {
         }
 
         const response = await fetch(
-          `https://10.8.150.90/api/inveplus/vservers/virtual/get/${serverId}`,
+          `${API_URL}/vservers/virtual/get/${serverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -179,7 +180,7 @@ const EditarServidorVirtual = () => {
     try {
       const token = localStorage.getItem("authenticationToken");
       const response = await fetch(
-        `https://10.8.150.90/api/inveplus/vservers/virtual/edit/${serverId}`,
+        `${API_URL}/vservers/virtual/edit/${serverId}`,
         {
           method: "PUT",
           headers: {

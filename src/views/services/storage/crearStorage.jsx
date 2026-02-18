@@ -1,3 +1,4 @@
+import { API_URL } from "../../../config/api";
 /**
  * Componente para crear nuevos dispositivos de Storage
  *
@@ -19,7 +20,7 @@ import { ArrowLeft, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const BASE_PATH = "/inveplus";
+const BASE_PATH = "/AssetSphere";
 
 const CrearStorage = () => {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ const CrearStorage = () => {
       const token = localStorage.getItem("authenticationToken");
 
       const response = await fetch(
-        "https://10.8.150.90/api/inveplus/storage/add",
+        `${API_URL}/storage/add`,
         {
           method: "POST",
           headers: {

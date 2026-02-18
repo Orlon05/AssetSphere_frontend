@@ -17,7 +17,7 @@ import {
 export default function VerSucursal() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const BASE_PATH = "/inveplus";
+  const BASE_PATH = "/AssetSphere";
   const [sucursal, setSucursal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
