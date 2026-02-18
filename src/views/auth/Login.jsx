@@ -28,7 +28,8 @@ const Login = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("https://10.8.150.90/api/inveplus/auth/login", {
+      const response = await fetch("http://localhost:8000/api/inveplus/auth/login"  , {
+      // const response = await fetch("https://10.8.150.90/api/inveplus/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
