@@ -27,6 +27,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkTokenExpiration();
+
+    const interval = setInterval(checkTokenExpiration, 60000);
+
+    return () => clearInterval(interval);
   }, [token]);
 
   const login = (newToken) => {
@@ -36,6 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('authenticationToken');
+    localStorage.removeItem('userInfo');
     setToken(null);
     setRemainingTime(0);
   };

@@ -144,7 +144,7 @@ export default function Dashboard() {
   useEffect(() => {
     const initializeUser = async () => {
       try {
-        const userData = JSON.parse(localStorage.getItem("user")) || {};
+        const userData = JSON.parse(localStorage.getItem("userInfo")) || {};
         let userId = userData.user_id;
 
         const token = localStorage.getItem("authenticationToken");
@@ -520,7 +520,6 @@ export default function Dashboard() {
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("autenticacionToken");
         logout();
         navigate(`${BASE_PATH}/login`);
       }

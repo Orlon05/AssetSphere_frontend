@@ -48,7 +48,7 @@ const Login = () => {
       const tokenFromResponse = data.data.accessToken;
       user.login(tokenFromResponse);
       localStorage.setItem("userInfo", JSON.stringify(data.data));
-      navigate("/dashboard");
+      navigate("/AssetSphere/dashboard");
     } catch (error) {
       setErrorMessage(error.message || "Usuario o contraseña incorrectos.");
       setModalError(true);
