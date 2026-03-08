@@ -38,16 +38,38 @@ const Login = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        const errorMessage =
-          data.detail && data.detail.length > 0
-            ? data.detail[0].msg
-            : "Error de autenticación";
-        throw new Error(errorMessage);
+        let errorMsg = "Usuario o contraseña incorrectos.";
+        if (data.detail) {
+          if (typeof data.detail === "string") {
+            errorMsg = data.detail;
+          } else if (Array.isArray(data.detail) && data.detail.length > 0) {
+            errorMsg = data.detail[0].msg || data.detail[0].message || errorMsg;
+          }
+        } else if (data.message) {
+          errorMsg = data.message;
+        }
+        throw new Error(errorMsg);
       }
 
-      const tokenFromResponse = data.data.accessToken;
+      const tokenFromResponse =
+        data.data?.accessToken ||
+        data.data?.access_token ||
+        data.accessToken ||
+        data.access_token;
+
+      if (!tokenFromResponse) {
+        throw new Error("No se recibió un token de autenticación válido.");
+      }
+
       user.login(tokenFromResponse);
-      localStorage.setItem("userInfo", JSON.stringify(data.data));
+      const userInfoData = data.data || {};
+      localStorage.setItem("userInfo", JSON.stringify({
+        user_id: userInfoData.user_id || userInfoData.id,
+        name: userInfoData.name,
+        username: userInfoData.username,
+        email: userInfoData.email,
+        role: userInfoData.role,
+      }));
       navigate("/AssetSphere/dashboard");
     } catch (error) {
       setErrorMessage(error.message || "Usuario o contraseña incorrectos.");
