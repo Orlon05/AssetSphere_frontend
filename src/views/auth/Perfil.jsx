@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../../config/api";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import { ArrowLeft, UserCircle } from "lucide-react";
+import { ArrowLeft, UserCircle, ShieldCheck } from "lucide-react";
 
 export default function Perfil() {
   const navigate = useNavigate();
@@ -13,9 +12,6 @@ export default function Perfil() {
     email: "",
     role: "",
   });
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_PATH = "/AssetSphere";
@@ -82,115 +78,6 @@ export default function Perfil() {
       );
     }
   }, [userId, token]);
-
-  const handleChangePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      Swal.fire({
-        title: "Error",
-        text: "Las contraseñas no coinciden",
-        icon: "error",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-
-    if (!userId) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo identificar al usuario",
-        icon: "error",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${API_URL}/users/edit/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            authorized: true,
-            password: newPassword,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Error HTTP ${response.status}`;
-        try {
-          const errorData = await response.json();
-          console.error("Detalles del error (JSON):", errorData);
-          if (errorData && Array.isArray(errorData.detail)) {
-            errorMessage = errorData.detail.map((e) => e.msg).join(", ");
-          } else if (errorData && errorData.message) {
-            errorMessage = errorData.message;
-          } else if (errorData) {
-            errorMessage = JSON.stringify(errorData);
-          }
-
-          Swal.fire({
-            title: "Error",
-            text: errorMessage,
-            icon: "error",
-            confirmButtonText: "Entendido",
-            confirmButtonColor: "#3085d6",
-          });
-        } catch (jsonError) {
-          console.error("Error al parsear JSON:", jsonError);
-          Swal.fire({
-            title: "Error",
-            text: errorMessage,
-            icon: "error",
-            confirmButtonText: "Entendido",
-            confirmButtonColor: "#3085d6",
-          });
-        }
-      } else {
-        Swal.fire({
-          title: "¡Éxito!",
-          text: "Contraseña actualizada con éxito",
-          icon: "success",
-          confirmButtonText: "Continuar",
-          confirmButtonColor: "#10b981",
-          background: "#ffffff",
-          color: "#374151",
-          iconColor: "#10b981",
-          customClass: {
-            popup: "rounded-lg shadow-xl",
-            title: "text-xl font-bold text-gray-800",
-            content: "text-gray-600",
-            confirmButton:
-              "bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors",
-          },
-        }).then(() => {
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-          navigate(`${BASE_PATH}/dashboard`);
-        });
-      }
-    } catch (error) {
-      console.error("Error inesperado:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Ocurrió un error inesperado",
-        icon: "error",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#3085d6",
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -270,66 +157,28 @@ export default function Perfil() {
           </div>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleChangePassword();
-          }}
-          className="space-y-4"
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+          <ShieldCheck size={22} className="text-blue-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-blue-800 mb-1">
+              Autenticación por Directorio Activo
+            </p>
+            <p className="text-sm text-blue-700">
+              La gestión de contraseñas se realiza a través del Directorio
+              Activo corporativo. Para cambiar su contraseña, comuníquese con
+              el área de Tecnología o use el portal de autoservicio de TI.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => navigate(`${BASE_PATH}/dashboard`)}
+          className="w-full mt-6 bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition flex items-center justify-center"
         >
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Contraseña actual
-            </label>
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nueva contraseña
-            </label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirmar nueva contraseña
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg shadow-sm focus:ring focus:ring-sky-400"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
-          >
-            Cambiar contraseña
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate(`${BASE_PATH}/dashboard`)}
-            className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition flex items-center justify-center mt-2"
-          >
-            <ArrowLeft className="mr-2" size={20} />
-            Regresar
-          </button>
-        </form>
+          <ArrowLeft className="mr-2" size={20} />
+          Regresar
+        </button>
       </div>
     </div>
   );

@@ -125,41 +125,56 @@ export default function Dashboard() {
       if (data.status === "success" && data.data) {
         setUser((prevUser) => ({
           ...prevUser,
-          name: data.data.name || "Usuario",
-          username: data.data.username || "Usuario",
-          email: data.data.email || "",
-          role: data.data.role || "",
+          name: data.data.name || prevUser.name,
+          username: data.data.username || prevUser.username,
+          email: data.data.email || prevUser.email,
+          role: data.data.role || prevUser.role,
         }));
       }
     } catch (error) {
-      console.error("Error al obtener datos del usuario:", error);
-      setUser((prevUser) => ({
-        ...prevUser,
-        name: "Usuario",
-        username: "Usuario",
-      }));
+      console.error("Error al obtener datos del usuario desde la API:", error);
     }
   };
 
   useEffect(() => {
     const initializeUser = async () => {
       try {
-        const userData = JSON.parse(localStorage.getItem("userInfo")) || {};
-        let userId = userData.user_id;
-
         const token = localStorage.getItem("authenticationToken");
-        if (!userId && token) {
-          const decodedToken = decodeJWT(token);
-          userId = decodedToken?.user_id;
-        }
+        const userData = JSON.parse(localStorage.getItem("userInfo")) || {};
 
-        setUser((prevUser) => ({
-          ...prevUser,
-          user_id: userId,
-          name: userData.name || "Usuario",
-          username: userData.username || "Usuario",
-          email: userData.email || "",
-        }));
+        const decoded = token ? decodeJWT(token) : null;
+
+        // Prefer an explicit user_id; fall back to the JWT 'sub' claim (AD SAM account or GUID)
+        const userId =
+          userData.user_id ||
+          userData.id ||
+          decoded?.user_id ||
+          decoded?.sub;
+
+        const name =
+          userData.name ||
+          decoded?.name ||
+          decoded?.display_name ||
+          "Usuario";
+
+        const username =
+          userData.username ||
+          decoded?.username ||
+          decoded?.preferred_username ||
+          decoded?.sub ||
+          "Usuario";
+
+        const email =
+          userData.email ||
+          decoded?.email ||
+          "";
+
+        const role =
+          userData.role ||
+          decoded?.role ||
+          "";
+
+        setUser({ user_id: userId, name, username, email, role });
 
         if (userId && token) {
           await fetchUserData(userId, token);
