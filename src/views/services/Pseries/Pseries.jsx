@@ -243,6 +243,7 @@ const Pseries = () => {
         const tableMetadata = [
           { name: "name", required: true, type: "string" },
           { name: "application", required: true, type: "string" },
+          { name: "application_cod", required: true, type: "string" },
           { name: "hostname", required: true, type: "string" },
           { name: "ip_address", required: false, type: "string" },
           { name: "environment", required: false, type: "string" },
@@ -325,6 +326,7 @@ const Pseries = () => {
         // Asegurar que todos los campos sean strings
         formattedRow.name = String(row.name || "");
         formattedRow.application = String(row.application || "");
+        formattedRow.application_cod = String(row.application_cod || "");
         formattedRow.hostname = String(row.hostname || "");
         formattedRow.ip_address = String(row.ip_address || "");
         formattedRow.environment = String(row.environment || "");
