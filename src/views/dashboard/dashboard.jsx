@@ -10,6 +10,7 @@ import {
   Building,
   Cloud,
   ShieldCheck,
+  ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
@@ -549,12 +550,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-300/20">
-      {/* Encabezado */}
-      <header className="w-full p-4 flex justify-between items-center bg-white shadow-md rounded-b-xl">
+    <div className="as-page min-h-screen bg-slate-50">
+      {/* Encabezado con efecto Glassmorphism */}
+      <header className="sticky top-0 z-50 w-full px-8 py-4 flex justify-between items-center bg-white/80 backdrop-blur-lg border-b border-slate-200/60 shadow-sm transition-all">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="text-blue-600" size={40} />
-          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-sky-600 to-blue-400 drop-shadow-sm tracking-wide">
+          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-as-brand-500 to-as-brand-700 flex items-center justify-center shadow-md shadow-as-brand-500/20">
+            <ShieldCheck className="text-white" size={24} />
+          </div>
+          <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 tracking-tight">
             AssetSphere
           </h1>
         </div>
@@ -562,81 +565,129 @@ export default function Dashboard() {
         <div className="relative">
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center bg-gray-300 border-1 border-white shadow-lg gap-2 p-2 rounded-lg hover:bg-gray-400/30"
+            className="inline-flex items-center gap-3 rounded-full border border-slate-200 bg-white/50 pl-2 pr-4 py-1.5 text-sm text-slate-700 shadow-sm hover:bg-white hover:shadow transition-all"
           >
-            <span>{user.name || "Usuario"}</span>
-            <ChevronDown size={16} />
+            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-200 to-slate-100 border border-slate-300 flex items-center justify-center overflow-hidden">
+              <UserIcon size={16} className="text-slate-500" />
+            </div>
+            <span className="font-medium">{user.name || user.username || "Administrador"}</span>
+            <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-200/40 rounded-lg shadow-lg py-1 z-10">
+            <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 transform opacity-100 scale-100 transition-all origin-top-right">
+              <div className="px-4 py-3 border-b border-slate-100 mb-2">
+                <p className="text-sm font-semibold text-slate-800">{user.name || "Usuario"}</p>
+                <p className="text-xs text-slate-500 truncate">{user.email || "admin@assetsphere.com"}</p>
+              </div>
               <button
                 onClick={() => {
                   setIsProfileOpen(false);
                   navigate(`${BASE_PATH}/perfil/${user.user_id}/perfil`);
                 }}
-                className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+                className="w-full text-slate-600 text-left px-4 py-2.5 text-sm hover:bg-slate-50 hover:text-as-brand-600 flex items-center gap-3 transition-colors"
               >
                 <UserIcon size={16} />
-                Ver Perfil
+                <span className="font-medium">Mi Perfil</span>
               </button>
-
-              <div className="border-t border-gray-500 my-1"></div>
 
               <button
                 onClick={handleLogout}
-                className="w-full text-gray-900 text-left px-4 py-2 text-sm hover:bg-gray-600 flex items-center gap-2"
+                className="w-full text-red-600 text-left px-4 py-2.5 text-sm hover:bg-red-50 flex items-center gap-3 transition-colors mt-1"
               >
                 <LogOut size={16} />
-                Cerrar Sesión
+                <span className="font-medium">Cerrar Sesión</span>
               </button>
             </div>
           )}
         </div>
       </header>
 
-      <main className="container mx-auto p-6">
-        <div className="rounded-lg p-6 mb-8 shadow-lg bg-white :bg-stone-700">
-          <h2 className="text-2xl text-gray-900 :text-white font-bold mb-2">
-            ¡Bienvenido, {user.username || "Usuario"}!
-          </h2>
-          <p className="text-gray-800">
-            Desde aquí puedes gestionar todos los módulos del sistema.
-          </p>
+      <main className="container mx-auto p-6 lg:p-8 max-w-[1400px]">
+        {/* Banner de Bienvenida Premium */}
+        <div className="relative bg-slate-900 rounded-3xl p-10 mb-10 text-white overflow-hidden shadow-2xl border border-slate-800">
+          {/* Elementos decorativos de fondo */}
+          <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
+            <div className="absolute -right-20 -top-40 w-96 h-96 bg-as-brand-500/20 rounded-full blur-3xl"></div>
+            <div className="absolute right-40 -bottom-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
+            
+            {/* Patrón de puntos (dot pattern) simulado con gradiente radial */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+          </div>
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300 mb-4">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                Sistema Operativo en Línea
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight text-white">
+                Resumen de <span className="text-transparent bg-clip-text bg-gradient-to-r from-as-brand-400 to-sky-400">Infraestructura</span>
+              </h2>
+              <p className="text-slate-400 text-lg leading-relaxed">
+                Supervisa y administra todos los recursos de TI desde un único centro de comando. Selecciona un módulo para acceder a las herramientas de gestión avanzadas.
+              </p>
+            </div>
+            
+            {/* Widget de Resumen rápido en el banner */}
+            <div className="flex gap-4 w-full md:w-auto">
+              <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-5 flex-1 md:w-40 flex flex-col items-center justify-center">
+                <span className="text-slate-400 text-sm font-medium mb-1">Total Módulos</span>
+                <span className="text-3xl font-bold text-white">{modules.length}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Módulos disponibles */}
-        <div className="bg-white :bg-stone-700 rounded-lg p-6 shadow-lg">
-          <h3 className="text-2xl text-gray-900 :bg-stone-700 :text-gray-200 font-bold mb-6">
-            Módulos Disponibles
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {modules.map((module) => (
-              <div
-                key={module.id}
-                onClick={() => handleModuleClick(module.id)}
-                className="bg-gray-300/30 rounded-lg p-5 shadow-md hover:shadow-lg transition-all cursor-pointer"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-gray-300/30 rounded-lg">
-                    <module.icon size={24} className="text-blue-500" />
-                  </div>
-                  <span className="text-2xl font-bold text-blue-500">
+        {/* Sección de Módulos */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+          <div>
+            <h3 className="text-2xl font-bold text-slate-800 tracking-tight">Módulos del Sistema</h3>
+            <p className="text-slate-500 mt-1">Accede rápidamente a las distintas áreas de administración</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+          {modules.map((module) => (
+            <div
+              key={module.id}
+              onClick={() => handleModuleClick(module.id)}
+              className="group relative bg-white border border-slate-200 rounded-3xl p-8 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-as-brand-200 hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full"
+            >
+              {/* Resplandor sutil en hover */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-as-brand-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              
+              <div className="relative z-10 flex justify-between items-start mb-8">
+                <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl group-hover:bg-as-brand-50 group-hover:border-as-brand-100 transition-all duration-300 shadow-sm">
+                  <module.icon size={32} className="text-slate-600 group-hover:text-as-brand-600 transition-colors duration-300" strokeWidth={1.5} />
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-4xl font-black text-slate-800 tracking-tight group-hover:text-as-brand-600 transition-colors duration-300">
                     {module.loading ? "..." : module.count}
                   </span>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Registros</span>
                 </div>
-                <h4 className="text-lg text-gray-900 font-medium mb-2">
+              </div>
+              
+              <div className="relative z-10 flex-grow">
+                <h4 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-as-brand-700 transition-colors duration-300">
                   {module.title}
                 </h4>
-                <p className="text-gray-900 font-semibold text-sm mb-4">
+                <p className="text-slate-500 text-sm leading-relaxed mb-8">
                   {module.description}
                 </p>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                  Gestionar
-                </button>
               </div>
-            ))}
-          </div>
+              
+              <div className="relative z-10 pt-5 border-t border-slate-100 flex items-center justify-between mt-auto">
+                <span className="text-sm font-bold text-slate-400 group-hover:text-as-brand-600 transition-colors duration-300 uppercase tracking-wide">
+                  Administrar
+                </span>
+                <div className="h-10 w-10 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:bg-as-brand-600 group-hover:border-as-brand-600 shadow-sm transition-all duration-300">
+                  <ArrowRight size={18} className="text-slate-400 group-hover:text-white transform group-hover:translate-x-0.5 transition-all duration-300" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>

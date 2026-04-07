@@ -121,10 +121,10 @@ export default function VerSucursal() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando información de la sucursal...</p>
+      <div className="as-page flex items-center justify-center">
+        <div className="text-center flex flex-col items-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-as-brand-500 border-t-transparent mb-4"></div>
+          <p className="text-as-text font-medium">Cargando información de la sucursal...</p>
         </div>
       </div>
     );
@@ -132,13 +132,18 @@ export default function VerSucursal() {
 
   if (error || !sucursal) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p>{error || "No se pudo cargar la información de la sucursal"}</p>
+      <div className="as-page flex items-center justify-center p-6">
+        <div className="as-card max-w-md w-full p-8 text-center">
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={32} />
+          </div>
+          <h2 className="text-2xl font-bold text-as-text mb-2">Error</h2>
+          <p className="text-as-muted mb-6">
+            {error || "No se pudo cargar la información de la sucursal"}
+          </p>
           <button
             onClick={() => navigate(`${BASE_PATH}/sucursales`)}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="as-btn-primary w-full justify-center"
           >
             Volver a la lista
           </button>
@@ -148,43 +153,43 @@ export default function VerSucursal() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="as-page">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <Building className="mr-2 text-blue-400" />
+          <h1 className="text-2xl font-bold text-as-text flex items-center">
+            <Building className="mr-2 text-as-brand-600" />
             Detalles de Sucursal
           </h1>
-          <p className="text-sm text-gray-900">
+          <p className="text-sm text-as-muted mt-1">
             {sucursal.branch_name || sucursal.name || "Sucursal"}
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => navigate(`${BASE_PATH}/sucursales`)}
-            className="px-4 py-2 flex items-center gap-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+            className="as-btn-secondary"
           >
             <ArrowLeft size={16} />
-            Volver
+            <span className="hidden sm:inline">Volver</span>
           </button>
           <button
             onClick={() => navigate(`${BASE_PATH}/editar/${id}/sucursal`)}
-            className="px-4 py-2 flex items-center gap-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            className="as-btn-primary"
           >
             <Edit size={16} />
-            Editar
+            <span className="hidden sm:inline">Editar</span>
           </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
+      <main className="as-container">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Información Principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Información General */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Building className="mr-2 text-blue-500" size={20} />
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -242,7 +247,7 @@ export default function VerSucursal() {
             </div>
 
             {/* Ubicación */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <MapPin className="mr-2 text-green-500" size={20} />
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -294,7 +299,7 @@ export default function VerSucursal() {
             </div>
 
             {/* Información de Hardware */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Server className="mr-2 text-purple-500" size={20} />
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -386,7 +391,7 @@ export default function VerSucursal() {
             </div>
 
             {/* Información Administrativa */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Settings className="mr-2 text-orange-500" size={20} />
                 <h2 className="text-xl font-semibold text-gray-900">

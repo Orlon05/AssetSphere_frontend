@@ -133,13 +133,20 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validar tipo de archivo
-    const fileType = file.type;
-    if (
-      fileType !==
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ) {
-      setFileError("Por favor, seleccione un archivo Excel válido (.xlsx)");
+    const fileName = (file.name || "").toLowerCase();
+    const fileType = (file.type || "").toLowerCase();
+    const allowedExtensions = [".xlsx", ".xls"];
+    const hasAllowedExtension = allowedExtensions.some((ext) =>
+      fileName.endsWith(ext)
+    );
+    const allowedMimeTypes = [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ];
+    const hasAllowedMimeType = allowedMimeTypes.includes(fileType);
+
+    if (!hasAllowedExtension && !hasAllowedMimeType) {
+      setFileError("Por favor, seleccione un archivo Excel válido (.xlsx o .xls)");
       setExcelData([]);
       setShowTable(false);
       setSheetNames([]);
@@ -505,7 +512,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           <input
             id="excel-file"
             type="file"
-            accept=".xlsx"
+            accept=".xlsx,.xls"
             onChange={handleFileChange}
             className="hidden"
           />

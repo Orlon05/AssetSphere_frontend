@@ -34,6 +34,9 @@ import {
   Download,
   Upload,
   Plus,
+  ArrowUpRight,
+  Activity,
+  Layers,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
@@ -612,10 +615,10 @@ export default function Storage() {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="as-page flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando dispositivos de storage...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-as-brand-600 mb-4"></div>
+          <p className="text-as-muted">Cargando dispositivos de storage...</p>
         </div>
       </div>
     );
@@ -623,16 +626,16 @@ export default function Storage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+      <div className="as-page flex items-center justify-center">
+        <div className="as-card p-6 max-w-md w-full">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p>
+          <p className="text-as-text">
             {error.message ||
               "Ha ocurrido un error al cargar los dispositivos de storage"}
           </p>
           <button
             onClick={() => fetchStorage(currentPage, rowsPerPage)}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="as-btn-primary mt-4"
           >
             Reintentar
           </button>
@@ -641,24 +644,62 @@ export default function Storage() {
     );
   }
 
+  // Cálculos de estadísticas para las tarjetas
+  const totalStorage = storageList.length;
+  const uniqueCategories = new Set(storageList.map(s => s.category).filter(Boolean)).size;
+  const activeStorage = storageList.filter(s => {
+    const status = s.status?.toLowerCase();
+    return status === "aplicado" || status === "active" || status === "activo";
+  }).length;
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="as-page">
       {/* Header */}
-      <header className="w-full p-8 flex items-center border-b border-gray-200 bg-white shadow-sm">
+      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold flex items-center text-gray-800">
-            <HardDrive className="mr-2 text-blue-600" />
+          <h1 className="text-2xl font-bold text-as-text flex items-center">
+            <HardDrive className="mr-2 text-as-brand-600" />
             Dispositivos de Storage
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-as-muted">
             Gestión y monitoreo de dispositivos de almacenamiento
           </p>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <main className="as-container">
+        {/* Status Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-as-brand-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-as-brand-500 transition-colors duration-300"></div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Storage</span>
+              <HardDrive size={16} className="text-slate-400 group-hover:text-as-brand-600 transition-colors duration-300" />
+            </div>
+            <div className="text-xl font-bold text-slate-800 group-hover:text-as-brand-600 transition-colors duration-300">{totalStorage}</div>
+          </div>
+
+          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-emerald-500 transition-colors duration-300"></div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Storage Activos</span>
+              <Activity size={16} className="text-slate-400 group-hover:text-emerald-600 transition-colors duration-300" />
+            </div>
+            <div className="text-xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">{activeStorage}</div>
+          </div>
+
+          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-indigo-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-indigo-500 transition-colors duration-300"></div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Categorías</span>
+              <Layers size={16} className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-300" />
+            </div>
+            <div className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">{uniqueCategories}</div>
+          </div>
+        </div>
+
+        <div className="as-card p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -669,7 +710,7 @@ export default function Storage() {
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  className="as-input pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -685,11 +726,11 @@ export default function Storage() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg border border-blue-100">
-                <span className="font-medium text-blue-600 mr-2">
+              <div className="flex items-center bg-as-brand-50 px-4 py-2 rounded-lg border border-as-brand-100">
+                <span className="font-medium text-as-brand-700 mr-2">
                   {selectedCount}
                 </span>
-                <span className="text-gray-700">
+                <span className="text-as-text">
                   Storage{selectedCount !== 1 ? "s" : ""} seleccionado
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
@@ -699,14 +740,14 @@ export default function Storage() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={irCrear}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="as-btn-primary"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
                 onClick={handleImport}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+                className="as-btn-success"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -714,7 +755,7 @@ export default function Storage() {
               </button>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                className="as-btn-purple"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -724,14 +765,14 @@ export default function Storage() {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto border border-gray-200 rounded-lg">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-gray-50 text-gray-700 border-b border-gray-200">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar">
+            <table className="as-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-4 py-3 rounded-tl-lg">
+                  <th scope="col" className="as-th w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
+                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                       checked={
                         storageList.length > 0 &&
                         selectedStorage.size === storageList.length
@@ -739,21 +780,21 @@ export default function Storage() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th scope="col" className="px-6 py-3 font-semibold">
+                  <th scope="col" className="as-th">
                     Nombre
                   </th>
-                  <th scope="col" className="px-6 py-3 font-semibold">
+                  <th scope="col" className="as-th">
                     Estado
                   </th>
-                  <th scope="col" className="px-6 py-3 font-semibold">
+                  <th scope="col" className="as-th">
                     Serial
                   </th>
-                  <th scope="col" className="px-6 py-3 font-semibold">
+                  <th scope="col" className="as-th">
                     Fabricante
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 rounded-tr-lg text-right font-semibold"
+                    className="as-th text-right"
                   >
                     Acciones
                   </th>
@@ -765,46 +806,44 @@ export default function Storage() {
                     return (
                       <tr
                         key={storage.id}
-                        className={`border-b border-gray-200 ${
+                        className={`group border-b border-slate-100 transition-colors ${
                           selectedStorage.has(storage.id)
-                            ? "bg-blue-50"
-                            : index % 2 === 0
-                            ? "bg-white"
-                            : "bg-gray-50"
-                        } hover:bg-gray-100`}
+                            ? "bg-as-brand-50/50"
+                            : "bg-white hover:bg-slate-50/50"
+                        }`}
                       >
-                        <td className="px-4 py-4">
+                        <td className="as-td">
                           <input
                             type="checkbox"
-                            className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-blue-600"
+                            className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                             checked={selectedStorage.has(storage.id)}
                             onChange={() => toggleSelectStorage(storage.id)}
                           />
                         </td>
-                        <td className="px-6 py-4 font-medium text-gray-800">
+                        <td className="as-td font-semibold text-slate-900">
                           {storage.name}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="as-td">
                           {getStatusBadge(storage.status)}
                         </td>
-                        <td className="px-6 py-4 text-gray-600">
+                        <td className="as-td font-mono text-slate-600">
                           {storage.serial || "N/A"}
                         </td>
-                        <td className="px-6 py-4 text-gray-600">
+                        <td className="as-td text-slate-600">
                           {storage.manufacturer || "N/A"}
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end space-x-2">
+                        <td className="as-td text-right">
+                          <div className="flex items-center justify-end space-x-1 opacity-100 transition-opacity duration-200">
                             <button
                               onClick={() =>
                                 navigate(
                                   `${BASE_PATH}/ver/${storage.id}/storages`
                                 )
                               }
-                              className="p-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                              className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
                               title="Ver detalles"
                             >
-                              <Eye size={16} />
+                              <Eye size={18} />
                             </button>
                             <button
                               onClick={() =>
@@ -812,17 +851,17 @@ export default function Storage() {
                                   `${BASE_PATH}/editar/${storage.id}/storages`
                                 )
                               }
-                              className="p-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors"
+                              className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                               title="Editar"
                             >
-                              <Edit size={16} />
+                              <Edit size={18} />
                             </button>
                             <button
                               onClick={() => handleDeleteStorage(storage.id)}
-                              className="p-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                               title="Eliminar"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={18} />
                             </button>
                           </div>
                         </td>
@@ -832,11 +871,14 @@ export default function Storage() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={7}
-                      className="px-6 py-4 text-center text-gray-500"
+                      colSpan={6}
+                      className="px-6 py-12 text-center text-slate-500 bg-white"
                     >
-                      No se encontraron dispositivos de storage que coincidan
-                      con la búsqueda
+                      <div className="flex flex-col items-center justify-center">
+                        <HardDrive className="h-12 w-12 text-slate-300 mb-3" />
+                        <p className="text-sm font-medium text-slate-900">No se encontraron dispositivos</p>
+                        <p className="text-sm mt-1">Ajusta tu búsqueda o intenta agregar uno nuevo.</p>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -845,17 +887,17 @@ export default function Storage() {
           </div>
 
           {/* Pagination */}
-          <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4 px-2">
             <div className="flex items-center">
-              <span className="text-sm text-gray-500 mr-2">
-                Filas por página:
+              <span className="text-sm font-medium text-slate-500 mr-3">
+                Filas por página
               </span>
               <select
                 value={rowsPerPage}
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-gray-300 text-gray-700 rounded-md px-2 py-1 text-sm"
+                className="bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -865,31 +907,31 @@ export default function Storage() {
               </select>
             </div>
 
-            <div className="text-sm text-gray-500">
-              Mostrando {indexOfFirstStorage + 1} a{" "}
-              {Math.min(indexOfLastStorage, filteredStorage.length)} de{" "}
-              {filteredStorage.length} dispositivos
+            <div className="text-sm font-medium text-slate-500">
+              Mostrando <span className="text-slate-900">{indexOfFirstStorage + 1}</span> a{" "}
+              <span className="text-slate-900">{Math.min(indexOfLastStorage, filteredStorage.length)}</span> de{" "}
+              <span className="text-slate-900">{filteredStorage.length}</span>
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
-                <ChevronLeft size={16} className="text-gray-600" />
+                <ChevronLeft size={18} />
               </button>
-              <span className="px-3 py-1 rounded-md bg-blue-600 text-white">
+              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-as-brand-50 text-as-brand-700 font-semibold border border-as-brand-100">
                 {currentPage}
-              </span>
+              </div>
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
-                <ChevronRight size={16} className="text-gray-600" />
+                <ChevronRight size={18} />
               </button>
             </div>
           </div>

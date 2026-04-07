@@ -7,7 +7,7 @@ import { API_URL } from "../../config/api";
 
 const gradientStyle = {
   background:
-    "linear-gradient(45deg, rgb(133, 132, 132), rgb(184, 182, 182), rgb(124, 183, 231), rgb(86, 79, 179))",
+    "radial-gradient(1200px circle at 15% 10%, rgba(37, 99, 235, 0.20), transparent 55%), radial-gradient(900px circle at 85% 20%, rgba(56, 189, 248, 0.20), transparent 50%), linear-gradient(135deg, #0B1220 0%, #0F172A 45%, #111827 100%)",
   backgroundSize: "400% 400%",
   animation: "gradient 10s ease infinite",
   height: "100vh",
@@ -48,7 +48,7 @@ const Login = () => {
       const tokenFromResponse = data.data.accessToken;
       user.login(tokenFromResponse);
       localStorage.setItem("userInfo", JSON.stringify(data.data));
-      navigate("/dashboard");
+      navigate("/AssetSphere/dashboard");
     } catch (error) {
       setErrorMessage(error.message || "Usuario o contraseña incorrectos.");
       setModalError(true);
@@ -71,13 +71,13 @@ const Login = () => {
         {/* Modal de error */}
         {modalError && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-              <h2 className="text-xl font-bold text-red-600 mb-2">Error</h2>
-              <p className="text-gray-700 mb-4">{errorMessage}</p>
+            <div className="bg-white p-6 rounded-xl shadow-as-md w-full max-w-sm border border-as-border">
+              <h2 className="text-lg font-semibold text-as-text mb-2">Error</h2>
+              <p className="text-sm text-as-muted mb-4">{errorMessage}</p>
               <div className="text-right">
                 <button
                   onClick={cerrarModalError}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  className="as-btn-secondary"
                 >
                   Cerrar
                 </button>
@@ -87,49 +87,62 @@ const Login = () => {
         )}
 
         <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
+          <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-as-md ring-1 ring-gray-900/5 rounded-2xl sm:px-10 border border-as-border">
             <div className="w-full">
               <div className="flex justify-center mb-6">
                 <img src="/AssetSphere/logo.png" alt="Logo AssetSphere" />
               </div>
               <div className="text-center">
-                <h1 className="text-3xl font-semibold text-gray-900">Iniciar Sesión</h1>
+                <h1 className="text-3xl font-semibold text-as-text">Iniciar Sesión</h1>
+                <p className="text-sm text-as-muted mt-1">
+                  Accede para gestionar y monitorear tu infraestructura
+                </p>
               </div>
               <div className="mt-5">
                 <form onSubmit={handleLoginSubmit}>
-                  <div className="relative mt-6">
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
-                      placeholder="Usuario"
-                      required
-                      autoComplete="username"
-                    />
-                    <label className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-as-text mb-2">
                       Usuario
                     </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        <FaUser />
+                      </span>
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="as-input pl-10"
+                        placeholder="Ingresa tu usuario"
+                        required
+                        autoComplete="username"
+                      />
+                    </div>
                   </div>
-                  <div className="relative mt-6">
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
-                      placeholder="Contraseña"
-                      required
-                      autoComplete="current-password"
-                    />
-                    <label className="pointer-events-none absolute top-0 left-0 origin-left -translate-y-1/2 transform text-sm text-gray-800 opacity-75 transition-all duration-100 ease-in-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:pl-0 peer-focus:text-sm peer-focus:text-gray-800">
+                  <div className="mt-5">
+                    <label className="block text-sm font-medium text-as-text mb-2">
                       Contraseña
                     </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        <FaLock />
+                      </span>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="as-input pl-10"
+                        placeholder="Ingresa tu contraseña"
+                        required
+                        autoComplete="current-password"
+                      />
+                    </div>
                   </div>
                   <div className="my-6">
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none disabled:opacity-50"
+                      className="w-full as-btn-primary py-3"
                     >
                       {isLoading ? "Cargando..." : "Ingresar"}
                     </button>
