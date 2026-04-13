@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkTokenExpiration();
+
+    // Eliminado: No borrar el token al cerrar la ventana/pestaña para permitir recarga sin cerrar sesión
   }, [token]);
 
   const login = (newToken) => {
@@ -40,8 +42,32 @@ export const AuthProvider = ({ children }) => {
     setRemainingTime(0);
   };
 
+  // Wrapper para fetch autenticado que cierra sesión si el backend no responde o devuelve 401/403
+  const authFetch = async (url, options = {}) => {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+      });
+      if (response.status === 401 || response.status === 403) {
+        logout();
+        window.location.href = "/AssetSphere/login";
+        return null;
+      }
+      return response;
+    } catch (error) {
+      // Si el backend no responde, cerrar sesión y redirigir
+      logout();
+      window.location.href = "/AssetSphere/login";
+      return null;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ token, login, logout, remainingTime }}>
+    <AuthContext.Provider value={{ token, login, logout, remainingTime, authFetch }}>
       {children}
     </AuthContext.Provider>
   );

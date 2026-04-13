@@ -35,6 +35,7 @@ import {
   Download,
   Upload,
   Plus,
+  FileText,
 } from "lucide-react";
 import { createRoot } from "react-dom/client";
 import ExcelImporter from "../../../hooks/Excelimporter";
@@ -319,10 +320,15 @@ const Pseries = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:8000/api/insumos/recolectar", {
+      const currentToken = localStorage.getItem("authenticationToken");
+      if (!currentToken) {
+        throw new Error("Token de autorización no encontrado. Por favor, inicia sesión nuevamente.");
+      }
+
+      const response = await fetch(`${API_URL}/insumos/recolectar`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token ?? ""}`,
+          Authorization: `Bearer ${currentToken}`,
         },
         body: formData,
       });
@@ -855,6 +861,15 @@ const Pseries = () => {
               >
                 <Upload size={16} />
                 <span className="hidden sm:inline">Exportar</span>
+              </button>
+              <button
+                onClick={() => navigate(`${BASE_PATH}/reportes-pseries`)}
+                className="as-btn"
+                style={{ backgroundColor: "#0f766e", color: "white" }}
+                title="Ver reportes mensuales"
+              >
+                <FileText size={16} />
+                <span className="hidden sm:inline">Reportes</span>
               </button>
             </div>
           </div>

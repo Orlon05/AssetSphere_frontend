@@ -52,6 +52,7 @@ const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
 );
 const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
+const ReportesPseries = lazy(() => import("../views/services/Pseries/ReportesPseries"));
 
 // Storage
 
@@ -337,6 +338,14 @@ const EnrutadorApp = [
   {
     path: BASE_PATH,
     element: <Login />,
+  },
+  {
+    path: `${BASE_PATH}/reportes-pseries`,
+    element: (
+      <ProtectedRoute>
+        <ReportesPseries />
+      </ProtectedRoute>
+    ),
   },
 ];
 
