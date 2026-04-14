@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
+import Logo from "../../../IMG/Tata_Logo.png";
 
 export default function Sucursales() {
   const navigate = useNavigate();
@@ -554,10 +555,10 @@ export default function Sucursales() {
 
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center flex flex-col items-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-as-brand-500 border-t-transparent mb-4"></div>
-          <p className="text-as-text font-medium">Cargando sucursales...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent mb-4"></div>
+          <p className="text-gray-900 font-medium">Cargando sucursales...</p>
         </div>
       </div>
     );
@@ -565,18 +566,18 @@ export default function Sucursales() {
 
   if (error) {
     return (
-      <div className="as-page flex items-center justify-center p-6">
-        <div className="as-card max-w-md w-full p-8 text-center">
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="bg-white border border-gray-200 rounded-lg max-w-md w-full p-8 text-center">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-as-text mb-2">Error de carga</h2>
-          <p className="text-as-muted mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error de carga</h2>
+          <p className="text-gray-600 mb-6">
             {error.message || "Ha ocurrido un error al cargar las sucursales"}
           </p>
           <button
             onClick={() => fetchSucursales(currentPage, rowsPerPage)}
-            className="as-btn-primary w-full justify-center"
+            className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2"
           >
             Reintentar
           </button>
@@ -594,53 +595,48 @@ export default function Sucursales() {
   const uniqueRegions = new Set(sucursalesList.map(s => s.region).filter(Boolean)).size;
 
   return (
-    <div className="as-page">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-as-text flex items-center">
-            <Building className="mr-2 text-as-brand-600" />
-            Sucursales
-          </h1>
-          <p className="text-sm text-as-muted">
-            Gestión y monitoreo de sucursales
-          </p>
+      <header className="sticky top-0 z-40 w-full px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Sucursales</h1>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="as-container">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-as-brand-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-as-brand-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Sucursales</span>
-              <Building size={16} className="text-slate-400 group-hover:text-as-brand-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Total Sucursales</span>
+              <Building size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-as-brand-600 transition-colors duration-300">{totalSucursales}</div>
+            <div className="text-2xl font-bold text-gray-900">{totalSucursales}</div>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-emerald-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Sucursales Activas</span>
-              <Activity size={16} className="text-slate-400 group-hover:text-emerald-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Sucursales Activas</span>
+              <Activity size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">{activeSucursales}</div>
+            <div className="text-2xl font-bold text-gray-900">{activeSucursales}</div>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-indigo-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-indigo-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Regiones</span>
-              <MapPin size={16} className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Regiones</span>
+              <MapPin size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">{uniqueRegions}</div>
+            <div className="text-2xl font-bold text-gray-900">{uniqueRegions}</div>
           </div>
         </div>
 
-        <div className="as-card p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -651,7 +647,7 @@ export default function Sucursales() {
                 <input
                   type="text"
                   placeholder="Buscar por nombre o código..."
-                  className="as-input pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -663,11 +659,11 @@ export default function Sucursales() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center bg-as-brand-50 px-4 py-2 rounded-lg border border-as-brand-100">
-                <span className="font-medium text-as-brand-700 mr-2">
+              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
+                <span className="font-medium mr-2">
                   {selectedCount}
                 </span>
-                <span className="text-as-brand-800">
+                <span>
                   Sucursal{selectedCount !== 1 ? "es" : ""} seleccionada
                   {selectedCount !== 1 ? "s" : ""}
                 </span>
@@ -677,14 +673,14 @@ export default function Sucursales() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={irCrear}
-                className="as-btn-primary"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
                 onClick={handleImport}
-                className="as-btn-success"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -692,7 +688,7 @@ export default function Sucursales() {
               </button>
               <button
                 onClick={handleExport}
-                className="as-btn-purple"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -702,14 +698,14 @@ export default function Sucursales() {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar">
-            <table className="as-table">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full">
               <thead>
-                <tr>
-                  <th scope="col" className="as-th w-12">
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
                       checked={
                         sucursalesList.length > 0 &&
                         selectedSucursales.size === sucursalesList.length
@@ -717,24 +713,24 @@ export default function Sucursales() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Nombre
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Código
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Ciudad
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Región
                   </th>
                   <th
                     scope="col"
-                    className="as-th text-right"
+                    className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
                   >
                     Acciones
                   </th>
@@ -745,44 +741,44 @@ export default function Sucursales() {
                   filteredSucursales.map((sucursal, index) => (
                     <tr
                       key={sucursal.id}
-                      className={`group border-b border-slate-100 transition-colors ${
+                      className={`border-b border-gray-200 transition-colors ${
                         selectedSucursales.has(sucursal.id)
-                          ? "bg-as-brand-50/50"
-                          : "bg-white hover:bg-slate-50/50"
+                          ? "bg-gray-50"
+                          : "bg-white hover:bg-gray-50"
                       }`}
                     >
-                      <td className="as-td">
+                      <td className="px-6 py-3">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
                           checked={selectedSucursales.has(sucursal.id)}
                           onChange={() => toggleSelectSucursal(sucursal.id)}
                         />
                       </td>
-                      <td className="as-td font-medium text-slate-800">
+                      <td className="px-6 py-3 font-medium text-gray-800">
                         {sucursal.branch_name || sucursal.name || "N/A"}
                       </td>
-                      <td className="as-td text-slate-600">
+                      <td className="px-6 py-3 text-gray-600">
                         {sucursal.branch_code || "N/A"}
                       </td>
-                      <td className="as-td">
+                      <td className="px-6 py-3">
                         {getStatusBadge(sucursal.status)}
                       </td>
-                      <td className="as-td text-slate-600">
+                      <td className="px-6 py-3 text-gray-600">
                         {sucursal.city || "N/A"}
                       </td>
-                      <td className="as-td text-slate-600">
+                      <td className="px-6 py-3 text-gray-600">
                         {sucursal.region || "N/A"}
                       </td>
-                      <td className="as-td text-right">
-                        <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <td className="px-6 py-3 text-right">
+                        <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
                               navigate(
                                 `${BASE_PATH}/ver/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Ver detalles"
                           >
                             <Eye size={18} />
@@ -793,14 +789,14 @@ export default function Sucursales() {
                                 `${BASE_PATH}/editar/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Editar"
                           >
                             <Edit size={18} />
                           </button>
                           <button
                             onClick={() => handleDeleteSucursal(sucursal.id)}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Eliminar"
                           >
                             <Trash2 size={18} />
@@ -813,7 +809,7 @@ export default function Sucursales() {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-6 py-8 text-center text-slate-500 bg-slate-50/50"
+                      className="px-6 py-8 text-center text-gray-500 bg-gray-50"
                     >
                       No se encontraron sucursales que coincidan con la búsqueda
                     </td>
@@ -826,7 +822,7 @@ export default function Sucursales() {
           {/* Pagination */}
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-gray-500">
                 Filas por página:
               </span>
               <select
@@ -834,7 +830,7 @@ export default function Sucursales() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="as-input py-1.5 pl-3 pr-8 text-sm"
+                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -844,21 +840,21 @@ export default function Sucursales() {
               </select>
             </div>
 
-            <div className="text-sm font-medium text-slate-500">
-              Mostrando <span className="text-slate-900">{indexOfFirstSucursal + 1}</span> a{" "}
-              <span className="text-slate-900">{Math.min(indexOfLastSucursal, filteredSucursales.length)}</span> de{" "}
-              <span className="text-slate-900">{filteredSucursales.length}</span> sucursales
+            <div className="text-sm font-medium text-gray-500">
+              Mostrando <span className="text-gray-900">{indexOfFirstSucursal + 1}</span> a{" "}
+              <span className="text-gray-900">{Math.min(indexOfLastSucursal, filteredSucursales.length)}</span> de{" "}
+              <span className="text-gray-900">{filteredSucursales.length}</span> sucursales
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
-              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-as-brand-50 text-as-brand-700 font-semibold border border-as-brand-100">
+              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-gray-900 text-white font-semibold border border-gray-900">
                 {currentPage}
               </div>
               <button
@@ -866,7 +862,7 @@ export default function Sucursales() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight size={18} />
               </button>

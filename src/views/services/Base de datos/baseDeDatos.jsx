@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { createRoot } from "react-dom/client";
 import {Database, Search, Eye, Edit, Trash2, ChevronLeft, ChevronRight, Download, Upload, Plus, ArrowUpRight, Activity, Layers} from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
+import Logo from "../../../IMG/Tata_Logo.png";
 
 /**
  * Componente principal para la gestión de bases de datos
@@ -643,10 +644,10 @@ const BaseDeDatos = () => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-as-brand-600 mb-4"></div>
-          <p className="text-as-muted">Cargando bases de datos...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mb-4"></div>
+          <p className="text-gray-600">Cargando bases de datos...</p>
         </div>
       </div>
     );
@@ -654,8 +655,8 @@ const BaseDeDatos = () => {
 
   if (error) {
     return (
-      <div className="as-page flex items-center justify-center p-6">
-        <div className="as-card max-w-md w-full p-6">
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="bg-white border border-gray-200 rounded-lg max-w-md w-full p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
               <Activity className="text-red-600" size={20} />
@@ -667,7 +668,7 @@ const BaseDeDatos = () => {
           </p>
           <button
             onClick={() => fetchBasesDeDatos(currentPage, rowsPerPage)}
-            className="as-btn-primary mt-5"
+            className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition mt-5"
           >
             Reintentar
           </button>
@@ -682,53 +683,48 @@ const BaseDeDatos = () => {
   const activeBases = base_datos.filter(bd => bd.inactive === "False" || bd.inactive === false || bd.inactive === "0" || !bd.inactive).length;
 
   return (
-    <div className="as-page">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-as-text flex items-center">
-            <Database className="mr-2 text-as-brand-600" />
-            Lista de Bases de datos
-          </h1>
-          <p className="text-sm text-as-muted">
-            Gestión y monitoreo de bases de datos
-          </p>
+      <header className="sticky top-0 z-40 w-full px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Bases de Datos</h1>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="as-container">
+      <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Status Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-as-brand-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-as-brand-500 transition-colors duration-300"></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Bases de Datos</span>
-              <Database size={16} className="text-slate-400 group-hover:text-as-brand-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Total Bases de Datos</span>
+              <Database size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-as-brand-600 transition-colors duration-300">{totalBases}</div>
+            <div className="text-2xl font-bold text-gray-900">{totalBases}</div>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-emerald-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Bases Activas</span>
-              <Activity size={16} className="text-slate-400 group-hover:text-emerald-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Bases Activas</span>
+              <Activity size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">{activeBases}</div>
+            <div className="text-2xl font-bold text-gray-900">{activeBases}</div>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-indigo-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-indigo-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Categorías</span>
-              <Layers size={16} className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Categorías</span>
+              <Layers size={16} className="text-gray-400" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">{uniqueCategories}</div>
+            <div className="text-2xl font-bold text-gray-900">{uniqueCategories}</div>
           </div>
         </div>
 
-        <div className="as-card p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -739,7 +735,7 @@ const BaseDeDatos = () => {
                 <input
                   type="text"
                   placeholder="Buscar base de datos..."
-                  className="as-input pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -752,7 +748,7 @@ const BaseDeDatos = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center bg-as-brand-50 text-as-brand-700 px-4 py-2 rounded-lg border border-as-brand-100">
+              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
                 <span className="font-medium mr-2">{selectedCount}</span>
                 <span>
                   Base de datos{selectedCount !== 1 ? "es" : ""} seleccionada
@@ -764,14 +760,14 @@ const BaseDeDatos = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={irCrear}
-                className="as-btn-primary"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
                 onClick={handleImport}
-                className="as-btn-success"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -779,7 +775,7 @@ const BaseDeDatos = () => {
               </button>
               <button
                 onClick={handleExport}
-                className="as-btn-purple"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -789,14 +785,14 @@ const BaseDeDatos = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar">
-            <table className="as-table">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <table className="w-full">
               <thead>
-                <tr>
-                  <th scope="col" className="as-th w-12">
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
                       checked={
                         base_datos.length > 0 &&
                         selectedBasesDeDatos.size === base_datos.length
@@ -804,21 +800,21 @@ const BaseDeDatos = () => {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Nombre
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     ID de Instancia
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Puerto
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Categoría
                   </th>
                   <th
                     scope="col"
-                    className="as-th text-right"
+                    className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
                   >
                     Acciones
                   </th>
@@ -829,40 +825,40 @@ const BaseDeDatos = () => {
                   filteredBasesDeDatos.map((baseDeDatos, index) => (
                     <tr
                       key={baseDeDatos.id}
-                      className={`group border-b border-slate-100 transition-colors ${
+                      className={`border-b border-gray-200 transition-colors ${
                         selectedBasesDeDatos.has(baseDeDatos.id)
-                          ? "bg-as-brand-50/50"
-                          : "bg-white hover:bg-slate-50/50"
+                          ? "bg-gray-50"
+                          : "bg-white hover:bg-gray-50"
                       }`}
                     >
-                      <td className="as-td">
+                      <td className="px-6 py-3">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
                           checked={selectedBasesDeDatos.has(baseDeDatos.id)}
                           onChange={() =>
                             toggleSelectBasesDeDatos(baseDeDatos.id)
                           }
                         />
                       </td>
-                      <td className="as-td font-semibold text-slate-900">
+                      <td className="px-6 py-3 font-semibold text-gray-900">
                         {baseDeDatos.name}
                       </td>
-                      <td className="as-td">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                      <td className="px-6 py-3">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
                           {baseDeDatos.instance_id}
                         </span>
                       </td>
-                      <td className="as-td font-mono text-slate-600">
+                      <td className="px-6 py-3 font-mono text-gray-600">
                         {baseDeDatos.port}
                       </td>
-                      <td className="as-td">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100/50">
+                      <td className="px-6 py-3">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
                           <Database size={12} />
                           {baseDeDatos.category}
                         </span>
                       </td>
-                      <td className="as-td text-right">
+                      <td className="px-6 py-3 text-right">
                         <div className="flex items-center justify-end space-x-1 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
@@ -870,7 +866,7 @@ const BaseDeDatos = () => {
                                 `${BASE_PATH}/ver/${baseDeDatos.id}/base-de-datos`
                               )
                             }
-                            className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Ver detalles"
                           >
                             <Eye size={18} />
@@ -881,14 +877,14 @@ const BaseDeDatos = () => {
                                 `${BASE_PATH}/editar/${baseDeDatos.id}/base-de-datos`
                               )
                             }
-                            className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Editar"
                           >
                             <Edit size={18} />
                           </button>
                           <button
                             onClick={() => handleDeleteStorage(baseDeDatos.id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Eliminar"
                           >
                             <Trash2 size={18} />
@@ -901,11 +897,11 @@ const BaseDeDatos = () => {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-12 text-center text-slate-500 bg-white"
+                      className="px-6 py-12 text-center text-gray-500 bg-white"
                     >
                       <div className="flex flex-col items-center justify-center">
-                        <Database className="h-12 w-12 text-slate-300 mb-3" />
-                        <p className="text-sm font-medium text-slate-900">No se encontraron bases de datos</p>
+                        <Database className="h-12 w-12 text-gray-300 mb-3" />
+                        <p className="text-sm font-medium text-gray-900">No se encontraron bases de datos</p>
                         <p className="text-sm mt-1">Ajusta tu búsqueda o intenta agregar una nueva.</p>
                       </div>
                     </td>
@@ -926,7 +922,7 @@ const BaseDeDatos = () => {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -936,21 +932,21 @@ const BaseDeDatos = () => {
               </select>
             </div>
 
-            <div className="text-sm font-medium text-slate-500">
-              Mostrando <span className="text-slate-900">{(currentPage - 1) * rowsPerPage + 1}</span> a{" "}
-              <span className="text-slate-900">{Math.min(currentPage * rowsPerPage, filteredBasesDeDatos.length)}</span>{" "}
-              de <span className="text-slate-900">{filteredBasesDeDatos.length}</span>
+            <div className="text-sm font-medium text-gray-500">
+              Mostrando <span className="text-gray-900">{(currentPage - 1) * rowsPerPage + 1}</span> a{" "}
+              <span className="text-gray-900">{Math.min(currentPage * rowsPerPage, filteredBasesDeDatos.length)}</span>{" "}
+              de <span className="text-gray-900">{filteredBasesDeDatos.length}</span>
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
-              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-as-brand-50 text-as-brand-700 font-semibold border border-as-brand-100">
+              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-gray-900 text-white font-semibold border border-gray-900">
                 {currentPage}
               </div>
               <button
@@ -958,7 +954,7 @@ const BaseDeDatos = () => {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight size={18} />
               </button>

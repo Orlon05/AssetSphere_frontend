@@ -1,6 +1,7 @@
 import { API_URL } from "../../../config/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import Chart from "react-apexcharts";
 import {
   ArrowLeft,
   FileText,
@@ -9,6 +10,12 @@ import {
   ChevronDown,
   AlertCircle,
   RefreshCcw,
+  Search,
+  X,
+  BarChart3,
+  TrendingUp,
+  Server,
+  Zap,
 } from "lucide-react";
 
 const ReportesPseries = () => {
@@ -20,6 +27,7 @@ const ReportesPseries = () => {
   const [tablaData, setTablaData] = useState({ headers: [], rows: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [busqueda, setBusqueda] = useState("");
 
   const token = localStorage.getItem("authenticationToken");
 
@@ -31,6 +39,69 @@ const ReportesPseries = () => {
     const rows = lineas.slice(1).map((linea) => linea.split(","));
     return { headers, rows };
   };
+
+  // Calcula estadísticas para gráficos
+  const estadisticas = useMemo(() => {
+    if (tablaData.rows.length === 0) {
+      return {
+        totalServidores: 0,
+        totalActivos: 0,
+        totalInactivos: 0,
+        cpuPromedio: 0,
+        memoriaPromedio: 0,
+        cpuData: [],
+        memoriaData: [],
+        estadosData: [],
+      };
+    }
+
+    const headerMap = {};
+    tablaData.headers.forEach((h, i) => {
+      headerMap[h.trim().toUpperCase()] = i;
+    });
+
+    let cpuActual = [],
+      memoriaActual = [],
+      estadoCounts = {};
+    let totalActivos = 0,
+      totalInactivos = 0;
+
+    tablaData.rows.forEach((row) => {
+      const estado = row[headerMap["ESTADO"]]?.trim();
+      if (estado) {
+        estadoCounts[estado] = (estadoCounts[estado] || 0) + 1;
+        if (estado.toLowerCase() === "activo") totalActivos++;
+        else totalInactivos++;
+      }
+
+      const cpu = parseFloat(row[headerMap["CPU_ACT"]]?.trim());
+      const memoria = parseFloat(row[headerMap["MEMORIA_ACT"]]?.trim());
+
+      if (!isNaN(cpu)) cpuActual.push(cpu);
+      if (!isNaN(memoria)) memoriaActual.push(memoria);
+    });
+
+    const cpuPromedioVal =
+      cpuActual.length > 0
+        ? (cpuActual.reduce((a, b) => a + b, 0) / cpuActual.length).toFixed(2)
+        : 0;
+    const memoriaPromedioVal =
+      memoriaActual.length > 0
+        ? (memoriaActual.reduce((a, b) => a + b, 0) / memoriaActual.length).toFixed(2)
+        : 0;
+
+    return {
+      totalServidores: tablaData.rows.length,
+      totalActivos,
+      totalInactivos,
+      cpuPromedio: cpuPromedioVal,
+      memoriaPromedio: memoriaPromedioVal,
+      estadosData: Object.entries(estadoCounts).map(([key, val]) => ({
+        name: key,
+        value: val,
+      })),
+    };
+  }, [tablaData]);
 
   const fetchReportes = async () => {
     setLoading(true);
@@ -63,6 +134,7 @@ const ReportesPseries = () => {
   const handleSeleccionarReporte = (reporte) => {
     setReporteSeleccionado(reporte);
     setTablaData(parsearCSV(reporte.contenido));
+    setBusqueda("");
   };
 
   const handleDescargar = () => {
@@ -148,17 +220,18 @@ const ReportesPseries = () => {
           </div>
         </div>
 
-        {reporteSeleccionado && (
-          <button
-            onClick={handleDescargar}
-            className="as-btn-primary group relative"
-            title="Descargar CSV"
-          >
-            <Download size={16} />
-            <span className="hidden sm:inline">Descargar CSV</span>
-            <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 rounded bg-black text-white text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">Descargar archivo</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {reporteSeleccionado && (
+            <button
+              onClick={handleDescargar}
+              className="as-btn-primary"
+              title="Descargar CSV"
+            >
+              <Download size={16} />
+              <span className="hidden sm:inline">Descargar CSV</span>
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="as-container">
@@ -208,12 +281,177 @@ const ReportesPseries = () => {
               </div>
             </div>
 
+            {/* KPIs - Estadísticas Principales */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="as-card p-4 border-l-4 border-l-blue-500">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
+                      Total Servidores
+                    </p>
+                    <p className="text-2xl font-bold text-slate-800 mt-1">
+                      {estadisticas.totalServidores}
+                    </p>
+                  </div>
+                  <Server size={24} className="text-blue-500 opacity-20" />
+                </div>
+              </div>
+
+              <div className="as-card p-4 border-l-4 border-l-green-500">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
+                      Servidores Activos
+                    </p>
+                    <p className="text-2xl font-bold text-green-600 mt-1">
+                      {estadisticas.totalActivos}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {estadisticas.totalServidores > 0
+                        ? (
+                            (estadisticas.totalActivos /
+                              estadisticas.totalServidores) *
+                            100
+                          ).toFixed(1)
+                        : 0}
+                      %
+                    </p>
+                  </div>
+                  <TrendingUp size={24} className="text-green-500 opacity-20" />
+                </div>
+              </div>
+
+              <div className="as-card p-4 border-l-4 border-l-orange-500">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
+                      CPU Promedio
+                    </p>
+                    <p className="text-2xl font-bold text-slate-800 mt-1">
+                      {estadisticas.cpuPromedio}%
+                    </p>
+                  </div>
+                  <Zap size={24} className="text-orange-500 opacity-20" />
+                </div>
+              </div>
+
+              <div className="as-card p-4 border-l-4 border-l-purple-500">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
+                      Memoria Promedio
+                    </p>
+                    <p className="text-2xl font-bold text-slate-800 mt-1">
+                      {estadisticas.memoriaPromedio} GB
+                    </p>
+                  </div>
+                  <BarChart3 size={24} className="text-purple-500 opacity-20" />
+                </div>
+              </div>
+            </div>
+
+            {/* Gráficos */}
+            {estadisticas.totalServidores > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Gráfico de Estados */}
+                <div className="as-card p-6">
+                  <h3 className="text-sm font-semibold text-slate-800 mb-4">
+                    Distribución de Estados
+                  </h3>
+                  {estadisticas.estadosData.length > 0 ? (
+                    <Chart
+                      options={{
+                        chart: { type: "donut" },
+                        labels: estadisticas.estadosData.map((d) => d.name),
+                        colors: [
+                          "#10b981",
+                          "#ef4444",
+                          "#f59e0b",
+                          "#6366f1",
+                        ],
+                        plotOptions: {
+                          pie: {
+                            donut: {
+                              size: "75%",
+                              labels: {
+                                show: true,
+                                name: {
+                                  show: true,
+                                  fontSize: "12px",
+                                },
+                                value: {
+                                  show: true,
+                                  fontSize: "14px",
+                                  fontWeight: 600,
+                                },
+                              },
+                            },
+                          },
+                        },
+                        legend: { position: "bottom" },
+                      }}
+                      series={estadisticas.estadosData.map((d) => d.value)}
+                      type="donut"
+                      height={300}
+                    />
+                  ) : (
+                    <p className="text-slate-400 text-sm">
+                      Sin datos de estado
+                    </p>
+                  )}
+                </div>
+
+                {/* Resumen tabla de Estados */}
+                <div className="as-card p-6">
+                  <h3 className="text-sm font-semibold text-slate-800 mb-4">
+                    Resumen de Estados
+                  </h3>
+                  <div className="space-y-3">
+                    {estadisticas.estadosData.map((estado, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{
+                              backgroundColor: [
+                                "#10b981",
+                                "#ef4444",
+                                "#f59e0b",
+                                "#6366f1",
+                              ][idx % 4],
+                            }}
+                          ></div>
+                          <span className="text-sm text-slate-700">
+                            {estado.name}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-slate-800">
+                            {estado.value}
+                          </span>
+                          <span className="text-xs text-slate-400 ml-2">
+                            (
+                            {(
+                              (estado.value /
+                                estadisticas.totalServidores) *
+                              100
+                            ).toFixed(1)}
+                            %)
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Tabla de datos */}
             <div className="as-card p-0 overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-semibold text-slate-800">
-                    Datos del reporte
+                    Detalle de Servidores
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
                     Generado el {formatearFecha(reporteSeleccionado?.fecha_generado)} ·{" "}
@@ -223,42 +461,101 @@ const ReportesPseries = () => {
               </div>
 
               {tablaData.headers.length > 0 ? (
-                <div className="overflow-x-auto custom-scrollbar max-h-[60vh]">
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
-                      <tr>
-                        {tablaData.headers.map((header, i) => (
-                          <th
-                            key={i}
-                            className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap"
-                          >
-                            {header.trim()}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tablaData.rows.map((row, rowIdx) => (
-                        <tr
-                          key={rowIdx}
-                          className={
-                            "border-b border-slate-100 transition-colors " +
-                            (rowIdx % 2 === 0 ? "bg-white" : "bg-slate-50/70")
-                          }
+                <>
+                  {/* Buscador */}
+                  <div className="px-6 py-3 border-b border-slate-100 bg-white">
+                    <div className="relative max-w-sm">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Search size={15} className="text-slate-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Buscar en el reporte..."
+                        className="as-input pl-9 pr-8 py-1.5 text-sm"
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                      />
+                      {busqueda && (
+                        <button
+                          onClick={() => setBusqueda("")}
+                          className="absolute inset-y-0 right-2 flex items-center text-slate-400 hover:text-slate-600"
                         >
-                          {row.map((cell, cellIdx) => (
-                            <td
-                              key={cellIdx}
-                              className="px-4 py-3 text-slate-700 whitespace-nowrap"
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="overflow-x-auto custom-scrollbar max-h-[60vh]">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 z-10 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                        <tr>
+                          {tablaData.headers.map((header, i) => (
+                            <th
+                              key={i}
+                              className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider whitespace-nowrap bg-slate-50"
                             >
-                              {cell?.trim() || "—"}
-                            </td>
+                              {header.trim()}
+                            </th>
                           ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {tablaData.rows
+                          .filter((row) =>
+                            busqueda.trim() === ""
+                              ? true
+                              : row.some((cell) =>
+                                  cell?.toLowerCase().includes(busqueda.toLowerCase())
+                                )
+                          )
+                          .map((row, rowIdx) => {
+                            const estado = row[
+                              tablaData.headers.indexOf("Estado")
+                            ]?.trim();
+                            let rowColor = "bg-white";
+                            if (estado?.toLowerCase() === "activo")
+                              rowColor = "bg-green-50/50";
+                            else if (estado?.toLowerCase() === "inactivo")
+                              rowColor = "bg-red-50/50";
+                            else if (estado?.toLowerCase() === "warning")
+                              rowColor = "bg-yellow-50/50";
+
+                            return (
+                              <tr
+                                key={rowIdx}
+                                className={`${rowColor} border-b border-slate-100 hover:bg-opacity-75 transition-colors`}
+                              >
+                                {row.map((cell, cellIdx) => (
+                                  <td
+                                    key={cellIdx}
+                                    className="px-4 py-3 text-slate-700 whitespace-nowrap text-xs"
+                                  >
+                                    {cell?.trim() || "—"}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                        {tablaData.rows.filter((row) =>
+                          busqueda.trim() === ""
+                            ? true
+                            : row.some((cell) =>
+                                cell?.toLowerCase().includes(busqueda.toLowerCase())
+                              )
+                        ).length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={tablaData.headers.length}
+                              className="px-6 py-10 text-center text-slate-400 text-sm"
+                            >
+                              No se encontraron resultados para "{busqueda}"
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               ) : (
                 <div className="p-12 text-center text-slate-400 text-sm">
                   El reporte no tiene datos.

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Logo from "../../IMG/Tata_Logo.png";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import BasesDeDatos from "../services/Base de datos/baseDeDatos";
 import Pseries from "../services/Pseries/Pseries";
 import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
 import Storage from "../services/storage/Storage";
-import { ShieldCheck } from "lucide-react";
 
 import {
   Server,
@@ -92,13 +92,15 @@ export default function Sidebar() {
         </div>
 
         {/* Logo Section */}
-        <div className={`flex items-center ${open ? "justify-start px-6" : "justify-center"} h-24 border-b border-slate-800/50 mb-4 transition-all overflow-hidden`}>
-          <div className="min-w-max flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-as-brand-500 to-as-brand-600 flex items-center justify-center shadow-lg shadow-as-brand-500/20">
-              <ShieldCheck className="text-white" size={22} strokeWidth={2.5} />
-            </div>
+        <div className={`flex items-center ${open ? "justify-start px-6" : "justify-center"} h-24 border-b border-slate-800/30 mb-6 transition-all overflow-hidden`}>
+          <div className="min-w-max flex items-center gap-4">
+            <img 
+              src={Logo}
+              alt="AssetSphere Logo"
+              className="h-12 w-12 object-contain filter drop-shadow-lg"
+            />
             <h1
-              className={`text-xl font-bold text-white tracking-wide whitespace-nowrap transition-opacity duration-300 ${
+              className={`text-2xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent tracking-tight whitespace-nowrap transition-opacity duration-300 ${
                 !open ? "opacity-0 w-0 hidden" : "opacity-100"
               }`}
             >

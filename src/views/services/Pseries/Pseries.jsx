@@ -1,4 +1,5 @@
 import { API_URL } from "../../../config/api";
+import Logo from "../../../IMG/Tata_Logo.png";
 /**
  * Componente principal para la gestión de servidores PSeries
  *
@@ -725,65 +726,60 @@ const Pseries = () => {
   }
 
   return (
-    <div className="as-page">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-as-text flex items-center">
-            <Server className="mr-2 text-as-brand-600" />
-            Servidores PSeries
-          </h1>
-          <p className="text-sm text-as-muted">
-            Gestión y monitoreo de servidores PSeries
-          </p>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Servidores PSeries
+              </h1>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="as-container">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-as-brand-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-as-brand-500 transition-colors duration-300"></div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total</span>
-              <Activity size={16} className="text-slate-400 group-hover:text-as-brand-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase">Total</span>
+              <Activity size={16} className="text-gray-600" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-as-brand-600 transition-colors duration-300">{statusCounts.total}</div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
           </div>
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-emerald-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Corriendo</span>
-              <CheckCircle size={16} className="text-slate-400 group-hover:text-emerald-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase">Corriendo</span>
+              <CheckCircle size={16} className="text-emerald-600" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">{statusCounts.running}</div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.running}</div>
           </div>
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-red-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-red-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">No activo</span>
-              <AlertCircle size={16} className="text-slate-400 group-hover:text-red-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase">No activo</span>
+              <AlertCircle size={16} className="text-red-600" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-red-600 transition-colors duration-300">{statusCounts.inactive}</div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.inactive}</div>
           </div>
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-amber-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-amber-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Mantenimiento</span>
-              <Clock size={16} className="text-slate-400 group-hover:text-amber-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase">Mantenimiento</span>
+              <Clock size={16} className="text-amber-600" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-amber-600 transition-colors duration-300">{statusCounts.maintenance}</div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.maintenance}</div>
           </div>
-          <div className="group relative bg-white border border-slate-200 rounded-lg p-3 hover:shadow-sm hover:border-indigo-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-indigo-500 transition-colors duration-300"></div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Otros</span>
-              <Server size={16} className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-300" />
+              <span className="text-xs font-medium text-gray-600 uppercase">Otros</span>
+              <Server size={16} className="text-indigo-600" />
             </div>
-            <div className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">{statusCounts.other}</div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.other}</div>
           </div>
         </div>
-        <div className="as-card p-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -794,7 +790,7 @@ const Pseries = () => {
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="as-input pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -807,7 +803,7 @@ const Pseries = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center bg-as-brand-50 text-as-brand-700 px-4 py-2 rounded-lg border border-as-brand-100">
+              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
                 <span className="font-medium mr-2">
                   {selectedCount}
                 </span>
@@ -828,7 +824,7 @@ const Pseries = () => {
               />
               <button
                 onClick={irCrear}
-                className="as-btn-primary"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
@@ -836,10 +832,10 @@ const Pseries = () => {
               <button
                 onClick={handleRecolectarInsumos}
                 disabled={insumosLoading}
-                className={`as-btn ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
                   insumosLoading
-                    ? "bg-slate-400 cursor-not-allowed text-white"
-                    : "bg-slate-700 hover:bg-slate-800 text-white"
+                    ? "bg-gray-400 cursor-not-allowed text-white"
+                    : "bg-gray-700 hover:bg-gray-600 text-white"
                 }`}
                 title="Seleccionar Excel y recolectar insumos"
               >
@@ -848,7 +844,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={handleImport}
-                className="as-btn-success"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -856,7 +852,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={handleExport}
-                className="as-btn-purple"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -864,8 +860,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={() => navigate(`${BASE_PATH}/reportes-pseries`)}
-                className="as-btn"
-                style={{ backgroundColor: "#0f766e", color: "white" }}
+                className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition flex items-center gap-2"
                 title="Ver reportes mensuales"
               >
                 <FileText size={16} />

@@ -22,6 +22,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../../IMG/Tata_Logo.png";
 import Swal from "sweetalert2";
 import {
   Search,
@@ -1012,68 +1013,56 @@ export default function ServidoresFisicos() {
   const uniqueModels = new Set(servers.map(s => s.server_model).filter(Boolean)).size;
 
   return (
-    <div className="as-page">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-as-text flex items-center">
-            <Server className="mr-2 text-as-brand-600" />
-            Servidores Físicos
-          </h1>
-          <p className="text-sm text-as-muted">
-            Gestión y monitoreo de servidores físicos
-          </p>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Servidores Físicos
+              </h1>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Contenido principal */}
-      <main className="as-container">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="group relative bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-as-brand-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-as-brand-500 transition-colors duration-300"></div>
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-as-brand-50 group-hover:border-as-brand-100 transition-colors duration-300">
-                <Server size={24} className="text-slate-500 group-hover:text-as-brand-600 transition-colors duration-300" />
-              </div>
-              <ArrowUpRight size={20} className="text-slate-300 group-hover:text-as-brand-500 group-hover:scale-110 transition-all duration-300" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <Server size={20} className="text-gray-600" />
+              <span className="text-2xl font-semibold text-gray-900">
+                {totalServers}
+              </span>
             </div>
-            <div>
-              <h3 className="text-3xl font-black text-slate-800 group-hover:text-as-brand-600 transition-colors duration-300">{totalServers}</h3>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Total Servidores</p>
-            </div>
+            <p className="text-sm text-gray-600">Total Servidores</p>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-emerald-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-emerald-500 transition-colors duration-300"></div>
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors duration-300">
-                <Activity size={24} className="text-slate-500 group-hover:text-emerald-600 transition-colors duration-300" />
-              </div>
-              <ArrowUpRight size={20} className="text-slate-300 group-hover:text-emerald-500 group-hover:scale-110 transition-all duration-300" />
+          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <Activity size={20} className="text-gray-600" />
+              <span className="text-2xl font-semibold text-gray-900">
+                {activeServers}
+              </span>
             </div>
-            <div>
-              <h3 className="text-3xl font-black text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">{activeServers}</h3>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Servidores Activos</p>
-            </div>
+            <p className="text-sm text-gray-600">Servidores Activos</p>
           </div>
 
-          <div className="group relative bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-indigo-300 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-transparent group-hover:bg-indigo-500 transition-colors duration-300"></div>
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-colors duration-300">
-                <Layers size={24} className="text-slate-500 group-hover:text-indigo-600 transition-colors duration-300" />
-              </div>
-              <ArrowUpRight size={20} className="text-slate-300 group-hover:text-indigo-500 group-hover:scale-110 transition-all duration-300" />
+          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <Layers size={20} className="text-gray-600" />
+              <span className="text-2xl font-semibold text-gray-900">
+                {uniqueOS}
+              </span>
             </div>
-            <div>
-              <h3 className="text-3xl font-black text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">{uniqueModels}</h3>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">Modelos Distintos</p>
-            </div>
+            <p className="text-sm text-gray-600">Sistemas Operativos</p>
           </div>
         </div>
 
-        <div className="as-card p-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
           {/* Barra de búsqueda y botones de acción */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -1084,7 +1073,7 @@ export default function ServidoresFisicos() {
                 <input
                   type="text"
                   placeholder="Buscar por hostname..."
-                  className="as-input pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onKeyDown={(e) =>
@@ -1101,7 +1090,7 @@ export default function ServidoresFisicos() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center bg-as-brand-600 px-4 py-2 rounded-lg shadow-sm">
+              <div className="flex items-center bg-gray-900 px-4 py-2 rounded-lg shadow-sm">
                 <span className="font-medium text-white mr-2">
                   {selectedCount}
                 </span>
@@ -1116,46 +1105,40 @@ export default function ServidoresFisicos() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => navigate(`${BASE_PATH}/crear-servidores-f`)}
-                className="as-btn-primary"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
                 title="Crear nuevo servidor"
               >
-                <Plus size={16} className="text-white" />
-                <span className="hidden text-white font-medium sm:inline">
-                  Crear
-                </span>
+                <Plus size={16} />
+                <span className="hidden sm:inline">Crear</span>
               </button>
               <button
                 onClick={handleImport}
-                className="as-btn-success"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
                 title="Importar desde Excel"
               >
-                <Download size={16} className="text-white" />
-                <span className="hidden text-white font-medium sm:inline">
-                  Importar
-                </span>
+                <Download size={16} />
+                <span className="hidden sm:inline">Importar</span>
               </button>
               <button
                 onClick={handleExport}
-                className="as-btn-purple"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
-                <Upload size={16} className="text-white" />
-                <span className="hidden text-white font-medium sm:inline">
-                  Exportar
-                </span>
+                <Upload size={16} />
+                <span className="hidden sm:inline">Exportar</span>
               </button>
             </div>
           </div>
 
           {/* Tabla de servidores */}
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar">
-            <table className="as-table">
+            <table className="w-full">
               <thead>
                 <tr>
-                  <th scope="col" className="as-th w-12">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
                       checked={
                         servers.length > 0 &&
                         selectedServers.size === servers.length
@@ -1164,21 +1147,21 @@ export default function ServidoresFisicos() {
                       aria-label="Seleccionar todos"
                     />
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Hostname
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Serial
                   </th>
-                  <th scope="col" className="as-th">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                     IP
                   </th>
                   <th
                     scope="col"
-                    className="as-th text-right"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Acciones
                   </th>
@@ -1189,42 +1172,42 @@ export default function ServidoresFisicos() {
                   filteredServers.map((server, index) => (
                     <tr
                       key={server.id}
-                      className={`group border-b border-slate-100 transition-colors ${
+                      className={`group border-b border-gray-200 transition-colors ${
                         selectedServers.has(server.id)
-                          ? "bg-as-brand-50/50"
-                          : "bg-white hover:bg-slate-50/50"
+                          ? "bg-gray-50"
+                          : "bg-white hover:bg-gray-50"
                       }`}
                     >
-                      <td className="as-td">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
                           checked={selectedServers.has(server.id)}
                           onChange={() => toggleSelectServer(server.id)}
                           aria-label={`Seleccionar servidor ${server.hostname}`}
                         />
                       </td>
-                      <td className="as-td font-semibold text-slate-900">
+                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
                         {server.hostname}
                       </td>
-                      <td className="as-td">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(server.service_status)}
                       </td>
-                      <td className="as-td text-slate-600">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
                           {server.serial_number}
                         </span>
                       </td>
-                      <td className="as-td font-mono text-slate-600">
+                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600">
                         {server.ip_server}
                       </td>
-                      <td className="as-td text-right">
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
                         <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
                               navigate(`${BASE_PATH}/ver/${server.id}/servers`)
                             }
-                            className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Ver detalles"
                             aria-label={`Ver detalles de ${server.hostname}`}
                           >
