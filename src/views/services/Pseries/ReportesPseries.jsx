@@ -281,218 +281,80 @@ const ReportesPseries = () => {
               </div>
             </div>
 
-            {/* KPIs - Estadísticas Principales */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="as-card p-4 border-l-4 border-l-blue-500">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
-                      Total Servidores
-                    </p>
-                    <p className="text-2xl font-bold text-slate-800 mt-1">
-                      {estadisticas.totalServidores}
-                    </p>
-                  </div>
-                  <Server size={24} className="text-blue-500 opacity-20" />
+
+
+
+            {/* KPIs - Diseño avanzado */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 animate-fade-in">
+              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-lg bg-gradient-to-br from-gray-50 via-white to-blue-50 border border-blue-100 hover:scale-[1.03] transition-transform duration-300">
+                <div className="bg-gradient-to-br from-blue-100 to-blue-300 rounded-full p-3 flex items-center justify-center shadow">
+                  <Server size={28} className="text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">Total Servidores</p>
+                  <p className="text-3xl font-extrabold text-blue-900 mt-1">{estadisticas.totalServidores}</p>
                 </div>
               </div>
-
-              <div className="as-card p-4 border-l-4 border-l-green-500">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
-                      Servidores Activos
-                    </p>
-                    <p className="text-2xl font-bold text-green-600 mt-1">
-                      {estadisticas.totalActivos}
-                    </p>
-                    <p className="text-xs text-slate-400 mt-1">
-                      {estadisticas.totalServidores > 0
-                        ? (
-                            (estadisticas.totalActivos /
-                              estadisticas.totalServidores) *
-                            100
-                          ).toFixed(1)
-                        : 0}
-                      %
-                    </p>
-                  </div>
-                  <TrendingUp size={24} className="text-green-500 opacity-20" />
+              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-lg bg-gradient-to-br from-gray-50 via-white to-green-50 border border-green-100 hover:scale-[1.03] transition-transform duration-300">
+                <div className="bg-gradient-to-br from-green-100 to-green-300 rounded-full p-3 flex items-center justify-center shadow">
+                  <TrendingUp size={28} className="text-green-600" />
                 </div>
-              </div>
-
-              <div className="as-card p-4 border-l-4 border-l-orange-500">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
-                      CPU Promedio
-                    </p>
-                    <p className="text-2xl font-bold text-slate-800 mt-1">
-                      {estadisticas.cpuPromedio}%
-                    </p>
-                  </div>
-                  <Zap size={24} className="text-orange-500 opacity-20" />
-                </div>
-              </div>
-
-              <div className="as-card p-4 border-l-4 border-l-purple-500">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">
-                      Memoria Promedio
-                    </p>
-                    <p className="text-2xl font-bold text-slate-800 mt-1">
-                      {estadisticas.memoriaPromedio} GB
-                    </p>
-                  </div>
-                  <BarChart3 size={24} className="text-purple-500 opacity-20" />
+                <div>
+                  <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">Activos</p>
+                  <p className="text-3xl font-extrabold text-green-900 mt-1">{estadisticas.totalActivos}</p>
                 </div>
               </div>
             </div>
 
-            {/* Gráficos */}
-            {estadisticas.totalServidores > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Gráfico de Estados */}
-                <div className="as-card p-6">
-                  <h3 className="text-sm font-semibold text-slate-800 mb-4">
-                    Distribución de Estados
-                  </h3>
-                  {estadisticas.estadosData.length > 0 ? (
-                    <Chart
-                      options={{
-                        chart: { type: "donut" },
-                        labels: estadisticas.estadosData.map((d) => d.name),
-                        colors: [
-                          "#10b981",
-                          "#ef4444",
-                          "#f59e0b",
-                          "#6366f1",
-                        ],
-                        plotOptions: {
-                          pie: {
-                            donut: {
-                              size: "75%",
-                              labels: {
-                                show: true,
-                                name: {
-                                  show: true,
-                                  fontSize: "12px",
-                                },
-                                value: {
-                                  show: true,
-                                  fontSize: "14px",
-                                  fontWeight: 600,
-                                },
-                              },
-                            },
-                          },
-                        },
-                        legend: { position: "bottom" },
-                      }}
-                      series={estadisticas.estadosData.map((d) => d.value)}
-                      type="donut"
-                      height={300}
-                    />
-                  ) : (
-                    <p className="text-slate-400 text-sm">
-                      Sin datos de estado
-                    </p>
-                  )}
-                </div>
 
-                {/* Resumen tabla de Estados */}
-                <div className="as-card p-6">
-                  <h3 className="text-sm font-semibold text-slate-800 mb-4">
-                    Resumen de Estados
-                  </h3>
-                  <div className="space-y-3">
-                    {estadisticas.estadosData.map((estado, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="h-3 w-3 rounded-full"
-                            style={{
-                              backgroundColor: [
-                                "#10b981",
-                                "#ef4444",
-                                "#f59e0b",
-                                "#6366f1",
-                              ][idx % 4],
-                            }}
-                          ></div>
-                          <span className="text-sm text-slate-700">
-                            {estado.name}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="font-bold text-slate-800">
-                            {estado.value}
-                          </span>
-                          <span className="text-xs text-slate-400 ml-2">
-                            (
-                            {(
-                              (estado.value /
-                                estadisticas.totalServidores) *
-                              100
-                            ).toFixed(1)}
-                            %)
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Gráficos y resumen de estados ocultos para vista más limpia */}
 
-            {/* Tabla de datos */}
-            <div className="as-card p-0 overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+
+
+            {/* Tabla de datos - Diseño avanzado */}
+            <div className="rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden mt-10 animate-fade-in">
+              <div className="px-8 py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <h2 className="text-base font-semibold text-slate-800">
-                    Detalle de Servidores
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Generado el {formatearFecha(reporteSeleccionado?.fecha_generado)} ·{" "}
-                    {tablaData.rows.length} registro{tablaData.rows.length !== 1 ? "s" : ""}
+                  <h2 className="text-xl font-extrabold text-blue-900 tracking-tight">Detalle de Servidores</h2>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Generado el {formatearFecha(reporteSeleccionado?.fecha_generado)} · {tablaData.rows.length} registro{tablaData.rows.length !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
 
               {tablaData.headers.length > 0 ? (
                 <>
-                  {/* Buscador */}
-                  <div className="px-6 py-3 border-b border-slate-100 bg-white">
-                    <div className="relative max-w-sm">
+                  {/* Buscador animado */}
+                  <div className="px-8 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50">
+                    <div className="relative max-w-xs">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search size={15} className="text-slate-400" />
+                        <Search size={17} className="text-blue-400" />
                       </div>
                       <input
                         type="text"
-                        placeholder="Buscar en el reporte..."
-                        className="as-input pl-9 pr-8 py-1.5 text-sm"
+                        placeholder="Buscar por cualquier campo..."
+                        className="pl-10 pr-8 py-2 text-base rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none w-full bg-white transition-all duration-200 shadow-sm"
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
                       />
                       {busqueda && (
                         <button
                           onClick={() => setBusqueda("")}
-                          className="absolute inset-y-0 right-2 flex items-center text-slate-400 hover:text-slate-600"
+                          className="absolute inset-y-0 right-2 flex items-center text-blue-400 hover:text-blue-700"
                         >
-                          <X size={14} />
+                          <X size={16} />
                         </button>
                       )}
                     </div>
                   </div>
                   <div className="overflow-x-auto custom-scrollbar max-h-[60vh]">
-                    <table className="w-full text-sm">
-                      <thead className="sticky top-0 z-10 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                    <table className="w-full text-base">
+                      <thead className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-gray-50 border-b border-blue-100">
                         <tr>
                           {tablaData.headers.map((header, i) => (
                             <th
                               key={i}
-                              className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider whitespace-nowrap bg-slate-50"
+                              className="px-5 py-4 text-left text-xs font-extrabold text-blue-700 uppercase tracking-wider whitespace-nowrap bg-blue-50"
                             >
                               {header.trim()}
                             </th>
@@ -512,23 +374,23 @@ const ReportesPseries = () => {
                             const estado = row[
                               tablaData.headers.indexOf("Estado")
                             ]?.trim();
-                            let rowColor = "bg-white";
+                            let rowColor = rowIdx % 2 === 0 ? "bg-white" : "bg-blue-50/60";
                             if (estado?.toLowerCase() === "activo")
-                              rowColor = "bg-green-50/50";
+                              rowColor = "bg-green-50/70";
                             else if (estado?.toLowerCase() === "inactivo")
-                              rowColor = "bg-red-50/50";
+                              rowColor = "bg-red-50/70";
                             else if (estado?.toLowerCase() === "warning")
-                              rowColor = "bg-yellow-50/50";
+                              rowColor = "bg-yellow-50/70";
 
                             return (
                               <tr
                                 key={rowIdx}
-                                className={`${rowColor} border-b border-slate-100 hover:bg-opacity-75 transition-colors`}
+                                className={`${rowColor} border-b border-blue-100 hover:bg-blue-100/70 transition-colors`}
                               >
                                 {row.map((cell, cellIdx) => (
                                   <td
                                     key={cellIdx}
-                                    className="px-4 py-3 text-slate-700 whitespace-nowrap text-xs"
+                                    className="px-5 py-3 text-gray-700 whitespace-nowrap text-xs"
                                   >
                                     {cell?.trim() || "—"}
                                   </td>
@@ -546,7 +408,7 @@ const ReportesPseries = () => {
                           <tr>
                             <td
                               colSpan={tablaData.headers.length}
-                              className="px-6 py-10 text-center text-slate-400 text-sm"
+                              className="px-8 py-12 text-center text-blue-300 text-base"
                             >
                               No se encontraron resultados para "{busqueda}"
                             </td>
@@ -557,7 +419,7 @@ const ReportesPseries = () => {
                   </div>
                 </>
               ) : (
-                <div className="p-12 text-center text-slate-400 text-sm">
+                <div className="p-16 text-center text-blue-200 text-base">
                   El reporte no tiene datos.
                 </div>
               )}

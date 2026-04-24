@@ -784,9 +784,7 @@ const Pseries = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-400" />
-                </div>
+                {/* Icono de lupa decorativo eliminado para evitar duplicidad */}
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
