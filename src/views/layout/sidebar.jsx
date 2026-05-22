@@ -6,6 +6,7 @@ import BasesDeDatos from "../services/Base de datos/baseDeDatos";
 import Pseries from "../services/Pseries/Pseries";
 import ServidoresVirtuales from "../services/servidores Virtuales/servidoresV";
 import Storage from "../services/storage/Storage";
+import Insumos from "../services/Insumos/Insumos";
 
 import {
   Server,
@@ -13,6 +14,7 @@ import {
   HardDrive,
   Cloud,
   LayoutGrid,
+  Boxes,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -47,6 +49,8 @@ export default function Sidebar() {
     },
     { id: 5, title: "Pseries", icon: Server, path: "/AssetSphere/pseries" },
     { id: 6, title: "Storage", icon: HardDrive, path: "/AssetSphere/storage" },
+    { id: 7, title: "Insumos", icon: Boxes, path: "/AssetSphere/insumos" },
+    {id: 8, title: "pseries_inve", icon: Server, path: "/AssetSphere/pseries_inve" },
     // { id: 7, title: "Sucursales", icon: Building, path: "/AssetSphere/sucursales" },
   ];
 
@@ -62,6 +66,8 @@ export default function Sidebar() {
       return <ServidoresVirtuales />;
     } else if (path.includes("storage")) {
       return <Storage />;
+    } else if (path.includes("insumos")) {
+      return <Insumos />;
     }
     // else if (path.includes("sucursales")) {
     //   return <Sucursales />;

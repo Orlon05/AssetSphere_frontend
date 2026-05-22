@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { API_URL } from "../../config/api";
 import Logo from "../../IMG/Tata_Logo.png";
 import {
-  ChevronDown,
   LogOut,
   UserIcon,
   Server,
@@ -101,8 +100,6 @@ export default function Dashboard() {
   ]);
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const fetchUserData = async (userId, token) => {

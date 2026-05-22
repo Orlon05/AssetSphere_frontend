@@ -49,7 +49,7 @@ const Pseries = () => {
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [insumosLoading, setInsumosLoading] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,7 +67,6 @@ const Pseries = () => {
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
 
   const searchInputRef = useRef(null);
-  const insumosFileInputRef = useRef(null);
   const selectedCount = selectedPseries.size;
   const BASE_PATH = "/AssetSphere";
 
@@ -295,67 +294,6 @@ const Pseries = () => {
     });
   };
 
-  const handleRecolectarInsumos = () => {
-    if (insumosFileInputRef.current) {
-      insumosFileInputRef.current.click();
-    }
-  };
-
-  const handleInsumosFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-
-    if (!file) return;
-
-    if (!file.name.toLowerCase().endsWith(".xlsx")) {
-      Swal.fire({
-        icon: "error",
-        title: "Archivo inválido",
-        text: "Selecciona un archivo .xlsx",
-      });
-      return;
-    }
-
-    setInsumosLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const currentToken = localStorage.getItem("authenticationToken");
-      if (!currentToken) {
-        throw new Error("Token de autorización no encontrado. Por favor, inicia sesión nuevamente.");
-      }
-
-      const response = await fetch(`${API_URL}/insumos/recolectar`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${currentToken}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData?.detail || "Error al recolectar insumos");
-      }
-
-      const data = await response.json();
-      Swal.fire({
-        icon: "success",
-        title: data.mensaje || "Proceso completado",
-        text: `Registros procesados: ${data.registros_procesados ?? 0}`,
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: err.message,
-      });
-    } finally {
-      setInsumosLoading(false);
-    }
-  };
-
   /**
    * Procesa los datos importados desde Excel
    * @param {Array} importedData - Datos importados del archivo Excel
@@ -556,7 +494,14 @@ const Pseries = () => {
       const status = (server?.status || "").toString().trim().toLowerCase();
       if (status === "active" || status === "running") acc.running += 1;
       else if (status === "inactive" || status === "not activated") acc.inactive += 1;
-      else if (status === "maintenance" || status === "mantenimiento") acc.maintenance += 1;
+      else if (
+        status === "maintenance" ||
+        status === "mantenimiento" ||
+        status === "warehouse" ||
+        status === "bodega" ||
+        status === "en bodega"
+      )
+        acc.maintenance += 1;
       else acc.other += 1;
       acc.total += 1;
       return acc;
@@ -638,6 +583,94 @@ const Pseries = () => {
     }
   };
 
+  const handleDeleteSelectedPseries = async () => {
+    if (selectedPseries.size === 0 || bulkDeleting) return;
+
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Deseas eliminar ${selectedPseries.size} servidor${selectedPseries.size !== 1 ? "es" : ""}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedPseries);
+    const eliminados = [];
+    const errores = [];
+
+    try {
+      for (const id of ids) {
+        try {
+          const response = await fetch(`${API_URL}/pseries/pseries/${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            let errorMessage = `Error HTTP ${response.status}`;
+            try {
+              const errorData = await response.json();
+              if (response.status === 422 && errorData?.detail) {
+                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+              } else if (response.status === 401 || response.status === 403) {
+                errorMessage =
+                  "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+              } else if (response.status === 404) {
+                errorMessage = "El servidor no existe.";
+              } else if (errorData?.message) {
+                errorMessage = errorData.message;
+              }
+            } catch {
+              errorMessage = `Error HTTP ${response.status}`;
+            }
+            errores.push({ id, mensaje: errorMessage });
+          } else {
+            eliminados.push(id);
+          }
+        } catch (e) {
+          errores.push({ id, mensaje: e?.message || "Error inesperado" });
+        }
+      }
+    } finally {
+      setBulkDeleting(false);
+    }
+
+    if (eliminados.length > 0) {
+      setPseries((prev) => prev.filter((server) => !eliminados.includes(server.id)));
+      setUnfilteredPseries((prev) => prev.filter((server) => !eliminados.includes(server.id)));
+      setSelectedPseries(new Set());
+      setSelectAll(false);
+    }
+
+    if (errores.length > 0) {
+      const first = errores[0];
+      Swal.fire({
+        icon: "warning",
+        title: "Eliminación parcial",
+        text:
+          errores.length === 1
+            ? `No se pudo eliminar el servidor ${first.id}: ${first.mensaje}`
+            : `Se eliminaron ${eliminados.length} y fallaron ${errores.length}. Ejemplo (${first.id}): ${first.mensaje}`,
+      });
+      return;
+    }
+
+    if (eliminados.length > 0) {
+      Toast.fire({
+        icon: "success",
+        title: `Se eliminaron ${eliminados.length} servidor${eliminados.length !== 1 ? "es" : ""}`,
+      });
+    }
+  };
+
   /**
    * Navega a la página de creación de servidor
    */
@@ -659,7 +692,7 @@ const Pseries = () => {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Corriendo
+          Activo
         </span>
       );
     } else if (statusLower === "inactive" || statusLower === "not activated") {
@@ -671,12 +704,15 @@ const Pseries = () => {
       );
     } else if (
       statusLower === "maintenance" ||
-      statusLower === "mantenimiento"
+      statusLower === "mantenimiento" ||
+      statusLower === "warehouse" ||
+      statusLower === "bodega" ||
+      statusLower === "en bodega"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
           <Clock size={12} className="mr-1" />
-          Mantenimiento
+          En bodega
         </span>
       );
     } else {
@@ -752,7 +788,7 @@ const Pseries = () => {
           </div>
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Corriendo</span>
+              <span className="text-xs font-medium text-gray-600 uppercase">Activo</span>
               <CheckCircle size={16} className="text-emerald-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{statusCounts.running}</div>
@@ -766,7 +802,7 @@ const Pseries = () => {
           </div>
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Mantenimiento</span>
+              <span className="text-xs font-medium text-gray-600 uppercase">En bodega</span>
               <Clock size={16} className="text-amber-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{statusCounts.maintenance}</div>
@@ -779,70 +815,65 @@ const Pseries = () => {
             <div className="text-2xl font-bold text-gray-900">{statusCounts.other}</div>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-          {/* Search and Action Buttons */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            {showSearch ? (
-              <div className="relative flex-1">
-                {/* Icono de lupa decorativo eliminado para evitar duplicidad */}
-                <input
-                  type="text"
-                  placeholder="Buscar por nombre..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
-                  value={searchValue}
-                  onChange={handleSearchChange}
-                  ref={searchInputRef}
-                />
-                <button
-                  onClick={handleSearchButtonClick}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <Search size={18} className="text-gray-400 hover:text-gray-600" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
-                <span className="font-medium mr-2">
-                  {selectedCount}
-                </span>
-                <span>
-                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
-                  {selectedCount !== 1 ? "s" : ""}
-                </span>
-              </div>
-            )}
+          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+              {showSearch ? (
+                <div className="relative flex-1 min-w-0">
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                    value={searchValue}
+                    onChange={handleSearchChange}
+                    ref={searchInputRef}
+                  />
+                  <button
+                    onClick={handleSearchButtonClick}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <Search size={18} className="text-gray-400 hover:text-gray-600" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg w-fit shrink-0">
+                    <span className="font-medium mr-2">{selectedCount}</span>
+                    <span>
+                      Pseries seleccionado
+                      {selectedCount !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleDeleteSelectedPseries}
+                    disabled={bulkDeleting}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
+                      bulkDeleting
+                        ? "bg-red-300 cursor-not-allowed text-white"
+                        : "bg-red-600 hover:bg-red-500 text-white"
+                    }`}
+                    title="Eliminar seleccionados"
+                  >
+                    <Trash2 size={16} />
+                    <span className="hidden sm:inline">
+                      {bulkDeleting ? "Eliminando..." : "Eliminar"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <input
-                ref={insumosFileInputRef}
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleInsumosFileChange}
-                className="hidden"
-              />
+            <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
               <button
                 onClick={irCrear}
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2 shrink-0"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
-                onClick={handleRecolectarInsumos}
-                disabled={insumosLoading}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
-                  insumosLoading
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-gray-700 hover:bg-gray-600 text-white"
-                }`}
-                title="Seleccionar Excel y recolectar insumos"
-              >
-                <Activity size={16} />
-                <span className="hidden sm:inline">{insumosLoading ? "Recolectando..." : "Recolectar Insumos"}</span>
-              </button>
-              <button
                 onClick={handleImport}
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2 shrink-0"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -850,7 +881,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -858,7 +889,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={() => navigate(`${BASE_PATH}/reportes-pseries`)}
-                className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition flex items-center gap-2"
+                className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition flex items-center gap-2 shrink-0"
                 title="Ver reportes mensuales"
               >
                 <FileText size={16} />
