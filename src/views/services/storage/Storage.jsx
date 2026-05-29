@@ -19,7 +19,7 @@ import Logo from "../../../IMG/Tata_Logo.png";
  */
 
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   Search,
@@ -43,6 +43,7 @@ import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 
 export default function Storage() {
+  const location = useLocation();
   const navigate = useNavigate();
 
   // Estados principales del componente
@@ -50,6 +51,13 @@ export default function Storage() {
   const [storageList, setStorageList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [invLoading, setInvLoading] = useState(false);
+  const [invError, setInvError] = useState("");
+  const [invHeaders, setInvHeaders] = useState([]);
+  const [invRows, setInvRows] = useState([]);
+  const [invSearchValue, setInvSearchValue] = useState("");
+  const [invCurrentPage, setInvCurrentPage] = useState(1);
+  const [invRowsPerPage, setInvRowsPerPage] = useState(25);
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,6 +77,7 @@ export default function Storage() {
 
   const selectedCount = selectedStorage.size;
   const BASE_PATH = "/AssetSphere";
+  const isInv = location.pathname.includes("storage-inv");
 
   // Configuración de notificaciones toast
   const Toast = Swal.mixin({
@@ -407,7 +416,7 @@ export default function Storage() {
 
   // Efectos para cargar datos y manejar búsquedas
   useEffect(() => {
-    fetchStorage(currentPage, rowsPerPage);
+    if (!isInv) fetchStorage(currentPage, rowsPerPage);
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
@@ -415,6 +424,7 @@ export default function Storage() {
   }, [selectedCount]);
 
   useEffect(() => {
+    if (isInv) return;
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
         setStorageList(unfilteredStorage);
@@ -430,6 +440,84 @@ export default function Storage() {
       setIsSearchButtonClicked(false);
     }
   }, [isSearchButtonClicked, searchValue, unfilteredStorage, rowsPerPage]);
+
+  const loadInventory = async () => {
+    setInvLoading(true);
+    setInvError("");
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      const response = await fetch(`${API_URL}/inv/storage`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.detail || data?.msg || "No se pudo cargar el inventario");
+      }
+      setInvHeaders(data?.data?.headers || []);
+      setInvRows(data?.data?.rows || []);
+      setInvSearchValue("");
+      setInvCurrentPage(1);
+    } catch (e) {
+      setInvError(e?.message || "No se pudo cargar el inventario");
+    } finally {
+      setInvLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isInv) return;
+    loadInventory();
+  }, [isInv]);
+
+  const handleInvImportComplete = async (importedData) => {
+    if (!importedData) {
+      Swal.fire("Error", "No se importaron datos.", "error");
+      return;
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Importación exitosa",
+      text: `Se importaron ${importedData.storage_rows ?? 0} filas de storage.`,
+    });
+
+    await loadInventory();
+  };
+
+  const handleInvImport = () => {
+    Swal.fire({
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      didOpen: () => {
+        const container = document.getElementById("excel-importer-container");
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleInvImportComplete}
+            tableMetadata={[]}
+          />
+        );
+        if (container) {
+          const root = createRoot(container);
+          root.render(importer);
+        }
+      },
+      willClose: () => {
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
+    });
+  };
 
   /**
    * Maneja cambios en el campo de búsqueda
@@ -614,6 +702,280 @@ export default function Storage() {
   };
 
   // Estados de carga y error
+  if (isInv) {
+    const query = invSearchValue.trim().toLowerCase();
+    const filteredRows =
+      query === ""
+        ? invRows
+        : invRows.filter((row) =>
+            row.some((cell) =>
+              String(cell ?? "")
+                .toLowerCase()
+                .includes(query)
+            )
+          );
+    const totalPagesInv =
+      filteredRows.length > 0
+        ? Math.ceil(filteredRows.length / invRowsPerPage)
+        : 0;
+    const pageInv =
+      totalPagesInv === 0
+        ? 1
+        : Math.min(Math.max(invCurrentPage, 1), totalPagesInv);
+    const indexOfLast = pageInv * invRowsPerPage;
+    const indexOfFirst = indexOfLast - invRowsPerPage;
+    const pageRows = filteredRows.slice(indexOfFirst, indexOfLast);
+
+    const escapeCSV = (value) => {
+      const s = String(value ?? "");
+      const escaped = s.replace(/"/g, '""');
+      if (/[",\n\r]/.test(escaped)) return `"${escaped}"`;
+      return escaped;
+    };
+
+    const invStatusIndex = invHeaders.findIndex((h) => {
+      const headerStr = String(h || "").trim().toLowerCase();
+      return (
+        headerStr === "warrantystatus" ||
+        headerStr === "warranty status" ||
+        headerStr === "status" ||
+        headerStr === "estado" ||
+        headerStr.includes("warranty")
+      );
+    });
+
+    console.log("DIAGNOSTIC - STORAGE INV:", {
+      invHeaders,
+      invStatusIndex,
+      rowsCount: filteredRows.length,
+      sampleRow: filteredRows[0] || null
+    });
+
+    const invStatusCounts = filteredRows.reduce(
+      (acc, row) => {
+        const statusValue =
+          invStatusIndex >= 0 && row[invStatusIndex] != null
+            ? String(row[invStatusIndex]).trim().toLowerCase()
+            : "";
+
+        if (statusValue === "with support" || statusValue === "con soporte") {
+          acc.withSupport += 1;
+        } else if (
+          statusValue === "expired" ||
+          statusValue === "vencido" ||
+          statusValue.includes("expired")
+        ) {
+          acc.expired += 1;
+        }
+
+        acc.total += 1;
+        return acc;
+      },
+      { total: 0, withSupport: 0, expired: 0 }
+    );
+
+    const handleDescargarCSVInventario = () => {
+      const csvLines = [
+        invHeaders.map(escapeCSV).join(","),
+        ...filteredRows.map((row) => row.map(escapeCSV).join(",")),
+      ];
+      const blob = new Blob([csvLines.join("\n")], {
+        type: "text/csv;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `storage_inv_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    return (
+      <div className="as-page">
+        <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-as-text flex items-center gap-2">
+              <HardDrive className="text-as-brand-600" size={24} />
+              storage_inv
+            </h1>
+          </div>
+        </header>
+
+        <main className="as-container">
+          {invLoading ? (
+            <div className="as-card p-6">Cargando...</div>
+          ) : invError ? (
+            <div className="as-card p-6 text-red-600">{invError}</div>
+          ) : (
+            <>
+              <div className="as-card p-4 mb-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div className="relative flex-1 min-w-0">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search size={18} className="text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Buscar por cualquier campo..."
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                      value={invSearchValue}
+                      onChange={(e) => {
+                        setInvSearchValue(e.target.value);
+                        setInvCurrentPage(1);
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleInvImport}
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 bg-gray-700 text-white hover:bg-gray-600"
+                    title="Importar desde Excel"
+                  >
+                    <Download size={16} />
+                    <span className="hidden sm:inline">Importar</span>
+                  </button>
+                  <button
+                    onClick={handleDescargarCSVInventario}
+                    disabled={filteredRows.length === 0}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
+                      filteredRows.length === 0
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-as-brand-600 text-white hover:bg-as-brand-700"
+                    }`}
+                    title="Descargar CSV del inventario"
+                  >
+                    <Download size={16} />
+                    <span className="hidden sm:inline">Descargar CSV</span>
+                  </button>
+                </div>
+
+                <div className="mt-3 text-xs text-slate-500">
+                  Mostrando {pageRows.length} de {filteredRows.length} registro
+                  {filteredRows.length !== 1 ? "s" : ""}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">With Support</span>
+                    <CheckCircle size={18} className="text-blue-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-slate-900">{invStatusCounts.withSupport}</div>
+                  <div className="text-xs text-slate-500 mt-1">Filas con estado With Support</div>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">Expired</span>
+                    <AlertCircle size={18} className="text-red-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-slate-900">{invStatusCounts.expired}</div>
+                  <div className="text-xs text-slate-500 mt-1">Filas con estado Expired</div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white">
+                <table className="as-table">
+                  <thead>
+                    <tr>
+                      {invHeaders.map((h) => (
+                        <th key={h} className="as-th whitespace-nowrap">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageRows.length > 0 ? (
+                      pageRows.map((row, idx) => (
+                        <tr key={idx} className="border-b border-slate-100">
+                          {row.map((cell, cidx) => (
+                            <td key={cidx} className="as-td whitespace-nowrap">
+                              {cell || "—"}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={invHeaders.length || 1}
+                          className="px-6 py-12 text-center text-slate-500 bg-white"
+                        >
+                          No hay datos
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4 px-2">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-slate-500 mr-3">
+                    Filas por página
+                  </span>
+                  <select
+                    className="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500"
+                    value={invRowsPerPage}
+                    onChange={(e) => {
+                      setInvRowsPerPage(parseInt(e.target.value));
+                      setInvCurrentPage(1);
+                    }}
+                  >
+                    {[10, 25, 50, 100].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    className={`p-2 rounded-lg border border-slate-200 ${
+                      pageInv <= 1 || totalPagesInv === 0
+                        ? "text-slate-300 cursor-not-allowed bg-white"
+                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                    }`}
+                    onClick={() => setInvCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={pageInv <= 1 || totalPagesInv === 0}
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-as-brand-50 text-as-brand-700 font-semibold border border-as-brand-100">
+                    {totalPagesInv === 0 ? 0 : pageInv}
+                  </div>
+                  <span className="text-sm text-slate-500">
+                    / {totalPagesInv}
+                  </span>
+                  <button
+                    className={`p-2 rounded-lg border border-slate-200 ${
+                      pageInv >= totalPagesInv || totalPagesInv === 0
+                        ? "text-slate-300 cursor-not-allowed bg-white"
+                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                    }`}
+                    onClick={() =>
+                      setInvCurrentPage((p) =>
+                        Math.min(p + 1, totalPagesInv || 1)
+                      )
+                    }
+                    disabled={pageInv >= totalPagesInv || totalPagesInv === 0}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="as-page flex items-center justify-center">

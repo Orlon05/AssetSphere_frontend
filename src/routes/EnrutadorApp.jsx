@@ -146,7 +146,31 @@ const EnrutadorApp = [
     ),
   },
   {
+    path: `${BASE_PATH}/storage-inv`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: `${BASE_PATH}/pseries`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/pseries-inv`,
+    element: (
+      <ProtectedRoute>
+        <Sidebar />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/insumos`,
     element: (
       <ProtectedRoute>
         <Sidebar />

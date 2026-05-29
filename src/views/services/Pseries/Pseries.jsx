@@ -18,8 +18,9 @@ import Logo from "../../../IMG/Tata_Logo.png";
  */
 
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import ReportesPseries from "./ReportesPseries";
 import {
   Search,
   Server,
@@ -36,12 +37,12 @@ import {
   Download,
   Upload,
   Plus,
-  FileText,
 } from "lucide-react";
 import { createRoot } from "react-dom/client";
 import ExcelImporter from "../../../hooks/Excelimporter";
 
 const Pseries = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   // Estados principales del componente
@@ -49,7 +50,14 @@ const Pseries = () => {
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [insumosLoading, setInsumosLoading] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [invLoading, setInvLoading] = useState(false);
+  const [invError, setInvError] = useState("");
+  const [invHeaders, setInvHeaders] = useState([]);
+  const [invRows, setInvRows] = useState([]);
+  const [invSearchValue, setInvSearchValue] = useState("");
+  const [invCurrentPage, setInvCurrentPage] = useState(1);
+  const [invRowsPerPage, setInvRowsPerPage] = useState(25);
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,9 +75,11 @@ const Pseries = () => {
   const [isSearchButtonClicked, setIsSearchButtonClicked] = useState(false);
 
   const searchInputRef = useRef(null);
-  const insumosFileInputRef = useRef(null);
   const selectedCount = selectedPseries.size;
   const BASE_PATH = "/AssetSphere";
+  const isInv = location.pathname.includes("pseries-inv");
+  const tab = new URLSearchParams(location.search).get("tab") || "servidores";
+  const isReportes = tab === "reportes";
 
   // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
@@ -208,11 +218,12 @@ const Pseries = () => {
 
   // Efecto para cargar datos iniciales
   useEffect(() => {
-    fetchPseries(currentPage, rowsPerPage);
-  }, [currentPage, rowsPerPage]);
+    if (!isInv && !isReportes) fetchPseries(currentPage, rowsPerPage);
+  }, [currentPage, rowsPerPage, isInv, isReportes]);
 
   // Efecto para manejar búsquedas
   useEffect(() => {
+    if (isInv || isReportes) return;
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
         setPseries(unfilteredPseries);
@@ -227,7 +238,84 @@ const Pseries = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage]);
+  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage, isInv, isReportes]);
+
+  const loadInventory = async () => {
+    setInvLoading(true);
+    setInvError("");
+    try {
+      const response = await fetch(`${API_URL}/inv/pseries`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.detail || data?.msg || "No se pudo cargar el inventario");
+      }
+      setInvHeaders(data?.data?.headers || []);
+      setInvRows(data?.data?.rows || []);
+      setInvSearchValue("");
+      setInvCurrentPage(1);
+    } catch (e) {
+      setInvError(e?.message || "No se pudo cargar el inventario");
+    } finally {
+      setInvLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isInv) return;
+    loadInventory();
+  }, [isInv]);
+
+  const handleInvImportComplete = async (importedData) => {
+    if (!importedData) {
+      Swal.fire("Error", "No se importaron datos.", "error");
+      return;
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Importación exitosa",
+      text: `Se importaron ${importedData.pseries_rows ?? 0} filas de pseries.`,
+    });
+
+    await loadInventory();
+  };
+
+  const handleInvImport = () => {
+    Swal.fire({
+      title: "Importar desde Excel",
+      html: '<div id="excel-importer-container"></div>',
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      width: "80%",
+      height: "80%",
+      didOpen: () => {
+        const container = document.getElementById("excel-importer-container");
+        const importer = (
+          <ExcelImporter
+            onImportComplete={handleInvImportComplete}
+            tableMetadata={[]}
+          />
+        );
+        if (container) {
+          const root = createRoot(container);
+          root.render(importer);
+        }
+      },
+      willClose: () => {
+        const container = document.getElementById("excel-importer-container");
+        if (container) {
+          const root = createRoot(container);
+          root.unmount();
+        }
+      },
+    });
+  };
 
   /**
    * Maneja la importación de datos desde Excel
@@ -293,67 +381,6 @@ const Pseries = () => {
         }
       },
     });
-  };
-
-  const handleRecolectarInsumos = () => {
-    if (insumosFileInputRef.current) {
-      insumosFileInputRef.current.click();
-    }
-  };
-
-  const handleInsumosFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-
-    if (!file) return;
-
-    if (!file.name.toLowerCase().endsWith(".xlsx")) {
-      Swal.fire({
-        icon: "error",
-        title: "Archivo inválido",
-        text: "Selecciona un archivo .xlsx",
-      });
-      return;
-    }
-
-    setInsumosLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const currentToken = localStorage.getItem("authenticationToken");
-      if (!currentToken) {
-        throw new Error("Token de autorización no encontrado. Por favor, inicia sesión nuevamente.");
-      }
-
-      const response = await fetch(`${API_URL}/insumos/recolectar`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${currentToken}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData?.detail || "Error al recolectar insumos");
-      }
-
-      const data = await response.json();
-      Swal.fire({
-        icon: "success",
-        title: data.mensaje || "Proceso completado",
-        text: `Registros procesados: ${data.registros_procesados ?? 0}`,
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: err.message,
-      });
-    } finally {
-      setInsumosLoading(false);
-    }
   };
 
   /**
@@ -556,7 +583,14 @@ const Pseries = () => {
       const status = (server?.status || "").toString().trim().toLowerCase();
       if (status === "active" || status === "running") acc.running += 1;
       else if (status === "inactive" || status === "not activated") acc.inactive += 1;
-      else if (status === "maintenance" || status === "mantenimiento") acc.maintenance += 1;
+      else if (
+        status === "maintenance" ||
+        status === "mantenimiento" ||
+        status === "warehouse" ||
+        status === "bodega" ||
+        status === "en bodega"
+      )
+        acc.maintenance += 1;
       else acc.other += 1;
       acc.total += 1;
       return acc;
@@ -638,6 +672,94 @@ const Pseries = () => {
     }
   };
 
+  const handleDeleteSelectedPseries = async () => {
+    if (selectedPseries.size === 0 || bulkDeleting) return;
+
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Deseas eliminar ${selectedPseries.size} servidor${selectedPseries.size !== 1 ? "es" : ""}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    setBulkDeleting(true);
+    const ids = Array.from(selectedPseries);
+    const eliminados = [];
+    const errores = [];
+
+    try {
+      for (const id of ids) {
+        try {
+          const response = await fetch(`${API_URL}/pseries/pseries/${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            let errorMessage = `Error HTTP ${response.status}`;
+            try {
+              const errorData = await response.json();
+              if (response.status === 422 && errorData?.detail) {
+                errorMessage = errorData.detail.map((e) => e.msg).join(", ");
+              } else if (response.status === 401 || response.status === 403) {
+                errorMessage =
+                  "Error de autorización. Tu sesión ha expirado o no tienes permisos.";
+              } else if (response.status === 404) {
+                errorMessage = "El servidor no existe.";
+              } else if (errorData?.message) {
+                errorMessage = errorData.message;
+              }
+            } catch {
+              errorMessage = `Error HTTP ${response.status}`;
+            }
+            errores.push({ id, mensaje: errorMessage });
+          } else {
+            eliminados.push(id);
+          }
+        } catch (e) {
+          errores.push({ id, mensaje: e?.message || "Error inesperado" });
+        }
+      }
+    } finally {
+      setBulkDeleting(false);
+    }
+
+    if (eliminados.length > 0) {
+      setPseries((prev) => prev.filter((server) => !eliminados.includes(server.id)));
+      setUnfilteredPseries((prev) => prev.filter((server) => !eliminados.includes(server.id)));
+      setSelectedPseries(new Set());
+      setSelectAll(false);
+    }
+
+    if (errores.length > 0) {
+      const first = errores[0];
+      Swal.fire({
+        icon: "warning",
+        title: "Eliminación parcial",
+        text:
+          errores.length === 1
+            ? `No se pudo eliminar el servidor ${first.id}: ${first.mensaje}`
+            : `Se eliminaron ${eliminados.length} y fallaron ${errores.length}. Ejemplo (${first.id}): ${first.mensaje}`,
+      });
+      return;
+    }
+
+    if (eliminados.length > 0) {
+      Toast.fire({
+        icon: "success",
+        title: `Se eliminaron ${eliminados.length} servidor${eliminados.length !== 1 ? "es" : ""}`,
+      });
+    }
+  };
+
   /**
    * Navega a la página de creación de servidor
    */
@@ -659,7 +781,7 @@ const Pseries = () => {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
           <CheckCircle size={12} className="mr-1" />
-          Corriendo
+          Activo
         </span>
       );
     } else if (statusLower === "inactive" || statusLower === "not activated") {
@@ -669,14 +791,35 @@ const Pseries = () => {
           No activo
         </span>
       );
+    } else if (statusLower === "with support" || statusLower === "con soporte") {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <CheckCircle size={12} className="mr-1" />
+          With Support
+        </span>
+      );
+    } else if (
+      statusLower === "expired" ||
+      statusLower === "vencido" ||
+      statusLower.includes("expired")
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <AlertCircle size={12} className="mr-1" />
+          Expired
+        </span>
+      );
     } else if (
       statusLower === "maintenance" ||
-      statusLower === "mantenimiento"
+      statusLower === "mantenimiento" ||
+      statusLower === "warehouse" ||
+      statusLower === "bodega" ||
+      statusLower === "en bodega"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
           <Clock size={12} className="mr-1" />
-          Mantenimiento
+          En bodega
         </span>
       );
     } else {
@@ -689,6 +832,280 @@ const Pseries = () => {
   };
 
   // Estados de carga y error
+  if (isInv) {
+    const query = invSearchValue.trim().toLowerCase();
+    const filteredRows =
+      query === ""
+        ? invRows
+        : invRows.filter((row) =>
+            row.some((cell) =>
+              String(cell ?? "")
+                .toLowerCase()
+                .includes(query)
+            )
+          );
+    const totalPagesInv =
+      filteredRows.length > 0
+        ? Math.ceil(filteredRows.length / invRowsPerPage)
+        : 0;
+    const pageInv =
+      totalPagesInv === 0
+        ? 1
+        : Math.min(Math.max(invCurrentPage, 1), totalPagesInv);
+    const indexOfLast = pageInv * invRowsPerPage;
+    const indexOfFirst = indexOfLast - invRowsPerPage;
+    const pageRows = filteredRows.slice(indexOfFirst, indexOfLast);
+
+    const escapeCSV = (value) => {
+      const s = String(value ?? "");
+      const escaped = s.replace(/"/g, '""');
+      if (/[",\n\r]/.test(escaped)) return `"${escaped}"`;
+      return escaped;
+    };
+
+    const invStatusIndex = invHeaders.findIndex((h) => {
+      const headerStr = String(h || "").trim().toLowerCase();
+      return (
+        headerStr === "warrantystatus" ||
+        headerStr === "warranty status" ||
+        headerStr === "status" ||
+        headerStr === "estado" ||
+        headerStr.includes("warranty")
+      );
+    });
+
+    console.log("DIAGNOSTIC - PSERIES INV:", {
+      invHeaders,
+      invStatusIndex,
+      rowsCount: filteredRows.length,
+      sampleRow: filteredRows[0] || null
+    });
+
+    const invStatusCounts = filteredRows.reduce(
+      (acc, row) => {
+        const statusValue =
+          invStatusIndex >= 0 && row[invStatusIndex] != null
+            ? String(row[invStatusIndex]).trim().toLowerCase()
+            : "";
+
+        if (statusValue === "with support" || statusValue === "con soporte") {
+          acc.withSupport += 1;
+        } else if (
+          statusValue === "expired" ||
+          statusValue === "vencido" ||
+          statusValue.includes("expired")
+        ) {
+          acc.expired += 1;
+        }
+
+        acc.total += 1;
+        return acc;
+      },
+      { total: 0, withSupport: 0, expired: 0 }
+    );
+
+    const handleDescargarCSVInventario = () => {
+      const csvLines = [
+        invHeaders.map(escapeCSV).join(","),
+        ...filteredRows.map((row) => row.map(escapeCSV).join(",")),
+      ];
+      const blob = new Blob([csvLines.join("\n")], {
+        type: "text/csv;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `pseries_inv_${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    };
+
+    return (
+      <div className="as-page">
+        <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-as-text flex items-center gap-2">
+              <Server className="text-as-brand-600" size={24} />
+              pseries_inv
+            </h1>
+          </div>
+        </header>
+
+        <main className="as-container">
+          {invLoading ? (
+            <div className="as-card p-6">Cargando...</div>
+          ) : invError ? (
+            <div className="as-card p-6 text-red-600">{invError}</div>
+          ) : (
+            <>
+              <div className="as-card p-4 mb-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div className="relative flex-1 min-w-0">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search size={18} className="text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Buscar por cualquier campo..."
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                      value={invSearchValue}
+                      onChange={(e) => {
+                        setInvSearchValue(e.target.value);
+                        setInvCurrentPage(1);
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleInvImport}
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 bg-as-brand-600 text-white hover:bg-as-brand-700"
+                    title="Importar desde Excel"
+                  >
+                    <Download size={16} />
+                    <span className="hidden sm:inline">Importar</span>
+                  </button>
+                  <button
+                    onClick={handleDescargarCSVInventario}
+                    disabled={filteredRows.length === 0}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
+                      filteredRows.length === 0
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-as-brand-600 text-white hover:bg-as-brand-700"
+                    }`}
+                    title="Descargar CSV del inventario"
+                  >
+                    <Download size={16} />
+                    <span className="hidden sm:inline">Descargar CSV</span>
+                  </button>
+                </div>
+
+                <div className="mt-3 text-xs text-slate-500">
+                  Mostrando {pageRows.length} de {filteredRows.length} registro
+                  {filteredRows.length !== 1 ? "s" : ""}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">With Support</span>
+                    <CheckCircle size={18} className="text-blue-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-slate-900">{invStatusCounts.withSupport}</div>
+                  <div className="text-xs text-slate-500 mt-1">Filas con estado With Support</div>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">Expired</span>
+                    <AlertCircle size={18} className="text-red-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-slate-900">{invStatusCounts.expired}</div>
+                  <div className="text-xs text-slate-500 mt-1">Filas con estado Expired</div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white">
+                <table className="as-table">
+                  <thead>
+                    <tr>
+                      {invHeaders.map((h) => (
+                        <th key={h} className="as-th whitespace-nowrap">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pageRows.length > 0 ? (
+                      pageRows.map((row, idx) => (
+                        <tr key={idx} className="border-b border-slate-100">
+                          {row.map((cell, cidx) => (
+                            <td key={cidx} className="as-td whitespace-nowrap">
+                              {cell || "—"}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={invHeaders.length || 1}
+                          className="px-6 py-12 text-center text-slate-500 bg-white"
+                        >
+                          No hay datos
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-4 px-2">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-slate-500 mr-3">
+                    Filas por página
+                  </span>
+                  <select
+                    className="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500"
+                    value={invRowsPerPage}
+                    onChange={(e) => {
+                      setInvRowsPerPage(parseInt(e.target.value));
+                      setInvCurrentPage(1);
+                    }}
+                  >
+                    {[10, 25, 50, 100].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    className={`p-2 rounded-lg border border-slate-200 ${
+                      pageInv <= 1 || totalPagesInv === 0
+                        ? "text-slate-300 cursor-not-allowed bg-white"
+                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                    }`}
+                    onClick={() => setInvCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={pageInv <= 1 || totalPagesInv === 0}
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-as-brand-50 text-as-brand-700 font-semibold border border-as-brand-100">
+                    {totalPagesInv === 0 ? 0 : pageInv}
+                  </div>
+                  <span className="text-sm text-slate-500">
+                    / {totalPagesInv}
+                  </span>
+                  <button
+                    className={`p-2 rounded-lg border border-slate-200 ${
+                      pageInv >= totalPagesInv || totalPagesInv === 0
+                        ? "text-slate-300 cursor-not-allowed bg-white"
+                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                    }`}
+                    onClick={() =>
+                      setInvCurrentPage((p) =>
+                        Math.min(p + 1, totalPagesInv || 1)
+                      )
+                    }
+                    disabled={pageInv >= totalPagesInv || totalPagesInv === 0}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="as-page flex items-center justify-center">
@@ -742,107 +1159,94 @@ const Pseries = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Total</span>
-              <Activity size={16} className="text-gray-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
-          </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Corriendo</span>
-              <CheckCircle size={16} className="text-emerald-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.running}</div>
-          </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">No activo</span>
-              <AlertCircle size={16} className="text-red-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.inactive}</div>
-          </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Mantenimiento</span>
-              <Clock size={16} className="text-amber-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.maintenance}</div>
-          </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Otros</span>
-              <Server size={16} className="text-indigo-600" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.other}</div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+            <button
+              onClick={() => navigate(`${BASE_PATH}/pseries?tab=servidores`)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                !isReportes
+                  ? "bg-as-brand-600 text-white"
+                  : "text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              Servidores
+            </button>
+            <button
+              onClick={() => navigate(`${BASE_PATH}/pseries?tab=reportes`)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                isReportes
+                  ? "bg-as-brand-600 text-white"
+                  : "text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              Reportes
+            </button>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-          {/* Search and Action Buttons */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            {showSearch ? (
-              <div className="relative flex-1">
-                {/* Icono de lupa decorativo eliminado para evitar duplicidad */}
-                <input
-                  type="text"
-                  placeholder="Buscar por nombre..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
-                  value={searchValue}
-                  onChange={handleSearchChange}
-                  ref={searchInputRef}
-                />
-                <button
-                  onClick={handleSearchButtonClick}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  <Search size={18} className="text-gray-400 hover:text-gray-600" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
-                <span className="font-medium mr-2">
-                  {selectedCount}
-                </span>
-                <span>
-                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
-                  {selectedCount !== 1 ? "s" : ""}
-                </span>
-              </div>
-            )}
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <input
-                ref={insumosFileInputRef}
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleInsumosFileChange}
-                className="hidden"
-              />
+        {isReportes ? (
+          <ReportesPseries embedded />
+        ) : (
+          <>
+          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+              {showSearch ? (
+                <div className="relative flex-1 min-w-0">
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                    value={searchValue}
+                    onChange={handleSearchChange}
+                    ref={searchInputRef}
+                  />
+                  <button
+                    onClick={handleSearchButtonClick}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <Search size={18} className="text-gray-400 hover:text-gray-600" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg w-fit shrink-0">
+                    <span className="font-medium mr-2">{selectedCount}</span>
+                    <span>
+                      Pseries seleccionado
+                      {selectedCount !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleDeleteSelectedPseries}
+                    disabled={bulkDeleting}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
+                      bulkDeleting
+                        ? "bg-red-300 cursor-not-allowed text-white"
+                        : "bg-red-600 hover:bg-red-500 text-white"
+                    }`}
+                    title="Eliminar seleccionados"
+                  >
+                    <Trash2 size={16} />
+                    <span className="hidden sm:inline">
+                      {bulkDeleting ? "Eliminando..." : "Eliminar"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
               <button
                 onClick={irCrear}
-                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2 shrink-0"
               >
                 <Plus size={16} />
                 <span className="hidden sm:inline">Crear</span>
               </button>
               <button
-                onClick={handleRecolectarInsumos}
-                disabled={insumosLoading}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 ${
-                  insumosLoading
-                    ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-gray-700 hover:bg-gray-600 text-white"
-                }`}
-                title="Seleccionar Excel y recolectar insumos"
-              >
-                <Activity size={16} />
-                <span className="hidden sm:inline">{insumosLoading ? "Recolectando..." : "Recolectar Insumos"}</span>
-              </button>
-              <button
                 onClick={handleImport}
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2 shrink-0"
                 title="Importar desde Excel"
               >
                 <Download size={16} />
@@ -850,19 +1254,11 @@ const Pseries = () => {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
                 <span className="hidden sm:inline">Exportar</span>
-              </button>
-              <button
-                onClick={() => navigate(`${BASE_PATH}/reportes-pseries`)}
-                className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition flex items-center gap-2"
-                title="Ver reportes mensuales"
-              >
-                <FileText size={16} />
-                <span className="hidden sm:inline">Reportes</span>
               </button>
             </div>
           </div>
@@ -1033,6 +1429,8 @@ const Pseries = () => {
             </div>
           </div>
         </div>
+          </>
+        )}
       </main>
     </div>
   );
