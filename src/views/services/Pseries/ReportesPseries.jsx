@@ -12,7 +12,6 @@ import {
   RefreshCcw,
   Search,
   X,
-  BarChart3,
   TrendingUp,
   Server,
 } from "lucide-react";
@@ -358,103 +357,36 @@ const ReportesPseries = ({ embedded = false }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          {reporteSeleccionado && (
             <button
-              onClick={handleSimularDosMeses}
-              disabled={simulando}
-              className={`as-btn-primary ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
-              title="Crea 2 reportes simulados (mes actual y mes anterior)"
+              onClick={handleDescargar}
+              className="as-btn-primary"
+              title="Descargar CSV"
             >
-              <RefreshCcw size={16} />
-              <span className="hidden sm:inline">
-                {simulando ? "Simulando..." : "Simular 2 meses"}
-              </span>
+              <Download size={16} />
+              <span className="hidden sm:inline">Descargar CSV</span>
             </button>
-            {reporteSeleccionado && (
-              <button
-                onClick={handleDescargar}
-                className="as-btn-primary"
-                title="Descargar CSV"
-              >
-                <Download size={16} />
-                <span className="hidden sm:inline">Descargar CSV</span>
-              </button>
-            )}
+          )}
+        </div>
+      </header>
+
+      <main className="as-container">
+        {reportes.length === 0 ? (
+          <div className="as-card p-12 flex flex-col items-center justify-center text-center">
+            <FileText className="h-16 w-16 text-slate-300 mb-4" />
+            <p className="text-lg font-semibold text-slate-700">
+              No hay reportes generados aún
+            </p>
+            <p className="text-sm text-slate-500 mt-1">
+              El primer reporte se generará automáticamente el día 2 de cada mes.
+            </p>
           </div>
-        </header>
-      )}
-
-      <main className={embedded ? "" : "as-container"}>
-        <div className="as-card p-4 mb-6">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-medium text-slate-600">Año:</span>
-              <div className="relative">
-                <select
-                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
-                  value={filtroYear}
-                  onChange={(e) => setFiltroYear(e.target.value)}
-                >
-                  <option value="">Todos</option>
-                  {Array.from({ length: 10 }, (_, i) =>
-                    String(new Date().getFullYear() - i)
-                  ).map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <ChevronDown size={14} className="text-slate-400" />
-                </div>
-              </div>
-              <span className="text-sm font-medium text-slate-600">Mes:</span>
-              <div className="relative">
-                <select
-                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
-                  value={filtroMonth}
-                  onChange={(e) => setFiltroMonth(e.target.value)}
-                >
-                  <option value="">Todos</option>
-                  {[
-                    ["1", "Ene"],
-                    ["2", "Feb"],
-                    ["3", "Mar"],
-                    ["4", "Abr"],
-                    ["5", "May"],
-                    ["6", "Jun"],
-                    ["7", "Jul"],
-                    ["8", "Ago"],
-                    ["9", "Sep"],
-                    ["10", "Oct"],
-                    ["11", "Nov"],
-                    ["12", "Dic"],
-                  ].map(([val, label]) => (
-                    <option key={val} value={val}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <ChevronDown size={14} className="text-slate-400" />
-                </div>
-              </div>
-              <button
-                onClick={handleAplicarFiltro}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-as-brand-600 text-white hover:bg-as-brand-700 transition-colors shadow-sm"
-              >
-                Filtrar
-              </button>
-              <button
-                onClick={handleLimpiarFiltro}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
-              >
-                Limpiar
-              </button>
-            </div>
-
-            {reportes.length > 0 && (
-              <>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {/* Selector de reporte */}
+            <div className="as-card p-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="text-sm font-medium text-slate-600 flex items-center gap-1">
                   <Calendar size={16} />
                   Seleccionar reporte:
@@ -484,45 +416,8 @@ const ReportesPseries = ({ embedded = false }) => {
                   {reportes.length} reporte{reportes.length !== 1 ? "s" : ""}{" "}
                   disponible{reportes.length !== 1 ? "s" : ""}
                 </span>
-              </>
-            )}
-
-            {embedded && (
-              <div className="ml-auto flex items-center gap-2">
-                <button
-                  onClick={handleSimularDosMeses}
-                  disabled={simulando}
-                  className={`as-btn-primary ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
-                  title="Crea 2 reportes simulados (mes actual y mes anterior)"
-                >
-                  <RefreshCcw size={16} />
-                  <span className="hidden sm:inline">
-                    {simulando ? "Simulando..." : "Simular 2 meses"}
-                  </span>
-                </button>
-                {reporteSeleccionado && (
-                  <button
-                    onClick={handleDescargar}
-                    className="as-btn-primary"
-                    title="Descargar CSV"
-                  >
-                    <Download size={16} />
-                    <span className="hidden sm:inline">Descargar CSV</span>
-                  </button>
-                )}
               </div>
-            )}
-          </div>
-          {(simMensaje || simError) && (
-            <div
-              className={`mt-3 text-sm ${
-                simError ? "text-red-600" : "text-green-700"
-              }`}
-            >
-              {simError || simMensaje}
             </div>
-          )}
-        </div>
 
         {reportes.length === 0 ? (
           <div className="as-card p-12 flex flex-col items-center justify-center text-center">

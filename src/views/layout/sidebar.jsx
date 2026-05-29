@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../IMG/Tata_Logo.png";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
@@ -11,26 +11,16 @@ import Insumos from "../services/Insumos/Insumos";
 import {
   Server,
   Database,
+  HardDrive,
   Cloud,
   LayoutGrid,
   Boxes,
-  ChevronDown,
-  ChevronRight,
 } from "lucide-react";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
-  const path = location.pathname;
-  const isInvPseries = path.includes("pseries-inv");
-  const isInvStorage = path.includes("storage-inv");
-  const isMainPseries = path.includes("pseries") && !isInvPseries;
-  const isMainStorage = path.includes("storage") && !isInvStorage;
-  const [expanded, setExpanded] = useState({
-    inventario: isInvPseries || isInvStorage,
-    infraestructura: isMainPseries || isMainStorage,
-  });
 
   const Menus = [
     {
@@ -57,45 +47,12 @@ export default function Sidebar() {
       icon: Database,
       path: "/AssetSphere/base-de-datos",
     },
-    {
-      id: 5,
-      title: "Inventario Infraestructura",
-      icon: Boxes,
-      path: "/AssetSphere/pseries-inv",
-      groupKey: "inventario",
-      children: [
-        { id: "pseries_inv", title: "Pseries", path: "/AssetSphere/pseries-inv" },
-        { id: "storage_inv", title: "Storage", path: "/AssetSphere/storage-inv" },
-      ],
-    },
-    {
-      id: 6,
-      title: "Servicios Infraestructura",
-      icon: Server,
-      path: "/AssetSphere/pseries",
-      groupKey: "infraestructura",
-      children: [
-        { id: "pseries", title: "Pseries", path: "/AssetSphere/pseries" },
-        { id: "storage", title: "Storage", path: "/AssetSphere/storage" },
-      ],
-    },
-    { id: 8, title: "Insumos", icon: Boxes, path: "/AssetSphere/insumos" },
+    { id: 5, title: "Pseries", icon: Server, path: "/AssetSphere/pseries" },
+    { id: 6, title: "Storage", icon: HardDrive, path: "/AssetSphere/storage" },
+    { id: 7, title: "Insumos", icon: Boxes, path: "/AssetSphere/insumos" },
+    {id: 8, title: "pseries_inve", icon: Server, path: "/AssetSphere/pseries_inve" },
     // { id: 7, title: "Sucursales", icon: Building, path: "/AssetSphere/sucursales" },
   ];
-
-  useEffect(() => {
-    setExpanded((prev) => ({
-      ...prev,
-      inventario:
-        prev.inventario ||
-        isInvPseries ||
-        isInvStorage,
-      infraestructura:
-        prev.infraestructura ||
-        isMainPseries ||
-        isMainStorage,
-    }));
-  }, [location.pathname]);
 
   const renderComponent = () => {
     const path = location.pathname;
@@ -165,92 +122,37 @@ export default function Sidebar() {
           </p>
           <ul className="space-y-1.5">
             {Menus.map((Menu) => {
-              const isLeaf = !Menu.children || Menu.children.length === 0;
-              const isActive = isLeaf
-                ? path.includes(Menu.path.split("/").pop())
-                : Menu.children.some((c) => path.includes(c.path.split("/").pop()));
+              const isActive = location.pathname.includes(Menu.path.split("/").pop());
               
               return (
-                <li key={Menu.id}>
-                  <div
-                    className={`group flex items-center rounded-xl px-3 py-3 cursor-pointer transition-all duration-200 ${
-                      isActive
-                        ? "bg-as-brand-600/10 text-as-brand-400"
-                        : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
-                    }`}
-                    onClick={() => {
-                      if (Menu.children && Menu.children.length > 0 && open) {
-                        setExpanded((prev) => ({
-                          ...prev,
-                          [Menu.groupKey]: !prev[Menu.groupKey],
-                        }));
-                        return;
-                      }
-                      if (Menu.children && Menu.children.length > 0 && !open) {
-                        navigate(Menu.children[0]?.path || Menu.path);
-                        return;
-                      }
-                      navigate(Menu.path);
-                    }}
-                    title={!open ? Menu.title : ""}
-                  >
-                    <div className={`min-w-max transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
-                      <Menu.icon 
-                        size={20} 
-                        strokeWidth={isActive ? 2.5 : 2}
-                        className={isActive ? "text-as-brand-400" : "text-slate-400 group-hover:text-slate-300"} 
-                      />
-                    </div>
-                    <span 
-                      className={`ml-3 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                        !open ? "opacity-0 translate-x-4 w-0 hidden" : "opacity-100 translate-x-0"
-                      }`}
-                    >
-                      {Menu.title}
-                    </span>
-                    {isActive && open && (
-                      <div className="ml-auto flex items-center gap-2">
-                        {Menu.children && Menu.children.length > 0 ? (
-                          expanded[Menu.groupKey] ? (
-                            <ChevronDown size={16} className="text-as-brand-400" />
-                          ) : (
-                            <ChevronRight size={16} className="text-as-brand-400" />
-                          )
-                        ) : (
-                          <div className="w-1.5 h-1.5 rounded-full bg-as-brand-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
-                        )}
-                      </div>
-                    )}
-                    {!isActive && Menu.children && Menu.children.length > 0 && open && (
-                      <div className="ml-auto">
-                        {expanded[Menu.groupKey] ? (
-                          <ChevronDown size={16} className="text-slate-400" />
-                        ) : (
-                          <ChevronRight size={16} className="text-slate-400" />
-                        )}
-                      </div>
-                    )}
+                <li
+                  key={Menu.id}
+                  className={`group flex items-center rounded-xl px-3 py-3 cursor-pointer transition-all duration-200 ${
+                    isActive
+                      ? "bg-as-brand-600/10 text-as-brand-400"
+                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                  }`}
+                  onClick={() => navigate(Menu.path)}
+                  title={!open ? Menu.title : ""}
+                >
+                  <div className={`min-w-max transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
+                    <Menu.icon 
+                      size={20} 
+                      strokeWidth={isActive ? 2.5 : 2}
+                      className={isActive ? "text-as-brand-400" : "text-slate-400 group-hover:text-slate-300"} 
+                    />
                   </div>
-
-                  {Menu.children && Menu.children.length > 0 && open && expanded[Menu.groupKey] && (
-                    <div className="mt-1 ml-9 space-y-1">
-                      {Menu.children.map((child) => {
-                        const childActive = location.pathname === child.path;
-                        return (
-                          <div
-                            key={child.id}
-                            className={`rounded-lg px-3 py-2 text-sm cursor-pointer transition-all ${
-                              childActive
-                                ? "bg-as-brand-600/10 text-as-brand-300"
-                                : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
-                            }`}
-                            onClick={() => navigate(child.path)}
-                          >
-                            {child.title}
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <span 
+                    className={`ml-3 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                      !open ? "opacity-0 translate-x-4 w-0 hidden" : "opacity-100 translate-x-0"
+                    }`}
+                  >
+                    {Menu.title}
+                  </span>
+                  
+                  {/* Indicador activo sutil */}
+                  {isActive && open && (
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-as-brand-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
                   )}
                 </li>
               );

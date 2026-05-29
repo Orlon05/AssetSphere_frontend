@@ -50,14 +50,7 @@ const Pseries = () => {
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [bulkDeleting, setBulkDeleting] = useState(false);
-  const [invLoading, setInvLoading] = useState(false);
-  const [invError, setInvError] = useState("");
-  const [invHeaders, setInvHeaders] = useState([]);
-  const [invRows, setInvRows] = useState([]);
-  const [invSearchValue, setInvSearchValue] = useState("");
-  const [invCurrentPage, setInvCurrentPage] = useState(1);
-  const [invRowsPerPage, setInvRowsPerPage] = useState(25);
+  const [insumosLoading, setInsumosLoading] = useState(false);
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -1159,82 +1152,75 @@ const Pseries = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-            <button
-              onClick={() => navigate(`${BASE_PATH}/pseries?tab=servidores`)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                !isReportes
-                  ? "bg-as-brand-600 text-white"
-                  : "text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              Servidores
-            </button>
-            <button
-              onClick={() => navigate(`${BASE_PATH}/pseries?tab=reportes`)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                isReportes
-                  ? "bg-as-brand-600 text-white"
-                  : "text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              Reportes
-            </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-600 uppercase">Total</span>
+              <Activity size={16} className="text-gray-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-600 uppercase">Corriendo</span>
+              <CheckCircle size={16} className="text-emerald-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.running}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-600 uppercase">No activo</span>
+              <AlertCircle size={16} className="text-red-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.inactive}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-600 uppercase">Mantenimiento</span>
+              <Clock size={16} className="text-amber-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.maintenance}</div>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-600 uppercase">Otros</span>
+              <Server size={16} className="text-indigo-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900">{statusCounts.other}</div>
           </div>
         </div>
-
-        {isReportes ? (
-          <ReportesPseries embedded />
-        ) : (
-          <>
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
-              {showSearch ? (
-                <div className="relative flex-1 min-w-0">
-                  <input
-                    type="text"
-                    placeholder="Buscar por nombre..."
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
-                    value={searchValue}
-                    onChange={handleSearchChange}
-                    ref={searchInputRef}
-                  />
-                  <button
-                    onClick={handleSearchButtonClick}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    <Search size={18} className="text-gray-400 hover:text-gray-600" />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg w-fit shrink-0">
-                    <span className="font-medium mr-2">{selectedCount}</span>
-                    <span>
-                      Pseries seleccionado
-                      {selectedCount !== 1 ? "s" : ""}
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleDeleteSelectedPseries}
-                    disabled={bulkDeleting}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
-                      bulkDeleting
-                        ? "bg-red-300 cursor-not-allowed text-white"
-                        : "bg-red-600 hover:bg-red-500 text-white"
-                    }`}
-                    title="Eliminar seleccionados"
-                  >
-                    <Trash2 size={16} />
-                    <span className="hidden sm:inline">
-                      {bulkDeleting ? "Eliminando..." : "Eliminar"}
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
+        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          {/* Search and Action Buttons */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+            {showSearch ? (
+              <div className="relative flex-1">
+                {/* Icono de lupa decorativo eliminado para evitar duplicidad */}
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre..."
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                  ref={searchInputRef}
+                />
+                <button
+                  onClick={handleSearchButtonClick}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  <Search size={18} className="text-gray-400 hover:text-gray-600" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg">
+                <span className="font-medium mr-2">
+                  {selectedCount}
+                </span>
+                <span>
+                  Pserie{selectedCount !== 1 ? "s" : ""} seleccionado
+                  {selectedCount !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
               <button
@@ -1259,6 +1245,14 @@ const Pseries = () => {
               >
                 <Upload size={16} />
                 <span className="hidden sm:inline">Exportar</span>
+              </button>
+              <button
+                onClick={() => navigate(`${BASE_PATH}/reportes-pseries`)}
+                className="px-4 py-2 bg-teal-700 text-white rounded-lg text-sm font-medium hover:bg-teal-600 transition flex items-center gap-2"
+                title="Ver reportes mensuales"
+              >
+                <FileText size={16} />
+                <span className="hidden sm:inline">Reportes</span>
               </button>
             </div>
           </div>

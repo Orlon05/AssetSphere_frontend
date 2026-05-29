@@ -162,22 +162,6 @@ const EnrutadorApp = [
     ),
   },
   {
-    path: `${BASE_PATH}/pseries-inv`,
-    element: (
-      <ProtectedRoute>
-        <Sidebar />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: `${BASE_PATH}/insumos`,
-    element: (
-      <ProtectedRoute>
-        <Sidebar />
-      </ProtectedRoute>
-    ),
-  },
-  {
     path: `${BASE_PATH}/base-de-datos`,
     element: (
       <ProtectedRoute>
