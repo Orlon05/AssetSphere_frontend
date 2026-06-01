@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     viteStaticCopy({
@@ -21,9 +21,10 @@ export default defineConfig({
     emptyOutDir: true,
   },
   base: "/AssetSphere/",
-   server: {
-     hmr: {
-       port: 443,
-     },
-   },
-});
+  server:
+    command === "serve"
+      ? {
+          hmr: true,
+        }
+      : undefined,
+}));

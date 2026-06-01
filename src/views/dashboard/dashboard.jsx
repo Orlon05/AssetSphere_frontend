@@ -503,12 +503,52 @@ export default function Dashboard() {
     }
   };
 
+  const fetchDashboardCounts = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) return false;
+
+      const response = await fetch(`${API_URL}/stats/counts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) return false;
+
+      const counts = payload?.data || {};
+
+      setModules((prevModules) =>
+        prevModules.map((module) => {
+          if (module.id === 1) return { ...module, count: counts.physical_servers ?? module.count, loading: false };
+          if (module.id === 2) return { ...module, count: counts.virtual_servers ?? module.count, loading: false };
+          if (module.id === 3) return { ...module, count: counts.base_datos ?? module.count, loading: false };
+          if (module.id === 4) return { ...module, count: counts.pseries ?? module.count, loading: false };
+          if (module.id === 5) return { ...module, count: counts.storage ?? module.count, loading: false };
+          if (module.id === 6) return { ...module, count: counts.sucursales ?? module.count, loading: false };
+          return module;
+        })
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   useEffect(() => {
-    fetchServerCount();
-    fetchPseriesCount();
-    fetchStorageCount();
-    fetchBaseDatosCount();
-    fetchServervCount();
+    const load = async () => {
+      const ok = await fetchDashboardCounts();
+      if (!ok) {
+        fetchServerCount();
+        fetchPseriesCount();
+        fetchStorageCount();
+        fetchBaseDatosCount();
+        fetchServervCount();
+      }
+    };
+    load();
   }, []);
 
   const handleLogout = () => {
