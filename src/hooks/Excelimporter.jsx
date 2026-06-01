@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import PropTypes from "prop-types";
+import { API_URL } from "../config/api";
 
 /**
  * Componente para importar y procesar archivos Excel con funcionalidades avanzadas
@@ -39,6 +40,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
    * @type {Array<Array>} Array bidimensional con los datos de las celdas
    */
   const [excelData, setExcelData] = useState([]);
+  const [originalFile, setOriginalFile] = useState(null);
 
   /**
    * Nombres de las columnas del archivo Excel
@@ -132,6 +134,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
 
     const file = e.target.files[0];
     if (!file) return;
+    setOriginalFile(file);
 
     const fileName = (file.name || "").toLowerCase();
     const fileType = (file.type || "").toLowerCase();
@@ -436,30 +439,46 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     });
 
     try {
-      // Mapear los datos
+      // Si hay archivo original, subirlo al backend
+      if (originalFile) {
+        const formData = new FormData();
+        formData.append("file", originalFile, originalFile.name);
+
+        const token = localStorage.getItem("authenticationToken");
+        const resp = await fetch(`${API_URL}/inv/upload`, {
+          method: "POST",
+          body: formData,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        if (!resp.ok) {
+          const text = await resp.text();
+          throw new Error(text || "Error al subir el archivo");
+        }
+
+        const result = await resp.json();
+        Swal.fire({ icon: "success", title: "Archivo subido", text: `Batch ${result.data.batch_id}: Pseries ${result.data.pseries_rows}, Storage ${result.data.storage_rows}` });
+
+        if (typeof onImportComplete === "function") {
+          onImportComplete(result.data);
+        }
+
+        // Limpiar estados
+        setOriginalFile(null);
+        setExcelData([]);
+        setColumns([]);
+        setShowTable(false);
+        setSheetNames([]);
+        setSelectedSheet("");
+        return;
+      }
+
+      // Si no hay archivo, proceder con el mapeo local (compatibilidad)
       const mappedData = mapExcelData(excelData, tableMetadata);
+      if (mappedData.length === 0) throw new Error("No se pudieron mapear los datos correctamente");
 
-      // Verificar que se hayan mapeado correctamente
-      if (mappedData.length === 0) {
-        throw new Error("No se pudieron mapear los datos correctamente");
-      }
-
-      // Simulación de guardado (reemplazar con llamada real a la API)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mostrar éxito
-      Swal.fire({
-        icon: "success",
-        title: "Datos Guardados",
-        text: `Se han procesado ${mappedData.length} registros correctamente.`,
-      });
-
-      // Ejecutar callback si existe
-      if (typeof onImportComplete === "function") {
-        onImportComplete(mappedData);
-      }
-
-      // Limpiar estados
+      Swal.fire({ icon: "success", title: "Datos Procesados", text: `Se han procesado ${mappedData.length} registros (local).` });
+      if (typeof onImportComplete === "function") onImportComplete(mappedData);
       setExcelData([]);
       setColumns([]);
       setShowTable(false);
@@ -467,12 +486,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       setSelectedSheet("");
     } catch (error) {
       console.error("Error al guardar:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al Guardar",
-        text:
-          error.message || "Ocurrió un error al intentar guardar los datos.",
-      });
+      Swal.fire({ icon: "error", title: "Error al Guardar", text: error.message || "Ocurrió un error al intentar guardar los datos." });
     } finally {
       setIsSaving(false);
     }

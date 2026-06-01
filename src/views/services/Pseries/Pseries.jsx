@@ -845,6 +845,24 @@ const Pseries = () => {
           No activo
         </span>
       );
+    } else if (statusLower === "with support" || statusLower === "con soporte") {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <CheckCircle size={12} className="mr-1" />
+          With Support
+        </span>
+      );
+    } else if (
+      statusLower === "expired" ||
+      statusLower === "vencido" ||
+      statusLower.includes("expired")
+    ) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <AlertCircle size={12} className="mr-1" />
+          Expired
+        </span>
+      );
     } else if (
       statusLower === "maintenance" ||
       statusLower === "mantenimiento" ||

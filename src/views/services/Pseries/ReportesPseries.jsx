@@ -12,7 +12,6 @@ import {
   RefreshCcw,
   Search,
   X,
-  BarChart3,
   TrendingUp,
   Server,
 } from "lucide-react";
