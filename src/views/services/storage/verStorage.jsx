@@ -5,20 +5,22 @@ import { API_URL } from "../../../config/api";
  * Este componente permite:
  * - Mostrar todos los detalles de un dispositivo de storage en modo solo lectura
  * - Organizar la información en secciones lógicas
- * - Aplicar estilos visuales específicos para estados y campos activos
+ * - Aplicar estilos visuales premium en escala de grises
  * - Manejar diferentes estructuras de respuesta de la API
- *
- * @component
- * @example
- * return (
- *   <VerStorage />
- * )
  */
 
 import { useState, useEffect } from "react";
-import { MdArrowBack } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  Database,
+  Layers,
+  Cpu,
+  Sliders,
+  HardDrive,
+  AlertCircle,
+  Network,
+} from "lucide-react";
 
 const VerStorage = () => {
   const navigate = useNavigate();
@@ -98,35 +100,97 @@ const VerStorage = () => {
   };
 
   /**
-   * Obtiene las clases CSS para el badge de estado
-   * @param {string} status - Estado del dispositivo
-   * @returns {string} Clases CSS para el estado
+   * Obtiene el icono apropiado para cada sección
    */
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Aplicado":
-        return "bg-green-100 text-green-800 border-green-300";
-      case "No Aplicado":
-        return "bg-red-100 text-red-800 border-red-300";
+  const getSectionIcon = (title) => {
+    switch (title) {
+      case "Información Básica":
+        return <Database className="text-gray-500" size={16} />;
+      case "Configuración de Red":
+        return <Network className="text-gray-500" size={16} />;
+      case "Especificaciones Técnicas":
+        return <Cpu className="text-gray-500" size={16} />;
+      case "Información Organizacional":
+        return <Layers className="text-gray-500" size={16} />;
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return <Database className="text-gray-500" size={16} />;
     }
   };
 
   /**
-   * Obtiene las clases CSS para el badge de activo
-   * @param {string} active - Estado activo del dispositivo
-   * @returns {string} Clases CSS para el estado activo
+   * Obtiene el badge de estado premium en escala de grises / sutil
    */
-  const getActiveColor = (active) => {
-    switch (active) {
-      case "Sí":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      case "No":
-        return "bg-gray-100 text-gray-800 border-gray-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+  const renderStatusBadge = (statusVal) => {
+    const s = (statusVal || "").toLowerCase().trim();
+    if (s === "aplicado" || s === "activo" || s === "active") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Aplicado
+        </span>
+      );
+    } else if (s === "no aplicado" || s === "inactivo" || s === "inactive") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          No Aplicado
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          {statusVal || "N/A"}
+        </span>
+      );
     }
+  };
+
+  /**
+   * Obtiene el badge de activo premium en escala de grises / sutil
+   */
+  const renderActiveBadge = (activeVal) => {
+    const a = (activeVal || "").toLowerCase().trim();
+    if (a === "sí" || a === "si" || a === "yes" || a === "active" || a === "true") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          Sí
+        </span>
+      );
+    } else if (a === "no" || a === "false") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          No
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          {activeVal || "N/A"}
+        </span>
+      );
+    }
+  };
+
+  /**
+   * Renderiza el valor del campo
+   */
+  const renderFieldValue = (field) => {
+    const val = storageData[field];
+    if (field === "status") {
+      return renderStatusBadge(val);
+    }
+    if (field === "active") {
+      return renderActiveBadge(val);
+    }
+    return (
+      <span className="text-sm font-semibold text-gray-800">
+        {val || "—"}
+      </span>
+    );
   };
 
   /**
@@ -189,15 +253,12 @@ const VerStorage = () => {
     }
   }, [storageId]);
 
-  // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-700">
-            Cargando datos del storage...
-          </p>
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles del storage...</p>
         </div>
       </div>
     );
@@ -205,14 +266,19 @@ const VerStorage = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
-          <strong>Error:</strong> {error}
+      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+        <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
+          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
+            <AlertCircle size={24} />
+          </div>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
+          <p className="text-sm text-gray-500 mb-6">{error}</p>
           <button
-            onClick={() => navigate("/storage")}
-            className="mt-3 block text-blue-600 hover:text-blue-800"
+            onClick={() => navigate(-1)}
+            className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
           >
-            <MdArrowBack className="inline mr-1" /> Volver a la lista
+            <ArrowLeft size={16} />
+            <span>Volver a la lista</span>
           </button>
         </div>
       </div>
@@ -220,71 +286,80 @@ const VerStorage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Visualizar Storage
-          </h1>
-          <p className="text-sm font-semibold text-gray-900">
-            Detalles completos del dispositivo de almacenamiento
-          </p>
+      <header className="sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
+            <Database size={20} />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+              Ver Registro Storage
+            </h1>
+            <p className="text-xs font-semibold text-gray-500">
+              Detalles completos del dispositivo de almacenamiento
+            </p>
+          </div>
         </div>
         <button
-          onClick={() => window.history.back()}
-          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
         >
-          <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          <ArrowLeft size={16} />
+          <span>Regresar</span>
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
-          <div className="space-y-6">
-            {formSections.map((section, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
-              >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+      <main className="max-w-7xl mx-auto px-8 mt-8">
+        {/* Banner principal rápido */}
+        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Nombre del Storage</span>
+            <span className="text-2xl font-bold text-gray-900">{storageData.name || "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Dirección IP</span>
+            <span className="text-lg font-semibold text-gray-800">{storageData.ip_address || "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Número de Serie</span>
+            <span className="text-lg font-semibold text-gray-800">{storageData.serial || "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Estado</span>
+            <div>{renderStatusBadge(storageData.status)}</div>
+          </div>
+        </div>
+
+        {/* Secciones de Categorías */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {formSections.map((section, idx) => (
+            <div key={idx} className="flex flex-col">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
+                <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
                   {section.title}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </h3>
+              </div>
+              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                   {section.fields.map((field) => (
-                    <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                    <div key={field} className="flex flex-col">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
                         {fieldLabels[field]}
-                      </label>
-                      {field === "status" ? (
-                        <div
-                          className={`border rounded-lg block w-full p-2.5 font-medium text-center ${getStatusColor(
-                            storageData.status
-                          )}`}
-                        >
-                          {storageData.status || "N/A"}
-                        </div>
-                      ) : field === "active" ? (
-                        <div
-                          className={`border rounded-lg block w-full p-2.5 font-medium text-center ${getActiveColor(
-                            storageData.active
-                          )}`}
-                        >
-                          {storageData.active || "N/A"}
-                        </div>
-                      ) : (
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
-                          {storageData[field] || "N/A"}
-                        </div>
-                      )}
+                      </span>
+                      {renderFieldValue(field)}
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>

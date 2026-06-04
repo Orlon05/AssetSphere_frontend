@@ -1,5 +1,6 @@
 import { API_URL } from "../../../config/api";
-import Logo from "../../../IMG/Tata_Logo.png";
+import Logo from "../../../IMG/Tcs.png";
+import Header from "../../../components/Header";
 /**
  * Componente principal para la gestión de servidores PSeries
  *
@@ -31,6 +32,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -38,6 +41,8 @@ import {
   Upload,
   Plus,
   ArrowUpRight,
+  FileText,
+  X,
 } from "lucide-react";
 import { createRoot } from "react-dom/client";
 import ExcelImporter from "../../../hooks/Excelimporter";
@@ -84,6 +89,7 @@ const Pseries = () => {
   const isInv = location.pathname.includes("pseries-inv");
   const tab = new URLSearchParams(location.search).get("tab") || "servidores";
   const isReportes = tab === "reportes";
+  const [showReports, setShowReports] = useState(isReportes);
 
   // Efecto para mostrar/ocultar barra de búsqueda según selección
   useEffect(() => {
@@ -222,12 +228,12 @@ const Pseries = () => {
 
   // Efecto para cargar datos iniciales
   useEffect(() => {
-    if (!isInv && !isReportes) fetchPseries(currentPage, rowsPerPage);
-  }, [currentPage, rowsPerPage, isInv, isReportes]);
+    if (!isInv) fetchPseries(currentPage, rowsPerPage);
+  }, [currentPage, rowsPerPage, isInv]);
 
   // Efecto para manejar búsquedas
   useEffect(() => {
-    if (isInv || isReportes) return;
+    if (isInv) return;
     if (isSearchButtonClicked) {
       if (searchValue.trim() === "") {
         setPseries(unfilteredPseries);
@@ -242,7 +248,7 @@ const Pseries = () => {
       }
       setIsSearchButtonClicked(false);
     }
-  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage, isInv, isReportes]);
+  }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage, isInv]);
 
   const loadInvData = async () => {
     setInvLoading(true);
@@ -273,6 +279,132 @@ const Pseries = () => {
     if (!isInv) return;
     loadInvData();
   }, [isInv]);
+
+  const handleAddManualInventory = () => {
+    Swal.fire({
+      title: "Agregar Nuevo Registro de Inventario PSeries",
+      html: `
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:left;max-height:60vh;overflow-y:auto;padding:8px;">
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">GPS</label>
+            <input id="swal-gps" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="GPS">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Número de Serie</label>
+            <input id="swal-serial" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Serial Number">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Artículos Adquiridos</label>
+            <input id="swal-items" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Items Purchased">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Descripción</label>
+            <input id="swal-description" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Description">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Proveedor</label>
+            <input id="swal-provider" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Provider">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Vendedor Local</label>
+            <input id="swal-vendor" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Local Vendor">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Modelo</label>
+            <input id="swal-model" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Model">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">CPU</label>
+            <input id="swal-cpu" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="CPU">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Memoria</label>
+            <input id="swal-memory" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Memory">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Ubicación</label>
+            <input id="swal-location" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Location">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Posición</label>
+            <input id="swal-position" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Position">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Unidad de Rack</label>
+            <input id="swal-rack" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Rack Unit">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">TCS Asset ID</label>
+            <input id="swal-assetid" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="TCS Asset ID">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">PO Number</label>
+            <input id="swal-po" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="PO Number">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Garantía Inicio</label>
+            <input type="date" id="swal-wstart" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Garantía Fin</label>
+            <input type="date" id="swal-wend" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Estado de Garantía</label>
+            <input id="swal-wstatus" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Warranty Status">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:bold;color:#4b5563;display:block;margin-bottom:4px;">Tipo de Soporte HW</label>
+            <input id="swal-wsupport" class="swal2-input" style="margin:0;width:100%;height:38px;font-size:13px;border-radius:8px;" placeholder="Type of HW Support">
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      cancelButtonText: "Cancelar",
+      width: "650px",
+      preConfirm: () => {
+        return {
+          GPS: document.getElementById("swal-gps").value,
+          SerialNumber: document.getElementById("swal-serial").value,
+          ItemsPurchased: document.getElementById("swal-items").value,
+          Description: document.getElementById("swal-description").value,
+          Provider: document.getElementById("swal-provider").value,
+          LocalVendor: document.getElementById("swal-vendor").value,
+          Model: document.getElementById("swal-model").value,
+          CPU: document.getElementById("swal-cpu").value,
+          Memory: document.getElementById("swal-memory").value,
+          Location: document.getElementById("swal-location").value,
+          Position: document.getElementById("swal-position").value,
+          RackUnit: document.getElementById("swal-rack").value,
+          TCSAssetID: document.getElementById("swal-assetid").value,
+          PONumber: document.getElementById("swal-po").value,
+          HWWarrantyStartDate: document.getElementById("swal-wstart").value,
+          HWWarrantyEndDate: document.getElementById("swal-wend").value,
+          WarrantyStatus: document.getElementById("swal-wstatus").value,
+          TypeOfHWSupport: document.getElementById("swal-wsupport").value
+        };
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${API_URL}/inv/pseries`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(result.value)
+          });
+          if (!response.ok) throw new Error();
+          Swal.fire("Éxito", "El registro ha sido agregado correctamente", "success");
+          loadInvData();
+        } catch (e) {
+          Swal.fire("Error", "No se pudo agregar el registro", "error");
+        }
+      }
+    });
+  };
 
   const handleLoadExcelInventory = () => {
     let root;
@@ -320,25 +452,33 @@ const Pseries = () => {
                   didOpen: () => Swal.showLoading(),
                 });
 
-                const response = await fetch(`${API_URL}/inv/pseries/import`, {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(importedData),
-                });
+                let message = "Inventario Pseries importado.";
 
-                if (!response.ok) {
-                  const errorDetail = await response.text();
-                  throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
+                if (importedData && typeof importedData === "object" && importedData.batch_id) {
+                  message = `Se subió el archivo correctamente. Pseries: ${importedData.pseries_rows}, Storage: ${importedData.storage_rows}.`;
+                } else {
+                  const response = await fetch(`${API_URL}/inv/pseries/import`, {
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(importedData),
+                  });
+
+                  if (!response.ok) {
+                    const errorDetail = await response.text();
+                    throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
+                  }
+
+                  const data = await response.json();
+                  message = `Se guardaron ${data.data.inserted_rows} filas en pseries_inventory.`;
                 }
 
-                const data = await response.json();
                 Swal.fire({
                   icon: "success",
                   title: "Inventario Pseries importado",
-                  text: `Se guardaron ${data.data.inserted_rows} filas en pseries_inventory.`,
+                  text: message,
                 });
 
                 if (isInv) {
@@ -1027,60 +1167,66 @@ const Pseries = () => {
 
     const handleViewInventoryRow = (row) => {
       const item = buildInventoryRowObject(row);
-      const summaryKeys = [
-        "id",
-        "GPS",
-        "SerialNumber",
-        "Model",
-        "Location",
-        "Description",
-      ];
+      
+      const categories = {
+        "Información General": ["GPS", "TCSAssetID", "PONumber", "ItemsPurchased", "Description", "Provider", "LocalVendor"],
+        "Especificaciones Técnicas": ["Model", "CPU", "Memory", "Hostname", "IPAddress", "RawCapacityTB", "UsableCapacityTB"],
+        "Ubicación Física": ["Location", "Position", "RackUnit"],
+        "Garantía y Soporte": ["HWWarrantyStartDate", "HWWarrantyEndDate", "WarrantyStatus", "TypeOfHWSupport"]
+      };
 
-      const summaryHtml = summaryKeys
-        .filter((key) => item[key] !== undefined && item[key] !== "")
-        .map(
-          (key) =>
-            `<div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:10px;align-items:center;padding:12px;border-radius:16px;background:#f8fafc;">` +
-            `<div style="font-size:0.95rem;font-weight:700;color:#0f172a;">${key}</div>` +
-            `<div style="color:#334155;white-space:pre-wrap;word-break:break-word;">${item[key] || "—"}</div>` +
-            `</div>`
-        )
-        .join("");
+      let htmlContent = `<div style="max-height:70vh;overflow-y:auto;padding:12px;text-align:left;font-family:'Inter',sans-serif;">`;
 
-      const detailsHtml = Object.entries(item)
-        .filter(([key]) => !summaryKeys.includes(key))
-        .map(
-          ([key, value]) =>
-            `<div style="display:grid;grid-template-columns:180px minmax(0,1fr);gap:8px;align-items:start;padding:10px 0;border-bottom:1px solid #e2e8f0;">` +
-            `<div style="font-weight:700;color:#0f172a;">${key}</div>` +
-            `<div style="color:#334155;white-space:pre-wrap;word-break:break-word;">${value || "—"}</div>` +
-            `</div>`
-        )
-        .join("");
+      Object.entries(categories).forEach(([catName, fields]) => {
+        const activeFields = fields.filter(f => item[f] !== undefined && item[f] !== "");
+        if (activeFields.length === 0) return;
 
-      Swal.fire({
-        title: "Ver registro",
-        html: `
-          <div style="max-height:70vh;overflow-y:auto;padding:0 8px;">
-            <div style="display:grid;gap:18px;">
-              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
-                ${summaryHtml}
-              </div>
-              <div style="padding:14px;border-radius:20px;background:#ffffff;box-shadow:0 1px 4px rgba(15,23,42,0.08);">
-                ${detailsHtml}
-              </div>
+        htmlContent += `
+          <div style="margin-bottom:20px;">
+            <h4 style="font-size:12px;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;border-left:4px solid #111827;padding-left:8px;">
+              ${catName}
+            </h4>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:12px;">
+        `;
+
+        activeFields.forEach(f => {
+          let val = item[f];
+          let valHtml = `<span style="color:#4b5563;font-size:12px;font-weight:500;">${val || "—"}</span>`;
+          if (f.toLowerCase().includes("warranty") && val.toLowerCase().includes("expired")) {
+            valHtml = `<span style="background:#fee2e2;color:#991b1b;font-size:10px;font-weight:700;padding:2px 8px;border-radius:9999px;border:1px solid #fecaca;display:inline-block;">Expirado</span>`;
+          } else if (f.toLowerCase().includes("warranty") && val.toLowerCase().includes("support")) {
+            valHtml = `<span style="background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;padding:2px 8px;border-radius:9999px;border:1px solid #a7f3d0;display:inline-block;">Con Soporte</span>`;
+          }
+
+          htmlContent += `
+            <div style="display:flex;flex-direction:column;padding:4px 0;">
+              <span style="font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:2px;letter-spacing:0.02em;">${f}</span>
+              ${valHtml}
+            </div>
+          `;
+        });
+
+        htmlContent += `
             </div>
           </div>
-        `,
-        width: "760px",
+        `;
+      });
+
+      htmlContent += `</div>`;
+
+      Swal.fire({
+        title: `Ver Registro #${item.id || ""}`,
+        html: htmlContent,
+        width: "700px",
         customClass: {
-          popup: "rounded-3xl",
+          popup: "rounded-2xl",
+          confirmButton: "px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium text-sm transition"
         },
         confirmButtonText: "Cerrar",
       });
     };
 
-    const handleEditInventoryRow = async (row) => {
+    const handleEditInventoryRow = (row) => {
       const itemId = getInventoryRowId(row);
       if (!itemId) {
         Swal.fire({
@@ -1090,68 +1236,7 @@ const Pseries = () => {
         });
         return;
       }
-
-      const item = buildInventoryRowObject(row);
-      const result = await Swal.fire({
-        title: "Editar registro",
-        input: "textarea",
-        inputLabel: "Edita los valores en formato JSON",
-        inputValue: JSON.stringify(item, null, 2),
-        inputAttributes: {
-          "aria-label": "Editar valores del inventario",
-          style: "width:100%;height:320px;",
-        },
-        showCancelButton: true,
-        confirmButtonText: "Guardar",
-        preConfirm: (value) => {
-          try {
-            return JSON.parse(value);
-          } catch {
-            Swal.showValidationMessage("JSON inválido. Corrige la sintaxis.");
-          }
-        },
-      });
-
-      if (!result.isConfirmed || !result.value) return;
-
-      const updatedValues = { ...result.value };
-      delete updatedValues.id;
-
-      try {
-        Swal.fire({
-          title: "Guardando cambios...",
-          allowOutsideClick: false,
-          showConfirmButton: false,
-          didOpen: () => Swal.showLoading(),
-        });
-
-        const response = await fetch(`${API_URL}/inv/pseries/${itemId}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedValues),
-        });
-
-        if (!response.ok) {
-          const errorDetail = await response.text();
-          throw new Error(`Error HTTP ${response.status}: ${errorDetail}`);
-        }
-        await loadInvData();
-        Swal.fire({
-          icon: "success",
-          title: "Registro actualizado",
-          text: "Los cambios se guardaron correctamente.",
-        });
-      } catch (error) {
-        console.error("Error al actualizar inventario Pseries:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error al actualizar",
-          text: error.message || "No se pudieron guardar los cambios.",
-        });
-      }
+      navigate(`${BASE_PATH}/editar/${itemId}/pseries-inv`);
     };
 
     const handleDeleteInventoryRow = async (row) => {
@@ -1252,7 +1337,7 @@ const Pseries = () => {
     };
 
     // Columns to show in the compact inventory table (match Servicios Infraestructura)
-    const desiredVisible = ["id", "gps", "serialnumber", "itemspurchased", "description"];
+    const desiredVisible = ["id", "gps", "serialnumber", "itemspurchased"];
     const visibleHeaderIndices = invHeaders
       .map((h, i) => ({ h: String(h || "").toLowerCase().replace(/\s+/g, ""), i }))
       .filter(({ h }) => desiredVisible.includes(h))
@@ -1265,129 +1350,131 @@ const Pseries = () => {
     const compactHeaders = compactHeaderIndices.map((i) => invHeaders[i]);
 
     return (
-      <div className="as-page">
-        <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-as-text flex items-center gap-2">
-              <Server className="text-as-brand-600" size={24} />
-              pseries_inv
-            </h1>
-          </div>
-        </header>
+      <div className="min-h-screen bg-white">
+        <Header title="Inventario PSeries" />
 
-        <main className="as-container">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {invLoading ? (
             <div className="as-card p-6">Cargando...</div>
           ) : invError ? (
             <div className="as-card p-6 text-red-600">{invError}</div>
           ) : (
             <>
-              <div className="as-card p-4 mb-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <div className="relative flex-1 min-w-0">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search size={18} className="text-slate-400" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Buscar por cualquier campo..."
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
-                      value={invSearchValue}
-                      onChange={(e) => {
-                        setInvSearchValue(e.target.value);
-                        setInvCurrentPage(1);
-                      }}
+              {/* Status Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-600 uppercase">Con Soporte</span>
+                    <CheckCircle size={16} className="text-emerald-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.withSupport}</div>
+                  <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-emerald-600"
+                      style={{ width: getBarWidth(warrantyCounts.withSupport) }}
                     />
                   </div>
-
-                  {selectedInvCount > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-3 py-2 text-sm text-slate-700 bg-slate-100 rounded-lg">
-                        {selectedInvCount} seleccionado{selectedInvCount !== 1 ? "s" : ""}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleDeleteSelectedInventoryRows}
-                        disabled={bulkDeletingInv}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
-                          bulkDeletingInv
-                            ? "bg-red-300 cursor-not-allowed text-white"
-                            : "bg-red-600 hover:bg-red-500 text-white"
-                        }`}
-                        title="Eliminar seleccionados"
-                      >
-                        <Trash2 size={16} />
-                        <span className="hidden sm:inline">
-                          {bulkDeletingInv ? "Eliminando..." : "Eliminar seleccionados"}
-                        </span>
-                      </button>
-                    </div>
-                  )}
-                  <button
-                    onClick={handleDescargarCSVInventario}
-                    disabled={filteredRows.length === 0}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
-                      filteredRows.length === 0
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-as-brand-600 text-white hover:bg-as-brand-700"
-                    }`}
-                    title="Descargar CSV del inventario"
-                  >
-                    <Download size={16} />
-                    <span className="hidden sm:inline">Descargar CSV</span>
-                  </button>
-                  <button
-                    onClick={handleLoadExcelInventory}
-                    className="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition flex items-center gap-2 shrink-0"
-                    title="Cargar inventario desde Excel"
-                  >
-                    <ArrowUpRight size={16} />
-                    <span className="hidden sm:inline">Cargar Excel</span>
-                  </button>
                 </div>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-600 uppercase">Expirado</span>
+                    <AlertCircle size={16} className="text-red-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.expired}</div>
+                  <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-rose-600"
+                      style={{ width: getBarWidth(warrantyCounts.expired) }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-600 uppercase">Otros WarrantyStatus</span>
+                    <Server size={16} className="text-indigo-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.other}</div>
+                  <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-amber-500"
+                      style={{ width: getBarWidth(warrantyCounts.other) }}
+                    />
+                  </div>
+                </div>
+              </div>
 
-                <div className="grid gap-4 sm:grid-cols-3 mt-4">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-xs uppercase text-slate-500 mb-2">
-                      With Support
-                    </div>
-                    <div className="text-2xl font-semibold text-slate-900">
-                      {warrantyCounts.withSupport}
-                    </div>
-                    <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-as-brand-600"
-                        style={{ width: getBarWidth(warrantyCounts.withSupport) }}
+              {/* Search and Action Buttons */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+                    <div className="relative flex-1 min-w-0">
+                      <input
+                        type="text"
+                        placeholder="Buscar por cualquier campo..."
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                        value={invSearchValue}
+                        onChange={(e) => {
+                          setInvSearchValue(e.target.value);
+                          setInvCurrentPage(1);
+                        }}
                       />
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Search size={18} className="text-slate-400" />
+                      </div>
                     </div>
+
+                    {selectedInvCount > 0 && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg w-fit shrink-0 text-sm font-medium">
+                          <span className="font-semibold mr-2">{selectedInvCount}</span>
+                          <span>seleccionado{selectedInvCount !== 1 ? "s" : ""}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleDeleteSelectedInventoryRows}
+                          disabled={bulkDeletingInv}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 ${
+                            bulkDeletingInv
+                              ? "bg-red-300 cursor-not-allowed text-white"
+                              : "bg-red-600 hover:bg-red-500 text-white"
+                          }`}
+                          title="Eliminar seleccionados"
+                        >
+                          <Trash2 size={16} />
+                          <span className="hidden sm:inline">Eliminar</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-xs uppercase text-slate-500 mb-2">
-                      Expired
-                    </div>
-                    <div className="text-2xl font-semibold text-slate-900">
-                      {warrantyCounts.expired}
-                    </div>
-                    <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-rose-600"
-                        style={{ width: getBarWidth(warrantyCounts.expired) }}
-                      />
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="text-xs uppercase text-slate-500 mb-2">
-                      Otros WarrantyStatus
-                    </div>
-                    <div className="text-2xl font-semibold text-slate-900">
-                      {warrantyCounts.other}
-                    </div>
-                    <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-amber-500"
-                        style={{ width: getBarWidth(warrantyCounts.other) }}
-                      />
-                    </div>
+
+                  <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
+                    <button
+                      onClick={handleAddManualInventory}
+                      className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
+                      title="Agregar nuevo dato manualmente"
+                    >
+                      <Plus size={16} />
+                      <span className="hidden sm:inline">Crear</span>
+                    </button>
+                    <button
+                      onClick={handleLoadExcelInventory}
+                      className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm font-medium hover:bg-gray-600 transition flex items-center gap-2 shrink-0"
+                      title="Cargar inventario desde Excel"
+                    >
+                      <Download size={16} />
+                      <span className="hidden sm:inline">Importar</span>
+                    </button>
+                    <button
+                      onClick={handleDescargarCSVInventario}
+                      disabled={filteredRows.length === 0}
+                      className={`px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0 ${
+                        filteredRows.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                      title="Descargar CSV del inventario"
+                    >
+                      <Upload size={16} />
+                      <span className="hidden sm:inline">Exportar</span>
+                    </button>
                   </div>
                 </div>
 
@@ -1410,12 +1497,12 @@ const Pseries = () => {
                           title="Seleccionar todo"
                         />
                       </th>
-                      <th className="as-th sticky left-12 bg-white z-20">Acciones</th>
                       {compactHeaders.map((h, idx) => (
                         <th key={`${h}-${idx}`} className="as-th whitespace-nowrap">
                           {h}
                         </th>
                       ))}
+                      <th className="as-th text-right">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1431,11 +1518,16 @@ const Pseries = () => {
                               title="Seleccionar fila"
                             />
                           </td>
-                          <td className="as-td sticky left-12 bg-white z-10 border-r border-slate-200">
-                            <div className="flex items-center space-x-2">
+                          {compactHeaderIndices.map((ci) => (
+                            <td key={ci} className="as-td whitespace-nowrap">
+                              {String(row[ci] ?? "").slice(0, 60) || "—"}
+                            </td>
+                          ))}
+                          <td className="as-td text-right">
+                            <div className="flex items-center justify-end space-x-2">
                               <button
                                 type="button"
-                                onClick={() => handleViewInventoryRow(row)}
+                                onClick={() => navigate(`${BASE_PATH}/ver/${getInventoryRowId(row)}/pseries-inv`)}
                                 className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
                                 title="Ver completo"
                               >
@@ -1459,17 +1551,12 @@ const Pseries = () => {
                               </button>
                             </div>
                           </td>
-                          {compactHeaderIndices.map((ci) => (
-                            <td key={ci} className="as-td whitespace-nowrap">
-                              {String(row[ci] ?? "").slice(0, 60) || "—"}
-                            </td>
-                          ))}
                         </tr>
                       ))
                     ) : (
                       <tr>
                         <td
-                          colSpan={compactHeaders.length + 1 || 1}
+                          colSpan={compactHeaders.length + 2 || 1}
                           className="px-6 py-12 text-center text-slate-500 bg-white"
                         >
                           No hay datos
@@ -1582,49 +1669,11 @@ const Pseries = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Servidores PSeries
-              </h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header title="Servidores PSeries" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-            <button
-              onClick={() => navigate(`${BASE_PATH}/pseries?tab=servidores`)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                !isReportes
-                  ? "bg-as-brand-600 text-white"
-                  : "text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              Servidores
-            </button>
-            <button
-              onClick={() => navigate(`${BASE_PATH}/pseries?tab=reportes`)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                isReportes
-                  ? "bg-as-brand-600 text-white"
-                  : "text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              Reportes
-            </button>
-          </div>
-        </div>
 
-        {isReportes ? (
-          <ReportesPseries embedded />
-        ) : (
-          <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between mb-2">
@@ -1733,6 +1782,14 @@ const Pseries = () => {
               >
                 <Upload size={16} />
                 <span className="hidden sm:inline">Exportar</span>
+              </button>
+              <button
+                onClick={() => setShowReports(true)}
+                className="px-4 py-2 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
+                title="Ver Reportes Mensuales"
+              >
+                <FileText size={16} />
+                <span>Reportes</span>
               </button>
             </div>
           </div>
@@ -1903,7 +1960,34 @@ const Pseries = () => {
             </div>
           </div>
         </div>
-          </>
+
+        {/* Modal para Reportes */}
+        {showReports && (
+          <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="text-gray-900" size={22} />
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Reportes Mensuales Consolidados
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowReports(false)}
+                  className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                  title="Cerrar"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50/30">
+                <ReportesPseries embedded />
+              </div>
+            </div>
+          </div>
         )}
       </main>
     </div>

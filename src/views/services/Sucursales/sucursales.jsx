@@ -22,6 +22,7 @@ import {
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 import Logo from "../../../IMG/Tata_Logo.png";
+import Header from "../../../components/Header";
 
 export default function Sucursales() {
   const navigate = useNavigate();
@@ -597,15 +598,7 @@ export default function Sucursales() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Sucursales</h1>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header title="Sucursales" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">

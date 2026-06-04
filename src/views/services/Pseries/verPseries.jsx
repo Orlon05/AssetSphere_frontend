@@ -22,6 +22,10 @@ import {
   CheckCircle,
   AlertCircle,
   Clock,
+  Cpu,
+  Layers,
+  Sliders,
+  HardDrive,
 } from "lucide-react";
 
 const VerPseries = () => {
@@ -209,83 +213,75 @@ const VerPseries = () => {
     }
   }, [pserieId, token]);
 
-  /**
-   * Genera badge de estado visual según el estado del servidor
-   * @param {string} status - Estado del servidor
-   * @returns {JSX.Element|null} Badge de estado
-   */
-  const getStatusBadge = (status) => {
-    if (!status) return null;
+  const getSectionIcon = (title) => {
+    switch (title) {
+      case "Información Básica":
+        return <Server className="text-gray-500" size={16} />;
+      case "Ubicación y Hardware":
+        return <Layers className="text-gray-500" size={16} />;
+      case "Sistema Operativo":
+        return <Cpu className="text-gray-500" size={16} />;
+      case "Recursos CPU":
+        return <Cpu className="text-gray-500" size={16} />;
+      case "Recursos Memoria":
+        return <HardDrive className="text-gray-500" size={16} />;
+      case "Configuración Avanzada":
+        return <Sliders className="text-gray-500" size={16} />;
+      default:
+        return <Server className="text-gray-500" size={16} />;
+    }
+  };
 
-    const statusLower = status.toLowerCase();
-
-    if (
-      statusLower === "active" ||
-      statusLower === "activo" ||
-      statusLower === "running"
-    ) {
+  const renderStatusBadge = (statusVal) => {
+    const s = (statusVal || "").toLowerCase().trim();
+    if (s === "activo" || s === "active" || s === "up" || s === "online") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          <CheckCircle size={12} className="mr-1" />
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           Activo
         </span>
       );
-    } else if (
-      statusLower === "inactive" ||
-      statusLower === "inactivo" ||
-      statusLower === "not activated"
-    ) {
+    } else if (s === "mantenimiento" || s === "maintenance") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-          <AlertCircle size={12} className="mr-1" />
-          Inactivo
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+          Mantenimiento
         </span>
       );
-    } else if (
-      statusLower === "maintenance" ||
-      statusLower === "mantenimiento"
-    ) {
+    } else if (s === "inactivo" || s === "inactive" || s === "down" || s === "offline") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-          <Clock size={12} className="mr-1" />
-          Mantenimiento
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+          Inactivo
         </span>
       );
     } else {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          {status}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-full">
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          {statusVal || "N/A"}
         </span>
       );
     }
   };
 
-  /**
-   * Formatea valores de campo según el tipo
-   * @param {string} field - Nombre del campo
-   * @param {string} value - Valor del campo
-   * @returns {string} Valor formateado
-   */
-  const formatFieldValue = (field, value) => {
-    if (!value) return "-";
-
-    // Formateo especial para campos de memoria
-    if (field.includes("memory")) {
-      return `${value} GB`;
+  const renderFieldValue = (field) => {
+    if (field.key === "status") {
+      return renderStatusBadge(field.value);
     }
-
-    return value;
+    return (
+      <span className="text-sm font-semibold text-gray-800">
+        {field.value || "—"}
+      </span>
+    );
   };
 
-  // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-700">
-            Cargando datos del servidor...
-          </p>
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles del servidor...</p>
         </div>
       </div>
     );
@@ -293,14 +289,19 @@ const VerPseries = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
-          <strong>Error:</strong> {error}
+      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+        <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
+          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
+            <AlertCircle size={24} />
+          </div>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
+          <p className="text-sm text-gray-500 mb-6">{error}</p>
           <button
-            onClick={() => navigate(`${BASE_PATH}/pseries`)}
-            className="mt-3 block text-blue-600 hover:text-blue-800"
+            onClick={() => navigate(-1)}
+            className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
           >
-            <ArrowLeft className="inline mr-1" size={16} /> Volver a la lista
+            <ArrowLeft size={16} />
+            <span>Volver a la lista</span>
           </button>
         </div>
       </div>
@@ -308,52 +309,77 @@ const VerPseries = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            <Server className="mr-2 text-blue-600" size={24} />
-            Visualizar PSeries
-          </h1>
-          <p className="text-sm font-semibold text-gray-900">
-            Detalles completos del servidor{" "}
-            <span className="font-bold">{name}</span>
-          </p>
+    <div className="min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12">
+      {/* Header */}
+      <header className="sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
+            <Server size={20} />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+              Ver Registro PSeries
+            </h1>
+            <p className="text-xs font-semibold text-gray-500">
+              Detalles técnicos y recursos de la LPAR
+            </p>
+          </div>
         </div>
         <button
-          onClick={() => navigate(`${BASE_PATH}/pseries`)}
-          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
         >
-          <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          <ArrowLeft size={16} />
+          <span>Regresar</span>
         </button>
       </header>
 
-      <main className="container mx-auto p-6">
-        <div className="space-y-6">
-          {formSections.map((section, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
-            >
-              <h2 className="text-lg font-semibold mb-4 text-gray-700 border-b pb-2">
-                {section.title}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {section.fields.map((field) => (
-                  <div key={field.key} className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      {field.label}
-                    </label>
-                    {field.key === "status" ? (
-                      <div className="py-2">{getStatusBadge(field.value)}</div>
-                    ) : (
-                      <div className="bg-gray-50 border border-gray-300 text-gray-700 rounded-lg p-2.5 min-h-[38px] flex items-center">
-                        {formatFieldValue(field.key, field.value)}
-                      </div>
-                    )}
-                  </div>
-                ))}
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-8 mt-8">
+        {/* Banner principal rápido */}
+        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Nombre LPAR (HMC)</span>
+            <span className="text-2xl font-bold text-gray-900">{name || "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Dirección IP</span>
+            <span className="text-lg font-semibold text-gray-800">{ip_address || "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Sistema Operativo</span>
+            <span className="text-lg font-semibold text-gray-800">{os ? `${os} ${version}`.trim() : "—"}</span>
+          </div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Estado</span>
+            <div>{renderStatusBadge(status)}</div>
+          </div>
+        </div>
+
+        {/* Secciones de Categorías */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {formSections.map((section, idx) => (
+            <div key={idx} className="flex flex-col">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
+                <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                  {section.title}
+                </h3>
+              </div>
+              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+                  {section.fields.map((field) => (
+                    <div key={field.key} className="flex flex-col">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                        {field.label}
+                      </span>
+                      {renderFieldValue(field)}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}

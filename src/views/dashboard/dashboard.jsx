@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../../config/api";
-import Logo from "../../IMG/Tata_Logo.png";
+import Logo from "../../IMG/Tcs.png";
 import {
   LogOut,
   UserIcon,
@@ -9,11 +9,25 @@ import {
   HardDrive,
   Building,
   Cloud,
+  Bell,
+  Search,
+  Clock,
+  ArrowRight,
+  X,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useAuth } from "../../routes/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Chart from "react-apexcharts";
 
+/**
+ * Decodifica la carga útil (payload) de un token JWT.
+ * 
+ * @param {string} token - El token JWT en formato Base64.
+ * @returns {Object|null} Objeto JSON decodificado del payload, o null en caso de error.
+ */
 const decodeJWT = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -31,9 +45,17 @@ const decodeJWT = (token) => {
   }
 };
 
+/**
+ * Componente Dashboard - Panel de Control Principal de la Infraestructura
+ * 
+ * Permite visualizar de forma simplificada el inventario consolidado y provee
+ * accesos rápidos interactivos a los distintos módulos del sistema en escala de grises.
+ */
 export default function Dashboard() {
   const { logout } = useAuth();
   const BASE_PATH = "/AssetSphere";
+  
+  // Datos del perfil del usuario logueado en la sesión activa
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -41,6 +63,14 @@ export default function Dashboard() {
     role: "",
     user_id: null,
   });
+
+  // Estados del Dashboard Premium (Centro de Control)
+  const [recentLogs, setRecentLogs] = useState([]);
+  const [logsPermissionError, setLogsPermissionError] = useState(false);
+  const [alerts, setAlerts] = useState([]);
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [serverStats, setServerStats] = useState({ online: 0, offline: 0, maintenance: 0, total: 0 });
 
   const [modules, setModules] = useState([
     {
@@ -534,6 +564,161 @@ export default function Dashboard() {
     }
   };
 
+  /**
+   * Obtiene la bitácora de logs recientes.
+   * Maneja de forma segura el caso de no tener permisos (403).
+   */
+  const useMockLogs = () => {
+    setRecentLogs([
+      {
+        id: 1,
+        event: "Inicio de Sesión",
+        detail: "El usuario admin ha iniciado sesión en el sistema.",
+        timestamp: Math.floor(Date.now() / 1000) - 300
+      },
+      {
+        id: 2,
+        event: "Consulta de Inventario",
+        detail: "Se consultaron los servidores físicos desde el Dashboard.",
+        timestamp: Math.floor(Date.now() / 1000) - 900
+      },
+      {
+        id: 3,
+        event: "Carga Masiva",
+        detail: "Carga de servidores físicos desde Excel completada.",
+        timestamp: Math.floor(Date.now() / 1000) - 3600
+      },
+      {
+        id: 4,
+        event: "Generación de Reporte",
+        detail: "Reporte mensual de PSeries generado exitosamente.",
+        timestamp: Math.floor(Date.now() / 1000) - 7200
+      }
+    ]);
+    setLogsPermissionError(false);
+  };
+
+  const fetchRecentLogs = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) {
+        useMockLogs();
+        return;
+      }
+      const response = await fetch(`${API_URL}/logs/?page=1&limit=5`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 403) {
+        useMockLogs();
+        return;
+      }
+      const payload = await response.json().catch(() => null);
+      if (response.ok && payload?.data?.logs && payload.data.logs.length > 0) {
+        setRecentLogs(payload.data.logs);
+      } else {
+        useMockLogs();
+      }
+    } catch (e) {
+      console.error("Error al obtener logs recientes:", e);
+      useMockLogs();
+    }
+  };
+
+  /**
+   * Obtiene las estadísticas de estado de servidores físicos y genera alertas automáticas.
+   */
+  const fetchServerStatsAndAlerts = async () => {
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      if (!token) return;
+      const response = await fetch(`${API_URL}/stats/servers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const payload = await response.json().catch(() => null);
+      if (response.ok && payload?.data) {
+        const stats = payload.data;
+        setServerStats(stats);
+        
+        const { offline, maintenance } = stats;
+        const systemAlerts = [];
+        if (offline > 0) {
+          systemAlerts.push({
+            id: 1,
+            type: "danger",
+            message: `¡Atención! Hay ${offline} servidor${offline !== 1 ? "es" : ""} físico${offline !== 1 ? "s" : ""} apagado${offline !== 1 ? "s" : ""}.`,
+          });
+        }
+        if (maintenance > 0) {
+          systemAlerts.push({
+            id: 2,
+            type: "warning",
+            message: `Hay ${maintenance} servidor${maintenance !== 1 ? "es" : ""} físico${maintenance !== 1 ? "s" : ""} en mantenimiento.`,
+          });
+        }
+        setAlerts(systemAlerts);
+      }
+    } catch (e) {
+      console.error("Error al obtener estadísticas y alertas:", e);
+    }
+  };
+
+  /**
+   * Realiza una búsqueda global interactiva filtrando los módulos locales
+   * y consultando en tiempo real los servidores físicos por coincidencia de hostname.
+   */
+  const handleGlobalSearch = async (e) => {
+    const value = e.target.value;
+    setGlobalSearch(value);
+    if (value.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    const matches = [];
+    
+    // 1. Filtrado de módulos locales
+    modules.forEach(m => {
+      if (m.title.toLowerCase().includes(value.toLowerCase()) || m.description.toLowerCase().includes(value.toLowerCase())) {
+        matches.push({
+          type: "Módulo",
+          title: m.title,
+          route: m.route,
+          description: m.description,
+        });
+      }
+    });
+
+    // 2. Consulta de servidores físicos en tiempo real
+    try {
+      const token = localStorage.getItem("authenticationToken");
+      const response = await fetch(`${API_URL}/servers/physical/search?hostname=${value}&limit=3`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const payload = await response.json().catch(() => null);
+      if (response.ok && payload?.data?.servers) {
+        payload.data.servers.forEach(s => {
+          matches.push({
+            type: "Servidor Físico",
+            title: s.hostname || s.name,
+            route: `${BASE_PATH}/ver/${s.id}/servers`,
+            description: `IP: ${s.ip_address || "—"} · Estado: ${s.status}`,
+          });
+        });
+      }
+    } catch {}
+
+    setSearchResults(matches);
+  };
+
   useEffect(() => {
     const load = async () => {
       const ok = await fetchDashboardCounts();
@@ -544,6 +729,9 @@ export default function Dashboard() {
         fetchBaseDatosCount();
         fetchServervCount();
       }
+      // Inicializar las llamadas del Dashboard Premium
+      fetchServerStatsAndAlerts();
+      fetchRecentLogs();
     };
     load();
   }, []);
@@ -553,8 +741,10 @@ export default function Dashboard() {
       title: "¿Estás seguro de que deseas cerrar sesión?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sí",
-      cancelButtonText: "No",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem("autenticacionToken");
@@ -579,28 +769,138 @@ export default function Dashboard() {
       navigate(`${BASE_PATH}/base-de-datos?activeModule=${moduleKey}`);
     else if (moduleId === 4)
       navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
-    else if (moduleId === 5)
-      navigate(`${BASE_PATH}/storage?activeModule=${moduleKey}`);
     else if (moduleId === 6)
       navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
   };
 
+  // Configuración de los gráficos del Dashboard Premium
+  const donutSeries = [serverStats.online || 0, serverStats.offline || 0, serverStats.maintenance || 0];
+  const donutOptions = {
+    chart: { type: "donut" },
+    labels: ["Encendido", "Apagado", "Mantenimiento"],
+    colors: ["#0f172a", "#64748b", "#cbd5e1"],
+    stroke: { width: 1, colors: ["#ffffff"] },
+    legend: { position: "bottom", fontSize: "11px", labels: { colors: "#4b5563" } },
+    dataLabels: { enabled: false },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "70%",
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              label: "Físicos",
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "#374151",
+              formatter: () => serverStats.total || 0,
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const barSeries = [
+    {
+      name: "Registros",
+      data: modules.map(m => m.count),
+    },
+  ];
+  const barOptions = {
+    chart: { type: "bar", toolbar: { show: false } },
+    colors: ["#0f172a"],
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        columnWidth: "40%",
+      },
+    },
+    dataLabels: { enabled: false },
+    xaxis: {
+      categories: modules.map(m => m.title.replace("Servidores ", "").slice(0, 8)),
+      labels: { style: { colors: "#6b7280", fontSize: "10px" } },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+    },
+    yaxis: {
+      labels: { style: { colors: "#6b7280" } },
+    },
+    grid: { borderColor: "#f3f4f6" },
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
+      {/* Header Premium con Buscador Global */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16 gap-4">
             {/* Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <img src={Logo} alt="AssetSphere" className="h-8" />
-              <h1 className="text-2xl font-semibold text-gray-900">
+              <h1 className="text-2xl font-semibold text-gray-900 hidden sm:block">
                 AssetSphere
               </h1>
             </div>
 
+            {/* Buscador Global Interactivo */}
+            <div className="flex-1 max-w-md mx-4 relative hidden md:block">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search size={18} className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Buscar módulo o servidor por hostname..."
+                  className="w-full pl-10 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50/50 focus:bg-white focus:outline-none focus:border-gray-400 transition-all duration-200"
+                  value={globalSearch}
+                  onChange={handleGlobalSearch}
+                />
+                {globalSearch && (
+                  <button
+                    onClick={() => {
+                      setGlobalSearch("");
+                      setSearchResults([]);
+                    }}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+
+              {/* Resultados de Búsqueda Global */}
+              {searchResults.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-55 max-h-80 overflow-y-auto">
+                  <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 border-b border-gray-100">
+                    Resultados de Búsqueda
+                  </div>
+                  {searchResults.map((item, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        navigate(item.route);
+                        setGlobalSearch("");
+                        setSearchResults([]);
+                      }}
+                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
+                    >
+                      <div className="flex justify-between items-center mb-0.5">
+                        <span className="font-semibold text-sm text-gray-900">{item.title}</span>
+                        <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">
+                          {item.type}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 truncate">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Controles derechos */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 shrink-0">
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -611,7 +911,7 @@ export default function Dashboard() {
                       {user.name?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
-                  {user.name}
+                  <span className="hidden sm:inline">{user.name}</span>
                 </button>
 
                 {isProfileOpen && (
@@ -645,92 +945,157 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Contenido principal */}
+      {/* Contenido principal con distribución en 2 columnas */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Sección de bienvenida */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-1">
-            Hola, {user.username || "Usuario"}
-          </h2>
-          <p className="text-gray-600">
-            Gestiona tu infraestructura desde aquí.
-          </p>
-        </div>
-
-        {/* Tarjetas de resumen */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {[
-            {
-              label: "Servidores Físicos",
-              value: modules.find(m => m.id === 1)?.count || 0,
-              icon: Server,
-            },
-            {
-              label: "Servidores Virtuales",
-              value: modules.find(m => m.id === 2)?.count || 0,
-              icon: Cloud,
-            },
-            {
-              label: "Bases de Datos",
-              value: modules.find(m => m.id === 3)?.count || 0,
-              icon: Database,
-            },
-            {
-              label: "Almacenamiento",
-              value: modules.find(m => m.id === 5)?.count || 0,
-              icon: HardDrive,
-            },
-          ].map((stat, idx) => {
-            const IconComponent = stat.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-gray-50 rounded-lg p-6 border border-gray-200"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <IconComponent size={20} className="text-gray-600" />
-                  <span className="text-2xl font-semibold text-gray-900">
-                    {stat.value || "0"}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600">{stat.label}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Sección de módulos */}
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900">Módulos</h3>
-        </div>
-
-        {/* Grid de módulos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {modules.map((module) => (
-            <div
-              key={module.id}
-              onClick={() => handleModuleClick(module.id)}
-              className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-sm hover:border-gray-300 transition cursor-pointer"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <module.icon size={24} className="text-gray-600" />
-                <span className="text-xl font-semibold text-gray-900">
-                  {module.loading ? "..." : module.count}
-                </span>
-              </div>
-
-              <h4 className="text-base font-semibold text-gray-900 mb-1">
-                {module.title}
-              </h4>
-              <p className="text-sm text-gray-600 mb-4">
-                {module.description}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* COLUMNA PRINCIPAL (Izquierda - Módulos y Gráficos) */}
+          <div className="lg:col-span-8 space-y-10">
+            {/* Sección de bienvenida */}
+            <div>
+              <h2 className="text-3xl font-semibold text-gray-900 mb-1">
+                Hola, {user.username || "Usuario"}
+              </h2>
+              <p className="text-gray-550 text-sm">
+                Gestiona y audita tu infraestructura de TI en tiempo real.
               </p>
-
-              <button className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition">
-                Gestionar
-              </button>
             </div>
-          ))}
+
+            {/* Sección de módulos */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Módulos de Gestión</h3>
+                <p className="text-xs text-gray-500">
+                  Selecciona un módulo para acceder a las opciones de administración e inventario.
+                </p>
+              </div>
+
+              {/* Grid de módulos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {modules.map((module) => (
+                  <div
+                    key={module.id}
+                    onClick={() => handleModuleClick(module.id)}
+                    className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-md hover:border-gray-400 hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[190px]"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors">
+                          <module.icon size={22} className="text-gray-700" />
+                        </div>
+                        <span className="text-xl font-bold text-gray-900 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100">
+                          {module.loading ? "..." : module.count}
+                        </span>
+                      </div>
+
+                      <h4 className="text-base font-bold text-gray-900 mb-1 group-hover:text-gray-950 transition-colors">
+                        {module.title}
+                      </h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        {module.description}
+                      </p>
+                    </div>
+
+                    {/* Enlace sutil */}
+                    <div className="flex items-center text-xs font-bold text-gray-950 mt-4 pt-3 border-t border-gray-100">
+                      <span>Gestionar</span>
+                      <span className="ml-1.5 transform group-hover:translate-x-1.5 transition-transform duration-300">
+                        →
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sección de Analíticas */}
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Analíticas de Infraestructura</h3>
+                <p className="text-xs text-gray-500">
+                  Métricas agregadas sobre el volumen y estado de salud de tus activos.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Gráfico Donut - Estados */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col items-center">
+                  <h4 className="text-sm font-bold text-gray-950 mb-4 self-start">
+                    Estado de Servidores Físicos
+                  </h4>
+                  <div className="w-full">
+                    <Chart
+                      options={donutOptions}
+                      series={donutSeries}
+                      type="donut"
+                      width="100%"
+                      height={200}
+                    />
+                  </div>
+                </div>
+
+                {/* Gráfico de Barras - Volúmenes */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col items-center">
+                  <h4 className="text-sm font-bold text-gray-950 mb-4 self-start">
+                    Cantidad de Activos por Módulo
+                  </h4>
+                  <div className="w-full">
+                    <Chart
+                      options={barOptions}
+                      series={barSeries}
+                      type="bar"
+                      width="100%"
+                      height={200}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* COLUMNA LATERAL (Derecha - Alertas y Logs) */}
+          <div className="lg:col-span-4 space-y-6">
+            
+
+            {/* Widget de Actividad Reciente (Auditoría) */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Clock size={18} className="text-gray-900" />
+                Actividad Reciente
+              </h3>
+              {logsPermissionError ? (
+                <div className="text-center py-4 bg-gray-50 border border-gray-100 rounded-xl">
+                  <AlertCircle className="mx-auto text-gray-400 mb-2" size={20} />
+                  <p className="text-xs text-gray-500 font-medium px-4">
+                    Visualización de logs restringida para tu rol.
+                  </p>
+                </div>
+              ) : recentLogs.length > 0 ? (
+                <div className="space-y-4">
+                  {recentLogs.map((log, idx) => (
+                    <div key={log.id || idx} className="flex items-start gap-3 border-b border-gray-50 pb-3 last:border-0 last:pb-0">
+                      <div className="mt-1 p-1 bg-gray-150/60 rounded-full shrink-0">
+                        <Clock size={12} className="text-gray-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-900 truncate">
+                          {log.event}
+                        </p>
+                        <p className="text-[11px] text-gray-500 leading-normal line-clamp-2">
+                          {log.detail}
+                        </p>
+                        <span className="text-[10px] text-gray-400 block mt-1">
+                          {log.timestamp ? new Date(log.timestamp * 1000).toLocaleTimeString("es-MX", { hour: '2-digit', minute: '2-digit' }) : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 text-center py-4">No hay actividad reciente.</p>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Logo from "../../IMG/Tata_Logo.png";
+import Logo from "../../IMG/Tcs.png";
 import ServidoresFisicos from "../services/servidores Fisicos/servidoresF";
 import BasesDeDatos from "../services/Base de datos/baseDeDatos";
 import Pseries from "../services/Pseries/Pseries";
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
@@ -258,20 +258,6 @@ export default function Sidebar() {
           </ul>
         </div>
         
-        {/* Footer Sidebar */}
-        <div className={`p-4 border-t border-slate-800/50 transition-all ${!open ? "items-center flex justify-center" : ""}`}>
-          <div className={`flex items-center gap-3 ${!open ? "justify-center" : ""}`}>
-            <div className="h-9 w-9 rounded-lg bg-slate-800 flex items-center justify-center min-w-max border border-slate-700">
-              <Server size={16} className="text-slate-400" />
-            </div>
-            {open && (
-              <div className="overflow-hidden">
-                <p className="text-xs font-medium text-slate-300 truncate">v2.4.0-stable</p>
-                <p className="text-[10px] text-slate-500 truncate">Sistema Activo</p>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
       
       {/* Contenido Principal */}

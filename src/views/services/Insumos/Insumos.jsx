@@ -2,6 +2,7 @@ import { API_URL } from "../../../config/api";
 import { useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { Activity, Upload } from "lucide-react";
+import Header from "../../../components/Header";
 
 export default function Insumos() {
   const fileInputRef = useRef(null);
@@ -73,13 +74,8 @@ export default function Insumos() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-semibold text-gray-900">Insumos</h1>
-          </div>
-        </div>
-      </header>
+      {/* Header */}
+      <Header title="Insumos" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white border border-gray-200 rounded-lg p-6">

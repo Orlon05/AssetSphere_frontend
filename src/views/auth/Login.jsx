@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../routes/AuthContext";
 import { API_URL } from "../../config/api";
-import Logo from "../../IMG/Tata_Logo.png"; // ✅ CORRECCIÓN
+import Logo from "../../IMG/Tcs.png"; // ✅ CORRECCIÓN
 
 // ✅ CORRECCIÓN: estilos + animación funcionan
 const gradientStyle = {

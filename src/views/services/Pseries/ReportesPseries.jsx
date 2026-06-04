@@ -1,6 +1,7 @@
 import { API_URL } from "../../../config/api";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import ProfileDropdown from "../../../components/ProfileDropdown";
 import Chart from "react-apexcharts";
 import {
   ArrowLeft,
@@ -306,7 +307,7 @@ const ReportesPseries = ({ embedded = false }) => {
     return (
       <div className="as-page flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-as-brand-600 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mb-4"></div>
           <p className="text-as-muted">Cargando reportes...</p>
         </div>
       </div>
@@ -326,7 +327,7 @@ const ReportesPseries = ({ embedded = false }) => {
             </h2>
           </div>
           <p className="text-sm text-gray-600">{error}</p>
-          <button onClick={fetchReportes} className="as-btn-primary mt-5">
+          <button onClick={fetchReportes} className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition mt-5">
             <RefreshCcw size={16} />
             Reintentar
           </button>
@@ -348,7 +349,7 @@ const ReportesPseries = ({ embedded = false }) => {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-as-text flex items-center gap-2">
-                <FileText className="text-as-brand-600" size={24} />
+                <FileText className="text-gray-900" size={24} />
                 Reportes PSeries
               </h1>
               <p className="text-sm text-as-muted">
@@ -361,7 +362,7 @@ const ReportesPseries = ({ embedded = false }) => {
             <button
               onClick={handleSimularDosMeses}
               disabled={simulando}
-              className={`as-btn-primary ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
+              className={`px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
               title="Crea 2 reportes simulados (mes actual y mes anterior)"
             >
               <RefreshCcw size={16} />
@@ -372,13 +373,14 @@ const ReportesPseries = ({ embedded = false }) => {
             {reporteSeleccionado && (
               <button
                 onClick={handleDescargar}
-                className="as-btn-primary"
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
                 title="Descargar CSV"
               >
                 <Download size={16} />
                 <span className="hidden sm:inline">Descargar CSV</span>
               </button>
             )}
+            <ProfileDropdown />
           </div>
         </header>
       )}
@@ -390,7 +392,7 @@ const ReportesPseries = ({ embedded = false }) => {
               <span className="text-sm font-medium text-slate-600">Año:</span>
               <div className="relative">
                 <select
-                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
+                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-gray-500/20 focus:border-gray-900 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
                   value={filtroYear}
                   onChange={(e) => setFiltroYear(e.target.value)}
                 >
@@ -410,7 +412,7 @@ const ReportesPseries = ({ embedded = false }) => {
               <span className="text-sm font-medium text-slate-600">Mes:</span>
               <div className="relative">
                 <select
-                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
+                  className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-3 pr-8 py-2 text-sm focus:ring-2 focus:ring-gray-500/20 focus:border-gray-900 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
                   value={filtroMonth}
                   onChange={(e) => setFiltroMonth(e.target.value)}
                 >
@@ -440,7 +442,7 @@ const ReportesPseries = ({ embedded = false }) => {
               </div>
               <button
                 onClick={handleAplicarFiltro}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-as-brand-600 text-white hover:bg-as-brand-700 transition-colors shadow-sm"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-900 text-white hover:bg-gray-800 transition shadow-sm"
               >
                 Filtrar
               </button>
@@ -452,46 +454,12 @@ const ReportesPseries = ({ embedded = false }) => {
               </button>
             </div>
 
-            {reportes.length > 0 && (
-              <>
-                <span className="text-sm font-medium text-slate-600 flex items-center gap-1">
-                  <Calendar size={16} />
-                  Seleccionar reporte:
-                </span>
-                <div className="relative">
-                  <select
-                    className="appearance-none bg-white border border-slate-200 text-slate-700 rounded-lg pl-4 pr-10 py-2 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer focus:bg-slate-50"
-                    value={reporteSeleccionado?.id ?? ""}
-                    onChange={(e) => {
-                      const rep = reportes.find(
-                        (r) => r.id === parseInt(e.target.value)
-                      );
-                      if (rep) handleSeleccionarReporte(rep);
-                    }}
-                  >
-                    {reportes.map((rep) => (
-                      <option key={rep.id} value={rep.id}>
-                        {formatearFecha(rep.fecha_generado)}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <ChevronDown size={14} className="text-slate-400" />
-                  </div>
-                </div>
-                <span className="text-xs text-slate-400">
-                  {reportes.length} reporte{reportes.length !== 1 ? "s" : ""}{" "}
-                  disponible{reportes.length !== 1 ? "s" : ""}
-                </span>
-              </>
-            )}
-
             {embedded && (
               <div className="ml-auto flex items-center gap-2">
                 <button
                   onClick={handleSimularDosMeses}
                   disabled={simulando}
-                  className={`as-btn-primary ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
+                  className={`px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition ${simulando ? "opacity-70 cursor-not-allowed" : ""}`}
                   title="Crea 2 reportes simulados (mes actual y mes anterior)"
                 >
                   <RefreshCcw size={16} />
@@ -502,7 +470,7 @@ const ReportesPseries = ({ embedded = false }) => {
                 {reporteSeleccionado && (
                   <button
                     onClick={handleDescargar}
-                    className="as-btn-primary"
+                    className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
                     title="Descargar CSV"
                   >
                     <Download size={16} />
@@ -539,24 +507,24 @@ const ReportesPseries = ({ embedded = false }) => {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            {/* KPIs - Diseño avanzado */}
+            {/* CORRECCIÓN: KPIs adaptados a la nueva escala de grises para un diseño más limpio */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 animate-fade-in">
-              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-lg bg-gradient-to-br from-gray-50 via-white to-blue-50 border border-blue-100 hover:scale-[1.03] transition-transform duration-300">
-                <div className="bg-gradient-to-br from-blue-100 to-blue-300 rounded-full p-3 flex items-center justify-center shadow">
-                  <Server size={28} className="text-blue-600" />
+              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-sm bg-gray-50 border border-gray-200 hover:scale-[1.01] transition-transform duration-300">
+                <div className="bg-gray-200 text-gray-700 rounded-full p-3 flex items-center justify-center shadow">
+                  <Server size={28} className="text-gray-700" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">Total Servidores</p>
-                  <p className="text-3xl font-extrabold text-blue-900 mt-1">{estadisticas.totalServidores}</p>
+                  <p className="text-3xl font-extrabold text-gray-900 mt-1">{estadisticas.totalServidores}</p>
                 </div>
               </div>
-              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-lg bg-gradient-to-br from-gray-50 via-white to-green-50 border border-green-100 hover:scale-[1.03] transition-transform duration-300">
-                <div className="bg-gradient-to-br from-green-100 to-green-300 rounded-full p-3 flex items-center justify-center shadow">
-                  <TrendingUp size={28} className="text-green-600" />
+              <div className="rounded-2xl p-6 flex items-center gap-5 shadow-sm bg-gray-50 border border-gray-200 hover:scale-[1.01] transition-transform duration-300">
+                <div className="bg-gray-200 text-gray-700 rounded-full p-3 flex items-center justify-center shadow">
+                  <TrendingUp size={28} className="text-gray-700" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-semibold uppercase tracking-wide">Activos</p>
-                  <p className="text-3xl font-extrabold text-green-900 mt-1">{estadisticas.totalActivos}</p>
+                  <p className="text-3xl font-extrabold text-gray-900 mt-1">{estadisticas.totalActivos}</p>
                 </div>
               </div>
             </div>
@@ -566,11 +534,11 @@ const ReportesPseries = ({ embedded = false }) => {
 
 
 
-            {/* Tabla de datos - Diseño avanzado */}
-            <div className="rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden mt-10 animate-fade-in">
+            {/* CORRECCIÓN: Tabla de detalles adaptada a escala de grises (bordes y sombras suaves) */}
+            <div className="rounded-2xl bg-white border border-gray-200 shadow-md overflow-hidden mt-10 animate-fade-in">
               <div className="px-8 py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <h2 className="text-xl font-extrabold text-blue-900 tracking-tight">Detalle de Servidores</h2>
+                  <h2 className="text-xl font-extrabold text-gray-900 tracking-tight">Detalle de Servidores</h2>
                   <p className="text-xs text-gray-400 mt-1">
                     Generado el {formatearFecha(reporteSeleccionado?.fecha_generado)} · {tablaData.rows.length} registro{tablaData.rows.length !== 1 ? "s" : ""}
                   </p>
@@ -580,22 +548,22 @@ const ReportesPseries = ({ embedded = false }) => {
               {tablaData.headers.length > 0 ? (
                 <>
                   {/* Buscador animado */}
-                  <div className="px-8 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50">
+                  <div className="px-8 py-4 border-b border-gray-100 bg-gray-50">
                     <div className="relative max-w-xs">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search size={17} className="text-blue-400" />
+                        <Search size={17} className="text-gray-400" />
                       </div>
                       <input
                         type="text"
                         placeholder="Buscar por cualquier campo..."
-                        className="pl-10 pr-8 py-2 text-base rounded-lg border-2 border-gray-200 focus:border-blue-400 outline-none w-full bg-white transition-all duration-200 shadow-sm"
+                        className="pl-10 pr-8 py-2 text-base rounded-lg border border-gray-200 focus:border-gray-400 outline-none w-full bg-white transition-all duration-200 shadow-sm"
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
                       />
                       {busqueda && (
                         <button
                           onClick={() => setBusqueda("")}
-                          className="absolute inset-y-0 right-2 flex items-center text-blue-400 hover:text-blue-700"
+                          className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-700"
                         >
                           <X size={16} />
                         </button>
@@ -604,12 +572,12 @@ const ReportesPseries = ({ embedded = false }) => {
                   </div>
                   <div className="overflow-x-auto custom-scrollbar max-h-[60vh]">
                     <table className="w-full text-base">
-                      <thead className="sticky top-0 z-10 bg-gradient-to-r from-blue-50 to-gray-50 border-b border-blue-100">
+                      <thead className="sticky top-0 z-10 bg-gray-50 border-b border-gray-200">
                         <tr>
                           {tablaData.headers.map((header, i) => (
                             <th
                               key={i}
-                              className="px-5 py-4 text-left text-xs font-extrabold text-blue-700 uppercase tracking-wider whitespace-nowrap bg-blue-50"
+                              className="px-5 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider whitespace-nowrap bg-gray-50"
                             >
                               {header.trim()}
                             </th>
@@ -636,18 +604,18 @@ const ReportesPseries = ({ embedded = false }) => {
                               );
                             const estadoRaw = idxEstado >= 0 ? row[idxEstado] : "";
                             const estado = String(estadoRaw || "").trim();
-                            let rowColor = rowIdx % 2 === 0 ? "bg-white" : "bg-blue-50/60";
+                            let rowColor = rowIdx % 2 === 0 ? "bg-white" : "bg-gray-50/50";
                             if (estado?.toLowerCase() === "activo" || estado?.toLowerCase() === "active" || estado?.toLowerCase() === "running")
-                              rowColor = "bg-green-50/70";
+                              rowColor = "bg-emerald-50/40";
                             else if (estado?.toLowerCase() === "inactivo" || estado?.toLowerCase() === "inactive")
-                              rowColor = "bg-red-50/70";
+                              rowColor = "bg-rose-50/40";
                             else if (estado?.toLowerCase() === "warning")
-                              rowColor = "bg-yellow-50/70";
+                              rowColor = "bg-amber-50/40";
 
                             return (
                               <tr
                                 key={rowIdx}
-                                className={`${rowColor} border-b border-blue-100 hover:bg-blue-100/70 transition-colors`}
+                                className={`${rowColor} border-b border-gray-100 hover:bg-gray-100/50 transition-colors`}
                               >
                                 {row.map((cell, cellIdx) => (
                                   <td
@@ -670,7 +638,7 @@ const ReportesPseries = ({ embedded = false }) => {
                           <tr>
                             <td
                               colSpan={tablaData.headers.length}
-                              className="px-8 py-12 text-center text-blue-300 text-base"
+                              className="px-8 py-12 text-center text-gray-400 text-base"
                             >
                               No se encontraron resultados para "{busqueda}"
                             </td>
@@ -681,7 +649,7 @@ const ReportesPseries = ({ embedded = false }) => {
                   </div>
                 </>
               ) : (
-                <div className="p-16 text-center text-blue-200 text-base">
+                <div className="p-16 text-center text-gray-400 text-base">
                   El reporte no tiene datos.
                 </div>
               )}

@@ -51,7 +51,11 @@ const CrearPseries = lazy(() =>
 const EditarPseries = lazy(() =>
   import("../views/services/Pseries/editarPseries")
 );
+const EditarPseriesInv = lazy(() =>
+  import("../views/services/Pseries/editarPseriesInv")
+);
 const VerPseries = lazy(() => import("../views/services/Pseries/verPseries"));
+const VerPseriesInv = lazy(() => import("../views/services/Pseries/verPseriesInv"));
 const ReportesPseries = lazy(() => import("../views/services/Pseries/ReportesPseries"));
 
 // Storage
@@ -62,7 +66,11 @@ const CrearStorage = lazy(() =>
 const EditarStorage = lazy(() =>
   import("../views/services/storage/editarStorage")
 );
+const EditarStorageInv = lazy(() =>
+  import("../views/services/storage/editarStorageInv")
+);
 const VerStorage = lazy(() => import("../views/services/storage/verStorage"));
+const VerStorageInv = lazy(() => import("../views/services/storage/verStorageInv"));
 
 // Sucursales
 
@@ -285,10 +293,26 @@ const EnrutadorApp = [
     ),
   },
   {
+    path: `${BASE_PATH}/editar/:storageId/storage-inv`,
+    element: (
+      <ProtectedRoute>
+        <EditarStorageInv />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: `${BASE_PATH}/editar/:pserieId/pseries`,
     element: (
       <ProtectedRoute>
         <EditarPseries />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/editar/:pserieId/pseries-inv`,
+    element: (
+      <ProtectedRoute>
+        <EditarPseriesInv />
       </ProtectedRoute>
     ),
   },
@@ -335,10 +359,26 @@ const EnrutadorApp = [
     ),
   },
   {
+    path: `${BASE_PATH}/ver/:storageId/storage-inv`,
+    element: (
+      <ProtectedRoute>
+        <VerStorageInv />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: `${BASE_PATH}/ver/:pserieId/pseries`,
     element: (
       <ProtectedRoute>
         <VerPseries />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: `${BASE_PATH}/ver/:pserieId/pseries-inv`,
+    element: (
+      <ProtectedRoute>
+        <VerPseriesInv />
       </ProtectedRoute>
     ),
   },
