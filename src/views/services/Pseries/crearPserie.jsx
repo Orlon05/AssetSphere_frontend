@@ -1,4 +1,7 @@
 /**
+ * @file crearPserie.jsx
+ * @description View component containing a form to create new PSeries servers.
+ *
  * Componente para crear nuevos servidores PSeries
  *
  * Funcionalidades:
@@ -319,7 +322,7 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
             value={formData[field.name]}
             onChange={handleChange}
             required={field.required}
-            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+            className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Seleccionar...</option>
             {field.options.map((option) => (
@@ -338,29 +341,29 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
             value={formData[field.name]}
             onChange={handleChange}
             required={field.required}
-            className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+            className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
           />
         );
     }
   };
 
   return (
-    <div className={isModal ? "bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
+    <div className={isModal ? "bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100" : "min-h-screen bg-gray-50 dark:bg-slate-900/50 text-gray-800 dark:text-slate-100"}>
       {/* Header */}
       {!isModal && (
-        <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
+        <header className="w-full p-4 flex items-center border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
           <button
             onClick={handleClose}
-            className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="mr-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 transition-colors"
           >
-            <ArrowLeft size={20} className="text-gray-600" />
+            <ArrowLeft size={20} className="text-gray-600 dark:text-slate-400" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-slate-100 flex items-center">
               <Server className="mr-2 text-blue-600" size={24} />
               Crear Servidor PSeries
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-slate-400">
               Ingresa la información del nuevo servidor
             </p>
           </div>
@@ -369,14 +372,14 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
 
       {/* Main Content */}
       <main className={isModal ? "" : "container mx-auto p-6"}>
-        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
+        <div className={isModal ? "bg-white dark:bg-slate-800" : "bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {formSections.map((section, sectionIndex) => (
               <div
                 key={sectionIndex}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700"
               >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                   {section.title}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -384,7 +387,7 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
                     <div key={field.name} className="space-y-2">
                       <label
                         htmlFor={field.name}
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                       >
                         {field.label}{" "}
                         {field.required && (
@@ -399,11 +402,11 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
             ))}
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -425,6 +428,8 @@ const CrearPseries = ({ onClose, onSuccess, isModal }) => {
 };
 
 export default CrearPseries;
+
+
 
 
 

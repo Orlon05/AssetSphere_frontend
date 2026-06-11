@@ -1,5 +1,6 @@
 /**
- * COMPONENTE: EditarServidorFisico
+ * @file editarservidor.jsx
+ * @description COMPONENTE: EditarServidorFisico
  *
  * PROPÓSITO:
  * Permite editar la información de un servidor físico existente.
@@ -34,6 +35,15 @@ import { API_URL } from "../../../config/api";
 /**
  * Componente reutilizable para los campos del formulario
  * Reduce la duplicación de código y mantiene consistencia visual
+ *
+ * @param {Object} props - Propiedades del componente InputField.
+ * @param {string} props.label - Etiqueta a mostrar para el input.
+ * @param {string} props.name - Nombre del input, usado para el id y name.
+ * @param {string|number} props.value - Valor actual del input.
+ * @param {Function} props.onChange - Callback que se ejecuta cuando el valor cambia.
+ * @param {string} [props.type="text"] - Tipo de input HTML.
+ * @param {boolean} [props.required=false] - Indica si el campo es obligatorio.
+ * @returns {JSX.Element} Campo de formulario.
  */
 const InputField = ({
   label,
@@ -44,7 +54,7 @@ const InputField = ({
   required = false,
 }) => (
   <div className="space-y-2">
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
@@ -53,12 +63,21 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
       required={required}
     />
   </div>
 );
 
+/**
+ * Componente EditarServidorFisico.
+ * Renderiza un formulario para editar un servidor físico existente.
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} [props.serverId] - ID del servidor a editar, opcional si se pasa por URL.
+ * @param {Function} [props.onClose] - Función callback para cerrar el modal.
+ * @returns {JSX.Element} Formulario de edición de servidor físico.
+ */
 const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
   const { serverId: urlServerId } = useParams(); // ID del servidor desde la URL
   const serverId = propServerId || urlServerId;
@@ -142,6 +161,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
   /**
    * Maneja cambios en todos los campos del formulario
    * Actualiza el estado formData con el nuevo valor
+   *
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>} e - Evento de cambio del input.
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -201,6 +222,9 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
    * Maneja el envío del formulario para actualizar el servidor
    * - Envía petición PUT a la API
    * - Maneja errores y muestra notificaciones apropiadas
+   *
+   * @param {React.FormEvent<HTMLFormElement>} event - Evento submit del formulario.
+   * @returns {Promise<void>}
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -245,7 +269,7 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
   // Pantalla de carga mientras se obtienen los datos del servidor
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300">
         <div className="text-xl font-semibold">
           Cargando datos del servidor...
         </div>
@@ -256,7 +280,7 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
   // Pantalla de error si no se pudieron cargar los datos
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300">
         <div className="text-xl font-semibold text-red-600">Error: {error}</div>
       </div>
     );
@@ -265,12 +289,12 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header con información del servidor que se está editando */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             Editar Servidor Físico
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Modifica la información del servidor
           </p>
         </div>
@@ -285,11 +309,11 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
 
       {/* Formulario de edición */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -309,14 +333,14 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
                 />
                 {/* Campo: Fabricante (select) */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Fabricante
                   </label>
                   <select
                     name="manufacturer"
                     value={formData.manufacturer}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar fabricante</option>
                     {manufacturerOptions.map((option) => (
@@ -334,14 +358,14 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
                 />
                 {/* Campo: Tipo de servidor (select) */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Tipo de Servidor
                   </label>
                   <select
                     name="server_type"
                     value={formData.server_type}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar tipo</option>
                     {serverTypeOptions.map((option) => (
@@ -353,14 +377,14 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
                 </div>
                 {/* Campo: Estado del servicio (select requerido) */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Estado del Servicio <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="service_status"
                     value={formData.service_status}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Seleccionar...</option>
@@ -375,8 +399,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Configuración de Red */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Configuración de Red
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -396,8 +420,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Especificaciones Técnicas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -424,8 +448,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Ubicación y Organización */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Ubicación y Organización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -457,21 +481,21 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Información de Servicio */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información de Servicio
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Campo: Tipo de servicio (select) */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Tipo de Servicio
                   </label>
                   <select
                     name="service_type"
                     value={formData.service_type}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar tipo de servicio</option>
                     {serviceTypeOptions.map((option) => (
@@ -503,8 +527,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Garantía y Soporte */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Garantía y Soporte
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -538,14 +562,14 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Información Adicional */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Adicional
               </h2>
               <div className="grid grid-cols-1 gap-4">
                 {/* Campo: Comentarios (textarea) */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Comentarios
                   </label>
                   <textarea
@@ -553,19 +577,19 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
                     rows="3"
                     value={formData.comments}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   ></textarea>
                 </div>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               {/* Botón Cancelar */}
               <button
                 type="button"
                 onClick={onClose || (() => navigate("/AssetSphere/servidoresf"))}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 transition-colors"
               >
                 <MdArrowBack size={18} className="mr-2" />
                 Cancelar
@@ -587,6 +611,8 @@ const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
 };
 
 export default EditarServidorFisico;
+
+
 
 
 

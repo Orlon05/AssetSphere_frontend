@@ -265,6 +265,10 @@ const Pseries = () => {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredPseries, rowsPerPage, isInv]);
 
+  /**
+   * Carga los datos del inventario PSeries desde la API.
+   * Actualiza los headers y filas en los estados correspondientes.
+   */
   const loadInvData = async () => {
     setInvLoading(true);
     setInvError("");
@@ -295,6 +299,9 @@ const Pseries = () => {
     loadInvData();
   }, [isInv]);
 
+  /**
+   * Abre un modal de SweetAlert2 con un formulario para agregar manualmente un registro al inventario.
+   */
   const handleAddManualInventory = () => {
     Swal.fire({
       title: "Agregar Nuevo Registro de Inventario PSeries",
@@ -421,6 +428,10 @@ const Pseries = () => {
     });
   };
 
+  /**
+   * Abre un modal para la importación de inventario desde un archivo Excel.
+   * Utiliza el componente ExcelImporter para manejar el proceso.
+   */
   const handleLoadExcelInventory = () => {
     let root;
 
@@ -1040,7 +1051,7 @@ const Pseries = () => {
       );
     } else {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
           {status}
         </span>
       );
@@ -1384,12 +1395,12 @@ const Pseries = () => {
             <>
               {/* Status Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Con Soporte</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Con Soporte</span>
                     <CheckCircle size={16} className="text-emerald-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.withSupport}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.withSupport}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-emerald-600"
@@ -1397,12 +1408,12 @@ const Pseries = () => {
                     />
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Expirado</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Expirado</span>
                     <AlertCircle size={16} className="text-red-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.expired}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.expired}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-rose-600"
@@ -1410,12 +1421,12 @@ const Pseries = () => {
                     />
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Otros WarrantyStatus</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Otros WarrantyStatus</span>
                     <Server size={16} className="text-indigo-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.other}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.other}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-amber-500"
@@ -1426,14 +1437,14 @@ const Pseries = () => {
               </div>
 
               {/* Search and Action Buttons */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
                     <div className="relative flex-1 min-w-0">
                       <input
                         type="text"
                         placeholder="Buscar por cualquier campo..."
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                         value={invSearchValue}
                         onChange={(e) => {
                           setInvSearchValue(e.target.value);
@@ -1489,7 +1500,7 @@ const Pseries = () => {
                     <button
                       onClick={handleDescargarCSVInventario}
                       disabled={filteredRows.length === 0}
-                      className={`px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0 ${
+                      className={`px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2 shrink-0 ${
                         filteredRows.length === 0 ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       title="Descargar CSV del inventario"
@@ -1506,14 +1517,14 @@ const Pseries = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white dark:bg-slate-800">
                 <table className="as-table">
                   <thead>
                     <tr>
-                      <th className="as-th sticky left-0 bg-white z-20 w-12">
+                      <th className="as-th sticky left-0 bg-white dark:bg-slate-800 z-20 w-12">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                           checked={allFilteredInventorySelected}
                           onChange={toggleSelectAllInventoryRows}
                           title="Seleccionar todo"
@@ -1531,10 +1542,10 @@ const Pseries = () => {
                     {pageRows.length > 0 ? (
                       pageRows.map((row, idx) => (
                         <tr key={idx} className="border-b border-slate-100">
-                          <td className="as-td sticky left-0 bg-white z-20 border-r border-slate-200">
+                          <td className="as-td sticky left-0 bg-white dark:bg-slate-800 z-20 border-r border-slate-200">
                             <input
                               type="checkbox"
-                              className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                              className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                               checked={selectedInvRows.has(getInventoryRowId(row))}
                               onChange={() => toggleSelectInventoryRow(row)}
                               title="Seleccionar fila"
@@ -1591,7 +1602,7 @@ const Pseries = () => {
                       <tr>
                         <td
                           colSpan={compactHeaders.length + 2 || 1}
-                          className="px-6 py-12 text-center text-slate-500 bg-white"
+                          className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                         >
                           No hay datos
                         </td>
@@ -1626,8 +1637,8 @@ const Pseries = () => {
                   <button
                     className={`p-2 rounded-lg border border-slate-200 ${
                       pageInv <= 1 || totalPagesInv === 0
-                        ? "text-slate-300 cursor-not-allowed bg-white"
-                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                        ? "text-slate-300 cursor-not-allowed bg-white dark:bg-slate-800"
+                        : "text-slate-600 hover:bg-slate-50 bg-white dark:bg-slate-800"
                     }`}
                     onClick={() => setInvCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={pageInv <= 1 || totalPagesInv === 0}
@@ -1643,8 +1654,8 @@ const Pseries = () => {
                   <button
                     className={`p-2 rounded-lg border border-slate-200 ${
                       pageInv >= totalPagesInv || totalPagesInv === 0
-                        ? "text-slate-300 cursor-not-allowed bg-white"
-                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                        ? "text-slate-300 cursor-not-allowed bg-white dark:bg-slate-800"
+                        : "text-slate-600 hover:bg-slate-50 bg-white dark:bg-slate-800"
                     }`}
                     onClick={() =>
                       setInvCurrentPage((p) =>
@@ -1663,10 +1674,10 @@ const Pseries = () => {
         {/* Modals Flotantes CRUD */}
         {activeModal && (
           <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
               {/* Header */}
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {activeModal === 'create' && "Crear Servidor PSeries"}
                   {activeModal === 'edit' && "Editar Servidor PSeries"}
                   {activeModal === 'view' && "Detalles del Servidor PSeries"}
@@ -1682,7 +1693,7 @@ const Pseries = () => {
                 </button>
               </div>
               {/* Content */}
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white dark:bg-slate-800">
                 {activeModal === 'create' && (
                   <CrearPseries
                     isModal
@@ -1770,9 +1781,9 @@ const Pseries = () => {
             <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
               <AlertCircle className="text-red-600" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">No se pudo cargar PSeries</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">No se pudo cargar PSeries</h2>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-slate-400">
             {error.message || "Ha ocurrido un error al cargar los servidores"}
           </p>
           <button
@@ -1796,43 +1807,43 @@ const Pseries = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Total</span>
-              <Activity size={16} className="text-gray-600" />
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Total</span>
+              <Activity size={16} className="text-gray-600 dark:text-slate-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{statusCounts.total}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Activo</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Activo</span>
               <CheckCircle size={16} className="text-emerald-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.running}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{statusCounts.running}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">No activo</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">No activo</span>
               <AlertCircle size={16} className="text-red-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.inactive}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{statusCounts.inactive}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">En bodega</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">En bodega</span>
               <Clock size={16} className="text-amber-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.maintenance}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{statusCounts.maintenance}</div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Otros</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Otros</span>
               <Server size={16} className="text-indigo-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{statusCounts.other}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{statusCounts.other}</div>
           </div>
         </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
               {showSearch ? (
@@ -1840,7 +1851,7 @@ const Pseries = () => {
                   <input
                     type="text"
                     placeholder="Buscar por nombre..."
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                     value={searchValue}
                     onChange={handleSearchChange}
                     ref={searchInputRef}
@@ -1849,7 +1860,7 @@ const Pseries = () => {
                     onClick={handleSearchButtonClick}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   >
-                    <Search size={18} className="text-gray-400 hover:text-gray-600" />
+                    <Search size={18} className="text-gray-400 hover:text-gray-600 dark:text-slate-400" />
                   </button>
                 </div>
               ) : (
@@ -1898,7 +1909,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2 shrink-0"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -1906,7 +1917,7 @@ const Pseries = () => {
               </button>
               <button
                 onClick={() => setShowReports(true)}
-                className="px-4 py-2 bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
+                className="px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
                 title="Ver Reportes Mensuales"
               >
                 <FileText size={16} />
@@ -1923,7 +1934,7 @@ const Pseries = () => {
                   <th scope="col" className="as-th w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                       checked={
                         pseries.length > 0 &&
                         selectedPseries.size === pseries.length
@@ -1959,13 +1970,13 @@ const Pseries = () => {
                       className={`group border-b border-slate-100 transition-colors ${
                         selectedPseries.has(pserie.id)
                           ? "bg-as-brand-50/50"
-                          : "bg-white hover:bg-slate-50/50"
+                          : "bg-white dark:bg-slate-800 hover:bg-slate-50/50"
                       }`}
                     >
                       <td className="as-td">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                           checked={selectedPseries.has(pserie.id)}
                           onChange={() => toggleSelectPseries(pserie.id)}
                         />
@@ -2017,7 +2028,7 @@ const Pseries = () => {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-12 text-center text-slate-500 bg-white"
+                      className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                     >
                       <div className="flex flex-col items-center justify-center">
                         <Server className="h-12 w-12 text-slate-300 mb-3" />
@@ -2042,7 +2053,7 @@ const Pseries = () => {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white dark:bg-slate-800 border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -2062,7 +2073,7 @@ const Pseries = () => {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -2074,7 +2085,7 @@ const Pseries = () => {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight size={18} />
               </button>
@@ -2085,12 +2096,12 @@ const Pseries = () => {
         {/* Modal para Reportes */}
         {showReports && (
           <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
               {/* Header */}
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FileText className="text-gray-900" size={22} />
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <FileText className="text-gray-900 dark:text-white" size={22} />
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                     Reportes Mensuales Consolidados
                   </h2>
                 </div>
@@ -2114,10 +2125,10 @@ const Pseries = () => {
         {/* Modals Flotantes CRUD */}
         {activeModal && (
           <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
               {/* Header */}
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {activeModal === 'create' && "Crear Servidor PSeries"}
                   {activeModal === 'edit' && "Editar Servidor PSeries"}
                   {activeModal === 'view' && "Detalles del Servidor PSeries"}
@@ -2132,7 +2143,7 @@ const Pseries = () => {
                 </button>
               </div>
               {/* Content */}
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white dark:bg-slate-800">
                 {activeModal === 'create' && (
                   <CrearPseries
                     isModal
@@ -2197,6 +2208,8 @@ const Pseries = () => {
 };
 
 export default Pseries;
+
+
 
 
 

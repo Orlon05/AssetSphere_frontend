@@ -37,6 +37,10 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
   const pserieId = propPserieId || routePserieId;
   const BASE_PATH = "/AssetSphere";
 
+  /**
+   * Maneja el cierre del componente o modal.
+   * Si es un modal invoca onClose, si no redirige atrás en el historial.
+   */
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -225,25 +229,35 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
     }
   }, [pserieId, token]);
 
+  /**
+   * Retorna el icono correspondiente según la sección del servidor.
+   * @param {string} title - Título de la sección.
+   * @returns {JSX.Element} Icono correspondiente.
+   */
   const getSectionIcon = (title) => {
     switch (title) {
       case "Información Básica":
-        return <Server className="text-gray-500" size={16} />;
+        return <Server className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Ubicación y Hardware":
-        return <Layers className="text-gray-500" size={16} />;
+        return <Layers className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Sistema Operativo":
-        return <Cpu className="text-gray-500" size={16} />;
+        return <Cpu className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Recursos CPU":
-        return <Cpu className="text-gray-500" size={16} />;
+        return <Cpu className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Recursos Memoria":
-        return <HardDrive className="text-gray-500" size={16} />;
+        return <HardDrive className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Configuración Avanzada":
-        return <Sliders className="text-gray-500" size={16} />;
+        return <Sliders className="text-gray-500 dark:text-slate-400" size={16} />;
       default:
-        return <Server className="text-gray-500" size={16} />;
+        return <Server className="text-gray-500 dark:text-slate-400" size={16} />;
     }
   };
 
+  /**
+   * Renderiza un badge visual de estado según el valor.
+   * @param {string} statusVal - Valor del estado.
+   * @returns {JSX.Element} Badge renderizado.
+   */
   const renderStatusBadge = (statusVal) => {
     const s = (statusVal || "").toLowerCase().trim();
     if (s === "activo" || s === "active" || s === "up" || s === "online") {
@@ -277,6 +291,11 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
     }
   };
 
+  /**
+   * Renderiza el valor del campo, con lógica especial para estados o URLs.
+   * @param {Object} field - Campo a renderizar.
+   * @returns {JSX.Element} Valor del campo renderizado.
+   */
   const renderFieldValue = (field) => {
     if (field.key === "status") {
       return renderStatusBadge(field.value);
@@ -284,7 +303,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
     if ((field.key === "hostname" || field.key === "ip_address") && field.value) {
       return (
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold text-gray-800">{field.value}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{field.value}</span>
           <button
             onClick={() => navigate(`${BASE_PATH}/pseries-inv?search=${encodeURIComponent(field.value)}`)}
             className="text-indigo-600 hover:text-indigo-800 text-[10px] font-extrabold underline flex items-center gap-0.5 print:hidden"
@@ -297,7 +316,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
       );
     }
     return (
-      <span className="text-sm font-semibold text-gray-800">
+      <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">
         {field.value || "—"}
       </span>
     );
@@ -305,10 +324,10 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles del servidor...</p>
+          <p className="mt-4 text-sm font-medium text-gray-500 dark:text-slate-400">Cargando detalles del servidor...</p>
         </div>
       </div>
     );
@@ -316,13 +335,13 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
             <AlertCircle size={24} />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
-          <p className="text-sm text-gray-500 mb-6">{error}</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Error al cargar datos</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">{error}</p>
           <button
             onClick={handleClose}
             className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
@@ -336,7 +355,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
   }
 
   return (
-    <div className={isModal ? "p-6 bg-white text-gray-800 pb-4 print:bg-white print:pb-0" : "min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12 print:bg-white print:pb-0"}>
+    <div className={isModal ? "p-6 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 pb-4 print:bg-white dark:bg-slate-800 print:pb-0" : "min-h-screen bg-[#fcfcfc] text-gray-800 dark:text-slate-100 font-sans pb-12 print:bg-white dark:bg-slate-800 print:pb-0"}>
       {/* Print styles */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -353,7 +372,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
             max-width: 100% !important;
             width: 100% !important;
           }
-          .bg-white {
+          .bg-white dark:bg-slate-800 {
             border: 1px solid #e5e7eb !important;
             box-shadow: none !important;
           }
@@ -365,16 +384,16 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
       `}} />
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/80 backdrop-blur-md print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <Server size={20} />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               Ver Registro PSeries
             </h1>
-            <p className="text-xs font-semibold text-gray-500">
+            <p className="text-xs font-semibold text-gray-500 dark:text-slate-400">
               Detalles técnicos y recursos de la LPAR
             </p>
           </div>
@@ -382,7 +401,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleClose}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
           >
             <ArrowLeft size={16} />
             <span>{isModal ? "Cerrar" : "Regresar"}</span>
@@ -391,7 +410,7 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
             <>
               <button
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
                 title="Imprimir ficha técnica"
               >
                 <Printer size={16} />
@@ -412,22 +431,22 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
       {/* Main Content */}
       <main className={isModal ? "max-w-7xl mx-auto mt-2" : "max-w-7xl mx-auto px-8 mt-8"}>
         {/* Banner principal rápido */}
-        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Nombre LPAR (HMC)</span>
-            <span className="text-2xl font-bold text-gray-900">{name || "—"}</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{name || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Dirección IP</span>
-            <span className="text-lg font-semibold text-gray-800">{ip_address || "—"}</span>
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">{ip_address || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Sistema Operativo</span>
-            <span className="text-lg font-semibold text-gray-800">{os ? `${os} ${version}`.trim() : "—"}</span>
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">{os ? `${os} ${version}`.trim() : "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Estado</span>
             <div>{renderStatusBadge(status)}</div>
@@ -440,11 +459,11 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
             <div key={idx} className="flex flex-col">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
-                <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
-              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm flex-1">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                   {section.fields.map((field) => (
                     <div key={field.key} className="flex flex-col">
@@ -465,6 +484,8 @@ const VerPseries = ({ pserieId: propPserieId, onClose, isModal }) => {
 };
 
 export default VerPseries;
+
+
 
 
 

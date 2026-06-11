@@ -1,9 +1,7 @@
 import { API_URL } from "../../../config/api";
 /**
- * COMPONENTE: VerServidorVirtual
- *
- * PROPÓSITO:
- * Componente de solo lectura para visualizar todos los detalles
+ * @file verservidoresv.jsx
+ * @description Componente de solo lectura para visualizar todos los detalles
  * de un servidor virtual específico de manera organizada.
  *
  * FUNCIONALIDADES PRINCIPALES:
@@ -30,6 +28,13 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
+/**
+ * Componente para visualizar la información detallada de un servidor virtual.
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {string} [props.serverId] - ID del servidor (opcional si se pasa por ruta)
+ * @param {Function} [props.onClose] - Función para cerrar el modal o regresar
+ */
 const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
   const navigate = useNavigate();
   const [serverData, setServerData] = useState({});
@@ -82,7 +87,7 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
    * OPTIMIZACIÓN: Centralización de lógica de estilos de estado
    */
   const getStatusColor = (status) => {
-    if (!status) return "bg-gray-100 text-gray-800 border-gray-300";
+    if (!status) return "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border-gray-300";
 
     const statusLower = status.toLowerCase();
     const statusMap = {
@@ -95,7 +100,7 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
     };
 
     return (
-      statusMap[statusLower] || "bg-gray-100 text-gray-800 border-gray-300"
+      statusMap[statusLower] || "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border-gray-300"
     );
   };
 
@@ -171,7 +176,7 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
       <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-700">
+          <p className="mt-4 text-lg text-gray-700 dark:text-slate-300">
             Cargando datos del servidor virtual...
           </p>
         </div>
@@ -197,14 +202,14 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100`}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm rounded-t-xl mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Visualizar Servidor Virtual
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Detalles completos del servidor virtual
           </p>
         </div>
@@ -219,21 +224,21 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
 
       {/* Contenido principal */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <div className="space-y-6">
             {/* Renderizado dinámico de secciones */}
             {formSections.map((section, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700"
               >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                   {section.title}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {section.fields.map((field) => (
                     <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                         {fieldLabels[field]}
                       </label>
 
@@ -248,7 +253,7 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
                         </div>
                       ) : (
                         /* Renderizado estándar para otros campos */
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                        <div className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5">
                           {serverData[field] || "N/A"}
                         </div>
                       )}
@@ -265,6 +270,8 @@ const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
 };
 
 export default VerServidorVirtual;
+
+
 
 
 

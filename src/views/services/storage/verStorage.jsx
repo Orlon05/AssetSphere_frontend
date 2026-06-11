@@ -1,13 +1,9 @@
-import { API_URL } from "../../../config/api";
 /**
- * Componente para visualizar detalles de dispositivos de Storage
- *
- * Este componente permite:
- * - Mostrar todos los detalles de un dispositivo de storage en modo solo lectura
- * - Organizar la información en secciones lógicas
- * - Aplicar estilos visuales premium en escala de grises
- * - Manejar diferentes estructuras de respuesta de la API
+ * @file verStorage.jsx
+ * @description Component to visualize the details of a storage device in read-only mode.
+ * It manages different API response structures and organizes information into logical sections.
  */
+import { API_URL } from "../../../config/api";
 
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +21,14 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
+/**
+ * Main component for viewing storage device details.
+ * @param {Object} props - Component props.
+ * @param {string} [props.storageId] - Optional ID of the storage device to view. If not provided, it's extracted from URL params.
+ * @param {Function} [props.onClose] - Optional callback function to execute when closing the view.
+ * @param {boolean} [props.isModal] - Indicates if the component is being rendered inside a modal.
+ * @returns {JSX.Element} The rendered component.
+ */
 const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   const navigate = useNavigate();
   const [storageData, setStorageData] = useState({});
@@ -118,20 +122,22 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   const getSectionIcon = (title) => {
     switch (title) {
       case "Información Básica":
-        return <Database className="text-gray-500" size={16} />;
+        return <Database className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Configuración de Red":
-        return <Network className="text-gray-500" size={16} />;
+        return <Network className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Especificaciones Técnicas":
-        return <Cpu className="text-gray-500" size={16} />;
+        return <Cpu className="text-gray-500 dark:text-slate-400" size={16} />;
       case "Información Organizacional":
-        return <Layers className="text-gray-500" size={16} />;
+        return <Layers className="text-gray-500 dark:text-slate-400" size={16} />;
       default:
-        return <Database className="text-gray-500" size={16} />;
+        return <Database className="text-gray-500 dark:text-slate-400" size={16} />;
     }
   };
 
   /**
-   * Obtiene el badge de estado premium en escala de grises / sutil
+   * Generates a premium grayscale/subtle status badge.
+   * @param {string} statusVal - The status value to evaluate.
+   * @returns {JSX.Element} The badge element.
    */
   const renderStatusBadge = (statusVal) => {
     const s = (statusVal || "").toLowerCase().trim();
@@ -160,7 +166,9 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   };
 
   /**
-   * Obtiene el badge de activo premium en escala de grises / sutil
+   * Generates a premium grayscale/subtle active badge.
+   * @param {string} activeVal - The active value to evaluate.
+   * @returns {JSX.Element} The active badge element.
    */
   const renderActiveBadge = (activeVal) => {
     const a = (activeVal || "").toLowerCase().trim();
@@ -189,7 +197,9 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   };
 
   /**
-   * Renderiza el valor del campo
+   * Renders the value for a specific field, including status and active badges.
+   * @param {string} field - The name of the field to render.
+   * @returns {JSX.Element} The rendered field value.
    */
   const renderFieldValue = (field) => {
     const val = storageData[field];
@@ -202,7 +212,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
     if ((field === "host_name" || field === "serial" || field === "ip_address") && val) {
       return (
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold text-gray-800">{val}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{val}</span>
           <button
             onClick={() => navigate(`${BASE_PATH}/storage-inv?search=${encodeURIComponent(val)}`)}
             className="text-indigo-600 hover:text-indigo-800 text-[10px] font-extrabold underline flex items-center gap-0.5 print:hidden"
@@ -215,7 +225,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
       );
     }
     return (
-      <span className="text-sm font-semibold text-gray-800">
+      <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">
         {val || "—"}
       </span>
     );
@@ -283,10 +293,10 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles del storage...</p>
+          <p className="mt-4 text-sm font-medium text-gray-500 dark:text-slate-400">Cargando detalles del storage...</p>
         </div>
       </div>
     );
@@ -294,13 +304,13 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
             <AlertCircle size={24} />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
-          <p className="text-sm text-gray-500 mb-6">{error}</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Error al cargar datos</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">{error}</p>
           <button
             onClick={handleClose}
             className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
@@ -314,7 +324,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   }
 
   return (
-    <div className={isModal ? "p-6 bg-white text-gray-800 pb-4 print:bg-white print:pb-0" : "min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12 print:bg-white print:pb-0"}>
+    <div className={isModal ? "p-6 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 pb-4 print:bg-white dark:bg-slate-800 print:pb-0" : "min-h-screen bg-[#fcfcfc] text-gray-800 dark:text-slate-100 font-sans pb-12 print:bg-white dark:bg-slate-800 print:pb-0"}>
       {/* Print styles */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -331,7 +341,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
             max-width: 100% !important;
             width: 100% !important;
           }
-          .bg-white {
+          .bg-white dark:bg-slate-800 {
             border: 1px solid #e5e7eb !important;
             box-shadow: none !important;
           }
@@ -343,16 +353,16 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
       `}} />
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/80 backdrop-blur-md print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <Database size={20} />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               Ver Registro Storage
             </h1>
-            <p className="text-xs font-semibold text-gray-500">
+            <p className="text-xs font-semibold text-gray-500 dark:text-slate-400">
               Detalles completos del dispositivo de almacenamiento
             </p>
           </div>
@@ -360,7 +370,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleClose}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
           >
             <ArrowLeft size={16} />
             <span>{isModal ? "Cerrar" : "Regresar"}</span>
@@ -369,7 +379,7 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
             <>
               <button
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
                 title="Imprimir ficha técnica"
               >
                 <Printer size={16} />
@@ -390,22 +400,22 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
       {/* Main Content */}
       <main className={isModal ? "max-w-7xl mx-auto mt-2" : "max-w-7xl mx-auto px-8 mt-8"}>
         {/* Banner principal rápido */}
-        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Nombre del Storage</span>
-            <span className="text-2xl font-bold text-gray-900">{storageData.name || "—"}</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{storageData.name || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Dirección IP</span>
-            <span className="text-lg font-semibold text-gray-800">{storageData.ip_address || "—"}</span>
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">{storageData.ip_address || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Número de Serie</span>
-            <span className="text-lg font-semibold text-gray-800">{storageData.serial || "—"}</span>
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">{storageData.serial || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Estado</span>
             <div>{renderStatusBadge(storageData.status)}</div>
@@ -418,11 +428,11 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
             <div key={idx} className="flex flex-col">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
-                <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
-              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm flex-1">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                   {section.fields.map((field) => (
                     <div key={field} className="flex flex-col">
@@ -443,6 +453,8 @@ const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
 };
 
 export default VerStorage;
+
+
 
 
 

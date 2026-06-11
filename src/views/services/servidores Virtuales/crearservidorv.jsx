@@ -1,6 +1,6 @@
-import { API_URL } from "../../../config/api";
 /**
- * COMPONENTE: CrearServidorVirtual
+ * @file crearservidorv.jsx
+ * @description COMPONENTE: CrearServidorVirtual
  *
  * PROPÓSITO:
  * Formulario para crear nuevos servidores virtuales en el sistema.
@@ -23,6 +23,7 @@ import { API_URL } from "../../../config/api";
  * - Lucide React para iconos
  */
 
+import { API_URL } from "../../../config/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
@@ -31,7 +32,16 @@ import Swal from "sweetalert2";
 // Constante para rutas base del sistema
 const BASE_PATH = "/AssetSphere";
 
-const CrearServidorVirtual = () => {
+/**
+ * Componente CrearServidorVirtual.
+ * Formulario para la creación de un nuevo servidor virtual.
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {boolean} [props.isModal=false] - Indica si el componente está siendo renderizado en un modal.
+ * @param {Function} [props.onClose] - Función a llamar para cerrar el modal.
+ * @returns {JSX.Element} Formulario de creación.
+ */
+const CrearServidorVirtual = ({ isModal = false, onClose }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,6 +64,8 @@ const CrearServidorVirtual = () => {
   /**
    * Maneja los cambios en los campos del formulario
    * Actualiza el estado correspondiente al campo modificado
+   *
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLSelectElement>} e - Evento de cambio de input.
    */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,6 +82,9 @@ const CrearServidorVirtual = () => {
    * - Maneja diferentes tipos de errores HTTP
    * - Muestra notificaciones de éxito/error
    * - Navega de vuelta a la lista en caso de éxito
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - Evento submit.
+   * @returns {Promise<void>}
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +141,8 @@ const CrearServidorVirtual = () => {
         text: "Servidor virtual creado correctamente",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        navigate(`${BASE_PATH}/servidoresv`);
+        if (isModal && onClose) onClose();
+        else navigate(`${BASE_PATH}/servidoresv`);
       });
     } catch (error) {
       console.error("Error al crear servidor virtual:", error);
@@ -145,6 +161,8 @@ const CrearServidorVirtual = () => {
   /**
    * Maneja la cancelación del formulario
    * Muestra confirmación para evitar pérdida accidental de datos
+   *
+   * @returns {void}
    */
   const handleCancel = () => {
     Swal.fire({
@@ -158,7 +176,8 @@ const CrearServidorVirtual = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/servidoresv`);
+        if (isModal && onClose) onClose();
+        else navigate(`${BASE_PATH}/servidoresv`);
       }
     });
   };
@@ -166,15 +185,15 @@ const CrearServidorVirtual = () => {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header con título y botón de regreso */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
         <div className="flex items-center">
           <Server className="mr-2 text-blue-600" size={24} />
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Crear Servidor Virtual
           </h1>
         </div>
         <button
-          onClick={handleCancel}
+          onClick={() => isModal && onClose ? onClose() : handleCancel()}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
@@ -184,11 +203,11 @@ const CrearServidorVirtual = () => {
 
       {/* Contenido principal del formulario */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -196,7 +215,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="platform"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Plataforma <span className="text-red-500">*</span>
                   </label>
@@ -207,7 +226,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.platform}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -215,7 +234,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="strategic_ally"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Aliado estratégico <span className="text-red-500">*</span>
                   </label>
@@ -226,7 +245,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.strategic_ally}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -234,7 +253,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="id_vm"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     ID VM <span className="text-red-500">*</span>
                   </label>
@@ -245,7 +264,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.id_vm}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -253,7 +272,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="server"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre del Servidor <span className="text-red-500">*</span>
                   </label>
@@ -264,7 +283,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.server}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -272,7 +291,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="so"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Sistema Operativo <span className="text-red-500">*</span>
                   </label>
@@ -283,7 +302,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.so}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -291,7 +310,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="ip"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Dirección IP <span className="text-red-500">*</span>
                   </label>
@@ -302,7 +321,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.ip}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -310,7 +329,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="status"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Estado <span className="text-red-500">*</span>
                   </label>
@@ -320,7 +339,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.status}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
                     <option value="activo">Activo</option>
@@ -332,8 +351,8 @@ const CrearServidorVirtual = () => {
             </div>
 
             {/* Sección: Configuración Técnica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Configuración Técnica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -341,7 +360,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="cluster"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Cluster
                   </label>
@@ -351,7 +370,7 @@ const CrearServidorVirtual = () => {
                     name="cluster"
                     value={formData.cluster}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -359,7 +378,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="hdd"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Almacenamiento (GB)
                   </label>
@@ -369,7 +388,7 @@ const CrearServidorVirtual = () => {
                     name="hdd"
                     value={formData.hdd}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -377,7 +396,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="cores"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Núcleos <span className="text-red-500">*</span>
                   </label>
@@ -388,7 +407,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.cores}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -396,7 +415,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="memory"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Memoria (GB) <span className="text-red-500">*</span>
                   </label>
@@ -407,7 +426,7 @@ const CrearServidorVirtual = () => {
                     required
                     value={formData.memory}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -415,7 +434,7 @@ const CrearServidorVirtual = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="modified"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Fecha de Modificación
                   </label>
@@ -425,18 +444,18 @@ const CrearServidorVirtual = () => {
                     name="modified"
                     value={formData.modified.substring(0, 16)}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 transition-colors"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -458,6 +477,8 @@ const CrearServidorVirtual = () => {
 };
 
 export default CrearServidorVirtual;
+
+
 
 
 

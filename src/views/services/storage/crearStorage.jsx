@@ -1,6 +1,7 @@
 import { API_URL } from "../../../config/api";
 /**
- * Componente para crear nuevos dispositivos de Storage
+ * @file crearStorage.jsx
+ * @description Componente para crear nuevos dispositivos de Storage
  *
  * Este formulario permite crear dispositivos de almacenamiento con campos específicos:
  * - Información básica (nombre, código, serial, host, estado)
@@ -22,6 +23,14 @@ import Swal from "sweetalert2";
 
 const BASE_PATH = "/AssetSphere";
 
+/**
+ * Componente principal para crear un nuevo dispositivo Storage.
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {Function} [props.onClose] - Función a ejecutar para cerrar la vista/modal
+ * @param {Function} [props.onSuccess] - Función a ejecutar al crear exitosamente
+ * @param {boolean} [props.isModal] - Indica si el componente se renderiza como modal
+ */
 const CrearStorage = ({ onClose, onSuccess, isModal }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -163,15 +172,15 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
   };
 
   return (
-    <div className={isModal ? "bg-white text-gray-800" : "as-page"}>
+    <div className={isModal ? "bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100" : "as-page"}>
       {/* Header */}
       {!isModal && (
-        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Crear Nuevo Storage
             </h1>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
               Ingresa la información del nuevo dispositivo de almacenamiento
             </p>
           </div>
@@ -187,18 +196,18 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
 
       {/* Main Content */}
       <main className={isModal ? "" : "container mx-auto p-6"}>
-        <div className={isModal ? "bg-white p-2" : "bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200"}>
+        <div className={isModal ? "bg-white dark:bg-slate-800 p-2" : "bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre <span className="text-red-500">*</span>
                   </label>
@@ -209,14 +218,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="cod_item_configuracion"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Código Item Configuración
                   </label>
@@ -226,14 +235,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="cod_item_configuracion"
                     value={formData.cod_item_configuracion}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="serial"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Número de Serie
                   </label>
@@ -243,14 +252,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="serial"
                     value={formData.serial}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="host_name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre del Host
                   </label>
@@ -260,14 +269,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="host_name"
                     value={formData.host_name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="status"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Estado <span className="text-red-500">*</span>
                   </label>
@@ -277,7 +286,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     required
                     value={formData.status}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     {statusOptions.map((option) => (
                       <option key={option} value={option}>
@@ -290,7 +299,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                 <div className="space-y-2">
                   <label
                     htmlFor="active"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Activo
                   </label>
@@ -299,7 +308,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="active"
                     value={formData.active}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     {activeOptions.map((option) => (
                       <option key={option} value={option}>
@@ -312,15 +321,15 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
             </div>
 
             {/* Sección: Configuración de Red */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Configuración de Red
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="ip_address"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Dirección IP
                   </label>
@@ -331,22 +340,22 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     value={formData.ip_address}
                     onChange={handleChange}
                     placeholder="192.168.1.100"
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Especificaciones Técnicas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="manufacturer"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Fabricante
                   </label>
@@ -355,7 +364,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="manufacturer"
                     value={formData.manufacturer}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar fabricante</option>
                     {manufacturerOptions.map((option) => (
@@ -369,7 +378,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                 <div className="space-y-2">
                   <label
                     htmlFor="model"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Modelo
                   </label>
@@ -379,14 +388,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="model"
                     value={formData.model}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="type"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Tipo
                   </label>
@@ -395,7 +404,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar tipo</option>
                     {typeOptions.map((option) => (
@@ -409,7 +418,7 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                 <div className="space-y-2">
                   <label
                     htmlFor="category"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Categoría
                   </label>
@@ -419,14 +428,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="disk_size"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Tamaño de Disco
                   </label>
@@ -437,14 +446,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     value={formData.disk_size}
                     onChange={handleChange}
                     placeholder="ej: 1TB"
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="item"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Item
                   </label>
@@ -454,22 +463,22 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="item"
                     value={formData.item}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Información Organizacional */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Organizacional
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="company"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Empresa
                   </label>
@@ -479,14 +488,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="organization_responsible"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Organización Responsable
                   </label>
@@ -496,14 +505,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="organization_responsible"
                     value={formData.organization_responsible}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="owner"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Propietario/Responsable
                   </label>
@@ -513,14 +522,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="owner"
                     value={formData.owner}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="org_maintenance"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Organización de Mantenimiento
                   </label>
@@ -530,14 +539,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="org_maintenance"
                     value={formData.org_maintenance}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="cost_center"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Centro de Costo
                   </label>
@@ -547,14 +556,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="cost_center"
                     value={formData.cost_center}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="application_code"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Código de Aplicación
                   </label>
@@ -564,14 +573,14 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="application_code"
                     value={formData.application_code}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="location"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Ubicación
                   </label>
@@ -581,18 +590,18 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -614,6 +623,8 @@ const CrearStorage = ({ onClose, onSuccess, isModal }) => {
 };
 
 export default CrearStorage;
+
+
 
 
 

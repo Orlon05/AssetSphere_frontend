@@ -1,6 +1,6 @@
-import { API_URL } from "../../../config/api";
 /**
- * COMPONENTE: EditarServidorVirtual
+ * @file editarservidorv.jsx
+ * @description COMPONENTE: EditarServidorVirtual
  *
  * PROPÓSITO:
  * Permite editar la información de un servidor virtual existente.
@@ -21,11 +21,21 @@ import { API_URL } from "../../../config/api";
  * - Eliminación de código duplicado
  */
 
+import { API_URL } from "../../../config/api";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
 
+/**
+ * Componente EditarServidorVirtual.
+ * Renderiza el formulario para editar datos de un servidor virtual.
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} [props.serverId] - ID del servidor virtual a editar.
+ * @param {Function} [props.onClose] - Función para cerrar el modal en el que se muestre.
+ * @returns {JSX.Element} Vista de edición.
+ */
 const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   const navigate = useNavigate();
   const { serverId: urlServerId } = useParams();
@@ -75,6 +85,8 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   /**
    * Maneja cambios en los campos del formulario
    * OPTIMIZACIÓN: Función unificada para todos los campos
+   *
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLSelectElement>} e - Evento de cambio de input.
    */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -167,6 +179,9 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   /**
    * Procesa la actualización del servidor
    * OPTIMIZACIÓN: Mejor preparación de datos y manejo de errores
+   *
+   * @param {React.FormEvent<HTMLFormElement>} event - Evento submit del formulario.
+   * @returns {Promise<void>}
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -236,6 +251,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
 
   /**
    * Maneja la cancelación con confirmación
+   * @returns {void}
    */
   const handleCancel = () => {
     Swal.fire({
@@ -271,7 +287,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   if (error) {
     return (
       <div className="flex items-center justify-center p-12 w-full">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 dark:border-slate-700">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p>{error}</p>
           <button
@@ -286,15 +302,15 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100`}>
       {/* Header con información del servidor */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm rounded-t-xl mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
             Editar Servidor Virtual
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Modifica la información del servidor{" "}
             <span className="font-bold">{formData.server}</span>
           </p>
@@ -310,11 +326,11 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
 
       {/* Formulario de edición */}
       <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -335,7 +351,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
                   <div key={field.name} className="space-y-2">
                     <label
                       htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                     >
                       {field.label}
                     </label>
@@ -345,7 +361,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleChange}
-                      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 ))}
@@ -353,8 +369,8 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Sección: Configuración */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Configuración
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -373,7 +389,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
                   <div key={field.name} className="space-y-2">
                     <label
                       htmlFor={field.name}
-                      className="block text-sm font-medium text-gray-700"
+                      className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                     >
                       {field.label}
                     </label>
@@ -383,7 +399,7 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleChange}
-                      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 ))}
@@ -391,11 +407,11 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 transition-colors"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -417,6 +433,8 @@ const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
 };
 
 export default EditarServidorVirtual;
+
+
 
 
 

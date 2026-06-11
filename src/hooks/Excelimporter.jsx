@@ -5,7 +5,8 @@ import PropTypes from "prop-types";
 import { API_URL } from "../config/api";
 
 /**
- * Componente para importar y procesar archivos Excel con funcionalidades avanzadas
+ * @file Excelimporter.jsx
+ * @description Componente para importar y procesar archivos Excel con funcionalidades avanzadas
  *
  * @component
  * @param {Object} props - Propiedades del componente
@@ -32,7 +33,7 @@ import { API_URL } from "../config/api";
  *
  * @returns {JSX.Element} Componente de importación de Excel
  */
-const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
+const ExcelImporter = ({ onImportComplete, tableMetadata, uploadUrl }) => {
   // ==================== ESTADO DEL COMPONENTE ====================
 
   /**
@@ -512,7 +513,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       <div className="mb-4">
         <label
           htmlFor="excel-file"
-          className="block w-full cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-6 text-center hover:border-gray-400 focus:outline-none"
+          className="block w-full cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-6 text-center hover:border-gray-400 dark:hover:border-slate-500 focus:outline-none"
         >
           <div className="flex flex-col items-center justify-center">
             <svg
@@ -529,11 +530,11 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               ></path>
             </svg>
-            <p className="mb-1 text-sm font-medium text-gray-500">
+            <p className="mb-1 text-sm font-medium text-gray-500 dark:text-slate-400">
               Haz clic para seleccionar un archivo Excel o arrastra y suelta
               aquí
             </p>
-            <p className="text-xs text-gray-500">.xlsx</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">.xlsx</p>
           </div>
           <input
             id="excel-file"
@@ -573,7 +574,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         <div className="mb-4">
           <label
             htmlFor="sheet-select"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300"
           >
             Seleccionar Hoja
           </label>
@@ -581,7 +582,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             id="sheet-select"
             value={selectedSheet}
             onChange={handleSheetChange}
-            className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+            className="block w-full rounded-md border border-gray-300 bg-white dark:bg-slate-800 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
           >
             <option value="">Seleccionar Hoja</option>
             {sheetNames.map((sheetName) => (
@@ -596,15 +597,15 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
       {/* Tabla de datos */}
       {showTable && (
         <div className="space-y-4">
-          <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-700 shadow">
             <table className="min-w-full divide-y divide-gray-200 table-fixed">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-slate-900/50">
                 <tr>
                   {columns.map((header, index) => (
                     <th
                       key={index}
                       style={{ width: columnWidths[index] }}
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-slate-400"
                     >
                       <div className="flex items-center justify-between whitespace-nowrap">
                         <span className="inline-block">{header}</span>
@@ -621,9 +622,9 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 bg-white dark:bg-slate-800">
                 {currentRows.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="hover:bg-gray-50">
+                  <tr key={rowIndex} className="hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50">
                     {row.map((cell, colIndex) => (
                       <td
                         key={colIndex}
@@ -658,11 +659,11 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
           {/* Controles de paginación */}
           <div className="flex flex-col items-center justify-between space-y-3 sm:flex-row sm:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">Filas por página:</span>
+              <span className="text-sm text-gray-700 dark:text-slate-300">Filas por página:</span>
               <select
                 value={rowsPerPage}
                 onChange={handleRowsPerPageChange}
-                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="rounded-md border border-gray-300 bg-white dark:bg-slate-800 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -671,7 +672,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700 dark:text-slate-300">
                 Mostrando {indexOfFirstRow + 1} a{" "}
                 {Math.min(indexOfLastRow, excelData.length)} de{" "}
                 {excelData.length} filas
@@ -680,7 +681,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 <button
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center rounded-md border border-gray-300 bg-white dark:bg-slate-800 px-2 py-1 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Anterior
                 </button>
@@ -690,7 +691,7 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={indexOfLastRow >= excelData.length}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center rounded-md border border-gray-300 bg-white dark:bg-slate-800 px-2 py-1 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Siguiente
                 </button>

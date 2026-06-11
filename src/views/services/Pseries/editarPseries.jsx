@@ -28,6 +28,10 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
   const [error, setError] = useState(null);
   const BASE_PATH = "/AssetSphere";
 
+  /**
+   * Maneja la acción de finalización exitosa.
+   * Ejecuta el callback onSuccess si existe, o redirige al listado principal.
+   */
   const handleDone = () => {
     if (onSuccess) {
       onSuccess();
@@ -36,6 +40,10 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
     }
   };
 
+  /**
+   * Maneja el cierre del componente o modal.
+   * Ejecuta el callback onClose si existe, o redirige al listado principal.
+   */
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -322,10 +330,10 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-sm font-medium text-gray-500">Cargando detalles del servidor...</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Cargando detalles del servidor...</p>
         </div>
       </div>
     );
@@ -333,10 +341,10 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 dark:border-slate-700 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-800 mb-4">{error}</p>
+          <p className="text-gray-800 dark:text-slate-100 mb-4">{error}</p>
           <button
             onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -349,15 +357,15 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
   }
 
   return (
-    <div className={isModal ? "p-6 bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
+    <div className={isModal ? "p-6 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100" : "min-h-screen bg-gray-50 dark:bg-slate-900/50 text-gray-800 dark:text-slate-100"}>
       {/* Header */}
-      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
             Editar PSeries
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Modifica la información del servidor{" "}
             <span className="font-bold">{name}</span>
           </p>
@@ -373,18 +381,18 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
 
       {/* Main Content */}
       <main className={isModal ? "" : "container mx-auto p-6"}>
-        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
+        <div className={isModal ? "bg-white dark:bg-slate-800" : "bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre LPAR en la HMC{" "}
                     <span className="text-red-500">*</span>
@@ -396,14 +404,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="application"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Aplicación <span className="text-red-500">*</span>
                   </label>
@@ -414,14 +422,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={application}
                     onChange={(e) => setApplication(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="hostname"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Hostname <span className="text-red-500">*</span>
                   </label>
@@ -432,14 +440,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={hostname}
                     onChange={(e) => setHostName(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="ip_address"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Dirección IP
                   </label>
@@ -449,14 +457,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="ip_address"
                     value={ip_address}
                     onChange={(e) => setIpAddress(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="status"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Estado <span className="text-red-500">*</span>
                   </label>
@@ -466,7 +474,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
                     {statusOptions.map((option) => (
@@ -480,7 +488,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                 <div className="space-y-2">
                   <label
                     htmlFor="subsidiary"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Filial
                   </label>
@@ -489,7 +497,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="subsidiary"
                     value={subsidiary}
                     onChange={(e) => setSubsidiary(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar filial</option>
                     {subsidiaryOptions.map((option) => (
@@ -503,15 +511,15 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
             </div>
 
             {/* Sección: Ubicación */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Ubicación
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="environment"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Ambiente
                   </label>
@@ -520,7 +528,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="environment"
                     value={environment}
                     onChange={(e) => setEnvironment(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar ambiente</option>
                     {environmentOptions.map((option) => (
@@ -534,7 +542,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                 <div className="space-y-2">
                   <label
                     htmlFor="slot"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Cajón
                   </label>
@@ -544,14 +552,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="slot"
                     value={slot}
                     onChange={(e) => setSlot(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="lpar_id"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     ID LPAR
                   </label>
@@ -561,22 +569,22 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="lpar_id"
                     value={lpar_id}
                     onChange={(e) => setLparId(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Sistema Operativo */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Sistema Operativo
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="os"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Sistema Operativo <span className="text-red-500">*</span>
                   </label>
@@ -586,7 +594,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={os}
                     onChange={(e) => setOs(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar S.O</option>
                     {osOptions.map((option) => (
@@ -600,7 +608,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                 <div className="space-y-2">
                   <label
                     htmlFor="version"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Versión
                   </label>
@@ -610,20 +618,20 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="version"
                     value={version}
                     onChange={(e) => setVersion(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: CPU */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">CPU</h2>
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">CPU</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="min_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU MIN <span className="text-red-500">*</span>
                   </label>
@@ -634,14 +642,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={min_cpu}
                     onChange={(e) => setMinCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="act_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU ACT <span className="text-red-500">*</span>
                   </label>
@@ -652,14 +660,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={act_cpu}
                     onChange={(e) => setActCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="max_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU MAX <span className="text-red-500">*</span>
                   </label>
@@ -670,14 +678,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={max_cpu}
                     onChange={(e) => setMaxCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="min_v_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU V MIN <span className="text-red-500">*</span>
                   </label>
@@ -688,14 +696,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={min_v_cpu}
                     onChange={(e) => setMinVCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="act_v_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU V ACT <span className="text-red-500">*</span>
                   </label>
@@ -706,14 +714,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={act_v_cpu}
                     onChange={(e) => setActVCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="max_v_cpu"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CPU V MAX <span className="text-red-500">*</span>
                   </label>
@@ -724,22 +732,22 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={max_v_cpu}
                     onChange={(e) => setMaxVCpu(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Memoria */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Memoria
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="min_memory"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Memoria MIN <span className="text-red-500">*</span>
                   </label>
@@ -750,14 +758,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     required
                     value={min_memory}
                     onChange={(e) => setMinMemory(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="act_memory"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Memoria ACT
                   </label>
@@ -767,14 +775,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="act_memory"
                     value={act_memory}
                     onChange={(e) => setActMemory(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="max_memory"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Memoria MAX
                   </label>
@@ -784,22 +792,22 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="max_memory"
                     value={max_memory}
                     onChange={(e) => setMaxMemory(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Información Adicional */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Adicional
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="expansion_factor"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Factor de expansión
                   </label>
@@ -809,14 +817,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="expansion_factor"
                     value={expansion_factor}
                     onChange={(e) => setExpansionFactor(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="memory_per_factor"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Memoria por factor
                   </label>
@@ -826,14 +834,14 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="memory_per_factor"
                     value={memory_per_factor}
                     onChange={(e) => setMemoryPerFactor(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="processor_compatibility"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Compatibilidad de procesador
                   </label>
@@ -842,7 +850,7 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
                     name="processor_compatibility"
                     value={processor_compatibility}
                     onChange={(e) => setProcessorCompatibility(e.target.value)}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar compatibilidad</option>
                     {processorCompatibilityOptions.map((option) => (
@@ -856,11 +864,11 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -882,6 +890,8 @@ const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) 
 };
 
 export default EditarPseries;
+
+
 
 
 

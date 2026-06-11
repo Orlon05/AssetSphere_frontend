@@ -1,9 +1,17 @@
+/**
+ * @file Perfil.jsx
+ * @description User profile view component allowing users to view and update their profile.
+ */
 import { useState, useEffect } from "react";
 import { API_URL } from "../../config/api";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, UserCircle } from "lucide-react";
 
+/**
+ * Perfil component for displaying and managing user profile information.
+ * @returns {JSX.Element} The rendered user profile view.
+ */
 export default function Perfil() {
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -168,8 +176,8 @@ export default function Perfil() {
           iconColor: "#10b981",
           customClass: {
             popup: "rounded-lg shadow-xl",
-            title: "text-xl font-bold text-gray-800",
-            content: "text-gray-600",
+            title: "text-xl font-bold text-gray-800 dark:text-slate-100",
+            content: "text-gray-600 dark:text-slate-400",
             confirmButton:
               "bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors",
           },
@@ -195,7 +203,7 @@ export default function Perfil() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
-        <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+        <div className="bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-8 w-full max-w-md">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-500 mb-4"></div>
             <p>Cargando información del usuario...</p>
@@ -208,9 +216,9 @@ export default function Perfil() {
   // if (error) {
   //   return (
   //     <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
-  //       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+  //       <div className="bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-8 w-full max-w-md">
   //         <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-  //         <p className="text-gray-700 mb-4">{error}</p>
+  //         <p className="text-gray-700 dark:text-slate-300 mb-4">{error}</p>
   //         <button
   //           onClick={() => navigate(`${BASE_PATH}/dashboard`)}
   //           className="w-full bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition"
@@ -224,7 +232,7 @@ export default function Perfil() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300/20 p-4">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+      <div className="bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-8 w-full max-w-md">
         <div className="flex items-center justify-center mb-6">
           <UserCircle size={28} className="text-sky-600 mr-2" />
           <h2 className="text-2xl font-bold text-slate-800">
@@ -236,36 +244,36 @@ export default function Perfil() {
 
         <div className="space-y-4 mb-8">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Nombre de asociado
             </label>
             <input
               type="text"
               value={user.name}
               readOnly
-              className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+              className="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 shadow-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Nombre de usuario
             </label>
             <input
               type="text"
               value={user.username}
               readOnly
-              className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+              className="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 shadow-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Email
             </label>
             <input
               type="email"
               value={user.email}
               readOnly
-              className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700 shadow-sm"
+              className="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 shadow-sm"
             />
           </div>
         </div>
@@ -278,7 +286,7 @@ export default function Perfil() {
           className="space-y-4"
         >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Contraseña actual
             </label>
             <input
@@ -290,7 +298,7 @@ export default function Perfil() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Nueva contraseña
             </label>
             <input
@@ -302,7 +310,7 @@ export default function Perfil() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Confirmar nueva contraseña
             </label>
             <input
@@ -334,3 +342,9 @@ export default function Perfil() {
     </div>
   );
 }
+
+
+
+
+
+

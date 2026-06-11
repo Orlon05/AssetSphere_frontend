@@ -121,17 +121,17 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex h-screen bg-white dark:bg-[#080c14] font-inter">
+    <div className="flex h-screen bg-white dark:bg-slate-800 dark:bg-[#080c14] font-inter">
       {/* Sidebar Profesional Minimalista Claro */}
       <div
         className={`flex flex-col ${
           open ? "w-72" : "w-20"
-        } bg-white h-full relative transition-all duration-300 ease-in-out border-r border-slate-200/80 shadow-[0_10px_30px_rgba(15,23,42,0.03)] z-40`}
+        } bg-white dark:bg-slate-800 h-full relative transition-all duration-300 ease-in-out border-r border-slate-200/80 shadow-[0_10px_30px_rgba(15,23,42,0.03)] z-40`}
       >
         {/* Botón colapsar */}
         <div 
           onClick={() => setOpen(!open)}
-          className="absolute -right-3.5 top-8 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center cursor-pointer shadow-sm hover:shadow hover:scale-105 transition-all z-50"
+          className="absolute -right-3.5 top-8 w-7 h-7 bg-white dark:bg-slate-800 border border-slate-200 rounded-full flex items-center justify-center cursor-pointer shadow-sm hover:shadow hover:scale-105 transition-all z-50"
         >
           <img
             src="/AssetSphere/chevron-left.png"
@@ -257,11 +257,10 @@ export default function Sidebar() {
             })}
           </ul>
         </div>
-        
       </div>
       
       {/* Contenido Principal */}
-      <div className="flex-1 h-screen overflow-hidden flex flex-col bg-white dark:bg-[#080c14]">
+      <div className="flex-1 h-screen overflow-hidden flex flex-col bg-white dark:bg-slate-800 dark:bg-[#080c14]">
         <div className="flex-1 overflow-auto custom-scrollbar relative">
           {renderComponent()}
         </div>
@@ -269,6 +268,8 @@ export default function Sidebar() {
     </div>
   );
 }
+
+
 
 
 

@@ -1,3 +1,7 @@
+/**
+ * @file crearSucursales.jsx
+ * @description Component for creating a new branch (sucursal) with detailed information including hardware, administrative, and maintenance data.
+ */
 // crear-sucursal.jsx
 "use client";
 import { useState, useEffect } from "react";
@@ -5,6 +9,11 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Building, Save, ArrowLeft } from "lucide-react";
 
+/**
+ * Main component for creating a new branch.
+ * Handles form state, validation, and API submission.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function CrearSucursal() {
   const navigate = useNavigate();
   const BASE_PATH = "/AssetSphere";
@@ -59,6 +68,10 @@ export default function CrearSucursal() {
     setHasChanges(true);
   }, [formData]);
 
+  /**
+   * Validates the form data before submission.
+   * @returns {boolean} True if the form is valid, false otherwise.
+   */
   const validateForm = () => {
     const newErrors = {};
 
@@ -96,6 +109,10 @@ export default function CrearSucursal() {
     }));
   };
 
+  /**
+   * Handles the form submission to create a new branch.
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -188,20 +205,20 @@ export default function CrearSucursal() {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             <Building className="mr-2 text-blue-400" />
             Crear Nueva Sucursal
           </h1>
-          <p className="text-sm text-gray-900">
+          <p className="text-sm text-gray-900 dark:text-white">
             Ingresa los datos de la nueva sucursal
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 flex items-center gap-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 py-2 flex items-center gap-2 text-gray-700 dark:text-slate-300 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
           >
             <ArrowLeft size={16} />
             Volver
@@ -222,13 +239,13 @@ export default function CrearSucursal() {
         <div className="bg-gray-300/30 border rounded-lg shadow-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Información General */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Información General
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Nombre *
                   </label>
                   <input
@@ -236,9 +253,9 @@ export default function CrearSucursal() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`bg-white border ${
+                    className={`bg-white dark:bg-slate-800 border ${
                       errors.name ? "border-red-500" : "border-gray-300"
-                    } text-gray-900 rounded-lg block w-full p-2.5`}
+                    } text-gray-900 dark:text-white rounded-lg block w-full p-2.5`}
                     placeholder="Nombre de la sucursal"
                   />
                   {errors.name && (
@@ -247,7 +264,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Código de Sucursal
                   </label>
                   <input
@@ -255,13 +272,13 @@ export default function CrearSucursal() {
                     name="branch_code"
                     value={formData.branch_code}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Código de la sucursal"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Nombre de Sucursal
                   </label>
                   <input
@@ -269,20 +286,20 @@ export default function CrearSucursal() {
                     name="branch_name"
                     value={formData.branch_name}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Nombre comercial de la sucursal"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Estado
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                   >
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
@@ -291,7 +308,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Ciudad
                   </label>
                   <input
@@ -299,13 +316,13 @@ export default function CrearSucursal() {
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Ciudad"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Región
                   </label>
                   <input
@@ -313,13 +330,13 @@ export default function CrearSucursal() {
                     name="region"
                     value={formData.region}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Región"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Departamento
                   </label>
                   <input
@@ -327,13 +344,13 @@ export default function CrearSucursal() {
                     name="department"
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Departamento"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Ubicación
                   </label>
                   <input
@@ -341,13 +358,13 @@ export default function CrearSucursal() {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Dirección física"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Subsidiaria
                   </label>
                   <input
@@ -355,7 +372,7 @@ export default function CrearSucursal() {
                     name="subsidiary"
                     value={formData.subsidiary}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Subsidiaria"
                   />
                 </div>
@@ -363,13 +380,13 @@ export default function CrearSucursal() {
             </div>
 
             {/* Información de Hardware */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Información de Hardware
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Marca
                   </label>
                   <input
@@ -377,13 +394,13 @@ export default function CrearSucursal() {
                     name="brand"
                     value={formData.brand}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Marca del equipo"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Modelo
                   </label>
                   <input
@@ -391,13 +408,13 @@ export default function CrearSucursal() {
                     name="model"
                     value={formData.model}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Modelo del equipo"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Procesador
                   </label>
                   <input
@@ -405,13 +422,13 @@ export default function CrearSucursal() {
                     name="processor"
                     value={formData.processor}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Tipo de procesador"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Núcleos CPU
                   </label>
                   <input
@@ -419,9 +436,9 @@ export default function CrearSucursal() {
                     name="cpu_cores"
                     value={formData.cpu_cores}
                     onChange={handleInputChange}
-                    className={`bg-white border ${
+                    className={`bg-white dark:bg-slate-800 border ${
                       errors.cpu_cores ? "border-red-500" : "border-gray-300"
-                    } text-gray-900 rounded-lg block w-full p-2.5`}
+                    } text-gray-900 dark:text-white rounded-lg block w-full p-2.5`}
                     placeholder="Número de núcleos"
                   />
                   {errors.cpu_cores && (
@@ -430,7 +447,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     RAM (GB)
                   </label>
                   <input
@@ -438,9 +455,9 @@ export default function CrearSucursal() {
                     name="ram"
                     value={formData.ram}
                     onChange={handleInputChange}
-                    className={`bg-white border ${
+                    className={`bg-white dark:bg-slate-800 border ${
                       errors.ram ? "border-red-500" : "border-gray-300"
-                    } text-gray-900 rounded-lg block w-full p-2.5`}
+                    } text-gray-900 dark:text-white rounded-lg block w-full p-2.5`}
                     placeholder="Memoria RAM en GB"
                   />
                   {errors.ram && (
@@ -449,7 +466,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Tamaño de Disco
                   </label>
                   <input
@@ -457,13 +474,13 @@ export default function CrearSucursal() {
                     name="total_disk_size"
                     value={formData.total_disk_size}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Ej: 500GB, 1TB"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Tipo de SO
                   </label>
                   <input
@@ -471,13 +488,13 @@ export default function CrearSucursal() {
                     name="os_type"
                     value={formData.os_type}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Ej: Windows, Linux"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Versión de SO
                   </label>
                   <input
@@ -485,13 +502,13 @@ export default function CrearSucursal() {
                     name="os_version"
                     value={formData.os_version}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Ej: Windows 10, Ubuntu 20.04"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Serial
                   </label>
                   <input
@@ -499,13 +516,13 @@ export default function CrearSucursal() {
                     name="serial"
                     value={formData.serial}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Número de serie"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     ID de Rack
                   </label>
                   <input
@@ -513,13 +530,13 @@ export default function CrearSucursal() {
                     name="rack_id"
                     value={formData.rack_id}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Identificador del rack"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Unidad
                   </label>
                   <input
@@ -527,13 +544,13 @@ export default function CrearSucursal() {
                     name="unit"
                     value={formData.unit}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Unidad en el rack"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Dirección IP
                   </label>
                   <input
@@ -541,7 +558,7 @@ export default function CrearSucursal() {
                     name="ip_address"
                     value={formData.ip_address}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Dirección IP"
                   />
                 </div>
@@ -549,13 +566,13 @@ export default function CrearSucursal() {
             </div>
 
             {/* Información Administrativa */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Información Administrativa
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     ID de Activo
                   </label>
                   <input
@@ -563,13 +580,13 @@ export default function CrearSucursal() {
                     name="asset_id"
                     value={formData.asset_id}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Identificador de activo"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Propietario del Servicio
                   </label>
                   <input
@@ -577,13 +594,13 @@ export default function CrearSucursal() {
                     name="service_owner"
                     value={formData.service_owner}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Propietario del servicio"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Inicio de Garantía
                   </label>
                   <input
@@ -591,12 +608,12 @@ export default function CrearSucursal() {
                     name="warranty_start_date"
                     value={formData.warranty_start_date}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Fin de Garantía
                   </label>
                   <input
@@ -604,11 +621,11 @@ export default function CrearSucursal() {
                     name="warranty_end_date"
                     value={formData.warranty_end_date}
                     onChange={handleInputChange}
-                    className={`bg-white border ${
+                    className={`bg-white dark:bg-slate-800 border ${
                       errors.warranty_end_date
                         ? "border-red-500"
                         : "border-gray-300"
-                    } text-gray-900 rounded-lg block w-full p-2.5`}
+                    } text-gray-900 dark:text-white rounded-lg block w-full p-2.5`}
                   />
                   {errors.warranty_end_date && (
                     <p className="text-red-500 text-xs">
@@ -618,7 +635,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Código de Aplicación
                   </label>
                   <input
@@ -626,13 +643,13 @@ export default function CrearSucursal() {
                     name="application_code"
                     value={formData.application_code}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Código de aplicación"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Responsable EVC
                   </label>
                   <input
@@ -640,13 +657,13 @@ export default function CrearSucursal() {
                     name="responsible_evc"
                     value={formData.responsible_evc}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Responsable EVC"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Dominio
                   </label>
                   <input
@@ -654,13 +671,13 @@ export default function CrearSucursal() {
                     name="domain"
                     value={formData.domain}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Dominio"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Organización Responsable
                   </label>
                   <input
@@ -668,20 +685,20 @@ export default function CrearSucursal() {
                     name="responsible_organization"
                     value={formData.responsible_organization}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Organización responsable"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Facturable
                   </label>
                   <select
                     name="billable"
                     value={formData.billable}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                   >
                     <option value="">Seleccionar</option>
                     <option value="Sí">Sí</option>
@@ -690,7 +707,7 @@ export default function CrearSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Centro de Costo
                   </label>
                   <input
@@ -698,13 +715,13 @@ export default function CrearSucursal() {
                     name="cost_center"
                     value={formData.cost_center}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Centro de costo"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Tipo de Facturación
                   </label>
                   <input
@@ -712,13 +729,13 @@ export default function CrearSucursal() {
                     name="billing_type"
                     value={formData.billing_type}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Tipo de facturación"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Rol
                   </label>
                   <input
@@ -726,13 +743,13 @@ export default function CrearSucursal() {
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Rol del sistema"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Entorno
                   </label>
                   <input
@@ -740,7 +757,7 @@ export default function CrearSucursal() {
                     name="environment"
                     value={formData.environment}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Entorno (Prod, Test, Dev)"
                   />
                 </div>
@@ -748,13 +765,13 @@ export default function CrearSucursal() {
             </div>
 
             {/* Información de Mantenimiento */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Información de Mantenimiento
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     OC Provisión
                   </label>
                   <input
@@ -762,13 +779,13 @@ export default function CrearSucursal() {
                     name="oc_provisioning"
                     value={formData.oc_provisioning}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Orden de compra provisión"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     OC Eliminación
                   </label>
                   <input
@@ -776,13 +793,13 @@ export default function CrearSucursal() {
                     name="oc_deletion"
                     value={formData.oc_deletion}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Orden de compra eliminación"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     OC Modificación
                   </label>
                   <input
@@ -790,13 +807,13 @@ export default function CrearSucursal() {
                     name="oc_modification"
                     value={formData.oc_modification}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Orden de compra modificación"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Período de Mantenimiento
                   </label>
                   <input
@@ -804,13 +821,13 @@ export default function CrearSucursal() {
                     name="maintenance_period"
                     value={formData.maintenance_period}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Período de mantenimiento"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Organización de Mantenimiento
                   </label>
                   <input
@@ -818,7 +835,7 @@ export default function CrearSucursal() {
                     name="maintenance_organization"
                     value={formData.maintenance_organization}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Organización de mantenimiento"
                   />
                 </div>
@@ -826,12 +843,12 @@ export default function CrearSucursal() {
             </div>
 
             {/* Comentarios */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Comentarios
               </h2>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-900">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white">
                   Comentarios Adicionales
                 </label>
                 <textarea
@@ -839,7 +856,7 @@ export default function CrearSucursal() {
                   value={formData.comments}
                   onChange={handleInputChange}
                   rows={4}
-                  className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                  className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                   placeholder="Comentarios adicionales sobre la sucursal..."
                 />
               </div>
@@ -850,6 +867,8 @@ export default function CrearSucursal() {
     </div>
   );
 }
+
+
 
 
 

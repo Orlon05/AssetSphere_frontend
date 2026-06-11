@@ -1,3 +1,7 @@
+/**
+ * @file verSucursal.jsx
+ * @description Component to view the details of a specific branch in read-only mode.
+ */
 // ver-sucursal.jsx
 "use client";
 import { useState, useEffect } from "react";
@@ -14,6 +18,10 @@ import {
   FileText,
 } from "lucide-react";
 
+/**
+ * Main component for viewing the details of a branch.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function VerSucursal() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -26,6 +34,9 @@ export default function VerSucursal() {
     fetchSucursal();
   }, [id]);
 
+  /**
+   * Fetches the branch data from the API and updates the state.
+   */
   const fetchSucursal = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -64,6 +75,11 @@ export default function VerSucursal() {
     }
   };
 
+  /**
+   * Formats a date string into a localized Spanish format.
+   * @param {string} dateString - The date string to format.
+   * @returns {string} The formatted date string, or a fallback string if invalid.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return "No especificado";
     try {
@@ -81,7 +97,7 @@ export default function VerSucursal() {
   const getStatusBadge = (status) => {
     if (!status) {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
           Sin estado
         </span>
       );
@@ -155,7 +171,7 @@ export default function VerSucursal() {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
-      <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
+      <header className="w-full px-6 py-5 flex justify-between items-center bg-white dark:bg-slate-800 border-b border-as-border shadow-sm">
         <div>
           <h1 className="text-2xl font-bold text-as-text flex items-center">
             <Building className="mr-2 text-as-brand-600" />
@@ -192,54 +208,54 @@ export default function VerSucursal() {
             <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Building className="mr-2 text-blue-500" size={20} />
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Información General
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Nombre
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.name || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Código de Sucursal
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.branch_code || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Nombre de Sucursal
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.branch_name || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Estado
                   </label>
                   <div className="mt-1">{getStatusBadge(sucursal.status)}</div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Subsidiaria
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.subsidiary || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Departamento
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.department || "No especificado"}
                   </p>
                 </div>
@@ -250,48 +266,48 @@ export default function VerSucursal() {
             <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <MapPin className="mr-2 text-green-500" size={20} />
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Ubicación
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Ciudad
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.city || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Región
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.region || "No especificado"}
                   </p>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Ubicación Física
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.location || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     ID de Rack
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.rack_id || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Unidad
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.unit || "No especificado"}
                   </p>
                 </div>
@@ -302,88 +318,88 @@ export default function VerSucursal() {
             <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Server className="mr-2 text-purple-500" size={20} />
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Hardware
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Marca
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.brand || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Modelo
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.model || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Procesador
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.processor || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Núcleos CPU
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.cpu_cores || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     RAM (GB)
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.ram ? `${sucursal.ram} GB` : "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Tamaño de Disco
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.total_disk_size || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Tipo de SO
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.os_type || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Versión de SO
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.os_version || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Serial
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.serial || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Dirección IP
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.ip_address || "No especificado"}
                   </p>
                 </div>
@@ -394,96 +410,96 @@ export default function VerSucursal() {
             <div className="as-card p-6">
               <div className="flex items-center mb-4">
                 <Settings className="mr-2 text-orange-500" size={20} />
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Información Administrativa
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     ID de Activo
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.asset_id || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Propietario del Servicio
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.service_owner || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Código de Aplicación
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.application_code || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Responsable EVC
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.responsible_evc || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Dominio
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.domain || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Organización Responsable
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.responsible_organization || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Facturable
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.billable || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Centro de Costo
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.cost_center || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Tipo de Facturación
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.billing_type || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Rol
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.role || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Entorno
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.environment || "No especificado"}
                   </p>
                 </div>
@@ -494,27 +510,27 @@ export default function VerSucursal() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Garantía */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 border rounded-lg shadow p-6">
               <div className="flex items-center mb-4">
                 <Calendar className="mr-2 text-blue-500" size={20} />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Garantía
                 </h2>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Inicio
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {formatDate(sucursal.warranty_start_date)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Fin
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {formatDate(sucursal.warranty_end_date)}
                   </p>
                 </div>
@@ -522,27 +538,27 @@ export default function VerSucursal() {
             </div>
 
             {/* Mantenimiento */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 border rounded-lg shadow p-6">
               <div className="flex items-center mb-4">
                 <Settings className="mr-2 text-green-500" size={20} />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Mantenimiento
                 </h2>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Período
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.maintenance_period || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     Organización
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.maintenance_organization || "No especificado"}
                   </p>
                 </div>
@@ -550,35 +566,35 @@ export default function VerSucursal() {
             </div>
 
             {/* Órdenes de Compra */}
-            <div className="bg-white border rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 border rounded-lg shadow p-6">
               <div className="flex items-center mb-4">
                 <FileText className="mr-2 text-purple-500" size={20} />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Órdenes de Compra
                 </h2>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     OC Provisión
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.oc_provisioning || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     OC Eliminación
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.oc_deletion || "No especificado"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-500">
+                  <label className="block text-sm font-medium text-gray-500 dark:text-slate-400">
                     OC Modificación
                   </label>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 dark:text-white font-medium">
                     {sucursal.oc_modification || "No especificado"}
                   </p>
                 </div>
@@ -587,14 +603,14 @@ export default function VerSucursal() {
 
             {/* Comentarios */}
             {sucursal.comments && (
-              <div className="bg-white border rounded-lg shadow p-6">
+              <div className="bg-white dark:bg-slate-800 border rounded-lg shadow p-6">
                 <div className="flex items-center mb-4">
-                  <FileText className="mr-2 text-gray-500" size={20} />
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <FileText className="mr-2 text-gray-500 dark:text-slate-400" size={20} />
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Comentarios
                   </h2>
                 </div>
-                <p className="text-gray-900">{sucursal.comments}</p>
+                <p className="text-gray-900 dark:text-white">{sucursal.comments}</p>
               </div>
             )}
           </div>
@@ -603,6 +619,8 @@ export default function VerSucursal() {
     </div>
   );
 }
+
+
 
 
 

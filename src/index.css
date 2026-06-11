@@ -21,7 +21,7 @@
 
   body {
     min-height: 100%;
-    background: theme(colors.as.bg);
+    background: #ffffff;
     color: theme(colors.as.text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -119,3 +119,206 @@
     @apply px-6 py-4 text-slate-700 border-b border-slate-100 group-hover:bg-slate-50/50 transition-colors;
   }
 }
+
+/* ==========================================
+   DARK MODE CUSTOM STYLES & OVERRIDES (PREMIUM)
+   ========================================== */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body, 
+.dark .min-h-screen {
+  background-color: #080c14 !important; /* Deep space blue-black */
+  color: #f8fafc !important; /* slate-50 */
+}
+
+/* Background overrides */
+.dark .bg-white,
+.dark .bg-as-panel,
+.dark .as-card,
+.dark .as-card-md {
+  background-color: #0f172a !important; /* Premium Slate-900 / Obsidian Card */
+}
+
+.dark .as-page,
+.dark .bg-slate-50,
+.dark .bg-gray-50,
+.dark .bg-gray-50\/50,
+.dark .bg-slate-50\/80,
+.dark .bg-slate-50\/40,
+.dark .bg-slate-50\/65,
+.dark .bg-blue-50\/65 {
+  background-color: #080c14 !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-slate-50\/50:hover {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+/* Text color overrides */
+.dark .text-gray-900,
+.dark .text-slate-800,
+.dark .text-as-text,
+.dark .text-gray-950,
+.dark .text-slate-900,
+.dark .font-bold.text-gray-900 {
+  color: #f8fafc !important; /* High contrast slate-50 */
+}
+
+.dark .text-gray-750,
+.dark .text-gray-700,
+.dark .text-gray-650,
+.dark .text-gray-600,
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-as-muted {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+
+.dark .text-gray-550,
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-slate-400 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Borders */
+.dark .border-gray-200,
+.dark .border-gray-100,
+.dark .border-slate-200,
+.dark .border-slate-100,
+.dark .border-slate-200\/80,
+.dark .border-slate-100\/80,
+.dark .border-as-border {
+  border-color: #1e293b !important; /* Slate-800 border line */
+}
+
+/* Sidebar and Header overrides */
+.dark header,
+.dark .bg-white.sticky {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+.dark .bg-white.h-full {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+/* Sidebar Menu link styles */
+.dark .group.flex.items-center.text-slate-500:hover {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-blue-50\/65.text-blue-600 {
+  background-color: rgba(30, 58, 138, 0.3) !important;
+  color: #60a5fa !important;
+  border-color: #2563eb !important;
+}
+
+/* Inputs, Selects and forms */
+.dark input,
+.dark select,
+.dark textarea,
+.dark .as-input,
+.dark .as-select {
+  background-color: #080c14 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark input:focus,
+.dark select:focus {
+  border-color: #3b82f6 !important; /* Blue brand highlight */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark input[readonly],
+.dark input[disabled],
+.dark .bg-gray-100 {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+/* Tables */
+.dark table,
+.dark .as-table {
+  background-color: #0f172a !important;
+}
+
+.dark th,
+.dark .as-th {
+  background-color: #080c14 !important;
+  color: #f8fafc !important;
+  border-color: #1e293b !important;
+}
+
+.dark td,
+.dark .as-td {
+  color: #cbd5e1 !important;
+  border-color: #1e293b !important;
+}
+
+.dark tr:hover,
+.dark tr:hover td {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+}
+
+/* Modals & SweetAlert2 dark override */
+.dark .swal2-popup {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #1e293b !important;
+}
+.dark .swal2-title {
+  color: #f8fafc !important;
+}
+.dark .swal2-html-container {
+  color: #cbd5e1 !important;
+}
+.dark .swal2-actions button {
+  border-radius: 0.375rem !important;
+}
+
+/* Buttons style overrides in Dark Mode */
+.dark .bg-gray-900 {
+  background-color: #f8fafc !important;
+  color: #080c14 !important;
+}
+.dark .bg-gray-900:hover {
+  background-color: #e2e8f0 !important;
+}
+.dark .bg-gray-700 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+.dark .bg-gray-700:hover {
+  background-color: #334155 !important;
+}
+
+/* Lucide icons in dark mode */
+.dark svg.text-gray-900,
+.dark svg.text-slate-800,
+.dark svg.text-gray-700 {
+  color: #f8fafc !important;
+}
+
+.dark svg.text-gray-400,
+.dark svg.text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+/* Custom Scrollbars in Dark Mode */
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155 !important;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569 !important;
+}
+
+

@@ -1,3 +1,7 @@
+/**
+ * @file CrearBasedeDatos.jsx
+ * @description View component containing a form to create a new database record.
+ */
 import { useState } from "react";
 import { API_URL } from "../../../config/api";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +20,7 @@ const BASE_PATH = "/AssetSphere";
  * - Confirmación de cancelación
  * - Navegación automática tras éxito
  */
-const CrearBasedeDatos = () => {
+const CrearBasedeDatos = ({ isModal = false, onClose }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -99,7 +103,8 @@ const CrearBasedeDatos = () => {
         text: "Base de datos creada correctamente",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        navigate(`${BASE_PATH}/base-de-datos`);
+        if (isModal && onClose) onClose();
+        else navigate(`${BASE_PATH}/base-de-datos`);
       });
     } catch (error) {
       console.error("Error al crear base de datos:", error);
@@ -129,7 +134,8 @@ const CrearBasedeDatos = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/base-de-datos`);
+        if (isModal && onClose) onClose();
+        else navigate(`${BASE_PATH}/base-de-datos`);
       }
     });
   };
@@ -137,17 +143,17 @@ const CrearBasedeDatos = () => {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Crear Base de Datos
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Ingresa la información de la nueva base de datos
           </p>
         </div>
         <button
-          onClick={() => window.history.back()}
+          onClick={() => isModal && onClose ? onClose() : window.history.back()}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
@@ -157,18 +163,18 @@ const CrearBasedeDatos = () => {
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="instance_id"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     ID de instancia <span className="text-red-500">*</span>
                   </label>
@@ -179,13 +185,13 @@ const CrearBasedeDatos = () => {
                     required
                     value={formData.instance_id}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre
                   </label>
@@ -195,14 +201,14 @@ const CrearBasedeDatos = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="cost_center"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Centro de Costos
                   </label>
@@ -212,14 +218,14 @@ const CrearBasedeDatos = () => {
                     name="cost_center"
                     value={formData.cost_center}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="category"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Categoría
                   </label>
@@ -229,14 +235,14 @@ const CrearBasedeDatos = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="type"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Tipo
                   </label>
@@ -246,14 +252,14 @@ const CrearBasedeDatos = () => {
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="item"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Objeto
                   </label>
@@ -263,14 +269,14 @@ const CrearBasedeDatos = () => {
                     name="item"
                     value={formData.item}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="owner_contact"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Contacto del Propietario
                   </label>
@@ -280,22 +286,22 @@ const CrearBasedeDatos = () => {
                     name="owner_contact"
                     value={formData.owner_contact}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Especificaciones Técnicas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="application_code"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Código de Aplicación
                   </label>
@@ -305,14 +311,14 @@ const CrearBasedeDatos = () => {
                     name="application_code"
                     value={formData.application_code}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="inactive"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Estado <span className="text-red-500">*</span>
                   </label>
@@ -322,7 +328,7 @@ const CrearBasedeDatos = () => {
                     required
                     value={formData.inactive}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
                     <option value="active">Activa</option>
@@ -333,7 +339,7 @@ const CrearBasedeDatos = () => {
                 <div className="space-y-2">
                   <label
                     htmlFor="asset_life_cycle_status"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Estado del ciclo de vida del activo
                   </label>
@@ -343,14 +349,14 @@ const CrearBasedeDatos = () => {
                     name="asset_life_cycle_status"
                     value={formData.asset_life_cycle_status}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="system_environment"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Entorno del sistema
                   </label>
@@ -360,14 +366,14 @@ const CrearBasedeDatos = () => {
                     name="system_environment"
                     value={formData.system_environment}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="cloud"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nube
                   </label>
@@ -377,14 +383,14 @@ const CrearBasedeDatos = () => {
                     name="cloud"
                     value={formData.cloud}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="version_number"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Número de versión
                   </label>
@@ -394,13 +400,13 @@ const CrearBasedeDatos = () => {
                     name="version_number"
                     value={formData.version_number}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="serial"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Serial
                   </label>
@@ -410,13 +416,13 @@ const CrearBasedeDatos = () => {
                     name="serial"
                     value={formData.serial}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="ci_tag"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     CI Tag
                   </label>
@@ -426,13 +432,13 @@ const CrearBasedeDatos = () => {
                     name="ci_tag"
                     value={formData.ci_tag}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="instance_name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre de la instancia
                   </label>
@@ -442,13 +448,13 @@ const CrearBasedeDatos = () => {
                     name="instance_name"
                     value={formData.instance_name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="model"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Modelo
                   </label>
@@ -458,13 +464,13 @@ const CrearBasedeDatos = () => {
                     name="model"
                     value={formData.model}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="ha"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     HA (Alta Disponibilidad)
                   </label>
@@ -474,13 +480,13 @@ const CrearBasedeDatos = () => {
                     name="ha"
                     value={formData.ha}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="port"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Puerto
                   </label>
@@ -490,22 +496,22 @@ const CrearBasedeDatos = () => {
                     name="port"
                     value={formData.port}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Sección: Ubicación y Organización */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Ubicación y Organización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label
                     htmlFor="owner_name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre del propietario
                   </label>
@@ -515,14 +521,14 @@ const CrearBasedeDatos = () => {
                     name="owner_name"
                     value={formData.owner_name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="department"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Departamento
                   </label>
@@ -532,14 +538,14 @@ const CrearBasedeDatos = () => {
                     name="department"
                     value={formData.department}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="company"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Compañía
                   </label>
@@ -549,14 +555,14 @@ const CrearBasedeDatos = () => {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="manufacturer_name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre del fabricante
                   </label>
@@ -566,14 +572,14 @@ const CrearBasedeDatos = () => {
                     name="manufacturer_name"
                     value={formData.manufacturer_name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="supplier_name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Nombre del Proveedor
                   </label>
@@ -583,14 +589,14 @@ const CrearBasedeDatos = () => {
                     name="supplier_name"
                     value={formData.supplier_name}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="supported"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Soporte
                   </label>
@@ -600,13 +606,13 @@ const CrearBasedeDatos = () => {
                     name="supported"
                     value={formData.supported}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="account_id"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     ID de Cuenta
                   </label>
@@ -616,13 +622,13 @@ const CrearBasedeDatos = () => {
                     name="account_id"
                     value={formData.account_id}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="create_date"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Fecha de creación
                   </label>
@@ -632,13 +638,13 @@ const CrearBasedeDatos = () => {
                     name="create_date"
                     value={formData.create_date}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="modified_date"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
                   >
                     Fecha de modificación
                   </label>
@@ -648,18 +654,18 @@ const CrearBasedeDatos = () => {
                     name="modified_date"
                     value={formData.modified_date}
                     onChange={handleChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <X size={18} className="mr-2" />
                 Cancelar
@@ -681,6 +687,8 @@ const CrearBasedeDatos = () => {
 };
 
 export default CrearBasedeDatos;
+
+
 
 
 

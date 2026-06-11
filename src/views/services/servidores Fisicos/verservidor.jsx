@@ -1,6 +1,6 @@
-import { API_URL } from "../../../config/api";
 /**
- * COMPONENTE: VerServidorFisico
+ * @file verservidor.jsx
+ * @description COMPONENTE: VerServidorFisico
  *
  * PROPÓSITO:
  * Componente de solo lectura para visualizar todos los detalles
@@ -26,11 +26,21 @@ import { API_URL } from "../../../config/api";
  * 7. Observaciones: comentarios adicionales
  */
 
+import { API_URL } from "../../../config/api";
 import { useState, useEffect } from "react";
 import { MdArrowBack } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
+/**
+ * Componente VerServidorFisico.
+ * Renderiza una vista detallada de la información de un servidor físico.
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} [props.serverId] - ID del servidor, si no se provee se toma de la URL.
+ * @param {Function} [props.onClose] - Función callback para cerrar el modal.
+ * @returns {JSX.Element} Vista de detalles del servidor.
+ */
 const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
   const { serverId: urlServerId } = useParams(); // ID del servidor desde la URL
   const serverId = propServerId || urlServerId;
@@ -111,6 +121,9 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
   /**
    * Función para obtener las clases CSS apropiadas según el estado del servidor
    * Proporciona colores diferenciados para cada tipo de estado de servidor físico
+   *
+   * @param {string} status - Estado actual del servicio.
+   * @returns {string} Clases CSS para el contenedor del estado.
    */
   const getStatusColor = (status) => {
     switch (status) {
@@ -121,15 +134,18 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
       case "maintenance":
         return "bg-yellow-100 text-yellow-800 border-yellow-300";
       case "decommissioned":
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border-gray-300";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border-gray-300";
     }
   };
 
   /**
    * Función para obtener el texto legible del estado
    * Convierte los valores técnicos en texto amigable para el usuario
+   *
+   * @param {string} status - Estado técnico actual.
+   * @returns {string} Estado amigable para mostrar.
    */
   const getStatusText = (status) => {
     switch (status) {
@@ -199,7 +215,7 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
       <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-700">
+          <p className="mt-4 text-lg text-gray-700 dark:text-slate-300">
             Cargando datos del servidor...
           </p>
         </div>
@@ -225,14 +241,14 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100`}>
       {/* Header con título y botón de regreso */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm rounded-t-xl mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Visualizar Servidor Físico
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Detalles completos del servidor
           </p>
         </div>
@@ -247,22 +263,22 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
 
       {/* Contenido principal con los datos del servidor */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <div className="space-y-6">
             {/* Renderizado dinámico de todas las secciones */}
             {formSections.map((section, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700"
               >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                   {section.title}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Renderizado de cada campo en la sección */}
                   {section.fields.map((field) => (
                     <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                         {fieldLabels[field]}
                       </label>
                       {/* Renderizado especial para el campo de estado con colores */}
@@ -279,7 +295,7 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
                                 ? "bg-yellow-100 border-yellow-300 text-yellow-800"
                                 : serverData.service_status?.toLowerCase() ===
                                   "decommissioned"
-                                ? "bg-gray-100 border-gray-300 text-gray-800"
+                                ? "bg-gray-100 dark:bg-slate-800 border-gray-300 text-gray-800 dark:text-slate-100"
                                 : "bg-red-100 border-red-300 text-red-800"
                             }
                           `}
@@ -288,7 +304,7 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
                         </div>
                       ) : (
                         /* Renderizado estándar para otros campos */
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                        <div className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5">
                           {serverData[field] || "N/A"}
                         </div>
                       )}
@@ -305,6 +321,8 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
 };
 
 export default VerServidorFisico;
+
+
 
 
 

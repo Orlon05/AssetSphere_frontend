@@ -1,3 +1,8 @@
+/**
+ * @file EnrutadorApp.jsx
+ * @description Application routing configuration with lazy loading for views and protected routes.
+ */
+
 import { lazy, Suspense } from "react";
 
 const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
@@ -82,6 +87,11 @@ const CrearSucursal = lazy(() =>
 
 const BASE_PATH = "/AssetSphere";
 
+/**
+ * EnrutadorApp
+ * @description An array of route objects defining the application's routing structure.
+ * @type {Array<Object>}
+ */
 const EnrutadorApp = [
   {
     path: `${BASE_PATH}/login`,

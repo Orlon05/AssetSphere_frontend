@@ -1,9 +1,19 @@
+/**
+ * @file ProfileDropdown.jsx
+ * @description Component for the user profile dropdown menu.
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../routes/AuthContext";
 import Swal from "sweetalert2";
 import { LogOut, User as UserIcon } from "lucide-react";
 
+/**
+ * ProfileDropdown Component
+ * @description Displays user information and provides options to view the profile or log out.
+ * @returns {JSX.Element} The rendered dropdown component.
+ */
 export default function ProfileDropdown() {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -51,10 +61,10 @@ export default function ProfileDropdown() {
     <div className="relative">
       <button
         onClick={() => setIsProfileOpen(!isProfileOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition"
+        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 rounded-lg transition"
       >
         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
             {user.name?.charAt(0).toUpperCase() || "U"}
           </span>
         </div>
@@ -62,24 +72,24 @@ export default function ProfileDropdown() {
       </button>
 
       {isProfileOpen && (
-        <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden z-50">
-          <div className="px-4 py-2 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+        <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden z-50">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-slate-800">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400 truncate">{user.email}</p>
           </div>
           <button
             onClick={() => {
               setIsProfileOpen(false);
               navigate(`${BASE_PATH}/perfil/${user.user_id}/perfil`);
             }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition"
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 flex items-center gap-2 transition"
           >
             <UserIcon size={14} />
             Ver Perfil
           </button>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100 transition"
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 flex items-center gap-2 border-t border-gray-100 dark:border-slate-800 transition"
           >
             <LogOut size={14} />
             Cerrar Sesión

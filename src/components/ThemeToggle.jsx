@@ -1,6 +1,16 @@
+/**
+ * @file ThemeToggle.jsx
+ * @description Provides a button to toggle between light and dark themes.
+ */
+
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
+/**
+ * ThemeToggle Component
+ * @description A component that toggles the application's theme (light/dark) and persists the selection in local storage.
+ * @returns {JSX.Element} The rendered button component.
+ */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
     const local = localStorage.getItem("theme");
@@ -27,7 +37,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-300 flex items-center justify-center border border-gray-200 dark:border-slate-700"
+      className="p-2 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-slate-300 transition dark:hover:bg-slate-700 flex items-center justify-center border border-gray-200 dark:border-slate-700"
       aria-label="Toggle dark mode"
       title={theme === "light" ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
     >

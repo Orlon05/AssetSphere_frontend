@@ -2,7 +2,8 @@ import { API_URL } from "../../../config/api";
 import Logo from "../../../IMG/Tcs.png";
 import Header from "../../../components/Header";
 /**
- * Componente principal para la gestión de dispositivos de Storage
+ * @file Storage.jsx
+ * @description Componente principal para la gestión de dispositivos de Storage
  *
  * Este componente proporciona una interfaz completa para:
  * - Listar dispositivos de storage con paginación
@@ -49,6 +50,11 @@ import VerStorage from "./verStorage";
 import EditarStorageInv from "./editarStorageInv";
 import VerStorageInv from "./verStorageInv";
 
+/**
+ * Componente principal `Storage`
+ * Gestiona y muestra el listado, creación, edición, y borrado de Storage y su inventario.
+ * @component
+ */
 export default function Storage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -461,6 +467,9 @@ export default function Storage() {
     }
   }, [isSearchButtonClicked, searchValue, unfilteredStorage, rowsPerPage]);
 
+  /**
+   * Carga los datos del inventario de Storage desde la API
+   */
   const loadInvData = async () => {
     setInvLoading(true);
     setInvError("");
@@ -491,6 +500,9 @@ export default function Storage() {
     loadInvData();
   }, [isInv]);
 
+  /**
+   * Muestra un modal para agregar manualmente un nuevo registro de inventario de Storage
+   */
   const handleAddManualInventory = () => {
     Swal.fire({
       title: "Agregar Nuevo Registro de Inventario Storage",
@@ -627,6 +639,9 @@ export default function Storage() {
     });
   };
 
+  /**
+   * Muestra un modal para cargar un archivo Excel de inventario de Storage
+   */
   const handleLoadExcelInventory = () => {
     let root;
 
@@ -882,7 +897,7 @@ export default function Storage() {
   const getStatusBadge = (status) => {
     if (!status) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
           <AlertCircle size={12} className="mr-1" />
           Sin estado
         </span>
@@ -1261,12 +1276,12 @@ export default function Storage() {
             <>
               {/* Status Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Con Soporte</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Con Soporte</span>
                     <CheckCircle size={16} className="text-emerald-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.withSupport}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.withSupport}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-emerald-600"
@@ -1274,12 +1289,12 @@ export default function Storage() {
                     />
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Expirado</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Expirado</span>
                     <AlertCircle size={16} className="text-red-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.expired}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.expired}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-rose-600"
@@ -1287,12 +1302,12 @@ export default function Storage() {
                     />
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 uppercase">Otros WarrantyStatus</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Otros WarrantyStatus</span>
                     <HardDrive size={16} className="text-indigo-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{warrantyCounts.other}</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">{warrantyCounts.other}</div>
                   <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-amber-500"
@@ -1303,14 +1318,14 @@ export default function Storage() {
               </div>
 
               {/* Search and Action Buttons */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
                     <div className="relative flex-1 min-w-0">
                       <input
                         type="text"
                         placeholder="Buscar por cualquier campo..."
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                         value={invSearchValue}
                         onChange={(e) => {
                           setInvSearchValue(e.target.value);
@@ -1366,7 +1381,7 @@ export default function Storage() {
                     <button
                       onClick={handleDescargarCSVInventario}
                       disabled={filteredRows.length === 0}
-                      className={`px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2 shrink-0 ${
+                      className={`px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2 shrink-0 ${
                         filteredRows.length === 0 ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       title="Descargar CSV del inventario"
@@ -1383,14 +1398,14 @@ export default function Storage() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm custom-scrollbar bg-white dark:bg-slate-800">
                 <table className="as-table">
                   <thead>
                     <tr>
-                      <th className="as-th sticky left-0 bg-white z-20 w-12">
+                      <th className="as-th sticky left-0 bg-white dark:bg-slate-800 z-20 w-12">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                           checked={allFilteredInventorySelected}
                           onChange={toggleSelectAllInventoryRows}
                           title="Seleccionar todo"
@@ -1408,10 +1423,10 @@ export default function Storage() {
                     {pageRows.length > 0 ? (
                       pageRows.map((row, idx) => (
                         <tr key={idx} className="border-b border-slate-100">
-                          <td className="as-td sticky left-0 bg-white z-20 border-r border-slate-200">
+                          <td className="as-td sticky left-0 bg-white dark:bg-slate-800 z-20 border-r border-slate-200">
                             <input
                               type="checkbox"
-                              className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                              className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                               checked={selectedInvRows.has(getInventoryRowId(row))}
                               onChange={() => toggleSelectInventoryRow(row)}
                               title="Seleccionar fila"
@@ -1468,7 +1483,7 @@ export default function Storage() {
                       <tr>
                         <td
                           colSpan={compactHeaders.length + 2 || 1}
-                          className="px-6 py-12 text-center text-slate-500 bg-white"
+                          className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                         >
                           No hay datos
                         </td>
@@ -1503,8 +1518,8 @@ export default function Storage() {
                   <button
                     className={`p-2 rounded-lg border border-slate-200 ${
                       pageInv <= 1 || totalPagesInv === 0
-                        ? "text-slate-300 cursor-not-allowed bg-white"
-                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                        ? "text-slate-300 cursor-not-allowed bg-white dark:bg-slate-800"
+                        : "text-slate-600 hover:bg-slate-50 bg-white dark:bg-slate-800"
                     }`}
                     onClick={() => setInvCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={pageInv <= 1 || totalPagesInv === 0}
@@ -1520,8 +1535,8 @@ export default function Storage() {
                   <button
                     className={`p-2 rounded-lg border border-slate-200 ${
                       pageInv >= totalPagesInv || totalPagesInv === 0
-                        ? "text-slate-300 cursor-not-allowed bg-white"
-                        : "text-slate-600 hover:bg-slate-50 bg-white"
+                        ? "text-slate-300 cursor-not-allowed bg-white dark:bg-slate-800"
+                        : "text-slate-600 hover:bg-slate-50 bg-white dark:bg-slate-800"
                     }`}
                     onClick={() =>
                       setInvCurrentPage((p) =>
@@ -1540,10 +1555,10 @@ export default function Storage() {
         {/* Modals Flotantes CRUD */}
         {activeModal && (
           <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
               {/* Header */}
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {activeModal === 'create' && "Crear Dispositivo Storage"}
                   {activeModal === 'edit' && "Editar Dispositivo Storage"}
                   {activeModal === 'view' && "Detalles del Dispositivo Storage"}
@@ -1559,7 +1574,7 @@ export default function Storage() {
                 </button>
               </div>
               {/* Content */}
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white dark:bg-slate-800">
                 {activeModal === 'create' && (
                   <CrearStorage
                     isModal
@@ -1676,32 +1691,32 @@ export default function Storage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Status Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Total Storage</span>
-              <HardDrive size={16} className="text-gray-600" />
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Total Storage</span>
+              <HardDrive size={16} className="text-gray-600 dark:text-slate-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{totalStorage}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalStorage}</div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Storage Activos</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Storage Activos</span>
               <Activity size={16} className="text-emerald-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{activeStorage}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{activeStorage}</div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-4 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase">Categorías</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase">Categorías</span>
               <Layers size={16} className="text-indigo-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{uniqueCategories}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{uniqueCategories}</div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -1712,7 +1727,7 @@ export default function Storage() {
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -1723,7 +1738,7 @@ export default function Storage() {
                 >
                   <Search
                     size={18}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-slate-400"
                   />
                 </button>
               </div>
@@ -1757,7 +1772,7 @@ export default function Storage() {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -1774,7 +1789,7 @@ export default function Storage() {
                   <th scope="col" className="as-th w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                       checked={
                         storageList.length > 0 &&
                         selectedStorage.size === storageList.length
@@ -1811,13 +1826,13 @@ export default function Storage() {
                         className={`group border-b border-slate-100 transition-colors ${
                           selectedStorage.has(storage.id)
                             ? "bg-as-brand-50/50"
-                            : "bg-white hover:bg-slate-50/50"
+                            : "bg-white dark:bg-slate-800 hover:bg-slate-50/50"
                         }`}
                       >
                         <td className="as-td">
                           <input
                             type="checkbox"
-                            className="w-4 h-4 rounded border-slate-300 bg-white checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
+                            className="w-4 h-4 rounded border-slate-300 bg-white dark:bg-slate-800 checked:bg-as-brand-600 text-as-brand-600 focus:ring-as-brand-500 cursor-pointer transition-colors"
                             checked={selectedStorage.has(storage.id)}
                             onChange={() => toggleSelectStorage(storage.id)}
                           />
@@ -1872,7 +1887,7 @@ export default function Storage() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-12 text-center text-slate-500 bg-white"
+                      className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                     >
                       <div className="flex flex-col items-center justify-center">
                         <HardDrive className="h-12 w-12 text-slate-300 mb-3" />
@@ -1897,7 +1912,7 @@ export default function Storage() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white dark:bg-slate-800 border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -1917,7 +1932,7 @@ export default function Storage() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -1929,7 +1944,7 @@ export default function Storage() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight size={18} />
               </button>
@@ -1939,10 +1954,10 @@ export default function Storage() {
         {/* Modals Flotantes CRUD */}
         {activeModal && (
           <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
               {/* Header */}
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {activeModal === 'create' && "Crear Dispositivo Storage"}
                   {activeModal === 'edit' && "Editar Dispositivo Storage"}
                   {activeModal === 'view' && "Detalles del Dispositivo Storage"}
@@ -1957,7 +1972,7 @@ export default function Storage() {
                 </button>
               </div>
               {/* Content */}
-              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white dark:bg-slate-800">
                 {activeModal === 'create' && (
                   <CrearStorage
                     isModal
@@ -2020,6 +2035,8 @@ export default function Storage() {
     </div>
   );
 }
+
+
 
 
 

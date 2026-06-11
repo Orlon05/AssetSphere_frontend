@@ -1,3 +1,8 @@
+/**
+ * @file sucursales.jsx
+ * @description Component to list and manage all branches (sucursales).
+ * Supports viewing, editing, deleting, importing from Excel, and exporting to Excel.
+ */
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -24,6 +29,10 @@ import { createRoot } from "react-dom/client";
 import Logo from "../../../IMG/Tata_Logo.png";
 import Header from "../../../components/Header";
 
+/**
+ * Main component for the branches listing and management page.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function Sucursales() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -75,6 +84,12 @@ export default function Sucursales() {
 
   const token = localStorage.getItem("authenticationToken");
 
+  /**
+   * Fetches the list of branches from the API.
+   * @param {number} page - The page number to fetch.
+   * @param {number} limit - The number of rows per page.
+   * @param {string} [search=""] - The search term.
+   */
   const fetchSucursales = async (page, limit, search = "") => {
     if (isSearching) return;
     setLoading(true);
@@ -115,6 +130,10 @@ export default function Sucursales() {
     }
   };
 
+  /**
+   * Fetches search results based on a query.
+   * @param {string} search - The search term to use.
+   */
   const fetchSearch = async (search) => {
     if (isSearching) return;
     setIsSearching(true);
@@ -252,6 +271,10 @@ export default function Sucursales() {
     });
   };
 
+  /**
+   * Handles the completion of an Excel import, sending the parsed data to the API.
+   * @param {Array} importedData - The array of objects imported from Excel.
+   */
   const handleImportComplete = async (importedData) => {
     console.log("Datos importados (cantidad):", importedData.length);
     console.log("Datos importados (muestra):", importedData.slice(0, 3));
@@ -369,6 +392,9 @@ export default function Sucursales() {
     }
   };
 
+  /**
+   * Exports the current list of branches to an Excel file.
+   */
   const handleExport = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -443,6 +469,10 @@ export default function Sucursales() {
   const indexOfLastSucursal = currentPage * rowsPerPage;
   const indexOfFirstSucursal = indexOfLastSucursal - rowsPerPage;
 
+  /**
+   * Handles the deletion of a branch after user confirmation.
+   * @param {string} sucursalId - The ID of the branch to delete.
+   */
   const handleDeleteSucursal = async (sucursalId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -547,7 +577,7 @@ export default function Sucursales() {
       );
     } else {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
           {status}
         </span>
       );
@@ -559,7 +589,7 @@ export default function Sucursales() {
       <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center flex flex-col items-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent mb-4"></div>
-          <p className="text-gray-900 font-medium">Cargando sucursales...</p>
+          <p className="text-gray-900 dark:text-white font-medium">Cargando sucursales...</p>
         </div>
       </div>
     );
@@ -568,12 +598,12 @@ export default function Sucursales() {
   if (error) {
     return (
       <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center p-6">
-        <div className="bg-white border border-gray-200 rounded-lg max-w-md w-full p-8 text-center">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg max-w-md w-full p-8 text-center">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error de carga</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error de carga</h2>
+          <p className="text-gray-600 dark:text-slate-400 mb-6">
             {error.message || "Ha ocurrido un error al cargar las sucursales"}
           </p>
           <button
@@ -604,32 +634,32 @@ export default function Sucursales() {
       <main className="max-w-7xl mx-auto px-4 py-6">
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Total Sucursales</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wide">Total Sucursales</span>
               <Building size={16} className="text-gray-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{totalSucursales}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{totalSucursales}</div>
           </div>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Sucursales Activas</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wide">Sucursales Activas</span>
               <Activity size={16} className="text-gray-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{activeSucursales}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{activeSucursales}</div>
           </div>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Regiones</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wide">Regiones</span>
               <MapPin size={16} className="text-gray-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{uniqueRegions}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{uniqueRegions}</div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6">
           {/* Search and Action Buttons */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -640,7 +670,7 @@ export default function Sucursales() {
                 <input
                   type="text"
                   placeholder="Buscar por nombre o código..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   ref={searchInputRef}
@@ -681,7 +711,7 @@ export default function Sucursales() {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -691,14 +721,14 @@ export default function Sucursales() {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-700">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
+                <tr className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-900 cursor-pointer transition-colors"
                       checked={
                         sucursalesList.length > 0 &&
                         selectedSucursales.size === sucursalesList.length
@@ -706,24 +736,24 @@ export default function Sucursales() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Nombre
                   </th>
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Código
                   </th>
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Ciudad
                   </th>
-                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Región
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
+                    className="px-6 py-3 text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider text-right"
                   >
                     Acciones
                   </th>
@@ -734,33 +764,33 @@ export default function Sucursales() {
                   filteredSucursales.map((sucursal, index) => (
                     <tr
                       key={sucursal.id}
-                      className={`border-b border-gray-200 transition-colors ${
+                      className={`border-b border-gray-200 dark:border-slate-700 transition-colors ${
                         selectedSucursales.has(sucursal.id)
-                          ? "bg-gray-50"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-gray-50 dark:bg-slate-900/50"
+                          : "bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
                       }`}
                     >
                       <td className="px-6 py-3">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-900 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-900 cursor-pointer transition-colors"
                           checked={selectedSucursales.has(sucursal.id)}
                           onChange={() => toggleSelectSucursal(sucursal.id)}
                         />
                       </td>
-                      <td className="px-6 py-3 font-medium text-gray-800">
+                      <td className="px-6 py-3 font-medium text-gray-800 dark:text-slate-100">
                         {sucursal.branch_name || sucursal.name || "N/A"}
                       </td>
-                      <td className="px-6 py-3 text-gray-600">
+                      <td className="px-6 py-3 text-gray-600 dark:text-slate-400">
                         {sucursal.branch_code || "N/A"}
                       </td>
                       <td className="px-6 py-3">
                         {getStatusBadge(sucursal.status)}
                       </td>
-                      <td className="px-6 py-3 text-gray-600">
+                      <td className="px-6 py-3 text-gray-600 dark:text-slate-400">
                         {sucursal.city || "N/A"}
                       </td>
-                      <td className="px-6 py-3 text-gray-600">
+                      <td className="px-6 py-3 text-gray-600 dark:text-slate-400">
                         {sucursal.region || "N/A"}
                       </td>
                       <td className="px-6 py-3 text-right">
@@ -771,7 +801,7 @@ export default function Sucursales() {
                                 `${BASE_PATH}/ver/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
                             title="Ver detalles"
                           >
                             <Eye size={18} />
@@ -782,14 +812,14 @@ export default function Sucursales() {
                                 `${BASE_PATH}/editar/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
                             title="Editar"
                           >
                             <Edit size={18} />
                           </button>
                           <button
                             onClick={() => handleDeleteSucursal(sucursal.id)}
-                            className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
                             title="Eliminar"
                           >
                             <Trash2 size={18} />
@@ -802,7 +832,7 @@ export default function Sucursales() {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-6 py-8 text-center text-gray-500 bg-gray-50"
+                      className="px-6 py-8 text-center text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-900/50"
                     >
                       No se encontraron sucursales que coincidan con la búsqueda
                     </td>
@@ -815,7 +845,7 @@ export default function Sucursales() {
           {/* Pagination */}
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-slate-400">
                 Filas por página:
               </span>
               <select
@@ -823,7 +853,7 @@ export default function Sucursales() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -833,17 +863,17 @@ export default function Sucursales() {
               </select>
             </div>
 
-            <div className="text-sm font-medium text-gray-500">
-              Mostrando <span className="text-gray-900">{indexOfFirstSucursal + 1}</span> a{" "}
-              <span className="text-gray-900">{Math.min(indexOfLastSucursal, filteredSucursales.length)}</span> de{" "}
-              <span className="text-gray-900">{filteredSucursales.length}</span> sucursales
+            <div className="text-sm font-medium text-gray-500 dark:text-slate-400">
+              Mostrando <span className="text-gray-900 dark:text-white">{indexOfFirstSucursal + 1}</span> a{" "}
+              <span className="text-gray-900 dark:text-white">{Math.min(indexOfLastSucursal, filteredSucursales.length)}</span> de{" "}
+              <span className="text-gray-900 dark:text-white">{filteredSucursales.length}</span> sucursales
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -855,7 +885,7 @@ export default function Sucursales() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronRight size={18} />
               </button>
@@ -866,6 +896,8 @@ export default function Sucursales() {
     </div>
   );
 }
+
+
 
 
 

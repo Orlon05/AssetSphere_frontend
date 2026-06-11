@@ -1,6 +1,7 @@
 import { API_URL } from "../../../config/api";
 /**
- * Componente para editar dispositivos de Storage existentes
+ * @file editarStorage.jsx
+ * @description Componente para editar dispositivos de Storage existentes
  *
  * Este componente permite:
  * - Cargar datos existentes del dispositivo desde la API
@@ -40,7 +41,7 @@ const InputField = ({
   required = false,
 }) => (
   <div className="space-y-2">
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
@@ -49,12 +50,21 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
       required={required}
     />
   </div>
 );
 
+/**
+ * Componente principal para la edición de un dispositivo de Storage.
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {string} [props.storageId] - ID del dispositivo de storage
+ * @param {Function} [props.onClose] - Función para cerrar el modal/vista
+ * @param {Function} [props.onSuccess] - Función a ejecutar en caso de éxito
+ * @param {boolean} [props.isModal] - Indica si el componente es un modal
+ */
 const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }) => {
   // Estado del formulario con todos los campos de storage
   const [formData, setFormData] = useState({
@@ -263,10 +273,10 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-sm font-medium text-gray-500">Cargando datos del storage...</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Cargando datos del storage...</p>
         </div>
       </div>
     );
@@ -274,10 +284,10 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 dark:border-slate-700 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-800 mb-4">{error}</p>
+          <p className="text-gray-800 dark:text-slate-100 mb-4">{error}</p>
           <button
             onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -290,15 +300,15 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
   }
 
   return (
-    <div className={isModal ? "bg-white text-gray-800" : "as-page"}>
+    <div className={isModal ? "bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100" : "as-page"}>
       {/* Header */}
       {!isModal && (
-        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
               Editar Storage
             </h1>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
               Modifica la información del dispositivo de almacenamiento
             </p>
           </div>
@@ -314,11 +324,11 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
 
       {/* Main Content */}
       <main className={isModal ? "" : "container mx-auto p-6"}>
-        <div className={isModal ? "bg-white" : "bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200"}>
+        <div className={isModal ? "bg-white dark:bg-slate-800" : "bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -348,14 +358,14 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
                   onChange={handleInputChange}
                 />
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Estado <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     {statusOptions.map((option) => (
@@ -366,14 +376,14 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Activo
                   </label>
                   <select
                     name="active"
                     value={formData.active}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     {activeOptions.map((option) => (
                       <option key={option} value={option}>
@@ -386,8 +396,8 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
             </div>
 
             {/* Sección: Configuración de Red */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Configuración de Red
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -401,20 +411,20 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
             </div>
 
             {/* Sección: Especificaciones Técnicas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Fabricante
                   </label>
                   <select
                     name="manufacturer"
                     value={formData.manufacturer}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar fabricante</option>
                     {manufacturerOptions.map((option) => (
@@ -431,14 +441,14 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
                   onChange={handleInputChange}
                 />
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Tipo
                   </label>
                   <select
                     name="type"
                     value={formData.type}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar tipo</option>
                     {typeOptions.map((option) => (
@@ -470,8 +480,8 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
             </div>
 
             {/* Sección: Información Organizacional */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Organizacional
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -521,11 +531,11 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <MdArrowBack size={18} className="mr-2" />
                 Cancelar
@@ -546,6 +556,8 @@ const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }
 };
 
 export default EditarStorage;
+
+
 
 
 

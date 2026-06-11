@@ -1,3 +1,8 @@
+/**
+ * @file verStorageInv.jsx
+ * @description Component to visualize detailed physical inventory records for a Storage device.
+ * It provides technical specifications, warranty tracking, and physical location information.
+ */
 import { API_URL } from "../../../config/api";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,7 +21,11 @@ import {
 } from "lucide-react";
 
 /**
- * Componente para visualizar detalles de registro del Inventario Storage con mejoras
+ * Main component for viewing complete inventory details of a storage device.
+ * @param {Object} props - Component props.
+ * @param {string} [props.storageId] - Optional ID of the storage inventory record. Extracted from URL if not provided.
+ * @param {Function} [props.onClose] - Optional callback function to execute when closing the view.
+ * @returns {JSX.Element} The rendered component.
  */
 const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
   const navigate = useNavigate();
@@ -30,6 +39,11 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
   const [error, setError] = useState(null);
   const [data, setData] = useState({});
 
+  /**
+   * Normalizes the keys of an object to match expected capitalization for consistent access.
+   * @param {Object} obj - The object to normalize.
+   * @returns {Object} A new object with normalized keys.
+   */
   const normalizeKeys = (obj) => {
     if (!obj || typeof obj !== "object") return obj;
     const normalized = {};
@@ -121,6 +135,11 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
     }
   }, [storageId, token]);
 
+  /**
+   * Calculates the remaining days from today until the specified end date.
+   * @param {string} endDateStr - The end date string to calculate from.
+   * @returns {number|null} The number of days remaining, or null if the date is invalid.
+   */
   const calculateRemainingDays = (endDateStr) => {
     if (!endDateStr) return null;
     const end = new Date(endDateStr);
@@ -133,6 +152,12 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
     return diffDays;
   };
 
+  /**
+   * Determines the warranty status and generates a corresponding badge and text.
+   * @param {string} statusVal - The raw warranty status from data.
+   * @param {string} endDateStr - The warranty end date.
+   * @returns {Object} An object containing the badge {JSX.Element} and text {string}.
+   */
   const getWarrantyInfo = (statusVal, endDateStr) => {
     const s = (statusVal || "").toLowerCase().trim();
     const diffDays = calculateRemainingDays(endDateStr);
@@ -256,6 +281,11 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
     },
   ];
 
+  /**
+   * Formats a date string into a localized Spanish format.
+   * @param {string} dateStr - The date string to format.
+   * @returns {string} The formatted date string, or a fallback string if invalid.
+   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
     try {
@@ -278,13 +308,13 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
       return (
         <div className="flex flex-col gap-1 items-start">
           {warranty.badge}
-          <span className="text-[10px] font-medium text-gray-500">{warranty.text}</span>
+          <span className="text-[10px] font-medium text-gray-500 dark:text-slate-400">{warranty.text}</span>
         </div>
       );
     }
     if (field.type === "date") {
       return (
-        <span className="text-sm font-semibold text-gray-800">
+        <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">
           {formatDate(val)}
         </span>
       );
@@ -292,7 +322,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
     if ((field.key === "Hostname" || field.key === "SerialNumber") && val) {
       return (
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold text-gray-800">{val}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">{val}</span>
           <button
             onClick={() => navigate(`${BASE_PATH}/storage?search=${encodeURIComponent(val)}`)}
             className="text-indigo-600 hover:text-indigo-800 text-[10px] font-extrabold underline flex items-center gap-0.5 print:hidden"
@@ -305,7 +335,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
       );
     }
     return (
-      <span className="text-sm font-semibold text-gray-800">
+      <span className="text-sm font-semibold text-gray-800 dark:text-slate-100">
         {val || "—"}
       </span>
     );
@@ -313,10 +343,10 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles de inventario Storage...</p>
+          <p className="mt-4 text-sm font-medium text-gray-500 dark:text-slate-400">Cargando detalles de inventario Storage...</p>
         </div>
       </div>
     );
@@ -324,13 +354,13 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
             <AlertCircle size={24} />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
-          <p className="text-sm text-gray-500 mb-6">{error}</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Error al cargar datos</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">{error}</p>
           <button
             onClick={onClose || (() => navigate(-1))}
             className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
@@ -344,7 +374,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen pb-12"} bg-[#fcfcfc] text-gray-800 font-sans print:bg-white print:pb-0`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen pb-12"} bg-[#fcfcfc] text-gray-800 dark:text-slate-100 font-sans print:bg-white dark:bg-slate-800 print:pb-0`}>
       {/* Print styles */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -361,7 +391,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
             max-width: 100% !important;
             width: 100% !important;
           }
-          .bg-white {
+          .bg-white dark:bg-slate-800 {
             border: 1px solid #e5e7eb !important;
             box-shadow: none !important;
           }
@@ -373,16 +403,16 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
       `}} />
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md rounded-t-xl mb-4 print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-t-xl mb-4 print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <HardDrive size={20} />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               Ver Registro Completo Inventario Storage
             </h1>
-            <p className="text-xs font-semibold text-gray-500">
+            <p className="text-xs font-semibold text-gray-500 dark:text-slate-400">
               Detalles técnicos e información de inventario físico del Storage
             </p>
           </div>
@@ -390,7 +420,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={onClose || (() => navigate(-1))}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
           >
             <ArrowLeft size={16} />
             <span>{isModal ? "Cerrar" : "Regresar"}</span>
@@ -399,7 +429,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
             <>
               <button
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-600 dark:text-slate-400 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white transition-all shadow-sm"
                 title="Imprimir ficha técnica"
               >
                 <Printer size={16} />
@@ -420,24 +450,24 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-8 mt-8 print:mt-0 print:px-0">
         {/* Banner principal rápido */}
-        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:mb-4">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:mb-4">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Número de Serie</span>
-            <span className="text-2xl font-bold text-gray-900">{data.SerialNumber || "—"}</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{data.SerialNumber || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Modelo</span>
-            <span className="text-lg font-semibold text-gray-800">{data.Model || "—"}</span>
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">{data.Model || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Hostname / IP</span>
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-800 dark:text-slate-100">
               {data.Hostname ? `${data.Hostname} (${data.IPAddress || "—"})` : data.IPAddress || "—"}
             </span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 dark:bg-slate-800 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Garantía</span>
             <div>{getWarrantyInfo(data.WarrantyStatus, data.HWWarrantyEndDate).badge}</div>
@@ -450,11 +480,11 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
             <div key={idx} className="flex flex-col">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-4 bg-gray-900 rounded-full print:bg-black"></span>
-                <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
-              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1 print:p-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm flex-1 print:p-4">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-5 print:gap-y-3">
                   {section.fields.map((field) => (
                     <div key={field.key} className="flex flex-col">
@@ -475,12 +505,12 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
           <div className="mt-8 flex flex-col print:mt-4">
             <div className="flex items-center gap-2 mb-3">
               <span className="w-1.5 h-4 bg-gray-900 rounded-full print:bg-black"></span>
-              <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
                 Descripción / Comentarios
               </h3>
             </div>
-            <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm print:p-4">
-              <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700/60 rounded-2xl p-6 shadow-sm print:p-4">
+              <p className="text-sm text-gray-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">
                 {data.Description}
               </p>
             </div>
@@ -492,6 +522,8 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
 };
 
 export default VerStorageInv;
+
+
 
 
 

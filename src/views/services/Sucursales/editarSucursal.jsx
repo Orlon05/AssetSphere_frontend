@@ -1,3 +1,8 @@
+/**
+ * @file editarSucursal.jsx
+ * @description Component for editing an existing branch (sucursal).
+ * It fetches the current branch data, manages state, handles validation, and submits updates.
+ */
 // editar-sucursal.jsx
 "use client";
 import { useState, useEffect } from "react";
@@ -5,6 +10,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Building, Save, ArrowLeft } from "lucide-react";
 
+/**
+ * Main component for editing a branch.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function EditarSucursal() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -69,6 +78,9 @@ export default function EditarSucursal() {
     setHasChanges(hasDataChanged);
   }, [formData, originalData]);
 
+  /**
+   * Fetches the branch data from the API and populates the form.
+   */
   const fetchSucursal = async () => {
     try {
       const token = localStorage.getItem("authenticationToken");
@@ -163,6 +175,10 @@ export default function EditarSucursal() {
     }
   };
 
+  /**
+   * Validates the form data before submission.
+   * @returns {boolean} True if the form is valid, false otherwise.
+   */
   const validateForm = () => {
     const newErrors = {};
 
@@ -200,6 +216,10 @@ export default function EditarSucursal() {
     }));
   };
 
+  /**
+   * Handles the form submission to update the branch.
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -294,7 +314,7 @@ export default function EditarSucursal() {
 
   if (loadingData) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300 text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando datos de la sucursal...</p>
@@ -306,20 +326,20 @@ export default function EditarSucursal() {
   return (
     <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             <Building className="mr-2 text-blue-400" />
             Editar Sucursal
           </h1>
-          <p className="text-sm text-gray-900">
+          <p className="text-sm text-gray-900 dark:text-white">
             Modifica los datos de la sucursal
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 flex items-center gap-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-4 py-2 flex items-center gap-2 text-gray-700 dark:text-slate-300 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
           >
             <ArrowLeft size={16} />
             Volver
@@ -340,13 +360,13 @@ export default function EditarSucursal() {
         <div className="bg-gray-300/30 border rounded-lg shadow-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Información General */}
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Información General
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Nombre *
                   </label>
                   <input
@@ -354,9 +374,9 @@ export default function EditarSucursal() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`bg-white border ${
+                    className={`bg-white dark:bg-slate-800 border ${
                       errors.name ? "border-red-500" : "border-gray-300"
-                    } text-gray-900 rounded-lg block w-full p-2.5`}
+                    } text-gray-900 dark:text-white rounded-lg block w-full p-2.5`}
                     placeholder="Nombre de la sucursal"
                   />
                   {errors.name && (
@@ -365,7 +385,7 @@ export default function EditarSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Código de Sucursal
                   </label>
                   <input
@@ -373,13 +393,13 @@ export default function EditarSucursal() {
                     name="branch_code"
                     value={formData.branch_code}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Código de la sucursal"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Nombre de Sucursal
                   </label>
                   <input
@@ -387,20 +407,20 @@ export default function EditarSucursal() {
                     name="branch_name"
                     value={formData.branch_name}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Nombre comercial de la sucursal"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Estado
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                   >
                     <option value="Activo">Activo</option>
                     <option value="Inactivo">Inactivo</option>
@@ -409,7 +429,7 @@ export default function EditarSucursal() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Ciudad
                   </label>
                   <input
@@ -417,13 +437,13 @@ export default function EditarSucursal() {
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Ciudad"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Región
                   </label>
                   <input
@@ -431,13 +451,13 @@ export default function EditarSucursal() {
                     name="region"
                     value={formData.region}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Región"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Departamento
                   </label>
                   <input
@@ -445,13 +465,13 @@ export default function EditarSucursal() {
                     name="department"
                     value={formData.department}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Departamento"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Ubicación
                   </label>
                   <input
@@ -459,13 +479,13 @@ export default function EditarSucursal() {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Dirección física"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-900">
+                  <label className="block text-sm font-medium text-gray-900 dark:text-white">
                     Subsidiaria
                   </label>
                   <input
@@ -473,7 +493,7 @@ export default function EditarSucursal() {
                     name="subsidiary"
                     value={formData.subsidiary}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-900 dark:text-white rounded-lg block w-full p-2.5"
                     placeholder="Subsidiaria"
                   />
                 </div>
@@ -488,6 +508,8 @@ export default function EditarSucursal() {
     </div>
   );
 }
+
+
 
 
 

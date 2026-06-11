@@ -1,8 +1,20 @@
+/**
+ * @file AuthContext.jsx
+ * @description Context provider for managing authentication state and token validation.
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
+/**
+ * AuthProvider Component
+ * @description Provides authentication context to its children, managing token lifecycle and authenticated fetch requests.
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} props.children - Child components that will consume the context.
+ * @returns {JSX.Element} The rendered provider component.
+ */
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("authenticationToken"));
   const [remainingTime, setRemainingTime] = useState(0);

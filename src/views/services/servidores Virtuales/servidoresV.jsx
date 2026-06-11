@@ -2,10 +2,8 @@ import { API_URL } from "../../../config/api";
 import Logo from "../../../IMG/Tcs.png";
 import Header from "../../../components/Header";
 /**
- * COMPONENTE: ServidoresVirtuales
- *
- * PROPÓSITO:
- * Componente principal para la gestión de servidores virtuales.
+ * @file servidoresV.jsx
+ * @description Componente principal para la gestión de servidores virtuales.
  * Proporciona una interfaz completa para listar, buscar, filtrar,
  * y realizar operaciones CRUD sobre servidores virtuales.
  *
@@ -76,6 +74,11 @@ const TABLE_METADATA = [
   ],
 ];
 
+/**
+ * Componente principal `ServidoresVirtuales`
+ * Renderiza la interfaz de gestión de servidores virtuales.
+ * @component
+ */
 export default function ServidoresVirtuales() {
   const navigate = useNavigate();
   const searchInputRef = useRef(null);
@@ -417,7 +420,7 @@ export default function ServidoresVirtuales() {
   }, [searchValue, unfilteredServers, rowsPerPage, fetchSearch]);
 
   /**
-   * Maneja la selección de todos los servidores
+   * Maneja la selección y deselección de todos los servidores mostrados.
    */
   const toggleSelectAll = useCallback(() => {
     setSelectAll(!selectAll);
@@ -429,7 +432,8 @@ export default function ServidoresVirtuales() {
   }, [selectAll, servers]);
 
   /**
-   * Maneja la selección individual de servidores
+   * Maneja la selección individual de un servidor específico.
+   * @param {string|number} serverId - El identificador del servidor
    */
   const toggleSelectServer = useCallback((serverId) => {
     setSelectedServers((prev) => {
@@ -569,7 +573,7 @@ export default function ServidoresVirtuales() {
     }
 
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
         {status}
       </span>
     );
@@ -607,7 +611,7 @@ export default function ServidoresVirtuales() {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300 text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando servidores virtuales...</p>
@@ -618,7 +622,7 @@ export default function ServidoresVirtuales() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-100 flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300 text-gray-100 flex items-center justify-center">
         <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
           <p>
@@ -653,38 +657,38 @@ export default function ServidoresVirtuales() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Server size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Server size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {totalServers}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Total Servidores</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Total Servidores</p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Activity size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Activity size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {activeServers}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Servidores Activos</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Servidores Activos</p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Layers size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Layers size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {uniqueOS}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Sistemas Operativos</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Sistemas Operativos</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
           {/* Barra de búsqueda y botones de acción */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -695,7 +699,7 @@ export default function ServidoresVirtuales() {
                 <input
                   type="text"
                   placeholder="Buscar por nombre..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onKeyDown={(e) =>
@@ -708,7 +712,7 @@ export default function ServidoresVirtuales() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   aria-label="Buscar"
                 >
-                  <Search size={16} className="text-gray-500" />
+                  <Search size={16} className="text-gray-500 dark:text-slate-400" />
                 </button>
               </div>
             ) : (
@@ -744,7 +748,7 @@ export default function ServidoresVirtuales() {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -758,10 +762,10 @@ export default function ServidoresVirtuales() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-400 cursor-pointer transition-colors"
                       checked={
                         servers.length > 0 &&
                         selectedServers.size === servers.length
@@ -770,18 +774,18 @@ export default function ServidoresVirtuales() {
                       aria-label="Seleccionar todos"
                     />
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-1/4">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-1/4">
                     Server
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-1/6">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-1/6">
                     Estado
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-1/6">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-1/6">
                     IP
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider w-32"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-32"
                   >
                     Acciones
                   </th>
@@ -792,22 +796,22 @@ export default function ServidoresVirtuales() {
                   filteredServers.map((server, index) => (
                     <tr
                       key={server.id}
-                      className={`group border-b border-gray-200 transition-colors ${
+                      className={`group border-b border-gray-200 dark:border-slate-700 transition-colors ${
                         selectedServers.has(server.id)
-                          ? "bg-gray-50"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-gray-50 dark:bg-slate-900/50"
+                          : "bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
                       }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-400 cursor-pointer transition-colors"
                           checked={selectedServers.has(server.id)}
                           onChange={() => toggleSelectServer(server.id)}
                           aria-label={`Seleccionar servidor ${server.server}`}
                         />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900 dark:text-white">
                         <div className="truncate" title={server.server}>
                           {truncateText(server.server, 25)}
                         </div>
@@ -815,7 +819,7 @@ export default function ServidoresVirtuales() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(server.status)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600 dark:text-slate-400">
                         <div className="truncate" title={server.ip}>
                           {truncateText(server.ip, 15)}
                         </div>
@@ -826,7 +830,7 @@ export default function ServidoresVirtuales() {
                             onClick={() =>
                               setActiveModal({ type: "view", id: server.id })
                             }
-                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Ver detalles"
                             aria-label={`Ver detalles de ${server.server}`}
                           >
@@ -858,7 +862,7 @@ export default function ServidoresVirtuales() {
                   <tr>
                     <td
                       colSpan={5}
-                      className="px-6 py-12 text-center text-slate-500 bg-white"
+                      className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                     >
                       <div className="flex flex-col items-center justify-center">
                         <Server className="h-12 w-12 text-slate-300 mb-3" />
@@ -883,7 +887,7 @@ export default function ServidoresVirtuales() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-gray-400/20 focus:border-gray-400 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -903,12 +907,12 @@ export default function ServidoresVirtuales() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 aria-label="Página anterior"
               >
                 <ChevronLeft size={18} />
               </button>
-              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-gray-100 text-gray-900 font-semibold border border-gray-200">
+              <div className="flex items-center justify-center min-w-[2rem] h-9 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white font-semibold border border-gray-200 dark:border-slate-700">
                 {currentPage}
               </div>
               <button
@@ -916,7 +920,7 @@ export default function ServidoresVirtuales() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 hover:text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 aria-label="Página siguiente"
               >
                 <ChevronRight size={18} />
@@ -927,14 +931,14 @@ export default function ServidoresVirtuales() {
       </main>
       {activeModal.type === "view" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 dark:border-slate-800">
             <VerServidorVirtual serverId={activeModal.id} onClose={() => setActiveModal({ type: null, id: null })} />
           </div>
         </div>
       )}
       {activeModal.type === "edit" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 dark:border-slate-800">
             <EditarServidorVirtual serverId={activeModal.id} onClose={() => {
               setActiveModal({ type: null, id: null });
               fetchServers(currentPage, rowsPerPage);
@@ -945,6 +949,8 @@ export default function ServidoresVirtuales() {
     </div>
   );
 }
+
+
 
 
 

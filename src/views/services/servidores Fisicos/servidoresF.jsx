@@ -1,5 +1,6 @@
 /**
- * COMPONENTE: ServidoresFisicos
+ * @file servidoresF.jsx
+ * @description COMPONENTE: ServidoresFisicos
  *
  * PROPÓSITO:
  * Componente principal para la gestión completa de servidores físicos.
@@ -53,6 +54,13 @@ import EditarServidorFisico from "./editarservidor";
 const BASE_PATH = "/AssetSphere";
 const API_BASE_URL = API_URL + "/servers/physical";
 
+/**
+ * Componente ServidoresFisicos.
+ * Renderiza la interfaz principal para la administración de servidores físicos.
+ * Incluye tabla de datos, paginación, búsqueda, importación y exportación.
+ *
+ * @returns {JSX.Element} Componente de gestión de servidores físicos.
+ */
 export default function ServidoresFisicos() {
   const navigate = useNavigate();
   const searchInputRef = useRef(null);
@@ -242,6 +250,8 @@ export default function ServidoresFisicos() {
 
   /**
    * Función utilitaria para obtener el token de autorización
+   * @returns {string} El token de autorización.
+   * @throws {Error} Si el token no es encontrado.
    */
   const getAuthToken = useCallback(() => {
     const token = localStorage.getItem("authenticationToken");
@@ -292,6 +302,9 @@ export default function ServidoresFisicos() {
    * Procesa los datos importados desde Excel
    * Incluye lógica compleja de formateo de fechas y limpieza de datos
    * Envía cada servidor individualmente a la API
+   *
+   * @param {Array<Object>} importedData - Datos extraídos del archivo Excel.
+   * @returns {Promise<void>}
    */
   const handleImportComplete = useCallback(
     async (importedData) => {
@@ -603,6 +616,7 @@ export default function ServidoresFisicos() {
 
   /**
    * Maneja la exportación a Excel
+   * @returns {Promise<void>}
    */
   const handleExport = useCallback(async () => {
     try {
@@ -642,6 +656,11 @@ export default function ServidoresFisicos() {
 
   /**
    * Carga los servidores desde la API
+   *
+   * @param {number} page - Número de página.
+   * @param {number} limit - Límite de filas por página.
+   * @param {string} [search=""] - Término de búsqueda.
+   * @returns {Promise<void>}
    */
   const fetchServers = useCallback(
     async (page, limit, search = "") => {
@@ -691,6 +710,9 @@ export default function ServidoresFisicos() {
 
   /**
    * Realiza búsqueda específica de servidores
+   *
+   * @param {string} search - Término de búsqueda.
+   * @returns {Promise<void>}
    */
   const fetchSearch = useCallback(
     async (search) => {
@@ -740,6 +762,7 @@ export default function ServidoresFisicos() {
 
   /**
    * Maneja los cambios en el campo de búsqueda
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Evento de cambio.
    */
   const handleSearchChange = useCallback((e) => {
     setSearchValue(e.target.value);
@@ -784,6 +807,9 @@ export default function ServidoresFisicos() {
 
   /**
    * Elimina un servidor físico
+   *
+   * @param {string} serverId - ID del servidor a eliminar.
+   * @returns {Promise<void>}
    */
   const handleDeleteServer = useCallback(
     async (serverId) => {
@@ -859,7 +885,7 @@ export default function ServidoresFisicos() {
   const getStatusBadge = useCallback((status) => {
     if (!status) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100">
           <AlertCircle size={12} className="mr-1" />
           Sin estado
         </span>
@@ -900,17 +926,17 @@ export default function ServidoresFisicos() {
         label: "Mantenimiento",
       },
       decommissioned: {
-        color: "bg-gray-100 text-gray-800",
+        color: "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100",
         icon: AlertCircle,
         label: "Retirado",
       },
       retirado: {
-        color: "bg-gray-100 text-gray-800",
+        color: "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100",
         icon: AlertCircle,
         label: "Retirado",
       },
       retired: {
-        color: "bg-gray-100 text-gray-800",
+        color: "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100",
         icon: AlertCircle,
         label: "Retirado",
       },
@@ -980,7 +1006,7 @@ export default function ServidoresFisicos() {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-900 flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300 text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando servidores...</p>
@@ -991,7 +1017,7 @@ export default function ServidoresFisicos() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-200 text-gray-100 flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 transition-colors duration-300 text-gray-100 flex items-center justify-center">
         <div className="bg-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-xl font-bold text-red-400 mb-4">Error</h2>
           <p>
@@ -1026,38 +1052,38 @@ export default function ServidoresFisicos() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Server size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Server size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {totalServers}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Total Servidores</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Total Servidores</p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Activity size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Activity size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {activeServers}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Servidores Activos</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Servidores Activos</p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+          <div className="bg-gray-50 dark:bg-slate-900/50 rounded-lg p-6 border border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <Layers size={20} className="text-gray-600" />
-              <span className="text-2xl font-semibold text-gray-900">
+              <Layers size={20} className="text-gray-600 dark:text-slate-400" />
+              <span className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {uniqueOS}
               </span>
             </div>
-            <p className="text-sm text-gray-600">Sistemas Operativos</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">Sistemas Operativos</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-6">
           {/* Barra de búsqueda y botones de acción */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             {showSearch ? (
@@ -1068,7 +1094,7 @@ export default function ServidoresFisicos() {
                 <input
                   type="text"
                   placeholder="Buscar por hostname..."
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-gray-400 pl-10"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onKeyDown={(e) =>
@@ -1081,7 +1107,7 @@ export default function ServidoresFisicos() {
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   aria-label="Buscar"
                 >
-                  <Search size={16} className="text-gray-500" />
+                  <Search size={16} className="text-gray-500 dark:text-slate-400" />
                 </button>
               </div>
             ) : (
@@ -1116,7 +1142,7 @@ export default function ServidoresFisicos() {
               </button>
               <button
                 onClick={handleExport}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-500 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/500 transition flex items-center gap-2"
                 title="Exportar a Excel"
               >
                 <Upload size={16} />
@@ -1130,10 +1156,10 @@ export default function ServidoresFisicos() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider w-12">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
+                      className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-400 cursor-pointer transition-colors"
                       checked={
                         servers.length > 0 &&
                         selectedServers.size === servers.length
@@ -1142,21 +1168,21 @@ export default function ServidoresFisicos() {
                       aria-label="Seleccionar todos"
                     />
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Hostname
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Serial
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     IP
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider"
                   >
                     Acciones
                   </th>
@@ -1167,33 +1193,33 @@ export default function ServidoresFisicos() {
                   filteredServers.map((server, index) => (
                     <tr
                       key={server.id}
-                      className={`group border-b border-gray-200 transition-colors ${
+                      className={`group border-b border-gray-200 dark:border-slate-700 transition-colors ${
                         selectedServers.has(server.id)
-                          ? "bg-gray-50"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-gray-50 dark:bg-slate-900/50"
+                          : "bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
                       }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300 bg-white checked:bg-gray-900 text-gray-900 focus:ring-gray-400 cursor-pointer transition-colors"
+                          className="w-4 h-4 rounded border-gray-300 bg-white dark:bg-slate-800 checked:bg-gray-900 text-gray-900 dark:text-white focus:ring-gray-400 cursor-pointer transition-colors"
                           checked={selectedServers.has(server.id)}
                           onChange={() => toggleSelectServer(server.id)}
                           aria-label={`Seleccionar servidor ${server.hostname}`}
                         />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900 dark:text-white">
                         {server.hostname}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(server.service_status)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border border-gray-200 dark:border-slate-700">
                           {server.serial_number}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600 dark:text-slate-400">
                         {server.ip_server}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -1202,7 +1228,7 @@ export default function ServidoresFisicos() {
                             onClick={() =>
                               setActiveModal({ type: "view", id: server.id })
                             }
-                            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Ver detalles"
                             aria-label={`Ver detalles de ${server.hostname}`}
                           >
@@ -1234,7 +1260,7 @@ export default function ServidoresFisicos() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-6 py-12 text-center text-slate-500 bg-white"
+                      className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                     >
                       <div className="flex flex-col items-center justify-center">
                         <Server className="h-12 w-12 text-slate-300 mb-3" />
@@ -1259,7 +1285,7 @@ export default function ServidoresFisicos() {
                 onChange={(e) =>
                   setRowsPerPage(Number.parseInt(e.target.value, 10))
                 }
-                className="bg-white border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
+                className="bg-white dark:bg-slate-800 border border-slate-200 text-slate-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-as-brand-500/20 focus:border-as-brand-500 outline-none transition-all shadow-sm cursor-pointer"
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -1279,7 +1305,7 @@ export default function ServidoresFisicos() {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 aria-label="Página anterior"
               >
                 <ChevronLeft size={18} />
@@ -1292,7 +1318,7 @@ export default function ServidoresFisicos() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                className="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-as-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 aria-label="Página siguiente"
               >
                 <ChevronRight size={18} />
@@ -1303,14 +1329,14 @@ export default function ServidoresFisicos() {
       </main>
       {activeModal.type === "view" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 dark:border-slate-800">
             <VerServidorFisico serverId={activeModal.id} onClose={() => setActiveModal({ type: null, id: null })} />
           </div>
         </div>
       )}
       {activeModal.type === "edit" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 dark:border-slate-800">
             <EditarServidorFisico serverId={activeModal.id} onClose={() => {
               setActiveModal({ type: null, id: null });
               fetchServers(currentPage, rowsPerPage);
@@ -1321,6 +1347,8 @@ export default function ServidoresFisicos() {
     </div>
   );
 }
+
+
 
 
 

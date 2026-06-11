@@ -1,3 +1,7 @@
+/**
+ * @file verbasededatos.jsx
+ * @description View component for displaying detailed information of a specific database in a read-only format.
+ */
 import { useState, useEffect } from "react";
 import { API_URL } from "../../../config/api";
 import { useParams, Link } from "react-router-dom";
@@ -118,7 +122,7 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
       case "maintenance":
         return "bg-yellow-100 text-yellow-800 border-yellow-300";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border-gray-300";
     }
   };
 
@@ -233,7 +237,7 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
       <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-700">
+          <p className="mt-4 text-lg text-gray-700 dark:text-slate-300">
             Cargando Base de datos...
           </p>
         </div>
@@ -263,14 +267,14 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100`}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm rounded-t-xl mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Visualizar Base de datos
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Detalles completos de la base de datos
           </p>
         </div>
@@ -285,20 +289,20 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <div className="space-y-6">
             {formSections.map((section, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700"
               >
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                   {section.title}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {section.fields.map((field) => (
                     <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                         {fieldLabels[field]}
                       </label>
                       {field === "inactive" ? (
@@ -321,7 +325,7 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
                             : "Estado desconocido"}
                         </div>
                       ) : (
-                        <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                        <div className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5">
                           {baseData[field] !== undefined &&
                           baseData[field] !== null
                             ? typeof baseData[field] === "object"
@@ -338,17 +342,17 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
 
             {/* Sección de campos adicionales si existen */}
             {additionalFields.length > 0 && (
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+                <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                   Información Adicional
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {additionalFields.map((field) => (
                     <div key={field} className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                         {fieldLabels[field] || field}
                       </label>
-                      <div className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5">
+                      <div className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5">
                         {baseData[field] !== undefined &&
                         baseData[field] !== null
                           ? typeof baseData[field] === "object"
@@ -369,6 +373,8 @@ const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
 };
 
 export default VerDatabase;
+
+
 
 
 

@@ -1,3 +1,7 @@
+/**
+ * @file Editarbasededatos.jsx
+ * @description View component containing a form to edit an existing database record.
+ */
 import { useState, useEffect } from "react";
 import { API_URL } from "../../../config/api";
 import { MdEdit, MdArrowBack } from "react-icons/md";
@@ -24,7 +28,7 @@ const InputField = ({
   required = false,
 }) => (
   <div className="space-y-2">
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
@@ -33,7 +37,7 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
       required={required}
     />
   </div>
@@ -257,10 +261,10 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-12 w-full bg-white">
+      <div className="flex justify-center items-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-xl font-semibold text-gray-700">
+          <p className="text-xl font-semibold text-gray-700 dark:text-slate-300">
             Cargando datos de la base de datos...
           </p>
         </div>
@@ -270,10 +274,10 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center p-12 w-full bg-white">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+      <div className="flex justify-center items-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 dark:border-slate-700">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-800 mb-4">{error}</p>
+          <p className="text-gray-800 dark:text-slate-100 mb-4">{error}</p>
           <button
             onClick={onClose || (() => navigate("/AssetSphere/base-de-datos"))}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -286,14 +290,14 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
   }
 
   return (
-    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100`}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm rounded-t-xl mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             Editar Base de Datos
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             Modifica la información de la base de datos
           </p>
         </div>
@@ -308,11 +312,11 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
 
       {/* Main Content */}
       <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información de Identificación */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información de Identificación
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -357,8 +361,8 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Sección: Clasificación y Categorización */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Clasificación y Categorización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -402,20 +406,20 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Sección: Estado y Entorno */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Estado y Entorno
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                     Estado
                   </label>
                   <select
                     name="inactive"
                     value={formData.inactive}
                     onChange={handleInputChange}
-                    className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Seleccionar estado</option>
                     <option value="active">Activa</option>
@@ -456,8 +460,8 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Sección: Información de Propietario */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información de Propietario
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -489,8 +493,8 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Sección: Información de Proveedores */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información de Proveedores
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -522,8 +526,8 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Sección: Fechas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Fechas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -545,7 +549,7 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={() => {
@@ -565,7 +569,7 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
                     }
                   });
                 }}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50"
               >
                 <MdArrowBack size={18} className="mr-2" />
                 Cancelar
@@ -586,6 +590,8 @@ const EditarBaseDatos = ({ baseDatosId: propBaseDatosId, onClose }) => {
 };
 
 export default EditarBaseDatos;
+
+
 
 
 

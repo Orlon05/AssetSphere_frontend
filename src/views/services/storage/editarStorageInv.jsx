@@ -1,9 +1,24 @@
+/**
+ * @file editarStorageInv.jsx
+ * @description Componente para editar los registros de inventario de Storage.
+ * Permite la modificación y creación de detalles de inventario asociados a un storage.
+ */
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, Save, HardDrive } from "lucide-react";
 import { API_URL } from "../../../config/api";
 
+/**
+ * Componente reutilizable para campos de entrada de texto.
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.label - Etiqueta del campo
+ * @param {string} props.name - Nombre del campo
+ * @param {string} props.value - Valor actual del campo
+ * @param {Function} props.onChange - Función para manejar cambios
+ * @param {string} [props.type="text"] - Tipo de input
+ * @param {boolean} [props.required=false] - Si el campo es requerido
+ */
 const InputField = ({
   label,
   name,
@@ -13,7 +28,7 @@ const InputField = ({
   required = false,
 }) => (
   <div className="space-y-2">
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-slate-300">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
@@ -22,12 +37,22 @@ const InputField = ({
       name={name}
       value={value ?? ""}
       onChange={onChange}
-      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
       required={required}
     />
   </div>
 );
 
+/**
+ * Componente reutilizable para campos de selección (dropdowns).
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.label - Etiqueta del campo
+ * @param {string} props.name - Nombre del campo
+ * @param {string} props.value - Valor actual seleccionado
+ * @param {Function} props.onChange - Función para manejar cambios
+ * @param {Array<string>} props.options - Opciones disponibles
+ * @param {boolean} [props.required=false] - Si el campo es requerido
+ */
 const SelectField = ({
   label,
   name,
@@ -37,7 +62,7 @@ const SelectField = ({
   required = false,
 }) => (
   <div className="space-y-2">
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-slate-300">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <select
@@ -45,7 +70,7 @@ const SelectField = ({
       name={name}
       value={value ?? ""}
       onChange={onChange}
-      className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+      className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
       required={required}
     >
       <option value="">Seleccionar estado</option>
@@ -58,6 +83,16 @@ const SelectField = ({
   </div>
 );
 
+/**
+ * Componente principal para editar o crear el inventario de un Storage.
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {string} [props.storageId] - ID del storage (opcional, puede venir por ruta)
+ * @param {Function} [props.onClose] - Función para cerrar la vista actual
+ * @param {Function} [props.onSuccess] - Función a ejecutar tras guardar exitosamente
+ * @param {boolean} [props.isModal] - Indica si se renderiza en un modal
+ * @param {boolean} [props.isCreate] - Indica si el formulario es para crear en lugar de editar
+ */
 const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModal, isCreate }) => {
   const navigate = useNavigate();
   const { storageId: routeStorageId } = useParams();
@@ -105,7 +140,11 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
     HWWarrantyEndDate: "",
     WarrantyStatus: "",
     TypeOfHWSupport: "",
+
+
+
   });
+
 
   const warrantyStatusOptions = [
     "With Support",
@@ -126,6 +165,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
         const response = await fetch(`${API_URL}/inv/storage/${storageId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
+
+            
           },
         });
         if (!response.ok) {
@@ -183,6 +224,10 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
     }
   }, [formData.HWWarrantyEndDate, loading]);
 
+  /**
+   * Maneja el cambio de valores en los campos del formulario.
+   * @param {Event} e - Evento de cambio en el input
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -191,6 +236,10 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
     }));
   };
 
+  /**
+   * Envía los datos del formulario a la API para crear o actualizar el inventario.
+   * @param {Event} e - Evento de envío del formulario
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -239,6 +288,9 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
     }
   };
 
+  /**
+   * Maneja el botón de cancelar, solicitando confirmación al usuario antes de salir.
+   */
   const handleCancel = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -258,10 +310,10 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-sm font-medium text-gray-500">Cargando detalles de inventario del Storage...</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Cargando detalles de inventario del Storage...</p>
         </div>
       </div>
     );
@@ -269,10 +321,10 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-12 w-full bg-white">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white dark:bg-slate-800">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 dark:border-slate-700 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-800 mb-4">{error}</p>
+          <p className="text-gray-800 dark:text-slate-100 mb-4">{error}</p>
           <button
             onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
@@ -285,15 +337,15 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
   }
 
   return (
-    <div className={isModal ? "p-6 bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
+    <div className={isModal ? "p-6 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100" : "min-h-screen bg-gray-50 dark:bg-slate-900/50 text-gray-800 dark:text-slate-100"}>
       {/* Header */}
-      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
             <HardDrive className="mr-2 text-blue-600" size={24} />
             {isCreate ? "Crear Registro Inventario Storage" : "Editar Registro Inventario Storage"}
           </h1>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
             {isCreate 
               ? "Ingresa la información del nuevo registro de inventario" 
               : `Modifica la información del dispositivo de inventario ${formData.Hostname || formData.SerialNumber || ""}`}
@@ -310,11 +362,11 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
 
       {/* Main Content */}
       <main className={isModal ? "" : "container mx-auto p-6"}>
-        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
+        <div className={isModal ? "bg-white dark:bg-slate-800" : "bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-slate-700"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Información Básica
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -346,8 +398,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
             </div>
 
             {/* Sección: Ubicación y Localización */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Ubicación y Localización
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -379,8 +431,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
             </div>
 
             {/* Sección: Especificaciones Técnicas */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -414,8 +466,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
             </div>
 
             {/* Sección: Adquisición y Proveedor */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Adquisición y Proveedor
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -441,8 +493,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
             </div>
 
             {/* Sección: Garantía y Soporte */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Garantía y Soporte
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -477,12 +529,12 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
             </div>
 
             {/* Sección: Descripción */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Descripción
               </h2>
               <div className="space-y-2">
-                <label htmlFor="Description" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="Description" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                   Comentarios / Descripción detallada
                 </label>
                 <textarea
@@ -491,17 +543,17 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
                   rows={4}
                   value={formData.Description ?? ""}
                   onChange={handleInputChange}
-                  className="bg-white border border-gray-300 text-gray-700 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium transition-colors"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 font-medium transition-colors"
               >
                 Cancelar
               </button>
@@ -522,6 +574,8 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
 };
 
 export default EditarStorageInv;
+
+
 
 
 
