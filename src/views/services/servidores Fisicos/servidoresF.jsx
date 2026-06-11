@@ -46,6 +46,8 @@ import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
 import { API_URL } from "../../../config/api";
 import Header from "../../../components/Header";
+import VerServidorFisico from "./verservidor";
+import EditarServidorFisico from "./editarservidor";
 
 // Configuraciones centralizadas
 const BASE_PATH = "/AssetSphere";
@@ -60,6 +62,7 @@ export default function ServidoresFisicos() {
   const [servers, setServers] = useState([]); // Lista de servidores mostrados
   const [loading, setLoading] = useState(true); // Estado de carga general
   const [error, setError] = useState(null); // Estado de error
+  const [activeModal, setActiveModal] = useState({ type: null, id: null });
 
   // Estados de paginación
   const [currentPage, setCurrentPage] = useState(1); // Página actual
@@ -699,7 +702,7 @@ export default function ServidoresFisicos() {
 
       try {
         const token = getAuthToken();
-        const url = `${API_BASE_URL}/search?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`;
+        const url = `${API_BASE_URL}?hostname=${search}&page=${currentPage}&limit=${rowsPerPage}`;
 
         const response = await fetch(url, {
           headers: {
@@ -1012,9 +1015,10 @@ export default function ServidoresFisicos() {
     return status === 'activo' || status === 'active';
   }).length;
   const uniqueModels = new Set(servers.map(s => s.server_model).filter(Boolean)).size;
+  const uniqueOS = new Set(servers.map(s => s.os_type).filter(Boolean)).size;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <Header title="Servidores Físicos" />
 
@@ -1196,7 +1200,7 @@ export default function ServidoresFisicos() {
                         <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
-                              navigate(`${BASE_PATH}/ver/${server.id}/servers`)
+                              setActiveModal({ type: "view", id: server.id })
                             }
                             className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Ver detalles"
@@ -1206,9 +1210,7 @@ export default function ServidoresFisicos() {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/editar/${server.id}/servers`
-                              )
+                              setActiveModal({ type: "edit", id: server.id })
                             }
                             className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                             title="Editar"
@@ -1299,6 +1301,27 @@ export default function ServidoresFisicos() {
           </div>
         </div>
       </main>
+      {activeModal.type === "view" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+            <VerServidorFisico serverId={activeModal.id} onClose={() => setActiveModal({ type: null, id: null })} />
+          </div>
+        </div>
+      )}
+      {activeModal.type === "edit" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+            <EditarServidorFisico serverId={activeModal.id} onClose={() => {
+              setActiveModal({ type: null, id: null });
+              fetchServers(currentPage, rowsPerPage);
+            }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+
+
+

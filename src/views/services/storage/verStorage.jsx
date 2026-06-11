@@ -20,14 +20,27 @@ import {
   HardDrive,
   AlertCircle,
   Network,
+  Edit,
+  Printer,
+  ArrowUpRight,
 } from "lucide-react";
 
-const VerStorage = () => {
+const VerStorage = ({ storageId: propStorageId, onClose, isModal }) => {
   const navigate = useNavigate();
   const [storageData, setStorageData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { storageId } = useParams();
+  const { storageId: routeStorageId } = useParams();
+  const storageId = propStorageId || routeStorageId;
+  const BASE_PATH = "/AssetSphere";
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  };
 
   /**
    * Configuración de secciones del formulario para organizar la visualización
@@ -186,6 +199,21 @@ const VerStorage = () => {
     if (field === "active") {
       return renderActiveBadge(val);
     }
+    if ((field === "host_name" || field === "serial" || field === "ip_address") && val) {
+      return (
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-semibold text-gray-800">{val}</span>
+          <button
+            onClick={() => navigate(`${BASE_PATH}/storage-inv?search=${encodeURIComponent(val)}`)}
+            className="text-indigo-600 hover:text-indigo-800 text-[10px] font-extrabold underline flex items-center gap-0.5 print:hidden"
+            title="Buscar en Inventario"
+          >
+            <ArrowUpRight size={10} />
+            <span>Ver Inventario</span>
+          </button>
+        </div>
+      );
+    }
     return (
       <span className="text-sm font-semibold text-gray-800">
         {val || "—"}
@@ -255,7 +283,7 @@ const VerStorage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
           <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles del storage...</p>
@@ -266,7 +294,7 @@ const VerStorage = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
             <AlertCircle size={24} />
@@ -274,11 +302,11 @@ const VerStorage = () => {
           <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
           <p className="text-sm text-gray-500 mb-6">{error}</p>
           <button
-            onClick={() => navigate(-1)}
+            onClick={handleClose}
             className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
           >
             <ArrowLeft size={16} />
-            <span>Volver a la lista</span>
+            <span>{isModal ? "Cerrar" : "Volver a la lista"}</span>
           </button>
         </div>
       </div>
@@ -286,9 +314,36 @@ const VerStorage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12">
+    <div className={isModal ? "p-6 bg-white text-gray-800 pb-4 print:bg-white print:pb-0" : "min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12 print:bg-white print:pb-0"}>
+      {/* Print styles */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @media print {
+          body {
+            background-color: white !important;
+            color: black !important;
+          }
+          header, button, nav, aside, .sidebar, .print-hide, .no-print {
+            display: none !important;
+          }
+          main, .print-full {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+          }
+          .bg-white {
+            border: 1px solid #e5e7eb !important;
+            box-shadow: none !important;
+          }
+          .grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+      `}} />
+
       {/* Header */}
-      <header className="sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md">
+      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <Database size={20} />
@@ -302,17 +357,38 @@ const VerStorage = () => {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
-        >
-          <ArrowLeft size={16} />
-          <span>Regresar</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleClose}
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+          >
+            <ArrowLeft size={16} />
+            <span>{isModal ? "Cerrar" : "Regresar"}</span>
+          </button>
+          {!isModal && (
+            <>
+              <button
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+                title="Imprimir ficha técnica"
+              >
+                <Printer size={16} />
+                <span>Imprimir</span>
+              </button>
+              <button
+                onClick={() => navigate(`${BASE_PATH}/editar/${storageId}/storages`)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-medium transition-all shadow-sm border border-gray-900"
+              >
+                <Edit size={16} />
+                <span>Editar</span>
+              </button>
+            </>
+          )}
+        </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-8 mt-8">
+      <main className={isModal ? "max-w-7xl mx-auto mt-2" : "max-w-7xl mx-auto px-8 mt-8"}>
         {/* Banner principal rápido */}
         <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-1">
@@ -367,3 +443,7 @@ const VerStorage = () => {
 };
 
 export default VerStorage;
+
+
+
+

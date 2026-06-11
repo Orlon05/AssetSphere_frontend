@@ -556,7 +556,7 @@ export default function Sucursales() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center flex flex-col items-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent mb-4"></div>
           <p className="text-gray-900 font-medium">Cargando sucursales...</p>
@@ -567,7 +567,7 @@ export default function Sucursales() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="bg-white border border-gray-200 rounded-lg max-w-md w-full p-8 text-center">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Activity size={32} />
@@ -596,7 +596,7 @@ export default function Sucursales() {
   const uniqueRegions = new Set(sucursalesList.map(s => s.region).filter(Boolean)).size;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <Header title="Sucursales" />
 
@@ -866,3 +866,7 @@ export default function Sucursales() {
     </div>
   );
 }
+
+
+
+

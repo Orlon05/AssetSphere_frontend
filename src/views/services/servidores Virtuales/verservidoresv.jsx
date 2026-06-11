@@ -30,12 +30,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-const VerServidorVirtual = () => {
+const VerServidorVirtual = ({ serverId: propServerId, onClose }) => {
   const navigate = useNavigate();
   const [serverData, setServerData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { serverId } = useParams();
+  const { serverId: urlServerId } = useParams();
+  const serverId = propServerId || urlServerId;
+  const isModal = !!propServerId;
 
   // Configuración declarativa de las secciones del formulario
   // OPTIMIZACIÓN: Estructura de datos centralizada para fácil mantenimiento
@@ -166,7 +168,7 @@ const VerServidorVirtual = () => {
   // Estado de carga
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-lg text-gray-700">
@@ -180,15 +182,14 @@ const VerServidorVirtual = () => {
   // Estado de error
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded max-w-md mx-auto">
           <strong>Error:</strong> {error}
           <button
-            onClick={() => navigate("/servidoresv")}
+            onClick={onClose || (() => navigate("/servidoresv"))}
             className="mt-3 block text-blue-600 hover:text-blue-800 transition-colors"
           >
-            <ArrowLeft className="inline mr-1" size={16} />
-            Volver a la lista
+            Volver
           </button>
         </div>
       </div>
@@ -196,9 +197,9 @@ const VerServidorVirtual = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Visualizar Servidor Virtual
@@ -208,11 +209,11 @@ const VerServidorVirtual = () => {
           </p>
         </div>
         <button
-          onClick={() => window.history.back()}
+          onClick={onClose || (() => window.history.back())}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
@@ -264,3 +265,7 @@ const VerServidorVirtual = () => {
 };
 
 export default VerServidorVirtual;
+
+
+
+

@@ -13,8 +13,10 @@ import { ArrowLeft } from "lucide-react";
  * - Soporte para diferentes estructuras de respuesta
  * - Estados visuales para campos especiales
  */
-const VerDatabase = () => {
-  const { baseDeDatosId } = useParams();
+const VerDatabase = ({ baseDatosId: propBaseDatosId, onClose }) => {
+  const { baseDeDatosId: urlBaseDeDatosId } = useParams();
+  const baseDeDatosId = propBaseDatosId || urlBaseDeDatosId;
+  const isModal = !!propBaseDatosId;
   const [baseData, setBaseData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -228,7 +230,7 @@ const VerDatabase = () => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
           <p className="mt-4 text-lg text-gray-700">
@@ -241,7 +243,7 @@ const VerDatabase = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-lg mx-auto shadow-md">
           <h2 className="text-lg font-semibold mb-2">
             Error al cargar los datos
@@ -249,29 +251,11 @@ const VerDatabase = () => {
           <p className="mb-4">{error}</p>
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => {
-                setLoading(true);
-                setError(null);
-                setTimeout(() => window.location.reload(), 300);
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-            >
-              Intentar nuevamente
-            </button>
-            <Link
-              to="/AssetSphere/base-de-datos"
+              onClick={onClose || (() => window.history.back())}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors text-center"
             >
-              Volver a la lista
-            </Link>
-          </div>
-          <div className="mt-4 text-sm bg-red-50 p-3 rounded border border-red-200">
-            <p>Sugerencias de solución:</p>
-            <ul className="list-disc pl-5 mt-2">
-              <li>Verifique que el ID de la base de datos sea correcto</li>
-              <li>Compruebe su conexión a internet</li>
-              <li>El servidor API puede estar inactivo o no responder</li>
-            </ul>
+              {isModal ? "Cerrar" : "Volver"}
+            </button>
           </div>
         </div>
       </div>
@@ -279,9 +263,9 @@ const VerDatabase = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Visualizar Base de datos
@@ -291,11 +275,11 @@ const VerDatabase = () => {
           </p>
         </div>
         <button
-          onClick={() => window.history.back()}
+          onClick={onClose || (() => window.history.back())}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
@@ -385,3 +369,7 @@ const VerDatabase = () => {
 };
 
 export default VerDatabase;
+
+
+
+

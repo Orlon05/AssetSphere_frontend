@@ -55,7 +55,7 @@ const InputField = ({
   </div>
 );
 
-const EditarStorage = () => {
+const EditarStorage = ({ storageId: propStorageId, onClose, onSuccess, isModal }) => {
   // Estado del formulario con todos los campos de storage
   const [formData, setFormData] = useState({
     cod_item_configuracion: "",
@@ -100,7 +100,41 @@ const EditarStorage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authenticationToken");
   const BASE_PATH = "/AssetSphere";
-  const { storageId } = useParams();
+  const { storageId: routeStorageId } = useParams();
+  const storageId = propStorageId || routeStorageId;
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/storage`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/storage`);
+    }
+  };
+
+  const handleCancel = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Los cambios no guardados se perderán",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, salir",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleClose();
+      }
+    });
+  };
 
   // Configuración de notificaciones toast
   const Toast = Swal.mixin({
@@ -215,7 +249,7 @@ const EditarStorage = () => {
       }
 
       showSuccessToast();
-      navigate(`${BASE_PATH}/storage`);
+      handleDone();
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -229,9 +263,10 @@ const EditarStorage = () => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-semibold">
-          Cargando datos del storage...
+      <div className="flex items-center justify-center p-12 w-full bg-white">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-sm font-medium text-gray-500">Cargando datos del storage...</p>
         </div>
       </div>
     );
@@ -239,36 +274,47 @@ const EditarStorage = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl font-semibold text-red-600">Error: {error}</div>
+      <div className="flex items-center justify-center p-12 w-full bg-white">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
+          <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-800 mb-4">{error}</p>
+          <button
+            onClick={handleClose}
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            Cerrar
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className={isModal ? "bg-white text-gray-800" : "as-page"}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-            Editar Storage
-          </h1>
-          <p className="text-sm font-semibold text-gray-900">
-            Modifica la información del dispositivo de almacenamiento
-          </p>
-        </div>
-        <button
-          onClick={() => window.history.back()}
-          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
-        >
-          <ArrowLeft className="mr-2" size={20} />
-          Regresar
-        </button>
-      </header>
+      {!isModal && (
+        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+              Editar Storage
+            </h1>
+            <p className="text-sm font-semibold text-gray-900">
+              Modifica la información del dispositivo de almacenamiento
+            </p>
+          </div>
+          <button
+            onClick={handleCancel}
+            className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Regresar
+          </button>
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white" : "bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -478,7 +524,7 @@ const EditarStorage = () => {
             <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                onClick={() => navigate(`${BASE_PATH}/storage`)}
+                onClick={handleCancel}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
               >
                 <MdArrowBack size={18} className="mr-2" />
@@ -500,3 +546,8 @@ const EditarStorage = () => {
 };
 
 export default EditarStorage;
+
+
+
+
+

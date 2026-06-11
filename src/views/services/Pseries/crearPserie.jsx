@@ -19,7 +19,7 @@ import { ArrowLeft, Save, X, Server } from "lucide-react";
 import Swal from "sweetalert2";
 import { API_URL } from "../../../config/api";
 
-const CrearPseries = () => {
+const CrearPseries = ({ onClose, onSuccess, isModal }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -77,6 +77,22 @@ const CrearPseries = () => {
   ];
 
   const BASE_PATH = "/AssetSphere";
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/pseries`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/pseries`);
+    }
+  };
 
   /**
    * Configuración de secciones del formulario
@@ -253,7 +269,7 @@ const CrearPseries = () => {
         text: "Servidor PSeries creado correctamente",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        navigate(`${BASE_PATH}/pseries`);
+        handleDone();
       });
     } catch (error) {
       console.error("Error al crear servidor:", error);
@@ -283,7 +299,7 @@ const CrearPseries = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/pseries`);
+        handleClose();
       }
     });
   };
@@ -329,29 +345,31 @@ const CrearPseries = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className={isModal ? "bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
       {/* Header */}
-      <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
-        <button
-          onClick={() => navigate(`${BASE_PATH}/pseries`)}
-          className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <ArrowLeft size={20} className="text-gray-600" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-            <Server className="mr-2 text-blue-600" size={24} />
-            Crear Servidor PSeries
-          </h1>
-          <p className="text-sm text-gray-500">
-            Ingresa la información del nuevo servidor
-          </p>
-        </div>
-      </header>
+      {!isModal && (
+        <header className="w-full p-4 flex items-center border-b border-gray-200 bg-white shadow-sm">
+          <button
+            onClick={handleClose}
+            className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <ArrowLeft size={20} className="text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center">
+              <Server className="mr-2 text-blue-600" size={24} />
+              Crear Servidor PSeries
+            </h1>
+            <p className="text-sm text-gray-500">
+              Ingresa la información del nuevo servidor
+            </p>
+          </div>
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {formSections.map((section, sectionIndex) => (
               <div
@@ -407,3 +425,8 @@ const CrearPseries = () => {
 };
 
 export default CrearPseries;
+
+
+
+
+

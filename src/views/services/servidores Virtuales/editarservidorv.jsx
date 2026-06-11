@@ -26,9 +26,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
 
-const EditarServidorVirtual = () => {
+const EditarServidorVirtual = ({ serverId: propServerId, onClose }) => {
   const navigate = useNavigate();
-  const { serverId } = useParams();
+  const { serverId: urlServerId } = useParams();
+  const serverId = propServerId || urlServerId;
+  const isModal = !!propServerId;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -217,7 +219,8 @@ const EditarServidorVirtual = () => {
         });
       } else {
         showSuccessToast();
-        navigate(`${BASE_PATH}/servidoresv`);
+        if (onClose) onClose();
+        else navigate(`${BASE_PATH}/servidoresv`);
       }
     } catch (error) {
       console.error("Error inesperado:", error);
@@ -246,7 +249,8 @@ const EditarServidorVirtual = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/servidoresv`);
+        if (onClose) onClose();
+        else navigate(`${BASE_PATH}/servidoresv`);
       }
     });
   };
@@ -254,7 +258,7 @@ const EditarServidorVirtual = () => {
   // Estado de carga
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p>Cargando detalles del servidor...</p>
@@ -266,15 +270,15 @@ const EditarServidorVirtual = () => {
   // Estado de error
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="flex items-center justify-center p-12 w-full">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p>{error}</p>
           <button
-            onClick={() => navigate(`${BASE_PATH}/servidoresv`)}
+            onClick={onClose || (() => navigate(`${BASE_PATH}/servidoresv`))}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
-            Volver a la lista
+            Volver
           </button>
         </div>
       </div>
@@ -282,9 +286,9 @@ const EditarServidorVirtual = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className={`${isModal ? "p-6" : "min-h-screen"} bg-white text-gray-800`}>
       {/* Header con información del servidor */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm rounded-t-xl mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
@@ -296,11 +300,11 @@ const EditarServidorVirtual = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate(`${BASE_PATH}/servidoresv`)}
+          onClick={onClose || (() => navigate(`${BASE_PATH}/servidoresv`))}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
@@ -413,3 +417,7 @@ const EditarServidorVirtual = () => {
 };
 
 export default EditarServidorVirtual;
+
+
+
+

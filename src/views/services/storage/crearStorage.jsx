@@ -22,9 +22,25 @@ import Swal from "sweetalert2";
 
 const BASE_PATH = "/AssetSphere";
 
-const CrearStorage = () => {
+const CrearStorage = ({ onClose, onSuccess, isModal }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/storage`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/storage`);
+    }
+  };
 
   // Estado inicial del formulario con todos los campos de storage
   const [formData, setFormData] = useState({
@@ -111,7 +127,7 @@ const CrearStorage = () => {
         text: "Storage creado correctamente",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        navigate(`${BASE_PATH}/storage`);
+        handleDone();
       });
     } catch (error) {
       console.error("Error al crear storage:", error);
@@ -141,35 +157,37 @@ const CrearStorage = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/storage`);
+        handleClose();
       }
     });
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className={isModal ? "bg-white text-gray-800" : "as-page"}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Crear Nuevo Storage
-          </h1>
-          <p className="text-sm font-semibold text-gray-900">
-            Ingresa la información del nuevo dispositivo de almacenamiento
-          </p>
-        </div>
-        <button
-          onClick={() => window.history.back()}
-          className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
-        >
-          <ArrowLeft className="mr-2" size={20} />
-          Regresar
-        </button>
-      </header>
+      {!isModal && (
+        <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Crear Nuevo Storage
+            </h1>
+            <p className="text-sm font-semibold text-gray-900">
+              Ingresa la información del nuevo dispositivo de almacenamiento
+            </p>
+          </div>
+          <button
+            onClick={handleClose}
+            className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Regresar
+          </button>
+        </header>
+      )}
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white p-2" : "bg-gray-100 rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -596,3 +614,8 @@ const CrearStorage = () => {
 };
 
 export default CrearStorage;
+
+
+
+
+

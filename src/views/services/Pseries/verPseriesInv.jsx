@@ -9,21 +9,64 @@ import {
   Clock,
   AlertCircle,
   Shield,
-  MapPin
+  MapPin,
+  Edit,
+  Printer,
+  ArrowUpRight
 } from "lucide-react";
 
 /**
- * Componente para visualizar detalles de registro del Inventario PSeries
+ * Componente para visualizar detalles de registro del Inventario PSeries con mejoras
  */
-const VerPseriesInv = () => {
+const VerPseriesInv = ({ pserieId: propPserieId, onClose }) => {
   const navigate = useNavigate();
-  const { pserieId } = useParams();
+  const { pserieId: urlPserieId } = useParams();
+  const pserieId = propPserieId || urlPserieId;
+  const isModal = !!propPserieId;
   const BASE_PATH = "/AssetSphere";
   const token = localStorage.getItem("authenticationToken");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState({});
+
+  const normalizeKeys = (obj) => {
+    if (!obj || typeof obj !== "object") return obj;
+    const normalized = {};
+    const expectedKeys = [
+      "TCSAssetID",
+      "SerialNumber",
+      "PONumber",
+      "ItemsPurchased",
+      "Provider",
+      "LocalVendor",
+      "Model",
+      "CPU",
+      "Memory",
+      "Hostname",
+      "IPAddress",
+      "GPS",
+      "Location",
+      "Position",
+      "RackUnit",
+      "HWWarrantyStartDate",
+      "HWWarrantyEndDate",
+      "WarrantyStatus",
+      "TypeOfHWSupport",
+      "Description"
+    ];
+    for (const [key, val] of Object.entries(obj)) {
+      const matchedKey = expectedKeys.find(
+        (ek) => ek.toLowerCase() === key.toLowerCase()
+      );
+      if (matchedKey) {
+        normalized[matchedKey] = val;
+      } else {
+        normalized[key] = val;
+      }
+    }
+    return normalized;
+  };
 
   useEffect(() => {
     const fetchPseriesInvData = async () => {
@@ -60,7 +103,7 @@ const VerPseriesInv = () => {
         const resJson = await response.json();
 
         if (resJson.status === "success" && resJson.data) {
-          setData(resJson.data);
+          setData(normalizeKeys(resJson.data));
         } else {
           console.error("Estructura de datos inesperada:", resJson);
           setError("Estructura de datos inesperada del servidor");
@@ -78,44 +121,96 @@ const VerPseriesInv = () => {
     }
   }, [pserieId, token]);
 
-  const getSectionIcon = (title) => {
-    switch (title) {
-      case "Información General":
-        return <Server className="text-gray-500" size={16} />;
-      case "Especificaciones Técnicas":
-        return <Cpu className="text-gray-500" size={16} />;
-      case "Ubicación Física":
-        return <MapPin className="text-gray-500" size={16} />;
-      case "Garantía y Soporte":
-        return <Shield className="text-gray-500" size={16} />;
-      default:
-        return <Server className="text-gray-500" size={16} />;
-    }
+  const calculateRemainingDays = (endDateStr) => {
+    if (!endDateStr) return null;
+    const end = new Date(endDateStr);
+    if (isNaN(end.getTime())) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    const diffTime = end.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
-  const renderWarrantyBadge = (statusVal) => {
+  const getWarrantyInfo = (statusVal, endDateStr) => {
     const s = (statusVal || "").toLowerCase().trim();
+    const diffDays = calculateRemainingDays(endDateStr);
+
     if (s.includes("support") || s.includes("con soporte")) {
-      return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          Con Soporte
-        </span>
-      );
+      if (diffDays !== null) {
+        if (diffDays < 0) {
+          return {
+            badge: (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                Soporte Expirado
+              </span>
+            ),
+            text: `La garantía expiró hace ${Math.abs(diffDays)} días`
+          };
+        } else if (diffDays === 0) {
+          return {
+            badge: (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                Vence Hoy
+              </span>
+            ),
+            text: "El soporte expira el día de hoy"
+          };
+        } else if (diffDays <= 90) {
+          return {
+            badge: (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                Expira Pronto
+              </span>
+            ),
+            text: `Expira en ${diffDays} días`
+          };
+        } else {
+          return {
+            badge: (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Con Soporte
+              </span>
+            ),
+            text: `${diffDays} días restantes de garantía`
+          };
+        }
+      }
+      return {
+        badge: (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Con Soporte
+          </span>
+        ),
+        text: "Garantía con soporte activo"
+      };
     } else if (s.includes("expired") || s.includes("expirado")) {
-      return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-          Expirado
-        </span>
-      );
+      const daysText = diffDays !== null ? ` (hace ${Math.abs(diffDays)} días)` : "";
+      return {
+        badge: (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            Expirado
+          </span>
+        ),
+        text: `Garantía vencida${daysText}`
+      };
     } else {
-      return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-          {statusVal || "N/A"}
-        </span>
-      );
+      return {
+        badge: (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            {statusVal || "N/A"}
+          </span>
+        ),
+        text: "Sin detalles de tiempo restante"
+      };
     }
   };
 
@@ -179,13 +274,34 @@ const VerPseriesInv = () => {
   const renderFieldValue = (field) => {
     const val = data[field.key];
     if (field.type === "badge" && field.key === "WarrantyStatus") {
-      return renderWarrantyBadge(val);
+      const warranty = getWarrantyInfo(val, data.HWWarrantyEndDate);
+      return (
+        <div className="flex flex-col gap-1 items-start">
+          {warranty.badge}
+          <span className="text-[10px] font-medium text-gray-500">{warranty.text}</span>
+        </div>
+      );
     }
     if (field.type === "date") {
       return (
         <span className="text-sm font-semibold text-gray-800">
           {formatDate(val)}
         </span>
+      );
+    }
+    if ((field.key === "Hostname" || field.key === "SerialNumber") && val) {
+      return (
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-semibold text-gray-800">{val}</span>
+          <button
+            onClick={() => navigate(`${BASE_PATH}/pseries?search=${encodeURIComponent(val)}`)}
+            className="text-indigo-600 hover:text-indigo-800 text-[10px] font-extrabold underline flex items-center gap-0.5 print:hidden"
+            title="Buscar este host en Servicios Activos"
+          >
+            <ArrowUpRight size={10} />
+            <span>Ver Activo</span>
+          </button>
+        </div>
       );
     }
     return (
@@ -197,7 +313,7 @@ const VerPseriesInv = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-900 border-t-transparent mx-auto"></div>
           <p className="mt-4 text-sm font-medium text-gray-500">Cargando detalles de inventario PSeries...</p>
@@ -208,7 +324,7 @@ const VerPseriesInv = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50/30">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="bg-white border border-red-100 rounded-2xl shadow-sm p-8 max-w-md w-full text-center">
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mx-auto mb-4">
             <AlertCircle size={24} />
@@ -216,11 +332,11 @@ const VerPseriesInv = () => {
           <h3 className="text-lg font-bold text-gray-900 mb-2">Error al cargar datos</h3>
           <p className="text-sm text-gray-500 mb-6">{error}</p>
           <button
-            onClick={() => navigate(-1)}
+            onClick={onClose || (() => navigate(-1))}
             className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-medium text-sm transition-all shadow-sm"
           >
             <ArrowLeft size={16} />
-            <span>Volver a la lista</span>
+            <span>{isModal ? "Cerrar" : "Volver a la lista"}</span>
           </button>
         </div>
       </div>
@@ -228,9 +344,36 @@ const VerPseriesInv = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] text-gray-800 font-sans pb-12">
+    <div className={`${isModal ? "p-6" : "min-h-screen pb-12"} bg-[#fcfcfc] text-gray-800 font-sans print:bg-white print:pb-0`}>
+      {/* Print styles */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @media print {
+          body {
+            background-color: white !important;
+            color: black !important;
+          }
+          header, button, nav, aside, .print-hide, .no-print {
+            display: none !important;
+          }
+          main, .print-full {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+          }
+          .bg-white {
+            border: 1px solid #e5e7eb !important;
+            box-shadow: none !important;
+          }
+          .grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+      `}} />
+
       {/* Header */}
-      <header className="sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 bg-white/80 backdrop-blur-md rounded-t-xl mb-4 print:hidden">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <Server size={20} />
@@ -244,52 +387,73 @@ const VerPseriesInv = () => {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
-        >
-          <ArrowLeft size={16} />
-          <span>Regresar</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onClose || (() => navigate(-1))}
+            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+          >
+            <ArrowLeft size={16} />
+            <span>{isModal ? "Cerrar" : "Regresar"}</span>
+          </button>
+          {!isModal && (
+            <>
+              <button
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+                title="Imprimir ficha técnica"
+              >
+                <Printer size={16} />
+                <span>Imprimir</span>
+              </button>
+              <button
+                onClick={() => navigate(`${BASE_PATH}/editar/${pserieId}/pseries-inv`)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-medium transition-all shadow-sm border border-gray-900"
+              >
+                <Edit size={16} />
+                <span>Editar</span>
+              </button>
+            </>
+          )}
+        </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-8 mt-8">
+      <main className="max-w-7xl mx-auto px-8 mt-8 print:mt-0 print:px-0">
         {/* Banner principal rápido */}
-        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:mb-4">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Número de Serie</span>
             <span className="text-2xl font-bold text-gray-900">{data.SerialNumber || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Modelo</span>
             <span className="text-lg font-semibold text-gray-800">{data.Model || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Ubicación / Datacenter</span>
             <span className="text-lg font-semibold text-gray-800">{data.Location || "—"}</span>
           </div>
-          <div className="h-px md:h-12 w-full md:w-px bg-gray-100"></div>
+          <div className="h-px md:h-12 w-full md:w-px bg-gray-100 print:hidden"></div>
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Garantía</span>
-            <div>{renderWarrantyBadge(data.WarrantyStatus)}</div>
+            <div>{getWarrantyInfo(data.WarrantyStatus, data.HWWarrantyEndDate).badge}</div>
           </div>
         </div>
 
         {/* Secciones de Categorías */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:gap-4 print:grid-cols-2">
           {formSections.map((section, idx) => (
             <div key={idx} className="flex flex-col">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
+                <span className="w-1.5 h-4 bg-gray-900 rounded-full print:bg-black"></span>
                 <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
-              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1">
-                <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+              <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm flex-1 print:p-4">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-5 print:gap-y-3">
                   {section.fields.map((field) => (
                     <div key={field.key} className="flex flex-col">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
@@ -306,14 +470,14 @@ const VerPseriesInv = () => {
 
         {/* Descripción / Comentarios si existen */}
         {data.Description && (
-          <div className="mt-8 flex flex-col">
+          <div className="mt-8 flex flex-col print:mt-4">
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-1.5 h-4 bg-gray-900 rounded-full"></span>
+              <span className="w-1.5 h-4 bg-gray-900 rounded-full print:bg-black"></span>
               <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
                 Descripción / Comentarios
               </h3>
             </div>
-            <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-gray-200/60 rounded-2xl p-6 shadow-sm print:p-4">
               <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
                 {data.Description}
               </p>
@@ -326,3 +490,7 @@ const VerPseriesInv = () => {
 };
 
 export default VerPseriesInv;
+
+
+
+

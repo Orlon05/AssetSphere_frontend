@@ -304,7 +304,7 @@ export default function EditarSucursal() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200">
         <div>
@@ -488,3 +488,7 @@ export default function EditarSucursal() {
     </div>
   );
 }
+
+
+
+

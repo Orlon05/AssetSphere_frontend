@@ -39,16 +39,25 @@ import {
   ArrowUpRight,
   Activity,
   Layers,
+  X,
 } from "lucide-react";
 import ExcelImporter from "../../../hooks/Excelimporter";
 import { createRoot } from "react-dom/client";
+import CrearStorage from "./crearStorage";
+import EditarStorage from "./editarStorage";
+import VerStorage from "./verStorage";
+import EditarStorageInv from "./editarStorageInv";
+import VerStorageInv from "./verStorageInv";
 
 export default function Storage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const searchParam = new URLSearchParams(location.search).get("search") || "";
 
   // Estados principales del componente
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(searchParam);
+  const [activeModal, setActiveModal] = useState(null); // 'create' | 'edit' | 'view' | 'create_inv' | 'edit_inv' | null
+  const [activeId, setActiveId] = useState(null);
   const [storageList, setStorageList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,7 +65,7 @@ export default function Storage() {
   const [invError, setInvError] = useState("");
   const [invHeaders, setInvHeaders] = useState([]);
   const [invRows, setInvRows] = useState([]);
-  const [invSearchValue, setInvSearchValue] = useState("");
+  const [invSearchValue, setInvSearchValue] = useState(searchParam);
   const [invCurrentPage, setInvCurrentPage] = useState(1);
   const [invRowsPerPage, setInvRowsPerPage] = useState(25);
   const [selectedInvRows, setSelectedInvRows] = useState(new Set());
@@ -420,8 +429,15 @@ export default function Storage() {
 
   // Efectos para cargar datos y manejar búsquedas
   useEffect(() => {
-    if (!isInv) fetchStorage(currentPage, rowsPerPage);
-  }, [currentPage, rowsPerPage]);
+    if (!isInv) {
+      const param = new URLSearchParams(location.search).get("search") || "";
+      if (param) {
+        fetchSearch(param);
+      } else {
+        fetchStorage(currentPage, rowsPerPage);
+      }
+    }
+  }, [currentPage, rowsPerPage, isInv, location.search]);
 
   useEffect(() => {
     setShowSearch(selectedCount === 0);
@@ -649,22 +665,29 @@ export default function Storage() {
 
         const importer = (
           <ExcelImporter
+            uploadUrl={`${API_URL}/inv/upload?type=storage`}
             onImportComplete={async (importedData) => {
               try {
-                Swal.close();
-                Swal.fire({
-                  title: "Guardando inventario Storage...",
-                  allowOutsideClick: false,
-                  showConfirmButton: false,
-                  didOpen: () => Swal.showLoading(),
-                });
-
                 let message = "Inventario Storage importado.";
 
                 if (importedData && typeof importedData === "object" && importedData.batch_id) {
                   // El archivo ya fue subido directamente al backend
                   message = `Se subió el archivo correctamente. Storage: ${importedData.storage_rows}, Pseries: ${importedData.pseries_rows}.`;
+                  
+                  Swal.fire({
+                    icon: "success",
+                    title: "Inventario Storage importado",
+                    text: message,
+                  });
                 } else {
+                  Swal.close();
+                  Swal.fire({
+                    title: "Guardando inventario Storage...",
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading(),
+                  });
+
                   const response = await fetch(`${API_URL}/inv/storage/import`, {
                     method: "POST",
                     headers: {
@@ -681,13 +704,13 @@ export default function Storage() {
 
                   const data = await response.json();
                   message = `Se guardaron ${data.data.inserted_rows} filas en storage_inventory.`;
-                }
 
-                Swal.fire({
-                  icon: "success",
-                  title: "Inventario Storage importado",
-                  text: message,
-                });
+                  Swal.fire({
+                    icon: "success",
+                    title: "Inventario Storage importado",
+                    text: message,
+                  });
+                }
 
                 if (isInv) {
                   await loadInvData();
@@ -1226,7 +1249,7 @@ export default function Storage() {
     const compactHeaders = compactHeaderIndices.map((i) => invHeaders[i]);
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
         <Header title="Inventario Storage" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1325,7 +1348,7 @@ export default function Storage() {
 
                   <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
                     <button
-                      onClick={handleAddManualInventory}
+                      onClick={() => setActiveModal('create_inv')}
                       className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
                       title="Agregar nuevo dato manualmente"
                     >
@@ -1373,12 +1396,12 @@ export default function Storage() {
                           title="Seleccionar todo"
                         />
                       </th>
-                      <th className="as-th sticky left-12 bg-white z-20">Acciones</th>
                       {compactHeaders.map((h, idx) => (
                         <th key={`${h}-${idx}`} className="as-th whitespace-nowrap">
                           {h}
                         </th>
                       ))}
+                      <th className="as-th text-right">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1394,24 +1417,41 @@ export default function Storage() {
                               title="Seleccionar fila"
                             />
                           </td>
-                          <td className="as-td sticky left-12 bg-white z-10 border-r border-slate-200">
-                            <div className="flex items-center space-x-2">
-                              <button
-                                type="button"
-                                onClick={() => handleViewInventoryRow(row)}
-                                className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
-                                title="Ver completo"
-                              >
-                                <Eye size={18} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleEditInventoryRow(row)}
-                                className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
-                                title="Editar"
-                              >
-                                <Edit size={18} />
-                              </button>
+                          {compactHeaderIndices.map((ci) => (
+                            <td key={ci} className="as-td whitespace-nowrap">
+                              {String(row[ci] ?? "").slice(0, 60) || "—"}
+                            </td>
+                          ))}
+                          <td className="as-td text-right">
+                            <div className="flex items-center justify-end space-x-2">
+                               <button
+                                 type="button"
+                                 onClick={() => {
+                                   const rowId = getInventoryRowId(row);
+                                   if (rowId) {
+                                     setActiveId(rowId);
+                                     setActiveModal('view_inv');
+                                   }
+                                 }}
+                                 className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
+                                 title="Ver completo"
+                               >
+                                 <Eye size={18} />
+                               </button>
+                               <button
+                                 type="button"
+                                 onClick={() => {
+                                   const rowId = getInventoryRowId(row);
+                                   if (rowId) {
+                                     setActiveId(rowId);
+                                     setActiveModal('edit_inv');
+                                   }
+                                 }}
+                                 className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                                 title="Editar"
+                               >
+                                 <Edit size={18} />
+                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleDeleteInventoryRow(row)}
@@ -1422,17 +1462,12 @@ export default function Storage() {
                               </button>
                             </div>
                           </td>
-                          {compactHeaderIndices.map((ci) => (
-                            <td key={ci} className="as-td whitespace-nowrap">
-                              {String(row[ci] ?? "").slice(0, 60) || "—"}
-                            </td>
-                          ))}
                         </tr>
                       ))
                     ) : (
                       <tr>
                         <td
-                          colSpan={compactHeaders.length + 1 || 1}
+                          colSpan={compactHeaders.length + 2 || 1}
                           className="px-6 py-12 text-center text-slate-500 bg-white"
                         >
                           No hay datos
@@ -1502,13 +1537,100 @@ export default function Storage() {
             </>
           )}
         </main>
+        {/* Modals Flotantes CRUD */}
+        {activeModal && (
+          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {activeModal === 'create' && "Crear Dispositivo Storage"}
+                  {activeModal === 'edit' && "Editar Dispositivo Storage"}
+                  {activeModal === 'view' && "Detalles del Dispositivo Storage"}
+                  {activeModal === 'create_inv' && "Crear Registro Inventario Storage"}
+                  {activeModal === 'edit_inv' && "Editar Registro Inventario Storage"}
+                  {activeModal === 'view_inv' && "Detalles de Inventario Storage"}
+                </h2>
+                <button
+                  onClick={() => { setActiveModal(null); setActiveId(null); }}
+                  className="p-1.5 hover:bg-slate-200/50 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+                {activeModal === 'create' && (
+                  <CrearStorage
+                    isModal
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchStorage(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'edit' && (
+                  <EditarStorage
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchStorage(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'view' && (
+                  <VerStorage
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+                {activeModal === 'create_inv' && (
+                  <EditarStorageInv
+                    isModal
+                    isCreate
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'edit_inv' && (
+                  <EditarStorageInv
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'view_inv' && (
+                  <VerStorageInv
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-as-brand-600 mb-4"></div>
           <p className="text-as-muted">Cargando dispositivos de storage...</p>
@@ -1519,7 +1641,7 @@ export default function Storage() {
 
   if (error) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="as-card p-6 max-w-md w-full">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
           <p className="text-as-text">
@@ -1546,7 +1668,7 @@ export default function Storage() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <Header title="Dispositivos de Storage" />
 
@@ -1619,7 +1741,7 @@ export default function Storage() {
 
             <div className="flex items-center gap-2 flex-wrap">
               <button
-                onClick={irCrear}
+                onClick={() => setActiveModal('create')}
                 className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
               >
                 <Plus size={16} />
@@ -1714,28 +1836,26 @@ export default function Storage() {
                         </td>
                         <td className="as-td text-right">
                           <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
-                            <button
-                              onClick={() =>
-                                navigate(
-                                  `${BASE_PATH}/ver/${storage.id}/storages`
-                                )
-                              }
-                              className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
-                              title="Ver detalles"
-                            >
-                              <Eye size={18} />
-                            </button>
-                            <button
-                              onClick={() =>
-                                navigate(
-                                  `${BASE_PATH}/editar/${storage.id}/storages`
-                                )
-                              }
-                              className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
-                              title="Editar"
-                            >
-                              <Edit size={18} />
-                            </button>
+                             <button
+                               onClick={() => {
+                                 setActiveId(storage.id);
+                                 setActiveModal('view');
+                               }}
+                               className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
+                               title="Ver detalles"
+                             >
+                               <Eye size={18} />
+                             </button>
+                             <button
+                               onClick={() => {
+                                 setActiveId(storage.id);
+                                 setActiveModal('edit');
+                               }}
+                               className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                               title="Editar"
+                             >
+                               <Edit size={18} />
+                             </button>
                             <button
                               onClick={() => handleDeleteStorage(storage.id)}
                               className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -1816,7 +1936,91 @@ export default function Storage() {
             </div>
           </div>
         </div>
+        {/* Modals Flotantes CRUD */}
+        {activeModal && (
+          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {activeModal === 'create' && "Crear Dispositivo Storage"}
+                  {activeModal === 'edit' && "Editar Dispositivo Storage"}
+                  {activeModal === 'view' && "Detalles del Dispositivo Storage"}
+                  {activeModal === 'create_inv' && "Crear Registro Inventario Storage"}
+                  {activeModal === 'edit_inv' && "Editar Registro Inventario Storage"}
+                </h2>
+                <button
+                  onClick={() => { setActiveModal(null); setActiveId(null); }}
+                  className="p-1.5 hover:bg-slate-200/50 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+                {activeModal === 'create' && (
+                  <CrearStorage
+                    isModal
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchStorage(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'edit' && (
+                  <EditarStorage
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchStorage(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'view' && (
+                  <VerStorage
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+                {activeModal === 'create_inv' && (
+                  <EditarStorageInv
+                    isModal
+                    isCreate
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'edit_inv' && (
+                  <EditarStorageInv
+                    isModal
+                    storageId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
 }
+
+
+
+

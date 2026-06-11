@@ -59,7 +59,11 @@ const InputField = ({
   </div>
 );
 
-const EditarServidorFisico = () => {
+const EditarServidorFisico = ({ serverId: propServerId, onClose }) => {
+  const { serverId: urlServerId } = useParams(); // ID del servidor desde la URL
+  const serverId = propServerId || urlServerId;
+  const isModal = !!propServerId;
+
   // Estado consolidado del formulario con todos los campos del servidor físico
   const [formData, setFormData] = useState({
     serial_number: "",
@@ -115,7 +119,6 @@ const EditarServidorFisico = () => {
   const [loading, setLoading] = useState(true); // Estado de carga inicial
   const [error, setError] = useState(null); // Estado de error
   const navigate = useNavigate();
-  const { serverId } = useParams(); // ID del servidor desde la URL
   const token = localStorage.getItem("authenticationToken");
 
   // Configuración de notificaciones toast
@@ -227,7 +230,8 @@ const EditarServidorFisico = () => {
 
       // Éxito: mostrar toast y navegar de vuelta
       showSuccessToast();
-      navigate("/AssetSphere/servidoresf");
+      if (onClose) onClose();
+      else navigate("/AssetSphere/servidoresf");
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -259,7 +263,7 @@ const EditarServidorFisico = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header con información del servidor que se está editando */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
@@ -560,7 +564,7 @@ const EditarServidorFisico = () => {
               {/* Botón Cancelar */}
               <button
                 type="button"
-                onClick={() => navigate("/AssetSphere/servidoresf")}
+                onClick={onClose || (() => navigate("/AssetSphere/servidoresf"))}
                 className="flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
               >
                 <MdArrowBack size={18} className="mr-2" />
@@ -583,3 +587,7 @@ const EditarServidorFisico = () => {
 };
 
 export default EditarServidorFisico;
+
+
+
+

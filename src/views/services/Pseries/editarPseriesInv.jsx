@@ -58,14 +58,31 @@ const SelectField = ({
   </div>
 );
 
-const EditarPseriesInv = () => {
+const EditarPseriesInv = ({ pserieId: propPserieId, onClose, onSuccess, isModal, isCreate }) => {
   const navigate = useNavigate();
-  const { pserieId } = useParams();
+  const { pserieId: routePserieId } = useParams();
+  const pserieId = propPserieId || routePserieId;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isCreate);
   const [error, setError] = useState(null);
   const BASE_PATH = "/AssetSphere";
   const token = localStorage.getItem("authenticationToken");
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/pseries-inv`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/pseries-inv`);
+    }
+  };
 
   const [formData, setFormData] = useState({
     GPS: "",
@@ -96,6 +113,10 @@ const EditarPseriesInv = () => {
   ];
 
   useEffect(() => {
+    if (isCreate) {
+      setLoading(false);
+      return;
+    }
     const fetchPseriesData = async () => {
       setLoading(true);
       setError(null);
@@ -130,10 +151,35 @@ const EditarPseriesInv = () => {
       }
     };
 
-    if (pserieId) {
+    if (pserieId && !isCreate) {
       fetchPseriesData();
     }
-  }, [pserieId, token]);
+  }, [pserieId, token, isCreate]);
+
+  // Auto-calculate WarrantyStatus based on HWWarrantyEndDate
+  useEffect(() => {
+    if (loading) return; // Don't override during initial data load
+    if (formData.HWWarrantyEndDate) {
+      const parts = formData.HWWarrantyEndDate.split("-");
+      if (parts.length === 3) {
+        const [year, month, day] = parts.map(Number);
+        const endDate = new Date(year, month - 1, day);
+        if (!isNaN(endDate.getTime())) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          endDate.setHours(0, 0, 0, 0);
+
+          const newStatus = endDate < today ? "Expired" : "With Support";
+          if (formData.WarrantyStatus !== newStatus) {
+            setFormData((prev) => ({
+              ...prev,
+              WarrantyStatus: newStatus,
+            }));
+          }
+        }
+      }
+    }
+  }, [formData.HWWarrantyEndDate, loading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -152,8 +198,13 @@ const EditarPseriesInv = () => {
       delete payload.id;
       delete payload.created_at;
 
-      const response = await fetch(`${API_URL}/inv/pseries/${pserieId}`, {
-        method: "PUT",
+      const url = isCreate 
+        ? `${API_URL}/inv/pseries` 
+        : `${API_URL}/inv/pseries/${pserieId}`;
+      const method = isCreate ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -168,12 +219,12 @@ const EditarPseriesInv = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Registro actualizado",
-        text: "Los cambios se guardaron correctamente.",
+        title: isCreate ? "Registro creado" : "Registro actualizado",
+        text: isCreate ? "El registro se creó correctamente." : "Los cambios se guardaron correctamente.",
         timer: 2000,
         showConfirmButton: false,
       });
-      navigate(`${BASE_PATH}/pseries-inv`);
+      handleDone();
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -198,17 +249,17 @@ const EditarPseriesInv = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/pseries-inv`);
+        handleClose();
       }
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando detalles de inventario de la PSeries...</p>
+          <p className="text-sm font-medium text-gray-500">Cargando detalles de inventario de la PSeries...</p>
         </div>
       </div>
     );
@@ -216,12 +267,12 @@ const EditarPseriesInv = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p>{error}</p>
+          <p className="text-gray-800 mb-4">{error}</p>
           <button
-            onClick={() => navigate(`${BASE_PATH}/pseries-inv`)}
+            onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             Volver al inventario
@@ -232,17 +283,18 @@ const EditarPseriesInv = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className={isModal ? "p-6 bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
-            Editar Registro Inventario PSeries
+            {isCreate ? "Crear Registro Inventario PSeries" : "Editar Registro Inventario PSeries"}
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Modifica la información del servidor de inventario{" "}
-            <span className="font-bold">{formData.SerialNumber}</span>
+            {isCreate 
+              ? "Ingresa la información del nuevo registro de inventario" 
+              : `Modifica la información del servidor de inventario ${formData.SerialNumber || ""}`}
           </p>
         </div>
         <button
@@ -250,13 +302,13 @@ const EditarPseriesInv = () => {
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -454,3 +506,7 @@ const EditarPseriesInv = () => {
 };
 
 export default EditarPseriesInv;
+
+
+
+

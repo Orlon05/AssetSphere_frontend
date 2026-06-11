@@ -22,6 +22,11 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ReportesPseries from "./ReportesPseries";
+import CrearPseries from "./crearPserie";
+import EditarPseries from "./editarPseries";
+import VerPseries from "./verPseries";
+import EditarPseriesInv from "./editarPseriesInv";
+import VerPseriesInv from "./verPseriesInv";
 import {
   Search,
   Server,
@@ -50,9 +55,12 @@ import ExcelImporter from "../../../hooks/Excelimporter";
 const Pseries = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const searchParam = new URLSearchParams(location.search).get("search") || "";
 
   // Estados principales del componente
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(searchParam);
+  const [activeModal, setActiveModal] = useState(null); // 'create' | 'edit' | 'view' | 'create_inv' | 'edit_inv' | null
+  const [activeId, setActiveId] = useState(null);
   const [pseries, setPseries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +69,7 @@ const Pseries = () => {
   const [invError, setInvError] = useState("");
   const [invHeaders, setInvHeaders] = useState([]);
   const [invRows, setInvRows] = useState([]);
-  const [invSearchValue, setInvSearchValue] = useState("");
+  const [invSearchValue, setInvSearchValue] = useState(searchParam);
   const [invCurrentPage, setInvCurrentPage] = useState(1);
   const [invRowsPerPage, setInvRowsPerPage] = useState(25);
   const [selectedInvRows, setSelectedInvRows] = useState(new Set());
@@ -226,10 +234,17 @@ const Pseries = () => {
     }
   };
 
-  // Efecto para cargar datos iniciales
+  // Efecto para cargar datos iniciales o manejar búsquedas vía URL
   useEffect(() => {
-    if (!isInv) fetchPseries(currentPage, rowsPerPage);
-  }, [currentPage, rowsPerPage, isInv]);
+    if (!isInv) {
+      const param = new URLSearchParams(location.search).get("search") || "";
+      if (param) {
+        fetchSearch(param);
+      } else {
+        fetchPseries(currentPage, rowsPerPage);
+      }
+    }
+  }, [currentPage, rowsPerPage, isInv, location.search]);
 
   // Efecto para manejar búsquedas
   useEffect(() => {
@@ -442,21 +457,28 @@ const Pseries = () => {
 
         const importer = (
           <ExcelImporter
+            uploadUrl={`${API_URL}/inv/upload?type=pseries`}
             onImportComplete={async (importedData) => {
               try {
-                Swal.close();
-                Swal.fire({
-                  title: "Guardando inventario Pseries...",
-                  allowOutsideClick: false,
-                  showConfirmButton: false,
-                  didOpen: () => Swal.showLoading(),
-                });
-
                 let message = "Inventario Pseries importado.";
 
                 if (importedData && typeof importedData === "object" && importedData.batch_id) {
                   message = `Se subió el archivo correctamente. Pseries: ${importedData.pseries_rows}, Storage: ${importedData.storage_rows}.`;
+                  
+                  Swal.fire({
+                    icon: "success",
+                    title: "Inventario Pseries importado",
+                    text: message,
+                  });
                 } else {
+                  Swal.close();
+                  Swal.fire({
+                    title: "Guardando inventario Pseries...",
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading(),
+                  });
+
                   const response = await fetch(`${API_URL}/inv/pseries/import`, {
                     method: "POST",
                     headers: {
@@ -473,13 +495,13 @@ const Pseries = () => {
 
                   const data = await response.json();
                   message = `Se guardaron ${data.data.inserted_rows} filas en pseries_inventory.`;
-                }
 
-                Swal.fire({
-                  icon: "success",
-                  title: "Inventario Pseries importado",
-                  text: message,
-                });
+                  Swal.fire({
+                    icon: "success",
+                    title: "Inventario Pseries importado",
+                    text: message,
+                  });
+                }
 
                 if (isInv) {
                   await loadInvData();
@@ -1350,7 +1372,7 @@ const Pseries = () => {
     const compactHeaders = compactHeaderIndices.map((i) => invHeaders[i]);
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
         <Header title="Inventario PSeries" />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1449,7 +1471,7 @@ const Pseries = () => {
 
                   <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
                     <button
-                      onClick={handleAddManualInventory}
+                      onClick={() => setActiveModal('create_inv')}
                       className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0"
                       title="Agregar nuevo dato manualmente"
                     >
@@ -1527,7 +1549,13 @@ const Pseries = () => {
                             <div className="flex items-center justify-end space-x-2">
                               <button
                                 type="button"
-                                onClick={() => navigate(`${BASE_PATH}/ver/${getInventoryRowId(row)}/pseries-inv`)}
+                                onClick={() => {
+                                  const rowId = getInventoryRowId(row);
+                                  if (rowId) {
+                                    setActiveId(rowId);
+                                    setActiveModal('view_inv');
+                                  }
+                                }}
                                 className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
                                 title="Ver completo"
                               >
@@ -1535,7 +1563,13 @@ const Pseries = () => {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => handleEditInventoryRow(row)}
+                                onClick={() => {
+                                  const rowId = getInventoryRowId(row);
+                                  if (rowId) {
+                                    setActiveId(rowId);
+                                    setActiveModal('edit_inv');
+                                  }
+                                }}
                                 className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                                 title="Editar"
                               >
@@ -1626,13 +1660,100 @@ const Pseries = () => {
             </>
           )}
         </main>
+        {/* Modals Flotantes CRUD */}
+        {activeModal && (
+          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {activeModal === 'create' && "Crear Servidor PSeries"}
+                  {activeModal === 'edit' && "Editar Servidor PSeries"}
+                  {activeModal === 'view' && "Detalles del Servidor PSeries"}
+                  {activeModal === 'create_inv' && "Crear Registro Inventario PSeries"}
+                  {activeModal === 'edit_inv' && "Editar Registro Inventario PSeries"}
+                  {activeModal === 'view_inv' && "Detalles de Inventario PSeries"}
+                </h2>
+                <button
+                  onClick={() => { setActiveModal(null); setActiveId(null); }}
+                  className="p-1.5 hover:bg-slate-200/50 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+                {activeModal === 'create' && (
+                  <CrearPseries
+                    isModal
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchPseries(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'edit' && (
+                  <EditarPseries
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchPseries(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'view' && (
+                  <VerPseries
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+                {activeModal === 'create_inv' && (
+                  <EditarPseriesInv
+                    isModal
+                    isCreate
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'edit_inv' && (
+                  <EditarPseriesInv
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'view_inv' && (
+                  <VerPseriesInv
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-as-brand-600 mb-4"></div>
           <p className="text-as-muted">Cargando servidores PSeries...</p>
@@ -1643,7 +1764,7 @@ const Pseries = () => {
 
   if (error) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="as-card p-6 max-w-md w-full">
           <div className="flex items-center gap-3 mb-3">
             <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
@@ -1667,7 +1788,7 @@ const Pseries = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <Header title="Servidores PSeries" />
 
@@ -1761,7 +1882,7 @@ const Pseries = () => {
 
             <div className="flex items-center gap-2 justify-end w-full lg:w-auto overflow-x-auto lg:overflow-visible flex-nowrap lg:flex-wrap">
               <button
-                onClick={irCrear}
+                onClick={() => setActiveModal('create')}
                 className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2 shrink-0"
               >
                 <Plus size={16} />
@@ -1862,20 +1983,20 @@ const Pseries = () => {
                       <td className="as-td text-right">
                         <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
                           <button
-                            onClick={() =>
-                              navigate(`${BASE_PATH}/ver/${pserie.id}/pseries`)
-                            }
+                            onClick={() => {
+                              setActiveId(pserie.id);
+                              setActiveModal('view');
+                            }}
                             className="p-2 text-slate-400 hover:text-as-brand-600 hover:bg-as-brand-50 rounded-lg transition-all"
                             title="Ver detalles"
                           >
                             <Eye size={18} />
                           </button>
                           <button
-                            onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/editar/${pserie.id}/pseries`
-                              )
-                            }
+                            onClick={() => {
+                              setActiveId(pserie.id);
+                              setActiveModal('edit');
+                            }}
                             className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                             title="Editar"
                           >
@@ -1989,9 +2110,94 @@ const Pseries = () => {
             </div>
           </div>
         )}
+
+        {/* Modals Flotantes CRUD */}
+        {activeModal && (
+          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {activeModal === 'create' && "Crear Servidor PSeries"}
+                  {activeModal === 'edit' && "Editar Servidor PSeries"}
+                  {activeModal === 'view' && "Detalles del Servidor PSeries"}
+                  {activeModal === 'create_inv' && "Crear Registro Inventario PSeries"}
+                  {activeModal === 'edit_inv' && "Editar Registro Inventario PSeries"}
+                </h2>
+                <button
+                  onClick={() => { setActiveModal(null); setActiveId(null); }}
+                  className="p-1.5 hover:bg-slate-200/50 rounded-lg text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
+                {activeModal === 'create' && (
+                  <CrearPseries
+                    isModal
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchPseries(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'edit' && (
+                  <EditarPseries
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      fetchPseries(currentPage, rowsPerPage);
+                    }}
+                  />
+                )}
+                {activeModal === 'view' && (
+                  <VerPseries
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                  />
+                )}
+                {activeModal === 'create_inv' && (
+                  <EditarPseriesInv
+                    isModal
+                    isCreate
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+                {activeModal === 'edit_inv' && (
+                  <EditarPseriesInv
+                    isModal
+                    pserieId={activeId}
+                    onClose={() => { setActiveModal(null); setActiveId(null); }}
+                    onSuccess={() => {
+                      setActiveModal(null);
+                      setActiveId(null);
+                      loadInvData();
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
 };
 
 export default Pseries;
+
+
+
+

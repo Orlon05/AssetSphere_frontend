@@ -7,6 +7,8 @@ import {Database, Search, Eye, Edit, Trash2, ChevronLeft, ChevronRight, Download
 import ExcelImporter from "../../../hooks/Excelimporter";
 import Logo from "../../../IMG/Tcs.png";
 import Header from "../../../components/Header";
+import VerDatabase from "./verbasededatos";
+import EditarBaseDatos from "./Editarbasededatos";
 
 /**
  * Componente principal para la gestión de bases de datos
@@ -28,6 +30,7 @@ const BaseDeDatos = () => {
   const [base_datos, setBasesDeDatos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeModal, setActiveModal] = useState({ type: null, id: null });
 
   // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -645,7 +648,7 @@ const BaseDeDatos = () => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mb-4"></div>
           <p className="text-gray-600">Cargando bases de datos...</p>
@@ -656,7 +659,7 @@ const BaseDeDatos = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="bg-white border border-gray-200 rounded-lg max-w-md w-full p-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
@@ -684,7 +687,7 @@ const BaseDeDatos = () => {
   const activeBases = base_datos.filter(bd => bd.inactive === "False" || bd.inactive === false || bd.inactive === "0" || !bd.inactive).length;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <Header title="Bases de Datos" />
 
@@ -855,9 +858,7 @@ const BaseDeDatos = () => {
                         <div className="flex items-center justify-end space-x-1 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/ver/${baseDeDatos.id}/base-de-datos`
-                              )
+                              setActiveModal({ type: "view", id: baseDeDatos.id })
                             }
                             className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Ver detalles"
@@ -866,9 +867,7 @@ const BaseDeDatos = () => {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(
-                                `${BASE_PATH}/editar/${baseDeDatos.id}/base-de-datos`
-                              )
+                              setActiveModal({ type: "edit", id: baseDeDatos.id })
                             }
                             className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                             title="Editar"
@@ -955,8 +954,29 @@ const BaseDeDatos = () => {
           </div>
         </div>
       </main>
+      {activeModal.type === "view" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+            <VerDatabase baseDatosId={activeModal.id} onClose={() => setActiveModal({ type: null, id: null })} />
+          </div>
+        </div>
+      )}
+      {activeModal.type === "edit" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100">
+            <EditarBaseDatos baseDatosId={activeModal.id} onClose={() => {
+              setActiveModal({ type: null, id: null });
+              fetchBasesDeDatos(currentPage, rowsPerPage);
+            }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default BaseDeDatos;
+
+
+
+

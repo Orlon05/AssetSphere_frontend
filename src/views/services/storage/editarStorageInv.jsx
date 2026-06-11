@@ -58,14 +58,31 @@ const SelectField = ({
   </div>
 );
 
-const EditarStorageInv = () => {
+const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModal, isCreate }) => {
   const navigate = useNavigate();
-  const { storageId } = useParams();
+  const { storageId: routeStorageId } = useParams();
+  const storageId = propStorageId || routeStorageId;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isCreate);
   const [error, setError] = useState(null);
   const BASE_PATH = "/AssetSphere";
   const token = localStorage.getItem("authenticationToken");
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/storage-inv`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/storage-inv`);
+    }
+  };
 
   const [formData, setFormData] = useState({
     GPS: "",
@@ -98,6 +115,10 @@ const EditarStorageInv = () => {
   ];
 
   useEffect(() => {
+    if (isCreate) {
+      setLoading(false);
+      return;
+    }
     const fetchStorageData = async () => {
       setLoading(true);
       setError(null);
@@ -132,10 +153,35 @@ const EditarStorageInv = () => {
       }
     };
 
-    if (storageId) {
+    if (storageId && !isCreate) {
       fetchStorageData();
     }
-  }, [storageId, token]);
+  }, [storageId, token, isCreate]);
+
+  // Auto-calculate WarrantyStatus based on HWWarrantyEndDate
+  useEffect(() => {
+    if (loading) return; // Don't override during initial data load
+    if (formData.HWWarrantyEndDate) {
+      const parts = formData.HWWarrantyEndDate.split("-");
+      if (parts.length === 3) {
+        const [year, month, day] = parts.map(Number);
+        const endDate = new Date(year, month - 1, day);
+        if (!isNaN(endDate.getTime())) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          endDate.setHours(0, 0, 0, 0);
+
+          const newStatus = endDate < today ? "Expired" : "With Support";
+          if (formData.WarrantyStatus !== newStatus) {
+            setFormData((prev) => ({
+              ...prev,
+              WarrantyStatus: newStatus,
+            }));
+          }
+        }
+      }
+    }
+  }, [formData.HWWarrantyEndDate, loading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -154,8 +200,13 @@ const EditarStorageInv = () => {
       delete payload.id;
       delete payload.created_at;
 
-      const response = await fetch(`${API_URL}/inv/storage/${storageId}`, {
-        method: "PUT",
+      const url = isCreate 
+        ? `${API_URL}/inv/storage` 
+        : `${API_URL}/inv/storage/${storageId}`;
+      const method = isCreate ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -170,12 +221,12 @@ const EditarStorageInv = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Registro actualizado",
-        text: "Los cambios se guardaron correctamente.",
+        title: isCreate ? "Registro creado" : "Registro actualizado",
+        text: isCreate ? "El registro se creó correctamente." : "Los cambios se guardaron correctamente.",
         timer: 2000,
         showConfirmButton: false,
       });
-      navigate(`${BASE_PATH}/storage-inv`);
+      handleDone();
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -200,17 +251,17 @@ const EditarStorageInv = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/storage-inv`);
+        handleClose();
       }
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando detalles de inventario del Storage...</p>
+          <p className="text-sm font-medium text-gray-500">Cargando detalles de inventario del Storage...</p>
         </div>
       </div>
     );
@@ -218,12 +269,12 @@ const EditarStorageInv = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p>{error}</p>
+          <p className="text-gray-800 mb-4">{error}</p>
           <button
-            onClick={() => navigate(`${BASE_PATH}/storage-inv`)}
+            onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             Volver al inventario
@@ -234,17 +285,18 @@ const EditarStorageInv = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className={isModal ? "p-6 bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <HardDrive className="mr-2 text-blue-600" size={24} />
-            Editar Registro Inventario Storage
+            {isCreate ? "Crear Registro Inventario Storage" : "Editar Registro Inventario Storage"}
           </h1>
           <p className="text-sm font-semibold text-gray-900">
-            Modifica la información del dispositivo de inventario{" "}
-            <span className="font-bold">{formData.Hostname || formData.SerialNumber}</span>
+            {isCreate 
+              ? "Ingresa la información del nuevo registro de inventario" 
+              : `Modifica la información del dispositivo de inventario ${formData.Hostname || formData.SerialNumber || ""}`}
           </p>
         </div>
         <button
@@ -252,13 +304,13 @@ const EditarStorageInv = () => {
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -470,3 +522,7 @@ const EditarStorageInv = () => {
 };
 
 export default EditarStorageInv;
+
+
+
+

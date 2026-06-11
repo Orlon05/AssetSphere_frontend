@@ -439,13 +439,13 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
     });
 
     try {
-      // Si hay archivo original, subirlo al backend
-      if (originalFile) {
+      // Si hay un uploadUrl y un archivo original, subirlo al backend
+      if (uploadUrl && originalFile) {
         const formData = new FormData();
         formData.append("file", originalFile, originalFile.name);
 
         const token = localStorage.getItem("authenticationToken");
-        const resp = await fetch(`${API_URL}/inv/upload`, {
+        const resp = await fetch(uploadUrl, {
           method: "POST",
           body: formData,
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -457,7 +457,19 @@ const ExcelImporter = ({ onImportComplete, tableMetadata }) => {
         }
 
         const result = await resp.json();
-        Swal.fire({ icon: "success", title: "Archivo subido", text: `Batch ${result.data.batch_id}: Pseries ${result.data.pseries_rows}, Storage ${result.data.storage_rows}` });
+        
+        let msg = "Archivo subido exitosamente.";
+        if (result.data) {
+          const batchInfo = result.data.batch_id ? `Batch ${result.data.batch_id}: ` : '';
+          const pseriesCount = result.data.pseries_rows !== undefined ? result.data.pseries_rows : (result.data.pseries !== undefined ? result.data.pseries : '');
+          const storageCount = result.data.storage_rows !== undefined ? result.data.storage_rows : (result.data.storage !== undefined ? result.data.storage : '');
+          const pseriesInfo = pseriesCount !== '' ? `Pseries ${pseriesCount}` : '';
+          const storageInfo = storageCount !== '' ? `Storage ${storageCount}` : '';
+          const separator = pseriesInfo && storageInfo ? ', ' : '';
+          msg = `${batchInfo}${pseriesInfo}${separator}${storageInfo}` || msg;
+        }
+
+        Swal.fire({ icon: "success", title: "Archivo subido", text: msg });
 
         if (typeof onImportComplete === "function") {
           onImportComplete(result.data);
@@ -753,6 +765,11 @@ ExcelImporter.propTypes = {
       validation: PropTypes.func,
     })
   ).isRequired,
+
+  /**
+   * URL opcional para subir el archivo directamente al backend
+   */
+  uploadUrl: PropTypes.string,
 };
 
 /**
@@ -762,6 +779,7 @@ ExcelImporter.defaultProps = {
   onImportComplete: () => {
     console.log("Importación completada - No se proporcionó callback");
   },
+  uploadUrl: null,
 };
 
 export default ExcelImporter;

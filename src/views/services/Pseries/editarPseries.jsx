@@ -19,13 +19,30 @@ import Swal from "sweetalert2";
 import { ArrowLeft, Save, X, Server } from "lucide-react";
 import { API_URL } from "../../../config/api";
 
-const EditarPseries = () => {
+const EditarPseries = ({ pserieId: propPserieId, onClose, onSuccess, isModal }) => {
   const navigate = useNavigate();
-  const { pserieId } = useParams();
+  const { pserieId: routePserieId } = useParams();
+  const pserieId = propPserieId || routePserieId;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const BASE_PATH = "/AssetSphere";
+
+  const handleDone = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate(`${BASE_PATH}/pseries`);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(`${BASE_PATH}/pseries`);
+    }
+  };
 
   // Estados individuales para cada campo del formulario
   const [name, setName] = useState("");
@@ -268,7 +285,7 @@ const EditarPseries = () => {
         });
       } else {
         showSuccessToast();
-        navigate(`${BASE_PATH}/pseries`);
+        handleDone();
       }
     } catch (error) {
       console.error("Error inesperado:", error);
@@ -297,7 +314,7 @@ const EditarPseries = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate(`${BASE_PATH}/pseries`);
+        handleClose();
       }
     });
   };
@@ -305,10 +322,10 @@ const EditarPseries = () => {
   // Estados de carga y error
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p>Cargando detalles del servidor...</p>
+          <p className="text-sm font-medium text-gray-500">Cargando detalles del servidor...</p>
         </div>
       </div>
     );
@@ -316,15 +333,15 @@ const EditarPseries = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-800 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200">
+      <div className="flex items-center justify-center p-12 w-full bg-white">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-200 text-center">
           <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-          <p>{error}</p>
+          <p className="text-gray-800 mb-4">{error}</p>
           <button
-            onClick={() => navigate(`${BASE_PATH}/pseries`)}
+            onClick={handleClose}
             className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
-            Volver a la lista
+            Volver
           </button>
         </div>
       </div>
@@ -332,9 +349,9 @@ const EditarPseries = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className={isModal ? "p-6 bg-white text-gray-800" : "min-h-screen bg-gray-50 text-gray-800"}>
       {/* Header */}
-      <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
+      <header className={`w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center">
             <Server className="mr-2 text-blue-600" size={24} />
@@ -346,17 +363,17 @@ const EditarPseries = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate(`${BASE_PATH}/pseries`)}
+          onClick={handleCancel}
           className="flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-medium transition-colors"
         >
           <ArrowLeft className="mr-2" size={20} />
-          Regresar
+          {isModal ? "Cerrar" : "Regresar"}
         </button>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+      <main className={isModal ? "" : "container mx-auto p-6"}>
+        <div className={isModal ? "bg-white" : "bg-white rounded-lg shadow-md p-6 border border-gray-200"}>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Sección: Información Básica */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -865,3 +882,7 @@ const EditarPseries = () => {
 };
 
 export default EditarPseries;
+
+
+
+

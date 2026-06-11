@@ -305,7 +305,7 @@ const ReportesPseries = ({ embedded = false }) => {
 
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mb-4"></div>
           <p className="text-as-muted">Cargando reportes...</p>
@@ -316,7 +316,7 @@ const ReportesPseries = ({ embedded = false }) => {
 
   if (error) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="as-card p-6 max-w-md w-full">
           <div className="flex items-center gap-3 mb-3">
             <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center">
@@ -662,3 +662,7 @@ const ReportesPseries = ({ embedded = false }) => {
 };
 
 export default ReportesPseries;
+
+
+
+

@@ -121,7 +121,7 @@ export default function VerSucursal() {
 
   if (loading) {
     return (
-      <div className="as-page flex items-center justify-center">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center">
         <div className="text-center flex flex-col items-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-as-brand-500 border-t-transparent mb-4"></div>
           <p className="text-as-text font-medium">Cargando información de la sucursal...</p>
@@ -132,7 +132,7 @@ export default function VerSucursal() {
 
   if (error || !sucursal) {
     return (
-      <div className="as-page flex items-center justify-center p-6">
+      <div className="min-h-screen w-full text-gray-800 dark:text-slate-100 flex items-center justify-center p-6">
         <div className="as-card max-w-md w-full p-8 text-center">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <AlertCircle size={32} />
@@ -153,7 +153,7 @@ export default function VerSucursal() {
   }
 
   return (
-    <div className="as-page">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header */}
       <header className="w-full px-6 py-5 flex justify-between items-center bg-white border-b border-as-border shadow-sm">
         <div>
@@ -603,3 +603,7 @@ export default function VerSucursal() {
     </div>
   );
 }
+
+
+
+

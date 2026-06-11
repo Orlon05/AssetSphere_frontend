@@ -62,9 +62,11 @@ const Login = () => {
   };
 
   useEffect(() => {
-  if (user.token) navigate("/AssetSphere/dashboard");
-}, [user.token, navigate]);
-
+    // Forzar modo claro en la vista de login
+    window.document.documentElement.classList.remove("dark");
+    
+    if (user.token) navigate("/AssetSphere/dashboard");
+  }, [user.token, navigate]);
 
   return (
     !user.token && (
@@ -84,7 +86,7 @@ const Login = () => {
         {modalError && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-              <h2 className="text-xl font-bold text-red-600 mb-2">Error</h2>
+              <h2 className="text-xl font-bold text-red-650 mb-2">Error</h2>
               <p className="text-gray-700 mb-4">{errorMessage}</p>
               <div className="text-right">
                 <button
@@ -99,11 +101,40 @@ const Login = () => {
         )}
 
         <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
+          <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10 overflow-hidden">
+            {isLoading && !isSuccess && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl z-30 transition-all duration-300">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full border-4 border-slate-900/10 border-t-slate-900 animate-spin"></div>
+                    <img src={Logo} alt="Logo" className="absolute w-8 h-8 animate-pulse" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-gray-900 tracking-wide animate-pulse">Autenticando...</p>
+                    <p className="text-[10px] text-gray-500 mt-1">Conectando con AssetSphere</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isSuccess && (
+              <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl z-30 transition-all duration-300">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-650 scale-100 animate-bounce">
+                    <CheckCircle size={36} />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-gray-900 tracking-wide">¡Acceso Concedido!</p>
+                    <p className="text-[10px] text-emerald-650 font-semibold mt-1">Cargando tu panel principal...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="w-full">
               <div className="flex justify-center mb-6">
                 {/* ✅ CORRECCIÓN LOGO */}
-                <img src={Logo} alt="Logo AssetSphere" />
+                <img src={Logo} alt="Logo AssetSphere" className="h-12 w-auto object-contain" />
               </div>
 
               <div className="text-center">
@@ -162,3 +193,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+

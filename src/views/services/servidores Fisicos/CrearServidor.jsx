@@ -185,7 +185,7 @@ const CrearServidorFisico = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen w-full text-gray-800 dark:text-slate-100">
       {/* Header con título y botón de regreso */}
       <header className="w-full p-4 flex justify-between items-center border-b border-gray-200 bg-gray-100 shadow-sm">
         <div>
@@ -754,3 +754,7 @@ const CrearServidorFisico = () => {
 };
 
 export default CrearServidorFisico;
+
+
+
+
