@@ -163,10 +163,7 @@ export default function Header() {
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <img src={Logo} alt="AssetSphere" className="h-8" />
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white hidden sm:block">
-              AssetSphere
-            </h1>
+            {/* Logo and title removed as per user request */}
           </div>
 
           <div className="flex-1 max-w-md mx-4 relative hidden md:block">
