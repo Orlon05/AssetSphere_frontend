@@ -764,21 +764,11 @@ export default function Dashboard() {
 
   const handleModuleClick = (moduleId) => {
     const selectedModule = modules.find((module) => module.id === moduleId);
-
     if (!selectedModule) return;
-
-    const { moduleKey } = selectedModule;
-
-    if (moduleId === 1)
-      navigate(`${BASE_PATH}/servidoresf?activeModule=${moduleKey}`);
-    else if (moduleId === 2)
-      navigate(`${BASE_PATH}/servidoresv?activeModule=${moduleKey}`);
-    else if (moduleId === 3)
-      navigate(`${BASE_PATH}/base-de-datos?activeModule=${moduleKey}`);
-    else if (moduleId === 4)
-      navigate(`${BASE_PATH}/pseries?activeModule=${moduleKey}`);
-    else if (moduleId === 6)
-      navigate(`${BASE_PATH}/sucursales?activeModule=${moduleKey}`);
+    const { moduleKey, route } = selectedModule;
+    if (route) {
+      navigate(`${route}?activeModule=${moduleKey}`);
+    }
   };
 
   // Configuración de los gráficos del Dashboard Premium
@@ -972,5 +962,6 @@ export default function Dashboard() {
     </div>
   );
 }
+
 
 
