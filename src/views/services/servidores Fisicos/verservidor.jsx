@@ -60,33 +60,25 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
         "serial_number",
         "manufacturer",
         "server_model",
-        "server_type",
         "service_status",
+        "environment",
       ],
     },
     {
       title: "Configuración de Red",
-      fields: ["ip_server", "ip_ilo"],
+      fields: ["ip_server"],
     },
     {
       title: "Especificaciones Técnicas",
-      fields: ["core_count", "installed_memory", "total_disk_capacity"],
+      fields: ["processor", "core_count", "installed_memory", "total_disk_capacity", "os_type"],
     },
     {
       title: "Ubicación Física",
-      fields: ["location", "ubication", "unit", "enclosure"],
-    },
-    {
-      title: "Información de Servicio",
-      fields: ["service_type", "application", "owner", "action"],
+      fields: ["location", "unit"],
     },
     {
       title: "Garantía y Soporte",
-      fields: ["warranty_start_date", "warranty_end_date", "eos", "po_number"],
-    },
-    {
-      title: "Observaciones",
-      fields: ["comments"],
+      fields: ["warranty_start_date", "warranty_end_date"],
     },
   ];
 
@@ -96,26 +88,18 @@ const VerServidorFisico = ({ serverId: propServerId, onClose }) => {
     serial_number: "Número de Serie",
     manufacturer: "Fabricante",
     server_model: "Modelo del Servidor",
-    server_type: "Tipo de Servidor",
     service_status: "Estado del Servicio",
+    environment: "Ambiente / Entorno",
     ip_server: "IP del Servidor",
-    ip_ilo: "IP iLO/IPMI",
+    processor: "Procesador / CPU",
     core_count: "Número de Núcleos",
     installed_memory: "Memoria Instalada",
     total_disk_capacity: "Capacidad Total de Disco",
+    os_type: "Sistema Operativo",
     location: "Ubicación",
-    ubication: "Ubicación Específica",
     unit: "Unidad/Rack",
-    enclosure: "Gabinete/Enclosure",
-    service_type: "Tipo de Servicio",
-    application: "Aplicación",
-    owner: "Propietario/Responsable",
-    action: "Acción",
     warranty_start_date: "Inicio Garantía",
     warranty_end_date: "Fin Garantía",
-    eos: "End of Support (EOS)",
-    po_number: "Número de Orden de Compra",
-    comments: "Observaciones",
   };
 
   /**

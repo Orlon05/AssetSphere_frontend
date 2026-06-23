@@ -825,7 +825,7 @@ export default function ServidoresVirtuales() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
                               setActiveModal({ type: "view", id: server.id })
@@ -840,7 +840,7 @@ export default function ServidoresVirtuales() {
                             onClick={() =>
                               setActiveModal({ type: "edit", id: server.id })
                             }
-                            className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Editar"
                             aria-label={`Editar ${server.server}`}
                           >
@@ -848,7 +848,7 @@ export default function ServidoresVirtuales() {
                           </button>
                           <button
                             onClick={() => handleDeleteServer(server.id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Eliminar"
                             aria-label={`Eliminar ${server.server}`}
                           >

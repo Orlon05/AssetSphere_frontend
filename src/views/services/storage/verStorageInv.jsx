@@ -403,7 +403,7 @@ const VerStorageInv = ({ storageId: propStorageId, onClose }) => {
       `}} />
 
       {/* Header */}
-      <header className={`sticky top-0 z-10 w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-t-xl mb-4 print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
+      <header className={`w-full px-8 py-5 flex justify-between items-center border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-t-xl mb-4 print:hidden ${isModal ? "rounded-t-xl mb-4" : ""}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-950 text-white flex items-center justify-center shadow-sm">
             <HardDrive size={20} />

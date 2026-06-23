@@ -153,6 +153,44 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
     "N/A"
   ];
 
+  const normalizeKeys = (obj) => {
+    if (!obj || typeof obj !== "object") return obj;
+    const normalized = {};
+    const expectedKeys = [
+      "TCSAssetID",
+      "SerialNumber",
+      "PONumber",
+      "ItemsPurchased",
+      "Provider",
+      "LocalVendor",
+      "Model",
+      "Hostname",
+      "IPAddress",
+      "RawCapacityTB",
+      "UsableCapacityTB",
+      "GPS",
+      "Location",
+      "Position",
+      "RackUnit",
+      "HWWarrantyStartDate",
+      "HWWarrantyEndDate",
+      "WarrantyStatus",
+      "TypeOfHWSupport",
+      "Description"
+    ];
+    for (const [key, val] of Object.entries(obj)) {
+      const matchedKey = expectedKeys.find(
+        (ek) => ek.toLowerCase() === key.toLowerCase()
+      );
+      if (matchedKey) {
+        normalized[matchedKey] = val;
+      } else {
+        normalized[key] = val;
+      }
+    }
+    return normalized;
+  };
+
   useEffect(() => {
     if (isCreate) {
       setLoading(false);
@@ -176,7 +214,7 @@ const EditarStorageInv = ({ storageId: propStorageId, onClose, onSuccess, isModa
         if (resData.status === "success" && resData.data) {
           const data = resData.data;
           // Format date strings to YYYY-MM-DD for input type date
-          const formatted = { ...data };
+          const formatted = normalizeKeys(data);
           if (formatted.HWWarrantyStartDate) {
             formatted.HWWarrantyStartDate = formatted.HWWarrantyStartDate.slice(0, 10);
           }

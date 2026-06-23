@@ -801,7 +801,7 @@ export default function Sucursales() {
                                 `${BASE_PATH}/ver/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Ver detalles"
                           >
                             <Eye size={18} />
@@ -812,14 +812,14 @@ export default function Sucursales() {
                                 `${BASE_PATH}/editar/${sucursal.id}/sucursal`
                               )
                             }
-                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Editar"
                           >
                             <Edit size={18} />
                           </button>
                           <button
                             onClick={() => handleDeleteSucursal(sucursal.id)}
-                            className="p-1.5 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Eliminar"
                           >
                             <Trash2 size={18} />

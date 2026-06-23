@@ -1175,10 +1175,31 @@ export default function ServidoresFisicos() {
                     Estado
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    IP
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Serial
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
-                    IP
+                    Fabricante / Modelo
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    CPU / Cores
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    RAM
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    Disco
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    S.O.
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    Ambiente
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-slate-400 uppercase tracking-wider">
+                    Ubicación / Unidad
                   </th>
                   <th
                     scope="col"
@@ -1214,16 +1235,37 @@ export default function ServidoresFisicos() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(server.service_status)}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600 dark:text-slate-400">
+                        {server.ip_server || "-"}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border border-gray-200 dark:border-slate-700">
-                          {server.serial_number}
+                          {server.serial_number || "-"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-600 dark:text-slate-400">
-                        {server.ip_server}
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.manufacturer || server.server_model ? `${server.manufacturer || ""} ${server.server_model || ""}`.trim() : "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.processor ? `${server.processor} (${server.core_count || 0} cores)` : server.core_count ? `${server.core_count} cores` : "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.installed_memory || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.total_disk_capacity || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.os_type || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.environment || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-slate-400">
+                        {server.location ? (server.unit ? `${server.location} / ${server.unit}` : server.location) : (server.unit || "-")}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
                               setActiveModal({ type: "view", id: server.id })
@@ -1238,7 +1280,7 @@ export default function ServidoresFisicos() {
                             onClick={() =>
                               setActiveModal({ type: "edit", id: server.id })
                             }
-                            className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Editar"
                             aria-label={`Editar ${server.hostname}`}
                           >
@@ -1246,7 +1288,7 @@ export default function ServidoresFisicos() {
                           </button>
                           <button
                             onClick={() => handleDeleteServer(server.id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            className="p-2 text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 rounded-lg transition-all"
                             title="Eliminar"
                             aria-label={`Eliminar ${server.hostname}`}
                           >
@@ -1259,7 +1301,7 @@ export default function ServidoresFisicos() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={13}
                       className="px-6 py-12 text-center text-slate-500 bg-white dark:bg-slate-800"
                     >
                       <div className="flex flex-col items-center justify-center">

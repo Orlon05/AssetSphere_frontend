@@ -859,7 +859,7 @@ const BaseDeDatos = () => {
                         </span>
                       </td>
                       <td className="px-6 py-3 text-right">
-                        <div className="flex items-center justify-end space-x-1 opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() =>
                               setActiveModal({ type: "view", id: baseDeDatos.id })

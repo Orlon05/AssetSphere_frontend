@@ -49,32 +49,24 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false); // Estado del botón de envío
 
-  // Estado inicial del formulario con todos los campos de la estructura de servidores físicos
+  // Estado inicial del formulario con los campos requeridos del servidor físico
   const [formData, setFormData] = useState({
     serial_number: "", // Número de serie del servidor (requerido)
     hostname: "", // Nombre del host (requerido)
     ip_server: "", // Dirección IP del servidor
-    ip_ilo: "", // Dirección IP del iLO/IPMI para gestión remota
     service_status: "active", // Estado del servicio (valor por defecto: activo)
-    server_type: "", // Tipo de servidor (Physical, Virtual, Blade, Rack)
     total_disk_capacity: "", // Capacidad total de almacenamiento
-    action: "", // Acción o propósito del servidor
     server_model: "", // Modelo específico del servidor
-    service_type: "", // Tipo de servicio (Production, Development, etc.)
     core_count: "", // Número de núcleos de CPU
     manufacturer: "", // Fabricante del servidor
     installed_memory: "", // Memoria RAM instalada
     warranty_start_date: "", // Fecha de inicio de garantía
     warranty_end_date: "", // Fecha de fin de garantía
-    eos: "", // End of Support (fin de soporte)
-    enclosure: "", // Gabinete o enclosure donde está ubicado
-    application: "", // Aplicación principal que ejecuta
-    owner: "", // Propietario o responsable del servidor
     location: "", // Ubicación física general
     unit: "", // Unidad o rack específico
-    ubication: "", // Ubicación específica detallada
-    comments: "", // Comentarios u observaciones adicionales
-    po_number: "", // Número de orden de compra
+    processor: "", // Procesador / CPU
+    environment: "", // Ambiente / Entorno
+    os_type: "", // Sistema Operativo
   });
 
   // Opciones predefinidas para campos de selección
@@ -83,13 +75,6 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
     "inactive",
     "maintenance",
     "decommissioned",
-  ];
-  const serverTypeOptions = ["Physical", "Virtual", "Blade", "Rack"];
-  const serviceTypeOptions = [
-    "Production",
-    "Development",
-    "Testing",
-    "Staging",
   ];
   const manufacturerOptions = [
     "Dell",
@@ -313,30 +298,6 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                   />
                 </div>
 
-                {/* Campo: Tipo de servidor (select) */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="server_type"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Tipo de Servidor
-                  </label>
-                  <select
-                    id="server_type"
-                    name="server_type"
-                    value={formData.server_type}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccionar tipo</option>
-                    {serverTypeOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 {/* Campo: Estado del servicio (requerido, select) */}
                 <div className="space-y-2">
                   <label
@@ -359,6 +320,25 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* Campo: Ambiente / Entorno */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="environment"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
+                  >
+                    Ambiente / Entorno
+                  </label>
+                  <input
+                    type="text"
+                    id="environment"
+                    name="environment"
+                    value={formData.environment}
+                    onChange={handleChange}
+                    placeholder="ej: Production, Testing"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
               </div>
             </div>
@@ -386,24 +366,6 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                     className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-
-                {/* Campo: IP iLO/IPMI para gestión remota */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="ip_ilo"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    IP iLO/IPMI
-                  </label>
-                  <input
-                    type="text"
-                    id="ip_ilo"
-                    name="ip_ilo"
-                    value={formData.ip_ilo}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
               </div>
             </div>
 
@@ -413,6 +375,25 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                 Especificaciones Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Campo: Procesador / CPU */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="processor"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
+                  >
+                    Procesador / CPU
+                  </label>
+                  <input
+                    type="text"
+                    id="processor"
+                    name="processor"
+                    value={formData.processor}
+                    onChange={handleChange}
+                    placeholder="ej: Intel Xeon, AMD EPYC"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
                 {/* Campo: Número de núcleos (tipo number para validación) */}
                 <div className="space-y-2">
                   <label
@@ -468,6 +449,25 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                     className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
+
+                {/* Campo: Sistema Operativo */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="os_type"
+                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
+                  >
+                    Sistema Operativo
+                  </label>
+                  <input
+                    type="text"
+                    id="os_type"
+                    name="os_type"
+                    value={formData.os_type}
+                    onChange={handleChange}
+                    placeholder="ej: RHEL 8, Windows Server 2022"
+                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
               </div>
             </div>
 
@@ -495,24 +495,6 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                   />
                 </div>
 
-                {/* Campo: Ubicación específica */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="ubication"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Ubicación Específica
-                  </label>
-                  <input
-                    type="text"
-                    id="ubication"
-                    name="ubication"
-                    value={formData.ubication}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
                 {/* Campo: Unidad o rack */}
                 <div className="space-y-2">
                   <label
@@ -530,114 +512,10 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                     className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-
-                {/* Campo: Gabinete o enclosure */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="enclosure"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Gabinete/Enclosure
-                  </label>
-                  <input
-                    type="text"
-                    id="enclosure"
-                    name="enclosure"
-                    value={formData.enclosure}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
               </div>
             </div>
 
-            {/* Sección 5: Información de Servicio */}
-            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
-                Información de Servicio
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Campo: Tipo de servicio (select) */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="service_type"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Tipo de Servicio
-                  </label>
-                  <select
-                    id="service_type"
-                    name="service_type"
-                    value={formData.service_type}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Seleccionar tipo de servicio</option>
-                    {serviceTypeOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Campo: Aplicación principal */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="application"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Aplicación
-                  </label>
-                  <input
-                    type="text"
-                    id="application"
-                    name="application"
-                    value={formData.application}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                {/* Campo: Propietario o responsable */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="owner"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Propietario/Responsable
-                  </label>
-                  <input
-                    type="text"
-                    id="owner"
-                    name="owner"
-                    value={formData.owner}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                {/* Campo: Acción o propósito */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="action"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Acción
-                  </label>
-                  <input
-                    type="text"
-                    id="action"
-                    name="action"
-                    value={formData.action}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Sección 6: Garantía y Soporte */}
+            {/* Sección 5: Garantía y Soporte */}
             <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
               <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
                 Garantía y Soporte
@@ -677,68 +555,6 @@ const CrearServidorFisico = ({ isModal = false, onClose }) => {
                     onChange={handleChange}
                     className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
                   />
-                </div>
-
-                {/* Campo: End of Support */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="eos"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    End of Support (EOS)
-                  </label>
-                  <input
-                    type="text"
-                    id="eos"
-                    name="eos"
-                    value={formData.eos}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                {/* Campo: Número de orden de compra */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="po_number"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Número de Orden de Compra
-                  </label>
-                  <input
-                    type="text"
-                    id="po_number"
-                    name="po_number"
-                    value={formData.po_number}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Sección 7: Información Adicional */}
-            <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-slate-300">
-                Información Adicional
-              </h2>
-              <div className="grid grid-cols-1 gap-4">
-                {/* Campo: Comentarios (textarea para texto largo) */}
-                <div className="space-y-2">
-                  <label
-                    htmlFor="comments"
-                    className="block text-sm font-medium text-gray-700 dark:text-slate-300"
-                  >
-                    Comentarios
-                  </label>
-                  <textarea
-                    id="comments"
-                    name="comments"
-                    rows="3"
-                    value={formData.comments}
-                    onChange={handleChange}
-                    className="bg-white dark:bg-slate-800 border border-gray-300 text-gray-700 dark:text-slate-300 rounded-lg block w-full p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                  ></textarea>
                 </div>
               </div>
             </div>
